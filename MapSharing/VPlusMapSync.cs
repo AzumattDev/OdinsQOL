@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ValheimPlus.Utility;
-using static ValheimPlus.VPlusDataObjects;
+using VMP_Mod.Utility;
+using static VMP_Mod.VPlusDataObjects;
 
-namespace ValheimPlus.RPC
+namespace VMP_Mod.RPC
 {
     public class VPlusMapSync
     {
@@ -47,7 +47,7 @@ namespace ValheimPlus.RPC
                 bool lastMapPackage = mapPkg.ReadBool();
 
                 if (!lastMapPackage) return; //This package is one of many chunks, so don't update clients until we get all of them.
-                
+
                 //Convert map data into ranges
                 List<MapRange> serverExploredAreas = ExplorationDataToMapRanges(ServerMapData);
 
@@ -55,7 +55,7 @@ namespace ValheimPlus.RPC
                 List<ZPackage> packages = ChunkMapData(serverExploredAreas);
 
                 //Send the updated server map to all clients
-                foreach(ZPackage pkg in packages)
+                foreach (ZPackage pkg in packages)
                 {
                     RpcQueue.Enqueue(new RpcData()
                     {
@@ -155,13 +155,13 @@ namespace ValheimPlus.RPC
             if (ServerMapData == null) return;
 
             //Load map data
-            if (File.Exists(ValheimPlusPlugin.VPlusDataDirectoryPath +
+            if (File.Exists(VMP_Modplugin.VMP_DatadirectoryPath +
                             Path.DirectorySeparatorChar +
                             ZNet.instance.GetWorldName() + "_mapSync.dat"))
             {
                 try
                 {
-                    string mapData = File.ReadAllText(ValheimPlusPlugin.VPlusDataDirectoryPath +
+                    string mapData = File.ReadAllText(VMP_Modplugin.VMP_DatadirectoryPath +
                                                       Path.DirectorySeparatorChar +
                                                       ZNet.instance.GetWorldName() + "_mapSync.dat");
 
@@ -206,10 +206,10 @@ namespace ValheimPlus.RPC
 
             if (mapDataToDisk.Count > 0)
             {
-                File.Delete(ValheimPlusPlugin.VPlusDataDirectoryPath +
+                File.Delete(VMP_Modplugin.VMP_DatadirectoryPath +
                             Path.DirectorySeparatorChar +
                             ZNet.instance.GetWorldName() + "_mapSync.dat");
-                File.WriteAllText(ValheimPlusPlugin.VPlusDataDirectoryPath +
+                File.WriteAllText(VMP_Modplugin.VMP_DatadirectoryPath +
                                   Path.DirectorySeparatorChar +
                                   ZNet.instance.GetWorldName() + "_mapSync.dat", string.Join(",", mapDataToDisk));
 
@@ -283,7 +283,7 @@ namespace ValheimPlus.RPC
             List<ZPackage> packageList = new List<ZPackage>();
 
             //Iterate the chunks
-            foreach(List<MapRange> thisChunk in chunkedData)
+            foreach (List<MapRange> thisChunk in chunkedData)
             {
                 ZPackage pkg = new ZPackage();
 
@@ -291,7 +291,7 @@ namespace ValheimPlus.RPC
                 pkg.Write(thisChunk.Count);
 
                 //Write each MapRange in this chunk to this package.
-                foreach(MapRange mapRange in thisChunk)
+                foreach (MapRange mapRange in thisChunk)
                 {
                     pkg.WriteVPlusMapRange(mapRange);
                 }

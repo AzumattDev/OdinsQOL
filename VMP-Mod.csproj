@@ -16,11 +16,12 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -294,15 +295,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MapSharing\GameObjectAssistant.cs" />
+    <Compile Include="MapSharing\ListExtensions.cs" />
     <Compile Include="MapSharing\Minimap.cs" />
+    <Compile Include="MapSharing\RPCQueue.cs" />
+    <Compile Include="MapSharing\VPlusAck.cs" />
+    <Compile Include="MapSharing\VPlusDataObjects.cs" />
     <Compile Include="MapSharing\VPlusMapPinSync.cs" />
     <Compile Include="MapSharing\VPlusMapSync.cs" />
+    <Compile Include="MapSharing\ZPackageExtensions.cs" />
     <Compile Include="Patches\ChestSizePatch.cs" />
     <Compile Include="Patches\InventoryPatch.cs" />
     <Compile Include="Patches\Craft_Smelt_fromchest.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Bundles\map-pin-ui" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

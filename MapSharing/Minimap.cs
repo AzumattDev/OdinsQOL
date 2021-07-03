@@ -6,14 +6,17 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using ValheimPlus.Configurations;
-using ValheimPlus.RPC;
-using ValheimPlus.Utility;
+using VMP_Mod.RPC;
+using VMP_Mod.Utility;
+using VMP_Mod;
 using Random = UnityEngine.Random;
+using BepInEx.Configuration;
+using System.Reflection;
 
 // ToDo add packet system to convey map markers
-namespace ValheimPlus.GameClasses
+namespace VMP_Mod.GameClasses
 {
+    
     /// <summary>
     /// Hooks base explore method
     /// </summary>
@@ -33,11 +36,11 @@ namespace ValheimPlus.GameClasses
     {
         private static void Prefix(ref float dt, ref Player player, ref Minimap __instance, ref float ___m_exploreTimer, ref float ___m_exploreInterval)
         {
-            if (Configuration.Current.Map.exploreRadius > 10000) Configuration.Current.Map.exploreRadius = 10000;
+            
 
-            if (!Configuration.Current.Map.IsEnabled) return;
+            if (!VMP_Modplugin.mapIsEnabled.Value) return;
 
-            if (Configuration.Current.Map.shareMapProgression)
+            if (VMP_Modplugin.shareMapProgression.Value)
             {
                 float explorerTime = ___m_exploreTimer;
                 explorerTime += Time.deltaTime;
@@ -47,14 +50,14 @@ namespace ValheimPlus.GameClasses
                     {
                         foreach (ZNet.PlayerInfo m_Player in ZNet.instance.m_players)
                         {
-                            HookExplore.call_Explore(__instance, m_Player.m_position, Configuration.Current.Map.exploreRadius);
+                            HookExplore.call_Explore(__instance, m_Player.m_position, VMP_Modplugin.exploreRadius.Value);
                         }
                     }
                 }
             }
 
             // Always reveal for your own, we do this non the less to apply the potentially bigger exploreRadius
-            HookExplore.call_Explore(__instance, player.transform.position, Configuration.Current.Map.exploreRadius);
+            HookExplore.call_Explore(__instance, player.transform.position, VMP_Modplugin.exploreRadius.Value);
         }
     }
 
@@ -63,7 +66,7 @@ namespace ValheimPlus.GameClasses
     {
         private static void Postfix()
         {
-            if (ZNet.m_isServer && Configuration.Current.Map.IsEnabled && Configuration.Current.Map.shareMapProgression)
+            if (ZNet.m_isServer && VMP_Modplugin.mapIsEnabled.Value && VMP_Modplugin.shareMapProgression.Value)
             {
                 //Init map array
                 VPlusMapSync.ServerMapData = new bool[Minimap.instance.m_textureSize * Minimap.instance.m_textureSize];
@@ -72,7 +75,7 @@ namespace ValheimPlus.GameClasses
                 VPlusMapSync.LoadMapDataFromDisk();
 
                 //Start map data save timer
-                ValheimPlusPlugin.mapSyncSaveTimer.Start();
+                VMP_Modplugin.mapSyncSaveTimer.Start();
             }
         }
     }
@@ -93,7 +96,7 @@ namespace ValheimPlus.GameClasses
 
             private static void Postfix(ref Minimap __instance, ref Minimap.PinData __result)
             {
-                if (Configuration.Current.Map.IsEnabled && Configuration.Current.Map.shareAllPins)
+                if (VMP_Modplugin.mapIsEnabled.Value && VMP_Modplugin.shareAllPins.Value)
                     if (shareablePins.Contains(__result.m_type))
                     {
                         if (__instance.m_mode != Minimap.MapMode.Large)
@@ -111,7 +114,7 @@ namespace ValheimPlus.GameClasses
             {
                 Minimap.PinType pintype = iconSelected.value == 4 ? Minimap.PinType.Icon4 : (Minimap.PinType)iconSelected.value;
                 Minimap.PinData addedPin = __instance.AddPin(pinPos, pintype, pinName.text, true, false);
-                if (Configuration.Current.Map.shareablePins && sharePin.isOn && !Configuration.Current.Map.shareAllPins)
+                if (VMP_Modplugin.shareablePins.Value && sharePin.isOn && !VMP_Modplugin.shareAllPins.Value)
                     VPlusMapPinSync.SendMapPinToServer(addedPin);
                 pinEditorPanel.SetActive(false);
                 __instance.m_wasFocused = false;
@@ -119,10 +122,10 @@ namespace ValheimPlus.GameClasses
 
             private static void Postfix(ref Minimap __instance)
             {
-                if (Configuration.Current.Map.IsEnabled)
+                if (VMP_Modplugin.mapIsEnabled.Value)
                 {
-                    Minimap_AddPin_Patch.shareablePins = new List<Minimap.PinType>() { 
-                        Minimap.PinType.Icon0, Minimap.PinType.Icon1, Minimap.PinType.Icon2, 
+                    Minimap_AddPin_Patch.shareablePins = new List<Minimap.PinType>() {
+                        Minimap.PinType.Icon0, Minimap.PinType.Icon1, Minimap.PinType.Icon2,
                         Minimap.PinType.Icon3, Minimap.PinType.Icon4 };
                     GameObject iconPanelOld = GameObjectAssistant.GetChildComponentByName<Transform>("IconPanel", __instance.m_largeRoot).gameObject;
                     for (int i = 0; i < 5; i++)
@@ -134,7 +137,7 @@ namespace ValheimPlus.GameClasses
                     __instance.m_nameInput.gameObject.SetActive(false);
                     if (mapPinBundle == null)
                     {
-                        mapPinBundle = AssetBundle.LoadFromStream(EmbeddedAsset.LoadEmbeddedAsset("Assets.Bundles.map-pin-ui"));
+                        mapPinBundle = GetAssetBundleFromResources("map-pin-ui");
                     }
                     GameObject pinEditorPanelParent = mapPinBundle.LoadAsset<GameObject>("MapPinEditor");
                     pinEditorPanel = GameObject.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject);
@@ -161,20 +164,30 @@ namespace ValheimPlus.GameClasses
                     sharePin = pinEditorPanel.GetComponentInChildren<Toggle>();
                     if (sharePin != null)
                         Debug.Log("Share pin loaded properly");
-                    if (!Configuration.Current.Map.shareablePins || Configuration.Current.Map.shareAllPins)
+                    if (!VMP_Modplugin.shareablePins.Value || VMP_Modplugin.shareAllPins.Value)
                         sharePin.gameObject.SetActive(false);
                 }
             }
         }
+        private static AssetBundle GetAssetBundleFromResources(string filename)
+        {
+            var execAssembly = Assembly.GetExecutingAssembly();
+            var resourceName = execAssembly.GetManifestResourceNames()
+                .Single(str => str.EndsWith(filename));
 
+            using (var stream = execAssembly.GetManifestResourceStream(resourceName))
+            {
+                return AssetBundle.LoadFromStream(stream);
+            }
+        }
         [HarmonyPatch(typeof(Minimap), "OnMapDblClick")]
         public static class MapPinEditor_Patches_OnMapDblClick
         {
             private static bool Prefix(ref Minimap __instance)
             {
-                if (Configuration.Current.Map.IsEnabled)
+                if (VMP_Modplugin.mapIsEnabled.Value)
                 {
-                    if(pinEditorPanel == null)
+                    if (pinEditorPanel == null)
                     {
                         Minimap_AddPin_Patch.shareablePins = new List<Minimap.PinType>() {
                         Minimap.PinType.Icon0, Minimap.PinType.Icon1, Minimap.PinType.Icon2,
@@ -189,7 +202,7 @@ namespace ValheimPlus.GameClasses
                         __instance.m_nameInput.gameObject.SetActive(false);
                         if (mapPinBundle == null)
                         {
-                            mapPinBundle = AssetBundle.LoadFromStream(EmbeddedAsset.LoadEmbeddedAsset("Assets.Bundles.map-pin-ui"));
+                            mapPinBundle = GetAssetBundleFromResources("map-pin-ui");
                         }
                         GameObject pinEditorPanelParent = mapPinBundle.LoadAsset<GameObject>("MapPinEditor");
                         pinEditorPanel = GameObject.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject);
@@ -216,7 +229,7 @@ namespace ValheimPlus.GameClasses
                         sharePin = pinEditorPanel.GetComponentInChildren<Toggle>();
                         if (sharePin != null)
                             Debug.Log("Share pin loaded properly");
-                        if (!Configuration.Current.Map.shareablePins || Configuration.Current.Map.shareAllPins)
+                        if (!VMP_Modplugin.shareablePins.Value || VMP_Modplugin.shareAllPins.Value)
                             sharePin.gameObject.SetActive(false);
                     }
                     if (!pinEditorPanel.activeSelf)
@@ -241,7 +254,7 @@ namespace ValheimPlus.GameClasses
         {
             private static bool Prefix(ref Minimap __instance)
             {
-                if (Configuration.Current.Map.IsEnabled)
+                if (VMP_Modplugin.mapIsEnabled.Value)
                 {
                     // Break out of this unnecessary thing
                     return false;
@@ -255,7 +268,7 @@ namespace ValheimPlus.GameClasses
         {
             private static bool Prefix(ref bool __result)
             {
-                if (Configuration.Current.Map.IsEnabled)
+                if (VMP_Modplugin.mapIsEnabled.Value)
                 {
                     __result = Minimap.m_instance.m_mode == Minimap.MapMode.Large && Minimap.m_instance.m_wasFocused;
                     return false;
@@ -269,15 +282,16 @@ namespace ValheimPlus.GameClasses
         {
             private static void Postfix(ref Minimap __instance)
             {
-                if (Configuration.Current.Map.IsEnabled)
+                if (VMP_Modplugin.mapIsEnabled.Value)
                 {
                     if (Minimap.InTextInput())
                     {
                         if (Input.GetKeyDown(KeyCode.Escape))
                         {
-                            Minimap.instance.m_wasFocused = false; 
+                            Minimap.instance.m_wasFocused = false;
                             pinEditorPanel.SetActive(false);
-                        } else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+                        }
+                        else if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
                         {
                             MapPinEditor_Patches_Awake.AddPin(ref __instance);
                         }
@@ -364,7 +378,7 @@ namespace ValheimPlus.GameClasses
 
                     customPin.m_doubleSize = true;
                     customPins.Add(zdo, customPin);
-                } 
+                }
                 else
                     customPin.m_pos = zdo.m_position;
 
@@ -375,7 +389,7 @@ namespace ValheimPlus.GameClasses
             {
                 timeCounter += dt;
 
-                if (timeCounter < updateInterval || !Configuration.Current.Map.IsEnabled || !Configuration.Current.Map.displayCartsAndBoats)
+                if (timeCounter < updateInterval || !VMP_Modplugin.mapIsEnabled.Value || !VMP_Modplugin.displayCartsAndBoats.Value)
                     return;
 
                 timeCounter -= updateInterval;

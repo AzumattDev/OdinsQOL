@@ -10,9 +10,9 @@ using System.Reflection.Emit;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace VMP_Mod.Patches
+namespace VMP_Mod
 {
-    class Craft_Smelt_fromchest : BaseUnityPlugin
+    public class Craft_Smelt_fromchest : BaseUnityPlugin
     {
         private static bool wasAllowed;
 
@@ -44,7 +44,7 @@ namespace VMP_Mod.Patches
         public static List<Container> containerList = new List<Container>();
         private static Craft_Smelt_fromchest context = null;
 
-        public class ConnectionParams 
+        public class ConnectionParams
         {
             public GameObject connection = null;
             public Vector3 stationPos;
