@@ -59,6 +59,7 @@ namespace VMP_Mod
         public static ConfigEntry<bool> modEnabled;
         public static ConfigEntry<bool> isDebug;
         public static ConfigEntry<int> nexusID;
+        public static ConfigEntry<int> workbenchAttachmentRange;
 
         public static List<Container> containerList = new List<Container>();
         private static VMP_Modplugin context = null;
@@ -94,7 +95,7 @@ namespace VMP_Mod
             modEnabled = Config.Bind<bool>("General", "Enabled", true, "Enable this mod");
             isDebug = Config.Bind<bool>("General", "IsDebug", true, "Show debug messages in log");
             nexusID = Config.Bind<int>("General", "NexusID", 40, "Nexus mod ID for updates");
-
+            
             m_range = Config.Bind<float>("General", "ContainerRange", 10f, "The maximum range from which to pull items from");
             resourceString = Config.Bind<string>("General", "ResourceCostString", "{0}/{1}", "String used to show required and available resources. {0} is replaced by how much is available, and {1} is replaced by how much is required. Set to nothing to leave it as default.");
             flashColor = Config.Bind<Color>("General", "FlashColor", Color.yellow, "Resource amounts will flash to this colour when coming from containers");
@@ -141,6 +142,7 @@ namespace VMP_Mod
             CraftingPatch.WorkbenchRange = Config.Bind<int>("WorkBench", "WorkBenchRange", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(6, 650)));
             CraftingPatch.workbenchEnemySpawnRange = Config.Bind<int>("WorkBench", "WorkBenchRange (Playerbase size)", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(6, 650)));
             CraftingPatch.AlterWorkBench = Config.Bind<bool>("WorkBench", "Change No Roof Behavior", true, "Show building pieces");
+            workbenchAttachmentRange = Config.Bind<int>("WorkBench", "WorkBench Extension", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(5, 100)));
 
 
             if (!modEnabled.Value)
