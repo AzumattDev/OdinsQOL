@@ -71,8 +71,9 @@ namespace VMP_Mod
 
         public static void Dbgl(string str = "", bool pref = true)
         {
-            if (isDebug.Value)
-                Debug.Log((pref ? typeof(VMP_Modplugin).Namespace + " " : "") + str);
+#if DEBUG
+            Debug.Log((pref ? typeof(VMP_Modplugin).Namespace + " " : "") + str);
+#endif
         }
 
 
@@ -94,7 +95,6 @@ namespace VMP_Mod
             nexusID = Config.Bind<int>("General", "NexusID", 40, "Nexus mod ID for updates");
 
             m_range = Config.Bind<float>("General", "ContainerRange", 10f, "The maximum range from which to pull items from");
-            //ignoreRangeInBuildArea = Config.Bind<bool>("General", "IgnoreRangeInBuildArea", true, "Ignore range for building pieces when in build area.");
             resourceString = Config.Bind<string>("General", "ResourceCostString", "{0}/{1}", "String used to show required and available resources. {0} is replaced by how much is available, and {1} is replaced by how much is required. Set to nothing to leave it as default.");
             flashColor = Config.Bind<Color>("General", "FlashColor", Color.yellow, "Resource amounts will flash to this colour when coming from containers");
             unFlashColor = Config.Bind<Color>("General", "UnFlashColor", Color.white, "Resource amounts will flash from this colour when coming from containers (set both colors to the same color for no flashing)");
@@ -113,7 +113,7 @@ namespace VMP_Mod
             fillAllModKey = Config.Bind<string>("Hot Keys", "FillAllModKey", "left shift", "Modifier key to pull all available fuel or ore when down. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
 
 
-            MapDetails.detailsmodEnabled = Config.Bind<bool>("General", "Enabled", true, "Enable this mod");
+            MapDetails.detailsmodEnabled = Config.Bind<bool>("General", "Map Details Enabled", true, "Enable Map Details showing mod");
 
             MapDetails.showRange = Config.Bind<float>("Variables", "ShowRange", 50f, "Range in metres around player to show details");
             MapDetails.updateDelta = Config.Bind<float>("Variables", "UpdateDelta", 5f, "Distance in metres to move before automatically updating the map details");
@@ -123,6 +123,18 @@ namespace VMP_Mod
             MapDetails.unownedBuildingColor = Config.Bind<Color>("Variables", "UnownedBuildingColor", Color.yellow, "Color of npc build pieces");
             MapDetails.customPlayerColors = Config.Bind<string>("Variables", "CustomPlayerColors", "", "Custom color list, comma-separated. Use either <name>:<colorCode> pair entries or just <colorCode> entries. E.g. Erinthe:FF0000 or just FF0000. The latter will assign a color randomly to each connected peer.");
 
+            Container_Configs.KarveRow = Config.Bind<int>("Containers", "Karve Rows", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(2, 30)));
+            Container_Configs.KarveCol = Config.Bind<int>("Containers", "Karve Columns", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(2, 8)));
+            Container_Configs.LongRow = Config.Bind<int>("Containers", "Longboat Rows", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(3, 30)));
+            Container_Configs.LongCol = Config.Bind<int>("Containers", "Longboat Columns", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(6, 8)));
+            Container_Configs.CartRow = Config.Bind<int>("Containers", "Cart Rows", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(3, 30)));
+            Container_Configs.CartCol = Config.Bind<int>("Containers", "Cart Colums", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(6, 8)));
+            Container_Configs.PersonalRow = Config.Bind<int>("Containers", "Personal Chest Rows", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(2, 20)));
+            Container_Configs.PersonalCol = Config.Bind<int>("Containers", "Personal Chest Colums", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(3, 8)));
+            Container_Configs.WoodRow = Config.Bind<int>("Containers", "Wood Chest Rows", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(2,10)));
+            Container_Configs.WoodCol = Config.Bind<int>("Containers", "Wood Chest Colums", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(5, 8)));
+            Container_Configs.IronRow = Config.Bind<int>("Containers", "Iron Chest Rows", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(3, 20)));
+            Container_Configs.IronCol = Config.Bind<int>("Containers", "Iron Chest Colums", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(6, 8)));
 
             if (!modEnabled.Value)
                 return;
