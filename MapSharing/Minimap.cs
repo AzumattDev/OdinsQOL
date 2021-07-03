@@ -142,6 +142,8 @@ namespace VMP_Mod.GameClasses
                     GameObject pinEditorPanelParent = mapPinBundle.LoadAsset<GameObject>("MapPinEditor");
                     pinEditorPanel = GameObject.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject);
                     pinEditorPanel.transform.SetParent(__instance.m_largeRoot.transform, false);
+                    var image = pinEditorPanel.GetComponentInChildren<Image>();
+                    image.gameObject.SetActive(false);
                     pinEditorPanel.SetActive(false);
 
                     pinName = pinEditorPanel.GetComponentInChildren<InputField>();
@@ -207,6 +209,8 @@ namespace VMP_Mod.GameClasses
                         GameObject pinEditorPanelParent = mapPinBundle.LoadAsset<GameObject>("MapPinEditor");
                         pinEditorPanel = GameObject.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject);
                         pinEditorPanel.transform.SetParent(__instance.m_largeRoot.transform, false);
+                        var image = pinEditorPanel.GetComponentInChildren<Image>();
+                        image.gameObject.SetActive(false);
                         pinEditorPanel.SetActive(false);
 
                         pinName = pinEditorPanel.GetComponentInChildren<InputField>();

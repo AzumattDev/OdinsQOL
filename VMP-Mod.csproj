@@ -306,7 +306,6 @@
     <Compile Include="MapSharing\ZPackageExtensions.cs" />
     <Compile Include="Patches\ChestSizePatch.cs" />
     <Compile Include="Patches\InventoryPatch.cs" />
-    <Compile Include="Patches\Craft_Smelt_fromchest.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
