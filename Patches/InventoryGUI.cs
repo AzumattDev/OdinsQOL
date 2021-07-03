@@ -21,8 +21,7 @@ namespace VMP_Mod.GameClasses
 
         public static void Postfix(ref InventoryGui __instance)
         {
-            if (Configuration.Current.Inventory.IsEnabled)
-            {
+            
                 RectTransform container = __instance.m_container;
                 RectTransform player = __instance.m_player;
                 GameObject playerGrid = InventoryGui.instance.m_playerGrid.gameObject;
@@ -58,7 +57,7 @@ namespace VMP_Mod.GameClasses
                     Scrollbar playerScrollbar = playerGridScroll.GetComponent<Scrollbar>();
                     lastValue = playerScrollbar.value;
                 }
-            }
+            
         }
     }
 
@@ -75,7 +74,7 @@ namespace VMP_Mod.GameClasses
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> Transpile(IEnumerable<CodeInstruction> instructions)
         {
-            if (!Configuration.Current.Player.IsEnabled) return instructions;
+            
 
             List<CodeInstruction> il = instructions.ToList();
 
@@ -113,7 +112,7 @@ namespace VMP_Mod.GameClasses
         [HarmonyPrefix]
         public static void Prefix(InventoryGui __instance)
         {
-            if (!Configuration.Current.Player.IsEnabled || !Configuration.Current.Player.autoRepair) return;
+            if (!Configuration.Current.Player.autoRepair) return;
 
             CraftingStation curr_crafting_station = Player.m_localPlayer.GetCurrentCraftingStation();
 
@@ -281,79 +280,79 @@ namespace VMP_Mod.GameClasses
     /// <summary>
     /// Inventory HUD setup
     /// </summary>
-    [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.SetupRequirement))]
-    public static class InventoryGui_SetupRequirement_Patch
-    {
-        private static bool Prefix(Transform elementRoot, Piece.Requirement req, Player player, bool craft, int quality, ref bool __result)
-        {
-            if (!Configuration.Current.Hud.IsEnabled && !Configuration.Current.CraftFromChest.IsEnabled || !Configuration.Current.Hud.showRequiredItems && !Configuration.Current.CraftFromChest.IsEnabled) return true;
+    //[HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.SetupRequirement))]
+    //public static class InventoryGui_SetupRequirement_Patch
+    //{
+    //    private static bool Prefix(Transform elementRoot, Piece.Requirement req, Player player, bool craft, int quality, ref bool __result)
+    //    {
+    //        if (!Configuration.Current.Hud.IsEnabled && !Configuration.Current.CraftFromChest.IsEnabled || !Configuration.Current.Hud.showRequiredItems && !Configuration.Current.CraftFromChest.IsEnabled) return true;
 
-            Image component = elementRoot.transform.Find("res_icon").GetComponent<Image>();
-            Text component2 = elementRoot.transform.Find("res_name").GetComponent<Text>();
-            Text component3 = elementRoot.transform.Find("res_amount").GetComponent<Text>();
-            UITooltip component4 = elementRoot.GetComponent<UITooltip>();
+    //        Image component = elementRoot.transform.Find("res_icon").GetComponent<Image>();
+    //        Text component2 = elementRoot.transform.Find("res_name").GetComponent<Text>();
+    //        Text component3 = elementRoot.transform.Find("res_amount").GetComponent<Text>();
+    //        UITooltip component4 = elementRoot.GetComponent<UITooltip>();
 
-            if (req.m_resItem != null)
-            {
-                component.gameObject.SetActive(true);
-                component2.gameObject.SetActive(true);
-                component3.gameObject.SetActive(true);
-                component.sprite = req.m_resItem.m_itemData.GetIcon();
-                component.color = Color.white;
-                component4.m_text = Localization.instance.Localize(req.m_resItem.m_itemData.m_shared.m_name);
-                component2.text = Localization.instance.Localize(req.m_resItem.m_itemData.m_shared.m_name);
-                int num = player.GetInventory().CountItems(req.m_resItem.m_itemData.m_shared.m_name);
-                int amount = req.GetAmount(quality);
+    //        if (req.m_resItem != null)
+    //        {
+    //            component.gameObject.SetActive(true);
+    //            component2.gameObject.SetActive(true);
+    //            component3.gameObject.SetActive(true);
+    //            component.sprite = req.m_resItem.m_itemData.GetIcon();
+    //            component.color = Color.white;
+    //            component4.m_text = Localization.instance.Localize(req.m_resItem.m_itemData.m_shared.m_name);
+    //            component2.text = Localization.instance.Localize(req.m_resItem.m_itemData.m_shared.m_name);
+    //            int num = player.GetInventory().CountItems(req.m_resItem.m_itemData.m_shared.m_name);
+    //            int amount = req.GetAmount(quality);
 
-                if (amount <= 0)
-                {
-                    InventoryGui.HideRequirement(elementRoot);
-                    __result = false;
-                    return false;
-                }
+    //            if (amount <= 0)
+    //            {
+    //                InventoryGui.HideRequirement(elementRoot);
+    //                __result = false;
+    //                return false;
+    //            }
 
-                if (Configuration.Current.CraftFromChest.IsEnabled)
-                {
-                    Stopwatch delta;
+    //            //if (Configuration.Current.CraftFromChest.IsEnabled)
+    //            //{
+    //            //    Stopwatch delta;
 
-                    GameObject pos = player.GetCurrentCraftingStation()?.gameObject;
-                    if (!pos || !Configuration.Current.CraftFromChest.checkFromWorkbench)
-                    {
-                        pos = player.gameObject;
-                        delta = Inventory_NearbyChests_Cache.delta;
-                    }
-                    else
-                        delta = GameObjectAssistant.GetStopwatch(pos);
+    //            //    GameObject pos = player.GetCurrentCraftingStation()?.gameObject;
+    //            //    if (!pos || !Configuration.Current.CraftFromChest.checkFromWorkbench)
+    //            //    {
+    //            //        pos = player.gameObject;
+    //            //        delta = Inventory_NearbyChests_Cache.delta;
+    //            //    }
+    //            //    else
+    //            //        delta = GameObjectAssistant.GetStopwatch(pos);
 
-                    int lookupInterval = Helper.Clamp(Configuration.Current.CraftFromChest.lookupInterval, 1, 10) * 1000;
-                    if (!delta.IsRunning || delta.ElapsedMilliseconds > lookupInterval)
-                    {
-                        Inventory_NearbyChests_Cache.chests = InventoryAssistant.GetNearbyChests(pos, Helper.Clamp(Configuration.Current.CraftFromChest.range, 1, 50));
-                        delta.Restart();
-                    }
-                    num += InventoryAssistant.GetItemAmountInItemList(InventoryAssistant.GetNearbyChestItemsByContainerList(Inventory_NearbyChests_Cache.chests), req.m_resItem.m_itemData);
-                }
+    //            //    int lookupInterval = Helper.Clamp(Configuration.Current.CraftFromChest.lookupInterval, 1, 10) * 1000;
+    //            //    if (!delta.IsRunning || delta.ElapsedMilliseconds > lookupInterval)
+    //            //    {
+    //            //        Inventory_NearbyChests_Cache.chests = InventoryAssistant.GetNearbyChests(pos, Helper.Clamp(Configuration.Current.CraftFromChest.range, 1, 50));
+    //            //        delta.Restart();
+    //            //    }
+    //            //    num += InventoryAssistant.GetItemAmountInItemList(InventoryAssistant.GetNearbyChestItemsByContainerList(Inventory_NearbyChests_Cache.chests), req.m_resItem.m_itemData);
+    //            //}
 
-                component3.text = num + "/" + amount.ToString();
+    //            component3.text = num + "/" + amount.ToString();
 
-                if (num < amount)
-                {
-                    component3.color = ((Mathf.Sin(Time.time * 10f) > 0f) ? Color.red : Color.white);
-                }
-                else
-                {
-                    component3.color = Color.white;
-                }
+    //            if (num < amount)
+    //            {
+    //                component3.color = ((Mathf.Sin(Time.time * 10f) > 0f) ? Color.red : Color.white);
+    //            }
+    //            else
+    //            {
+    //                component3.color = Color.white;
+    //            }
 
-                component3.fontSize = 14;
-                if (component3.text.Length > 5)
-                {
-                    component3.fontSize -= component3.text.Length - 5;
-                }
-            }
+    //            component3.fontSize = 14;
+    //            if (component3.text.Length > 5)
+    //            {
+    //                component3.fontSize -= component3.text.Length - 5;
+    //            }
+    //        }
 
-            __result = true;
-            return false;
-        }
-    }
+    //        __result = true;
+    //        return false;
+    //    }
+    //}
 }

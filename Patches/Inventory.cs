@@ -14,11 +14,10 @@ namespace VMP_Mod.GameClasses
     {
         private static void Postfix(ref bool __result)
         {
-            if (Configuration.Current.Items.IsEnabled)
-            {
+
                 if (Configuration.Current.Items.noTeleportPrevention)
                     __result = true;
-            }
+            
         }
     }
 
@@ -30,8 +29,7 @@ namespace VMP_Mod.GameClasses
     {
         public static bool Prefix(ref bool __result)
         {
-            if (Configurations.Configuration.Current.Inventory.IsEnabled &&
-                Configurations.Configuration.Current.Inventory.inventoryFillTopToBottom)
+            if (Configurations.Configuration.Current.Inventory.inventoryFillTopToBottom)
             {
                 __result = true;
                 return false;
@@ -51,14 +49,13 @@ namespace VMP_Mod.GameClasses
 
         public static void Prefix(string name, ref int w, ref int h)
         {
-            if (Configuration.Current.Inventory.IsEnabled)
-            {
+           
                 // Player inventory
                 if (h == 4 && w == 8 || name == "Inventory")
                 {
                     h = Helper.Clamp(Configuration.Current.Inventory.playerInventoryRows, playerInventoryMinRows, playerInventoryMaxRows);
                 }
-            }
+            
         }
     }
 
