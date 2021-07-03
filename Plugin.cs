@@ -124,18 +124,24 @@ namespace VMP_Mod
             MapDetails.unownedBuildingColor = Config.Bind<Color>("Variables", "UnownedBuildingColor", Color.yellow, "Color of npc build pieces");
             MapDetails.customPlayerColors = Config.Bind<string>("Variables", "CustomPlayerColors", "", "Custom color list, comma-separated. Use either <name>:<colorCode> pair entries or just <colorCode> entries. E.g. Erinthe:FF0000 or just FF0000. The latter will assign a color randomly to each connected peer.");
 
-            Container_Configs.KarveRow = Config.Bind<int>("Containers", "Karve Rows", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(2, 30)));
-            Container_Configs.KarveCol = Config.Bind<int>("Containers", "Karve Columns", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(2, 8)));
-            Container_Configs.LongRow = Config.Bind<int>("Containers", "Longboat Rows", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(3, 30)));
-            Container_Configs.LongCol = Config.Bind<int>("Containers", "Longboat Columns", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(6, 8)));
-            Container_Configs.CartRow = Config.Bind<int>("Containers", "Cart Rows", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(3, 30)));
-            Container_Configs.CartCol = Config.Bind<int>("Containers", "Cart Colums", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(6, 8)));
-            Container_Configs.PersonalRow = Config.Bind<int>("Containers", "Personal Chest Rows", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(2, 20)));
-            Container_Configs.PersonalCol = Config.Bind<int>("Containers", "Personal Chest Colums", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(3, 8)));
-            Container_Configs.WoodRow = Config.Bind<int>("Containers", "Wood Chest Rows", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(2,10)));
-            Container_Configs.WoodCol = Config.Bind<int>("Containers", "Wood Chest Colums", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(5, 8)));
-            Container_Configs.IronRow = Config.Bind<int>("Containers", "Iron Chest Rows", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(3, 20)));
-            Container_Configs.IronCol = Config.Bind<int>("Containers", "Iron Chest Colums", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(6, 8)));
+            Container_Configs.KarveRow = Config.Bind<int>("Containers", "Karve Rows", 2, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(2, 30)));
+            Container_Configs.KarveCol = Config.Bind<int>("Containers", "Karve Columns", 2, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(2, 8)));
+            Container_Configs.LongRow = Config.Bind<int>("Containers", "Longboat Rows", 3, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(3, 30)));
+            Container_Configs.LongCol = Config.Bind<int>("Containers", "Longboat Columns", 6, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(6, 8)));
+            Container_Configs.CartRow = Config.Bind<int>("Containers", "Cart Rows", 3, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(3, 30)));
+            Container_Configs.CartCol = Config.Bind<int>("Containers", "Cart Colums", 6, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(6, 8)));
+            Container_Configs.PersonalRow = Config.Bind<int>("Containers", "Personal Chest Rows", 2, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(2, 20)));
+            Container_Configs.PersonalCol = Config.Bind<int>("Containers", "Personal Chest Colums", 3, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(3, 8)));
+            Container_Configs.WoodRow = Config.Bind<int>("Containers", "Wood Chest Rows", 2, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(2,10)));
+            Container_Configs.WoodCol = Config.Bind<int>("Containers", "Wood Chest Colums", 5, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(5, 8)));
+            Container_Configs.IronRow = Config.Bind<int>("Containers", "Iron Chest Rows", 3, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(3, 20)));
+            Container_Configs.IronCol = Config.Bind<int>("Containers", "Iron Chest Colums", 6, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(6, 8)));
+
+
+            CraftingPatch.WorkbenchRange = Config.Bind<int>("WorkBench", "WorkBenchRange", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(6, 650)));
+            CraftingPatch.workbenchEnemySpawnRange = Config.Bind<int>("WorkBench", "WorkBenchRange (Playerbase size)", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(6, 650)));
+            CraftingPatch.AlterWorkBench = Config.Bind<bool>("WorkBench", "Change No Roof Behavior", true, "Show building pieces");
+
 
             if (!modEnabled.Value)
                 return;
