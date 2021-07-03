@@ -71,9 +71,10 @@ namespace VMP_Mod
 
         public static void Dbgl(string str = "", bool pref = true)
         {
-#if DEBUG
-            Debug.Log((pref ? typeof(VMP_Modplugin).Namespace + " " : "") + str);
-#endif
+
+            if (isDebug.Value)
+                Debug.Log((pref ? typeof(VMP_Modplugin).Namespace + " " : "") + str);
+
         }
 
 
