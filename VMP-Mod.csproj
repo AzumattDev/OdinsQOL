@@ -305,9 +305,12 @@
     <Compile Include="MapSharing\VPlusMapSync.cs" />
     <Compile Include="MapSharing\ZPackageExtensions.cs" />
     <Compile Include="Patches\ChestSizePatch.cs" />
+    <Compile Include="Patches\ShowContainerContentsPatch.cs" />
+    <Compile Include="Patches\ItemData.cs" />
     <Compile Include="Patches\MapDetails.cs" />
     <Compile Include="Patches\CraftingPatches.cs" />
     <Compile Include="Patches\InventoryPatch.cs" />
+    <Compile Include="Patches\SortUtils.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
