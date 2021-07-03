@@ -112,6 +112,18 @@ namespace VMP_Mod
             pullItemsKey = Config.Bind<string>("Hot Keys", "PullItemsKey", "left ctrl", "Holding down this key while crafting or building will pull resources into your inventory instead of building. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
             fillAllModKey = Config.Bind<string>("Hot Keys", "FillAllModKey", "left shift", "Modifier key to pull all available fuel or ore when down. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
 
+
+            MapDetails.detailsmodEnabled = Config.Bind<bool>("General", "Enabled", true, "Enable this mod");
+
+            MapDetails.showRange = Config.Bind<float>("Variables", "ShowRange", 50f, "Range in metres around player to show details");
+            MapDetails.updateDelta = Config.Bind<float>("Variables", "UpdateDelta", 5f, "Distance in metres to move before automatically updating the map details");
+            MapDetails.showBuildings = Config.Bind<bool>("Variables", "ShowBuildings", true, "Show building pieces");
+            MapDetails.personalBuildingColor = Config.Bind<Color>("Variables", "PersonalBuildingColor", Color.green, "Color of one's own build pieces");
+            MapDetails.otherBuildingColor = Config.Bind<Color>("Variables", "OtherBuildingColor", Color.red, "Color of other players' build pieces");
+            MapDetails.unownedBuildingColor = Config.Bind<Color>("Variables", "UnownedBuildingColor", Color.yellow, "Color of npc build pieces");
+            MapDetails.customPlayerColors = Config.Bind<string>("Variables", "CustomPlayerColors", "", "Custom color list, comma-separated. Use either <name>:<colorCode> pair entries or just <colorCode> entries. E.g. Erinthe:FF0000 or just FF0000. The latter will assign a color randomly to each connected peer.");
+
+
             if (!modEnabled.Value)
                 return;
 
@@ -121,6 +133,13 @@ namespace VMP_Mod
 
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), null);
         }
+
+        private void Update()
+        {
+            if (Minimap.instance && Player.m_localPlayer)
+                StartCoroutine(MapDetails.UpdateMap(false));
+        }
+
         private void LateUpdate()
         {
             wasAllowed = AllowByKey();
