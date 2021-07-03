@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VMP_Mod
 {
-    public class Class1
+    public class Plugin
     {
     }
 }
