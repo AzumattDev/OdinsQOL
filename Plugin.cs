@@ -39,7 +39,6 @@ namespace VMP_Mod
 
         public static ConfigEntry<bool> modEnabled;
         public static ConfigEntry<bool> isDebug;
-        public static ConfigEntry<int> nexusID;
         public static ConfigEntry<int> workbenchAttachmentRange;
 
         public static ConfigEntry<bool> filltoptobottom;
@@ -88,10 +87,10 @@ namespace VMP_Mod
 
             serverConfigLocked = config("General", "Lock Configuration", true, "Lock Configuration", true );
             configSync.AddLockingConfigEntry<bool>(serverConfigLocked);
-            shareMapProgression = config<bool>("Maps", "Share Map Progress with others", true, "Share Map Progress with others", true );
+            shareMapProgression = config<bool>("Maps", "Share Map Progress with others", false, "Share Map Progress with others", true );
             mapIsEnabled = config<bool>("Maps", "Map Control enabled", true, "Map Control enabled", true );
             shareablePins = config<bool>("Maps", "Share Pins", true, "Share pins with other players", true );
-            shareAllPins = config<bool>("Maps", "Share ALL pins with other players", true, "Share ALL pins with other players", true );
+            shareAllPins = config<bool>("Maps", "Share ALL pins with other players", false, "Share ALL pins with other players", true );
             preventPlayerFromTurningOffPublicPosition = config<bool>("General", "IsDebug", true, "Show debug messages in log", true );
             displayCartsAndBoats = config<bool>("Maps", "Display Boats/Carts", true, "Show Boats and carts on the map", true );
             exploreRadius = config<int>("Maps", "NexusID", 40, "Explore radius addition", true );
@@ -99,7 +98,6 @@ namespace VMP_Mod
 
             modEnabled = config<bool>("General", "Enabled", true, "Enable this mod", true );
             isDebug = config<bool>("General", "IsDebug", true, "Show debug messages in log", true );
-            nexusID = config<int>("General", "NexusID", 40, "Nexus mod ID for updates", true );
 
             Container_Configs.KarveRow = config<int>("Containers", "Karve Rows", 2, new ConfigDescription("Rows for Karve", new AcceptableValueRange<int>(2, 30)), true );
             Container_Configs.KarveCol = config<int>("Containers", "Karve Columns", 2, new ConfigDescription("Columns for Karve", new AcceptableValueRange<int>(2, 8)), true );
@@ -130,9 +128,9 @@ namespace VMP_Mod
             returnedpercent = config<int>("Items", "Percent of item materials you would recieve back from deconstruction", 2, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"), true );
 
 
-            MapDetail.showRange = config<float>("Variables", "ShowRange", 50f, "Range in metres around player to show details");
-            MapDetail.updateDelta = config<float>("Variables", "UpdateDelta", 5f, "Distance in metres to move before automatically updating the map details");
-            MapDetail.showBuildings = config<bool>("Variables", "ShowBuildings", true, "Show building pieces");
+            MapDetail.showRange = config<float>("Variables", "ShowRange", 50f, "Range in metres around player to show details",true);
+            MapDetail.updateDelta = config<float>("Variables", "UpdateDelta", 5f, "Distance in metres to move before automatically updating the map details", true);
+            MapDetail.showBuildings = config<bool>("Variables", "ShowBuildings", true, "Show building pieces", true);
             MapDetail.personalBuildingColor = Config.Bind<Color>("Variables", "PersonalBuildingColor", Color.green, "Color of one's own build pieces");
             MapDetail.otherBuildingColor = Config.Bind<Color>("Variables", "OtherBuildingColor", Color.red, "Color of other players' build pieces");
             MapDetail.unownedBuildingColor = Config.Bind<Color>("Variables", "UnownedBuildingColor", Color.yellow, "Color of npc build pieces");

@@ -26,7 +26,7 @@ namespace VMP_Mod.RPC
                 }                
 
                 ZLog.Log($"Sent map pin to all clients");
-                //VPlusAck.SendAck(sender);
+                //VMPAck.SendAck(sender);
             }
             else //Client
             {
@@ -56,7 +56,7 @@ namespace VMP_Mod.RPC
                     }
                 }
                 //Send Ack
-                //VPlusAck.SendAck(sender);
+                //VMPAck.SendAck(sender);
             }
         }
 

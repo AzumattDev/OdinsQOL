@@ -185,6 +185,7 @@ namespace VMP_Mod.GameClasses
         [HarmonyPatch(typeof(Minimap), "OnMapDblClick")]
         public static class MapPinEditor_Patches_OnMapDblClick
         {
+            public static bool imageoff = false;
             private static bool Prefix(ref Minimap __instance)
             {
                 if (VMP_Modplugin.mapIsEnabled.Value)
@@ -209,9 +210,7 @@ namespace VMP_Mod.GameClasses
                         GameObject pinEditorPanelParent = mapPinBundle.LoadAsset<GameObject>("MapPinEditor");
                         pinEditorPanel = GameObject.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject);
                         pinEditorPanel.transform.SetParent(__instance.m_largeRoot.transform, false);
-                        var title = pinEditorPanel.transform.Find("Title");
-                        var picture = title.GetComponentInChildren<Image>();
-                        picture.gameObject.SetActive(false);
+
 
                         pinName = pinEditorPanel.GetComponentInChildren<InputField>();
                         if (pinName != null)
@@ -239,10 +238,14 @@ namespace VMP_Mod.GameClasses
                     if (!pinEditorPanel.activeSelf)
                     {
                         pinEditorPanel.SetActive(true);
+                        
+                         if (imageoff == false)
+                        { 
                         var title = pinEditorPanel.transform.Find("Title");
                         var picture = title.GetComponentInChildren<Image>();
                         picture.gameObject.SetActive(false);
-
+                            imageoff = true;
+                        }
                     }
                     if (!pinName.isFocused)
                     {
