@@ -1,9 +1,7 @@
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using UnityEngine;
-using VMP_Mod.Patches;
+using VMP_Mod;
 
 namespace VMP_Mod.GameClasses
 {
@@ -25,6 +23,27 @@ namespace VMP_Mod.GameClasses
         }
     }
 
+    [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.Awake))]
+    public static class ItemDrop_Awake_Patch
+    {
+        private static void Prefix(ref ItemDrop __instance)
+        {
+
+            if (VMP_Modplugin.itemStackMultiplier.Value > 0)
+            {
+                __instance.m_itemData.m_shared.m_weight = VMP_Modplugin.applyModifierValue(__instance.m_itemData.m_shared.m_weight, VMP_Modplugin.WeightReduction.Value);
+
+                if (__instance.m_itemData.m_shared.m_maxStackSize > 1)
+                {
+                    if (VMP_Modplugin.itemStackMultiplier.Value >= 1)
+                    {
+                        __instance.m_itemData.m_shared.m_maxStackSize = (int)VMP_Modplugin.applyModifierValue(__instance.m_itemData.m_shared.m_maxStackSize, VMP_Modplugin.itemStackMultiplier.Value);
+
+                    }
+                }
+            }
+        }
+    }
 
     /// <summary>
     /// When merging another inventory, try to merge items with existing stacks.
