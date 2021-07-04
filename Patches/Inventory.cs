@@ -1,6 +1,7 @@
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using VMP_Mod;
 
 namespace VMP_Mod.GameClasses
@@ -56,7 +57,11 @@ namespace VMP_Mod.GameClasses
             }
         }
     }
-
+    public static class Inventory_NearbyChests_Cache
+    {
+        public static List<Container> chests = new List<Container>();
+        public static readonly Stopwatch delta = new Stopwatch();
+    }
     /// <summary>
     /// When merging another inventory, try to merge items with existing stacks.
     /// </summary>

@@ -257,11 +257,11 @@ namespace VMP_Mod.Patches
                     __instance.m_jumpStaminaUsage = jumpStaminaDrain.Value;
                 }
 
-                    __instance.m_autoPickupRange = baseAutoPickUpRange.Value;
-                    __instance.m_baseCameraShake = disableCameraShake.Value;
-                    __instance.m_maxCarryWeight = baseMaximumWeight.Value;
-                    __instance.m_maxPlaceDistance = maximumPlacementDistance.Value;
-                
+                __instance.m_autoPickupRange = baseAutoPickUpRange.Value;
+                __instance.m_baseCameraShake = disableCameraShake.Value;
+                __instance.m_maxCarryWeight = baseMaximumWeight.Value;
+                __instance.m_maxPlaceDistance = maximumPlacementDistance.Value;
+
             }
         }
 
@@ -270,10 +270,10 @@ namespace VMP_Mod.Patches
         {
             private static bool Prefix(ref float ___m_secPerUnit, ref int ___m_maxHoney)
             {
-                
-                    ___m_secPerUnit = honeyProductionSpeed.Value;
-                    ___m_maxHoney = maximumHoneyPerBeehive.Value;
-                
+
+                ___m_secPerUnit = honeyProductionSpeed.Value;
+                ___m_maxHoney = maximumHoneyPerBeehive.Value;
+
 
                 return true;
             }
@@ -284,7 +284,7 @@ namespace VMP_Mod.Patches
         {
             private static void Postfix(Hud __instance)
             {
-                 __instance.m_damageScreen.gameObject.SetActive(false);
+                __instance.m_damageScreen.gameObject.SetActive(false);
             }
         }
 
@@ -295,20 +295,156 @@ namespace VMP_Mod.Patches
             {
                 string portalName = __instance.GetText();
 
-                
-                    __result = Localization.instance.Localize(string.Concat(new string[]
-                        {
+
+                __result = Localization.instance.Localize(string.Concat(new string[]
+                    {
                     "$piece_portal $piece_portal_tag:",
                     " ",
                     "[",portalName,"]"
-                        }));
+                    }));
 
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, __result, 0, null);
-                    return;
-                
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, __result, 0, null);
+                return;
+
+            }
+        }
+        [HarmonyPatch(typeof(Player), nameof(Player.UpdateFood))]
+        public static class Player_UpdateFood_Transpiler
+        {
+            private static FieldInfo field_Player_m_foodUpdateTimer = AccessTools.Field(typeof(Player), nameof(Player.m_foodUpdateTimer));
+            private static MethodInfo method_ComputeModifiedDt = AccessTools.Method(typeof(Player_UpdateFood_Transpiler), nameof(Player_UpdateFood_Transpiler.ComputeModifiedDT));
+
+            /// <summary>
+            /// Replaces the first load of dt inside Player::UpdateFood with a modified dt that is scaled
+            /// by the food duration scaling multiplier. This ensures the food lasts longer while maintaining
+            /// the same rate of regeneration.
+            /// </summary>
+            [HarmonyTranspiler]
+            public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                List<CodeInstruction> il = instructions.ToList();
+
+                for (int i = 0; i < il.Count - 2; ++i)
+                {
+                    if (il[i].LoadsField(field_Player_m_foodUpdateTimer) &&
+                        il[i + 1].opcode == OpCodes.Ldarg_1 /* dt */ &&
+                        il[i + 2].opcode == OpCodes.Add)
+                    {
+                        // We insert after Ldarg_1 (push dt) a call to our function, which computes the modified DT and returns it.
+                        il.Insert(i + 2, new CodeInstruction(OpCodes.Call, method_ComputeModifiedDt));
+                    }
+                }
+
+                return il.AsEnumerable();
+            }
+
+            private static float ComputeModifiedDT(float dt)
+            {
+                return dt / VMP_Modplugin.applyModifierValue(1.0f, 10f);
             }
         }
 
+        [HarmonyPatch(typeof(Player), nameof(Player.GetTotalFoodValue))]
+        public static class Player_GetTotalFoodValue_Transpiler
+        {
+            private static FieldInfo field_Food_m_health = AccessTools.Field(typeof(Player.Food), nameof(Player.Food.m_health));
+            private static FieldInfo field_Food_m_stamina = AccessTools.Field(typeof(Player.Food), nameof(Player.Food.m_stamina));
+            private static FieldInfo field_Food_m_item = AccessTools.Field(typeof(Player.Food), nameof(Player.Food.m_item));
+            private static FieldInfo field_ItemData_m_shared = AccessTools.Field(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.m_shared));
+            private static FieldInfo field_SharedData_m_food = AccessTools.Field(typeof(ItemDrop.ItemData.SharedData), nameof(ItemDrop.ItemData.SharedData.m_food));
+            private static FieldInfo field_SharedData_m_foodStamina = AccessTools.Field(typeof(ItemDrop.ItemData.SharedData), nameof(ItemDrop.ItemData.SharedData.m_foodStamina));
+
+            /// <summary>
+            /// Replaces loads to the current health/stamina for food with loads to the original health/stamina for food
+            /// inside Player::GetTotalFoodValue. This disables food degradation.
+            /// </summary>
+            [HarmonyTranspiler]
+            public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                List<CodeInstruction> il = instructions.ToList();
+
+                for (int i = 0; i < il.Count; ++i)
+                {
+                    bool loads_health = il[i].LoadsField(field_Food_m_health);
+                    bool loads_stamina = il[i].LoadsField(field_Food_m_stamina);
+
+                    if (loads_health || loads_stamina)
+                    {
+                        il[i].operand = field_Food_m_item;
+                        il.Insert(++i, new CodeInstruction(OpCodes.Ldfld, field_ItemData_m_shared));
+                        il.Insert(++i, new CodeInstruction(OpCodes.Ldfld, loads_health ? field_SharedData_m_food : field_SharedData_m_foodStamina));
+                    }
+                }
+
+
+                return il.AsEnumerable();
+            }
+        }
+        [HarmonyPatch(typeof(Player), nameof(Player.RemovePiece))]
+        public static class Player_RemovePiece_Transpiler
+        {
+            private static MethodInfo modifyIsInsideMythicalZone = AccessTools.Method(typeof(Player_RemovePiece_Transpiler), nameof(Player_RemovePiece_Transpiler.IsInsideNoBuildLocation));
+
+            /// <summary>
+            //  Replaces the RemovePiece().Location.IsInsideNoBuildLocation with a stub function
+            /// </summary>
+            [HarmonyTranspiler]
+            public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                List<CodeInstruction> il = instructions.ToList();
+                for (int i = 0; i < il.Count; ++i)
+                {
+                    if (il[i].operand != null)
+                        // search for every call to the function
+                        if (il[i].operand.ToString().Contains(nameof(Location.IsInsideNoBuildLocation)))
+                        {
+                            il[i] = new CodeInstruction(OpCodes.Call, modifyIsInsideMythicalZone);
+                            // replace every call to the function with the stub
+                        }
+                }
+                return il.AsEnumerable();
+            }
+
+            private static bool IsInsideNoBuildLocation(Vector3 point)
+            {
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(Player), "OnSpawned")]
+        public static class Player_OnSpawned_Patch
+        {
+            private static void Prefix(ref Player __instance)
+            {
+                //Show VPlus tutorial raven if not yet seen by the player's character.
+                Tutorial.TutorialText introTutorial = new Tutorial.TutorialText()
+                {
+                    m_label = "VMP Intro",
+                    m_name = "vmp",
+                    m_text = "We hope you have fun and enjoy your play time!",
+                    m_topic = "Welcome to Valheim!"
+                };
+
+                if (!Tutorial.instance.m_texts.Contains(introTutorial))
+                {
+                    Tutorial.instance.m_texts.Add(introTutorial);
+                }
+
+                Player.m_localPlayer.ShowTutorial("vplus");
+
+                //Only sync on first spawn
+                if (VMP_Mod.RPC.MapSync.ShouldSyncOnSpawn && VMP_Modplugin.shareMapProgression.Value)
+                {
+                    //Send map data to the server
+                    VMP_Mod.RPC.MapSync.SendMapToServer();
+                    VMP_Mod.RPC.MapSync.ShouldSyncOnSpawn = false;
+                }
+
+                if (SkipTuts.Value)
+                    __instance.m_firstSpawn = false;
+
+            }
+        }
 
         [HarmonyPatch(typeof(UnityEngine.EventSystems.EventSystem), "OnApplicationFocus")]
         public static class EventSystem_OnApplicationFocus_Patch
@@ -330,14 +466,20 @@ namespace VMP_Mod.Patches
         {
             private static void Postfix(ref string __result)
             {
-                Debug.Log($"Version generator started.");
+                UnityEngine.Debug.Log($"Version generator started.");
 
-                        __result = __result + "@" + VMP_Modplugin.Version;
-                        Debug.Log($"Version generated with enforced mod : {__result}");
+                __result = __result + "@" + VMP_Modplugin.Version;
+                UnityEngine.Debug.Log($"Version generated with enforced mod : {__result}");
 
             }
         }
 
+
+
+
+        //////////
+        ///
+       
 
     }
 }

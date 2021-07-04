@@ -231,11 +231,6 @@ namespace VMP_Mod.GameClasses
         }
     }
 
-    public static class Inventory_NearbyChests_Cache
-    {
-        public static List<Container> chests = new List<Container>();
-        public static readonly Stopwatch delta = new Stopwatch();
-    }
 
     [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.SetupRequirement))]
     public static class InventoryGui_SetupRequirement_Patch
