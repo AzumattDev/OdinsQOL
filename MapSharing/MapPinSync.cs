@@ -23,8 +23,8 @@ namespace VMP_Mod.RPC
                 {
                     if(peer.m_uid != sender)
                         ZRoutedRpc.instance.InvokeRoutedRPC(peer.m_uid, "VMPMapPinSync", new object[] { mapPinPkg });
-                }                
-
+                }
+                VMP_Modplugin.Dbgl("Sending pin to all clints");
                 ZLog.Log($"Sent map pin to all clients");
                 //VMPAck.SendAck(sender);
             }
