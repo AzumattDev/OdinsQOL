@@ -1,6 +1,7 @@
 ﻿using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace VMP_Mod.Patches
 {
@@ -9,7 +10,19 @@ namespace VMP_Mod.Patches
         public static ConfigEntry<int> WorkbenchRange;
         public static ConfigEntry<int> workbenchEnemySpawnRange;
         public static ConfigEntry<bool> AlterWorkBench;
+        public static ConfigEntry<int> maxEntries;
+        public static ConfigEntry<SortType> sortType;
+        public static ConfigEntry<bool> sortAsc;
+        public static ConfigEntry<string> entryString;
+        public static ConfigEntry<string> overFlowText;
 
+        public enum SortType
+        {
+            Name,
+            Weight,
+            Amount,
+            Value
+        }
         /// <summary>
         /// Alter workbench range
         /// </summary>
@@ -72,5 +85,171 @@ namespace VMP_Mod.Patches
                 return true;
             }
         }
+        [HarmonyPatch(typeof(Container), "GetHoverText")]
+        static class GetHoverText_Patch
+        {
+            static void Postfix(Container __instance, ref string __result)
+            {
+                if ((__instance.m_checkGuardStone && !PrivateArea.CheckAccess(__instance.transform.position, 0f, false, false)) || __instance.GetInventory().NrOfItems() == 0)
+                    return;
+
+                var items = new List<ItemData>();
+                foreach (ItemDrop.ItemData idd in __instance.GetInventory().GetAllItems())
+                {
+                    items.Add(new ItemData(idd));
+                }
+                SortByType(SortType.Value, items, sortAsc.Value);
+                int entries = 0;
+                int amount = 0;
+                string name = "";
+                for (int i = 0; i < items.Count; i++)
+                {
+                    if (maxEntries.Value >= 0 && entries >= maxEntries.Value)
+                    {
+                        if (overFlowText.Value.Length > 0)
+                            __result += "\n" + overFlowText.Value;
+                        break;
+                    }
+                    ItemData item = items[i];
+
+                    if (item.m_shared.m_name == name || name == "")
+                    {
+                        amount += item.m_stack;
+                    }
+                    else
+                    {
+                        __result += "\n" + string.Format(entryString.Value, amount, Localization.instance.Localize(name));
+                        entries++;
+
+                        amount = item.m_stack;
+                    }
+                    name = item.m_shared.m_name;
+                    if (i == items.Count - 1)
+                    {
+                        __result += "\n" + string.Format(entryString.Value, amount, Localization.instance.Localize(name));
+                    }
+                }
+            }
+        }
+
+        public static void SortByType(SortType type, List<ItemData> items, bool asc)
+        {
+            // combine
+            SortByName(items, true);
+
+            for (int i = 0; i < items.Count; i++)
+            {
+                while (i < items.Count - 1 && items[i].m_stack < items[i].m_shared.m_maxStackSize && items[i + 1].m_shared.m_name == items[i].m_shared.m_name)
+                {
+                    int amount = Mathf.Min(items[i].m_shared.m_maxStackSize - items[i].m_stack, items[i + 1].m_stack);
+                    items[i].m_stack += amount;
+                    if (amount == items[i + 1].m_stack)
+                    {
+                        items.RemoveAt(i + 1);
+                    }
+                    else
+                        items[i + 1].m_stack -= amount;
+                }
+            }
+            switch (type)
+            {
+                case SortType.Name:
+                    SortByName(items, asc);
+                    break;
+                case SortType.Weight:
+                    SortByWeight(items, asc);
+                    break;
+                case SortType.Value:
+                    SortByValue(items, asc);
+                    break;
+                case SortType.Amount:
+                    SortByAmount(items, asc);
+                    break;
+            }
+        }
+
+        public static void SortByName(List<ItemData> items, bool asc)
+        {
+            items.Sort(delegate (ItemData a, ItemData b) {
+
+                if (a.m_shared.m_name == b.m_shared.m_name)
+                {
+                    return CompareInts(a.m_stack, b.m_stack, false);
+                }
+                return CompareStrings(Localization.instance.Localize(a.m_shared.m_name), Localization.instance.Localize(b.m_shared.m_name), asc);
+            });
+        }
+        public static void SortByWeight(List<ItemData> items, bool asc)
+        {
+            items.Sort(delegate (ItemData a, ItemData b) {
+                if (a.m_shared.m_weight == b.m_shared.m_weight)
+                {
+                    if (a.m_shared.m_name == b.m_shared.m_name)
+                        return CompareInts(a.m_stack, b.m_stack, false);
+                    return CompareStrings(Localization.instance.Localize(a.m_shared.m_name), Localization.instance.Localize(b.m_shared.m_name), true);
+                }
+                return CompareFloats(a.m_shared.m_weight, b.m_shared.m_weight, asc);
+            });
+        }
+        public static void SortByValue(List<ItemData> items, bool asc)
+        {
+            items.Sort(delegate (ItemData a, ItemData b) {
+                if (a.m_shared.m_value == b.m_shared.m_value)
+                {
+                    if (a.m_shared.m_name == b.m_shared.m_name)
+                        return CompareInts(a.m_stack, b.m_stack, false);
+                    return CompareStrings(Localization.instance.Localize(a.m_shared.m_name), Localization.instance.Localize(b.m_shared.m_name), true);
+                }
+                return CompareInts(a.m_shared.m_value, b.m_shared.m_value, asc);
+            });
+        }
+
+        public static void SortByAmount(List<ItemData> items, bool asc)
+        {
+            items.Sort(delegate (ItemData a, ItemData b) {
+                if (a.m_stack == b.m_stack)
+                {
+                    return CompareStrings(Localization.instance.Localize(a.m_shared.m_name), Localization.instance.Localize(b.m_shared.m_name), true);
+                }
+                return CompareInts(a.m_stack, b.m_stack, asc);
+            });
+        }
+
+        public static int CompareStrings(string a, string b, bool asc)
+        {
+            if (asc)
+                return a.CompareTo(b);
+            else
+                return b.CompareTo(a);
+        }
+
+        public static int CompareFloats(float a, float b, bool asc)
+        {
+            if (asc)
+                return a.CompareTo(b);
+            else
+                return b.CompareTo(a);
+        }
+
+        public static int CompareInts(float a, float b, bool asc)
+        {
+            if (asc)
+                return a.CompareTo(b);
+            else
+                return b.CompareTo(a);
+        }
+        public class ItemData
+        {
+            public ItemDrop.ItemData idd;
+            public ItemDrop.ItemData.SharedData m_shared;
+            public int m_stack;
+
+            public ItemData(ItemDrop.ItemData idd)
+            {
+                m_shared = idd.m_shared;
+                m_stack = idd.m_stack;
+            }
+        }
     }
+
 }

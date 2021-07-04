@@ -138,6 +138,11 @@ namespace VMP_Mod
 
 
 
+            CraftingPatch.maxEntries = Config.Bind<int>("General", "MaxEntries", -1, "Max number of entries to show");
+            CraftingPatch.sortType = Config.Bind<CraftingPatch.SortType>("General", "SortType", CraftingPatch.SortType.Value, "Type by which to sort entries.");
+            CraftingPatch.sortAsc = Config.Bind<bool>("General", "SortAsc", false, "Sort ascending?");
+            CraftingPatch.entryString = Config.Bind<string>("General", "EntryText", "<color=#AAAAAAFF>{0} {1}</color>", "Entry text. {0} is replaced by the total amount, {1} is replaced by the item name.");
+            CraftingPatch.overFlowText = Config.Bind<string>("General", "OverFlowText", "<color=#AAAAAAFF>...</color>", "Overflow text if more items than max entries.");
 
 
             if (!modEnabled.Value)
