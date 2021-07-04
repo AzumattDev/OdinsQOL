@@ -153,10 +153,10 @@ namespace VMP_Mod
             GamePatches.SkipTuts = config<bool>("Game", "Skip Tuts", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
             GamePatches.reequipItemsAfterSwimming = config<bool>("Game", "Re Equip after Swimming", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
             GamePatches.enableAreaRepair = config<bool>("Game", "Area Repair", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
-            GamePatches.areaRepairRadius = Config.Bind<int>("General", "Area Repair Radius", -1, "Max number of entries to show");
-            GamePatches.baseMegingjordBuff = Config.Bind<int>("General", "Base Meginjord Buff", -1, "Max number of entries to show");
-            GamePatches.honeyProductionSpeed = Config.Bind<int>("General", "Honey Speed", -1, "Max number of entries to show");
-            GamePatches.maximumHoneyPerBeehive = Config.Bind<int>("General", "Honey Count Per Hive", -1, "Max number of entries to show");
+            GamePatches.areaRepairRadius = config<int>("General", "Area Repair Radius", -1, "Max number of entries to show", true);
+            GamePatches.baseMegingjordBuff = config<int>("General", "Base Meginjord Buff", -1, "Max number of entries to show", true);
+            GamePatches.honeyProductionSpeed = config<int>("General", "Honey Speed", -1, "Max number of entries to show", true);
+            GamePatches.maximumHoneyPerBeehive = config<int>("General", "Honey Count Per Hive", -1, "Max number of entries to show", true);
 
 
             if (!modEnabled.Value)
