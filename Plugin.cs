@@ -28,7 +28,7 @@ namespace VMP_Mod
     [BepInPlugin(VMP_Modplugin.GUID, VMP_Modplugin.ModName, VMP_Modplugin.Version)]
     public class VMP_Modplugin : BaseUnityPlugin
     {
-        public const string Version = "0.0.1";
+        public const string Version = "0.0.2";
         public const string ModName = "VMP Mod";
         public const string GUID = "com.vmp.mod";
         public static readonly string VMP_DatadirectoryPath = Paths.BepInExRootPath + "/vmp-data/";
@@ -41,9 +41,6 @@ namespace VMP_Mod
         public static ConfigEntry<bool> preventPlayerFromTurningOffPublicPosition;
         public static ConfigEntry<bool> displayCartsAndBoats;
         public static ConfigEntry<int> exploreRadius;
-
-        private static List<ConnectionParams> containerConnections = new List<ConnectionParams>();
-        private static GameObject connectionVfxPrefab = null;
 
         public static ConfigEntry<bool> modEnabled;
         public static ConfigEntry<bool> isDebug;
