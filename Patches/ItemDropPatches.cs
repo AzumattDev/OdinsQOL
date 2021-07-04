@@ -28,7 +28,7 @@ namespace VMP_Mod.Patches
                     {
                         if (itemStackMultiplier.Value >= 1)
                         {
-                            __instance.m_itemData.m_shared.m_maxStackSize = itemStackMultiplier.Value;
+                            __instance.m_itemData.m_shared.m_maxStackSize = __instance.m_itemData.m_shared.m_maxStackSize * itemStackMultiplier.Value;
                         }
                     }
                 }
