@@ -15,10 +15,23 @@ namespace VMP_Mod.Patches
         public static ConfigEntry<bool> SkipTuts;
         public static ConfigEntry<bool> reequipItemsAfterSwimming;
         public static ConfigEntry<bool> enableAreaRepair;
+        public static ConfigEntry<bool> StaminaIsEnabled;
         public static ConfigEntry<int> areaRepairRadius;
         public static ConfigEntry<int> baseMegingjordBuff;
         public static ConfigEntry<int> honeyProductionSpeed;
         public static ConfigEntry<int> maximumHoneyPerBeehive;
+        public static ConfigEntry<float> dodgeStaminaUsage;
+        public static ConfigEntry<float> encumberedStaminaDrain;
+        public static ConfigEntry<float> sneakStaminaDrain;
+        public static ConfigEntry<float> runStaminaDrain;
+        public static ConfigEntry<float> staminaRegenDelay;
+        public static ConfigEntry<float> staminaRegen;
+        public static ConfigEntry<float> swimStaminaDrain;
+        public static ConfigEntry<float> jumpStaminaDrain;
+        public static ConfigEntry<float> baseAutoPickUpRange;
+        public static ConfigEntry<float> disableCameraShake;
+        public static ConfigEntry<float> baseMaximumWeight;
+        public static ConfigEntry<float> maximumPlacementDistance;
 
         [HarmonyPatch(typeof(Game), nameof(Game.UpdateRespawn))]
         public static class Game_UpdateRespawn_Patch
@@ -224,36 +237,31 @@ namespace VMP_Mod.Patches
             }
         }
 
-        //[HarmonyPatch(typeof(Player), "Awake")]
-        //public static class Player_Awake_Patch
-        //{
-        //    private static void Postfix(ref Player __instance)
-        //    {
-        //        if (Configuration.Current.Stamina.IsEnabled)
-        //        {
-        //            __instance.m_dodgeStaminaUsage = Helper.applyModifierValue(__instance.m_dodgeStaminaUsage, Configuration.Current.Stamina.dodgeStaminaUsage);
-        //            __instance.m_encumberedStaminaDrain = Helper.applyModifierValue(__instance.m_encumberedStaminaDrain, Configuration.Current.Stamina.encumberedStaminaDrain);
-        //            __instance.m_sneakStaminaDrain = Helper.applyModifierValue(__instance.m_sneakStaminaDrain, Configuration.Current.Stamina.sneakStaminaDrain);
-        //            __instance.m_runStaminaDrain = Helper.applyModifierValue(__instance.m_runStaminaDrain, Configuration.Current.Stamina.runStaminaDrain);
-        //            __instance.m_staminaRegenDelay = Helper.applyModifierValue(__instance.m_staminaRegenDelay, Configuration.Current.Stamina.staminaRegenDelay);
-        //            __instance.m_staminaRegen = Helper.applyModifierValue(__instance.m_staminaRegen, Configuration.Current.Stamina.staminaRegen);
-        //            __instance.m_swimStaminaDrainMinSkill = Helper.applyModifierValue(__instance.m_swimStaminaDrainMinSkill, Configuration.Current.Stamina.swimStaminaDrain);
-        //            __instance.m_swimStaminaDrainMaxSkill = Helper.applyModifierValue(__instance.m_swimStaminaDrainMaxSkill, Configuration.Current.Stamina.swimStaminaDrain);
-        //            __instance.m_jumpStaminaUsage = Helper.applyModifierValue(__instance.m_jumpStaminaUsage, Configuration.Current.Stamina.jumpStaminaDrain);
-        //        }
-        //        if (Configuration.Current.Player.IsEnabled)
-        //        {
-        //            __instance.m_autoPickupRange = Configuration.Current.Player.baseAutoPickUpRange;
-        //            __instance.m_baseCameraShake = Configuration.Current.Player.disableCameraShake ? 0f : 4f;
-        //            __instance.m_maxCarryWeight = Configuration.Current.Player.baseMaximumWeight;
+        [HarmonyPatch(typeof(Player), "Awake")]
+        public static class Player_Awake_Patch
+        {
+            private static void Postfix(ref Player __instance)
+            {
+                if (StaminaIsEnabled.Value)
+                {
+                    __instance.m_dodgeStaminaUsage = dodgeStaminaUsage.Value;
+                    __instance.m_encumberedStaminaDrain = encumberedStaminaDrain.Value;
+                    __instance.m_sneakStaminaDrain = sneakStaminaDrain.Value;
+                    __instance.m_runStaminaDrain = runStaminaDrain.Value;
+                    __instance.m_staminaRegenDelay = staminaRegenDelay.Value;
+                    __instance.m_staminaRegen = staminaRegen.Value;
+                    __instance.m_swimStaminaDrainMinSkill = swimStaminaDrain.Value;
+                    __instance.m_swimStaminaDrainMaxSkill = swimStaminaDrain.Value;
+                    __instance.m_jumpStaminaUsage = jumpStaminaDrain.Value;
+                }
 
-        //        }
-        //        if (Configuration.Current.Building.IsEnabled)
-        //        {
-        //            __instance.m_maxPlaceDistance = Configuration.Current.Building.maximumPlacementDistance;
-        //        }
-        //    }
-        //}
+                    __instance.m_autoPickupRange = baseAutoPickUpRange.Value;
+                    __instance.m_baseCameraShake = disableCameraShake.Value;
+                    __instance.m_maxCarryWeight = baseMaximumWeight.Value;
+                    __instance.m_maxPlaceDistance = maximumPlacementDistance.Value;
+                
+            }
+        }
 
         [HarmonyPatch(typeof(Beehive), "Awake")]
         public static class Beehive_Awake_Patch
