@@ -12,7 +12,7 @@ namespace VMP_Mod
     {
         public static InventoryGui __inventoryGui;
         public static Button m_tabDeconstruct;
-        private const string deconstructText = "Deconstruct";
+        private const string deconstructText = "Recycle";
         private static Recipe m_deconstructRecipe;
         private static ItemDrop.ItemData m_deconstructItem;
         private static readonly string[] nonDestructableItems = new[] { "$item_oozebomb" };
