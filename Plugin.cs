@@ -126,7 +126,7 @@ namespace VMP_Mod
             Playerinvrow = config<int>("Items", "Player Inventory row count", 12, new ConfigDescription("Player row count for inventory", new AcceptableValueRange<int>(4, 20)), true );
             Deconstruct = config<bool>("Items", "Allow deconstruction of items in crafting menu", true, new ConfigDescription("Deconstructing crafting items for return of mats"), true );
             AutoRepair = config<bool>("Items", "Auto repair your things when interacting with build station", true, new ConfigDescription("Auto repair your things when interacting with build station"), true );
-            returnedpercent = config<int>("Items", "Percent of item materials you would recieve back from deconstruction", 2, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"), true );
+            returnedpercent = config<int>("Items", "Percent of item materials you would recieve back from deconstruction", 100, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"), true );
 
 
             MapDetail.showRange = config<float>("Variables", "ShowRange", 50f, "Range in metres around player to show details",true);
