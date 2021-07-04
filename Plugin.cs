@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using ServerSync;
 using VMP_Mod.Patches;
 
 namespace VMP_Mod
@@ -47,9 +48,14 @@ namespace VMP_Mod
         public static ConfigEntry<bool> AutoRepair;
         public static ConfigEntry<int> returnedpercent;
 
+        public static ConfigEntry<float> WeightReduction;
+        public static ConfigEntry<float> itemStackMultiplier;
+        public static ConfigEntry<bool> NoTeleportPrevention;
 
         public static List<Container> containerList = new List<Container>();
         private static VMP_Modplugin context = null;
+        public static ServerSync.ConfigSync configSync = new ServerSync.ConfigSync(GUID) { DisplayName = ModName, CurrentVersion = Version };
+        private ConfigEntry<bool> serverConfigLocked;
 
         public class ConnectionParams
         {
@@ -64,52 +70,64 @@ namespace VMP_Mod
                 Debug.Log((pref ? typeof(VMP_Modplugin).Namespace + " " : "") + str);
 
         }
+        ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description, bool synchronizedSetting = true)
+        {
+            ConfigEntry<T> configEntry = Config.Bind(group, name, value, description);
+
+            SyncedConfigEntry<T> syncedConfigEntry = configSync.AddConfigEntry(configEntry);
+            syncedConfigEntry.SynchronizedConfig = synchronizedSetting;
+
+            return configEntry;
+        }
+
+        ConfigEntry<T> config<T>(string group, string name, T value, string description, bool synchronizedSetting = true) => config(group, name, value, new ConfigDescription(description), synchronizedSetting);
 
 
         public void Awake()
         {
 
-
-            shareMapProgression = Config.Bind<bool>("Maps", "Share Map Progress with others", true, "Share Map Progress with others");
-            mapIsEnabled = Config.Bind<bool>("Maps", "Map Control enabled", true, "Map Control enabled");
-            shareablePins = Config.Bind<bool>("Maps", "Share Pins", true, "Share pins with other players");
-            shareAllPins = Config.Bind<bool>("Maps", "Share ALL pins with other players", true, "Share ALL pins with other players");
-            preventPlayerFromTurningOffPublicPosition = Config.Bind<bool>("General", "IsDebug", true, "Show debug messages in log");
-            displayCartsAndBoats = Config.Bind<bool>("Maps", "Display Boats/Carts", true, "Show Boats and carts on the map");
-            exploreRadius = Config.Bind<int>("Maps", "NexusID", 40, "Explore radius addition");
+            serverConfigLocked = config("General", "Lock Configuration", false, "Lock Configuration");
+            configSync.AddLockingConfigEntry<bool>(serverConfigLocked);
+            shareMapProgression = config<bool>("Maps", "Share Map Progress with others", true, "Share Map Progress with others");
+            mapIsEnabled = config<bool>("Maps", "Map Control enabled", true, "Map Control enabled");
+            shareablePins = config<bool>("Maps", "Share Pins", true, "Share pins with other players");
+            shareAllPins = config<bool>("Maps", "Share ALL pins with other players", true, "Share ALL pins with other players");
+            preventPlayerFromTurningOffPublicPosition = config<bool>("General", "IsDebug", true, "Show debug messages in log");
+            displayCartsAndBoats = config<bool>("Maps", "Display Boats/Carts", true, "Show Boats and carts on the map");
+            exploreRadius = config<int>("Maps", "NexusID", 40, "Explore radius addition");
             context = this;
 
-            modEnabled = Config.Bind<bool>("General", "Enabled", true, "Enable this mod");
-            isDebug = Config.Bind<bool>("General", "IsDebug", true, "Show debug messages in log");
-            nexusID = Config.Bind<int>("General", "NexusID", 40, "Nexus mod ID for updates");
+            modEnabled = config<bool>("General", "Enabled", true, "Enable this mod");
+            isDebug = config<bool>("General", "IsDebug", true, "Show debug messages in log");
+            nexusID = config<int>("General", "NexusID", 40, "Nexus mod ID for updates");
 
-            Container_Configs.KarveRow = Config.Bind<int>("Containers", "Karve Rows", 2, new ConfigDescription("Rows for Karve", new AcceptableValueRange<int>(2, 30)));
-            Container_Configs.KarveCol = Config.Bind<int>("Containers", "Karve Columns", 2, new ConfigDescription("Columns for Karve", new AcceptableValueRange<int>(2, 8)));
-            Container_Configs.LongRow = Config.Bind<int>("Containers", "Longboat Rows", 3, new ConfigDescription("Rows for longboat", new AcceptableValueRange<int>(3, 30)));
-            Container_Configs.LongCol = Config.Bind<int>("Containers", "Longboat Columns", 6, new ConfigDescription("Columns for longboat", new AcceptableValueRange<int>(6, 8)));
-            Container_Configs.CartRow = Config.Bind<int>("Containers", "Cart Rows", 3, new ConfigDescription("Rows for Cart", new AcceptableValueRange<int>(3, 30)));
-            Container_Configs.CartCol = Config.Bind<int>("Containers", "Cart Colums", 6, new ConfigDescription("Columns for Cart", new AcceptableValueRange<int>(6, 8)));
-            Container_Configs.PersonalRow = Config.Bind<int>("Containers", "Personal Chest Rows", 2, new ConfigDescription("Personal Chest Rows", new AcceptableValueRange<int>(2, 20)));
-            Container_Configs.PersonalCol = Config.Bind<int>("Containers", "Personal Chest Colums", 3, new ConfigDescription("Personal Chest Colums", new AcceptableValueRange<int>(3, 8)));
-            Container_Configs.WoodRow = Config.Bind<int>("Containers", "Wood Chest Rows", 2, new ConfigDescription("Wood Chest Rows", new AcceptableValueRange<int>(2, 10)));
-            Container_Configs.WoodCol = Config.Bind<int>("Containers", "Wood Chest Colums", 5, new ConfigDescription("Wood Chest Colums", new AcceptableValueRange<int>(5, 8)));
-            Container_Configs.IronRow = Config.Bind<int>("Containers", "Iron Chest Rows", 3, new ConfigDescription("Iron Chest Rows", new AcceptableValueRange<int>(3, 20)));
-            Container_Configs.IronCol = Config.Bind<int>("Containers", "Iron Chest Colums", 6, new ConfigDescription("Iron Chest Colums", new AcceptableValueRange<int>(6, 8)));
+            Container_Configs.KarveRow = config<int>("Containers", "Karve Rows", 2, new ConfigDescription("Rows for Karve", new AcceptableValueRange<int>(2, 30)));
+            Container_Configs.KarveCol = config<int>("Containers", "Karve Columns", 2, new ConfigDescription("Columns for Karve", new AcceptableValueRange<int>(2, 8)));
+            Container_Configs.LongRow = config<int>("Containers", "Longboat Rows", 3, new ConfigDescription("Rows for longboat", new AcceptableValueRange<int>(3, 30)));
+            Container_Configs.LongCol = config<int>("Containers", "Longboat Columns", 6, new ConfigDescription("Columns for longboat", new AcceptableValueRange<int>(6, 8)));
+            Container_Configs.CartRow = config<int>("Containers", "Cart Rows", 3, new ConfigDescription("Rows for Cart", new AcceptableValueRange<int>(3, 30)));
+            Container_Configs.CartCol = config<int>("Containers", "Cart Colums", 6, new ConfigDescription("Columns for Cart", new AcceptableValueRange<int>(6, 8)));
+            Container_Configs.PersonalRow = config<int>("Containers", "Personal Chest Rows", 2, new ConfigDescription("Personal Chest Rows", new AcceptableValueRange<int>(2, 20)));
+            Container_Configs.PersonalCol = config<int>("Containers", "Personal Chest Colums", 3, new ConfigDescription("Personal Chest Colums", new AcceptableValueRange<int>(3, 8)));
+            Container_Configs.WoodRow = config<int>("Containers", "Wood Chest Rows", 2, new ConfigDescription("Wood Chest Rows", new AcceptableValueRange<int>(2, 10)));
+            Container_Configs.WoodCol = config<int>("Containers", "Wood Chest Colums", 5, new ConfigDescription("Wood Chest Colums", new AcceptableValueRange<int>(5, 8)));
+            Container_Configs.IronRow = config<int>("Containers", "Iron Chest Rows", 3, new ConfigDescription("Iron Chest Rows", new AcceptableValueRange<int>(3, 20)));
+            Container_Configs.IronCol = config<int>("Containers", "Iron Chest Colums", 6, new ConfigDescription("Iron Chest Colums", new AcceptableValueRange<int>(6, 8)));
 
 
-            CraftingPatch.WorkbenchRange = Config.Bind<int>("WorkBench", "WorkBenchRange", 40, new ConfigDescription("Range you can build from workbench in meters", new AcceptableValueRange<int>(6, 650)));
-            CraftingPatch.workbenchEnemySpawnRange = Config.Bind<int>("WorkBench", "WorkBenchRange (Playerbase size)", 40, new ConfigDescription("Workbench PlayerBase radius, this is how far away enemies spawn", new AcceptableValueRange<int>(6, 650)));
-            CraftingPatch.AlterWorkBench = Config.Bind<bool>("WorkBench", "Change No Roof Behavior", true, "Show building pieces");
-            workbenchAttachmentRange = Config.Bind<int>("WorkBench", "WorkBench Extension", 40, new ConfigDescription("Range for workbench extensions", new AcceptableValueRange<int>(5, 100)));
+            CraftingPatch.WorkbenchRange = config<int>("WorkBench", "WorkBenchRange", 40, new ConfigDescription("Range you can build from workbench in meters", new AcceptableValueRange<int>(6, 650)));
+            CraftingPatch.workbenchEnemySpawnRange = config<int>("WorkBench", "WorkBenchRange (Playerbase size)", 40, new ConfigDescription("Workbench PlayerBase radius, this is how far away enemies spawn", new AcceptableValueRange<int>(6, 650)));
+            CraftingPatch.AlterWorkBench = config<bool>("WorkBench", "Change No Roof Behavior", true, "Show building pieces");
+            workbenchAttachmentRange = config<int>("WorkBench", "WorkBench Extension", 40, new ConfigDescription("Range for workbench extensions", new AcceptableValueRange<int>(5, 100)));
 
-            ItemDropPatches.WeightReduction = Config.Bind<float>("Items", "Item Weight Increase", 1.25f, new ConfigDescription("Multiplier for your item weight", new AcceptableValueList<float>(0f, 10f)));
-            ItemDropPatches.itemStackMultiplier = Config.Bind<int>("Items", "Item Stack Increase", 2, new ConfigDescription("Multiplier for your item stacks", new AcceptableValueList<int>(0, 10)));
-            ItemDropPatches.NoTeleportPrevention = Config.Bind<bool>("Items", "Disable Teleport check for items", false, new ConfigDescription("Disable Teleport check for items"));
-            filltoptobottom = Config.Bind<bool>("Items", "Fill your things top to bottom when moving from inv to chest", true, new ConfigDescription("Move your things top to bottom when changing from inv to chest"));
-            Playerinvrow = Config.Bind<int>("Items", "Player Inventory row count", 12, new ConfigDescription("Player row count for inventory", new AcceptableValueRange<int>(4, 20)));
-            Deconstruct = Config.Bind<bool>("Items", "Allow deconstruction of items in crafting menu", true, new ConfigDescription("Deconstructing crafting items for return of mats"));
-            AutoRepair = Config.Bind<bool>("Items", "Auto repair your things when interacting with build station", true, new ConfigDescription("Auto repair your things when interacting with build station"));
-            returnedpercent = Config.Bind<int>("Items", "Percent of item materials you would recieve back from deconstruction", 2, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"));
+            WeightReduction = config<float>("Items", "Item Weight Increase", 1.25f, new ConfigDescription("Multiplier for your item weight"));
+            itemStackMultiplier = config<float>("Items", "Item Stack Increase", 2f, new ConfigDescription("Multiplier for your item stacks"));
+            NoTeleportPrevention = config<bool>("Items", "Disable Teleport check for items", false, new ConfigDescription("Disable Teleport check for items"));
+            filltoptobottom = config<bool>("Items", "Fill your things top to bottom when moving from inv to chest", true, new ConfigDescription("Move your things top to bottom when changing from inv to chest"));
+            Playerinvrow = config<int>("Items", "Player Inventory row count", 12, new ConfigDescription("Player row count for inventory", new AcceptableValueRange<int>(4, 20)));
+            Deconstruct = config<bool>("Items", "Allow deconstruction of items in crafting menu", true, new ConfigDescription("Deconstructing crafting items for return of mats"));
+            AutoRepair = config<bool>("Items", "Auto repair your things when interacting with build station", true, new ConfigDescription("Auto repair your things when interacting with build station"));
+            returnedpercent = config<int>("Items", "Percent of item materials you would recieve back from deconstruction", 2, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"));
 
 
 
@@ -124,6 +142,48 @@ namespace VMP_Mod
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), null);
         }
 
+
+        [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.Awake))]
+        public static class ItemDrop_Awake_Patch
+        {
+            private static void Prefix(ref ItemDrop __instance)
+            {
+
+                if (itemStackMultiplier.Value > 0)
+                {
+                    __instance.m_itemData.m_shared.m_weight = applyModifierValue(__instance.m_itemData.m_shared.m_weight, WeightReduction.Value);
+
+                    if (__instance.m_itemData.m_shared.m_maxStackSize > 1)
+                    {
+                        if (itemStackMultiplier.Value >= 1)
+                        {
+                            __instance.m_itemData.m_shared.m_maxStackSize = (int)applyModifierValue(__instance.m_itemData.m_shared.m_maxStackSize, itemStackMultiplier.Value);
+
+                        }
+                    }
+                }
+            }
+        }
+
+        public static float applyModifierValue(float targetValue, float value)
+        {
+
+            if (value <= -100)
+                value = -100;
+
+            float newValue = targetValue;
+
+            if (value >= 0)
+            {
+                newValue = targetValue + ((targetValue / 100) * value);
+            }
+            else
+            {
+                newValue = targetValue - ((targetValue / 100) * (value * -1));
+            }
+
+            return newValue;
+        }
 
 
     }
