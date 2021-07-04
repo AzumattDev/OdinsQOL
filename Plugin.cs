@@ -22,7 +22,7 @@ namespace VMP_Mod
         public const string Version = "0.0.1";
         public const string ModName = "VMP Mod";
         public const string GUID = "com.vmp.mod";
-        public static readonly string[] VMP_DatadirectoryPath = { Paths.BepInExRootPath , "/vmp-data/" };
+        public static readonly string VMP_DatadirectoryPath = Paths.BepInExRootPath + "/vmp-data/";
         public static System.Timers.Timer mapSyncSaveTimer =
             new System.Timers.Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
         public static ConfigEntry<bool> mapIsEnabled;
@@ -153,7 +153,10 @@ namespace VMP_Mod
 
             wasAllowed = !switchPrevent.Value;
 
-
+            if (!Directory.Exists(VMP_DatadirectoryPath))
+            {
+                Directory.CreateDirectory(VMP_DatadirectoryPath);
+            }
 
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), null);
         }

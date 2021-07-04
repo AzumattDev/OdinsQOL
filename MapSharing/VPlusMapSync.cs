@@ -159,7 +159,7 @@ namespace VMP_Mod.RPC
             {
                 try
                 {
-                    string mapData = File.ReadAllText(VMP_Modplugin.VMP_DatadirectoryPath  +  ZNet.instance.GetWorldName() + "_mapSync.dat");
+                    string mapData = File.ReadAllText(Path.Combine(VMP_Modplugin.VMP_DatadirectoryPath+$"{ZNet.instance.GetWorldName()}_mapSync.dat"));
 
                     string[] dataPoints = mapData.Split(',');
 
@@ -202,8 +202,8 @@ namespace VMP_Mod.RPC
 
             if (mapDataToDisk.Count > 0)
             {
-                File.Delete(VMP_Modplugin.VMP_DatadirectoryPath + $"{ZNet.instance.GetWorldName()}_mapSync.dat");
-                File.WriteAllText(VMP_Modplugin.VMP_DatadirectoryPath + $"{ZNet.instance.GetWorldName()}_mapSync.dat", string.Join(",", mapDataToDisk));
+                File.Delete(Path.Combine(VMP_Modplugin.VMP_DatadirectoryPath + $"{ZNet.instance.GetWorldName()}_mapSync.dat"));
+                File.WriteAllText(Path.Combine(VMP_Modplugin.VMP_DatadirectoryPath + $"{ZNet.instance.GetWorldName()}_mapSync.dat"), string.Join(",", mapDataToDisk));
 
                 ZLog.Log($"Saved {mapDataToDisk.Count} map points to disk.");
             }

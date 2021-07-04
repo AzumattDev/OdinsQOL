@@ -70,23 +70,5 @@ namespace VMP_Mod.Patches
         }
 
 
-        [HarmonyPatch(typeof(Console), "InputText")]
-        static class InputText_Patch
-        {
-            static bool Prefix(Console __instance)
-            {
-                string text = __instance.m_input.text;
-                if (text.ToLower().Equals($"{typeof(VMP_Modplugin).Namespace.ToLower()} reset"))
-                {
-                    context.Config.Reload();
-                    context.Config.Save();
-
-                    Traverse.Create(__instance).Method("AddString", new object[] { text }).GetValue();
-                    Traverse.Create(__instance).Method("AddString", new object[] { $"{context.Info.Metadata.Name} config reloaded" }).GetValue();
-                    return false;
-                }
-                return true;
-            }
-        }
     }
 }
