@@ -1,12 +1,8 @@
-﻿using BepInEx;
-using BepInEx.Configuration;
+﻿using BepInEx.Configuration;
 using HarmonyLib;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 namespace VMP_Mod.Patches
@@ -16,8 +12,6 @@ namespace VMP_Mod.Patches
         private static Vector2 lastPos = Vector2.zero;
         private static List<int> lastPixels = new List<int>();
         private static Texture2D mapTexture;
-        private static VMP_Modplugin context;
-
 
         public static ConfigEntry<float> showRange;
         public static ConfigEntry<float> updateDelta;
@@ -27,9 +21,6 @@ namespace VMP_Mod.Patches
         public static ConfigEntry<Color> otherBuildingColor;
         public static ConfigEntry<Color> unownedBuildingColor;
         public static ConfigEntry<string> customPlayerColors;
-
-
-
 
         [HarmonyPatch(typeof(Minimap), "GenerateWorldMap")]
         static class GenerateWorldMap_Patch

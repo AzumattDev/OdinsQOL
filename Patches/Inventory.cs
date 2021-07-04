@@ -57,11 +57,13 @@ namespace VMP_Mod.GameClasses
             }
         }
     }
+
     public static class Inventory_NearbyChests_Cache
     {
         public static List<Container> chests = new List<Container>();
         public static readonly Stopwatch delta = new Stopwatch();
     }
+
     /// <summary>
     /// When merging another inventory, try to merge items with existing stacks.
     /// </summary>
