@@ -2,7 +2,7 @@
 
 namespace VMP_Mod.RPC
 {
-    public class VPlusAck
+    public class VMPAck
     {
         public static void RPC_VPlusAck(long sender)
         {

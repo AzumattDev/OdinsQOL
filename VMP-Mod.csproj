@@ -301,10 +301,10 @@
     <Compile Include="MapSharing\ListExtensions.cs" />
     <Compile Include="MapSharing\Minimap.cs" />
     <Compile Include="MapSharing\RPCQueue.cs" />
-    <Compile Include="MapSharing\VPlusAck.cs" />
-    <Compile Include="MapSharing\VPlusDataObjects.cs" />
-    <Compile Include="MapSharing\VPlusMapPinSync.cs" />
-    <Compile Include="MapSharing\VPlusMapSync.cs" />
+    <Compile Include="MapSharing\VMPAck.cs" />
+    <Compile Include="MapSharing\DataObjects.cs" />
+    <Compile Include="MapSharing\MapPinSync.cs" />
+    <Compile Include="MapSharing\MapSync.cs" />
     <Compile Include="MapSharing\ZPackageExtensions.cs" />
     <Compile Include="Patches\ChestSizePatch.cs" />
     <Compile Include="Patches\Deconstruct.cs" />

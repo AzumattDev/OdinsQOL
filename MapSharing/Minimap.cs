@@ -69,10 +69,10 @@ namespace VMP_Mod.GameClasses
             if (ZNet.m_isServer && VMP_Modplugin.mapIsEnabled.Value && VMP_Modplugin.shareMapProgression.Value)
             {
                 //Init map array
-                VPlusMapSync.ServerMapData = new bool[Minimap.instance.m_textureSize * Minimap.instance.m_textureSize];
+                MapSync.ServerMapData = new bool[Minimap.instance.m_textureSize * Minimap.instance.m_textureSize];
 
                 //Load map data from disk
-                VPlusMapSync.LoadMapDataFromDisk();
+                MapSync.LoadMapDataFromDisk();
 
                 //Start map data save timer
                 VMP_Modplugin.mapSyncSaveTimer.Start();
@@ -209,9 +209,9 @@ namespace VMP_Mod.GameClasses
                         GameObject pinEditorPanelParent = mapPinBundle.LoadAsset<GameObject>("MapPinEditor");
                         pinEditorPanel = GameObject.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject);
                         pinEditorPanel.transform.SetParent(__instance.m_largeRoot.transform, false);
-                        var image = pinEditorPanel.GetComponentInChildren<Image>();
-                        image.gameObject.SetActive(false);
-                        pinEditorPanel.SetActive(false);
+                        var title = pinEditorPanel.transform.Find("Title");
+                        var picture = title.GetComponentInChildren<Image>();
+                        picture.gameObject.SetActive(false);
 
                         pinName = pinEditorPanel.GetComponentInChildren<InputField>();
                         if (pinName != null)
@@ -239,6 +239,10 @@ namespace VMP_Mod.GameClasses
                     if (!pinEditorPanel.activeSelf)
                     {
                         pinEditorPanel.SetActive(true);
+                        var title = pinEditorPanel.transform.Find("Title");
+                        var picture = title.GetComponentInChildren<Image>();
+                        picture.gameObject.SetActive(false);
+
                     }
                     if (!pinName.isFocused)
                     {

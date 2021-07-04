@@ -7,13 +7,13 @@ using static VMP_Mod.VPlusDataObjects;
 
 namespace VMP_Mod.RPC
 {
-    public class VPlusMapSync
+    public class MapSync
     {
         public static bool[] ServerMapData;
 
         public static bool ShouldSyncOnSpawn = true;
 
-        public static void RPC_VPlusMapSync(long sender, ZPackage mapPkg)
+        public static void RPC_VMPMapSync(long sender, ZPackage mapPkg)
         {
             if (ZNet.m_isServer) //Server
             {
@@ -40,7 +40,7 @@ namespace VMP_Mod.RPC
                     ZLog.Log($"Received {exploredAreaCount} map ranges from peer #{sender}.");
 
                     //Send Ack
-                    VPlusAck.SendAck(sender);
+                    VMPAck.SendAck(sender);
                 }
 
                 //Check if this is the last chunk from the client.
@@ -59,7 +59,7 @@ namespace VMP_Mod.RPC
                 {
                     RpcQueue.Enqueue(new RpcData()
                     {
-                        Name = "VPlusMapSync",
+                        Name = "VMPMapSync",
                         Payload = new object[] { pkg },
                         Target = ZRoutedRpc.Everybody
                     });
@@ -101,7 +101,7 @@ namespace VMP_Mod.RPC
                     ZLog.Log($"I got {exploredAreaCount} map ranges from the server!");
 
                     //Send Ack
-                    VPlusAck.SendAck(sender);
+                    VMPAck.SendAck(sender);
                 }
                 else
                 {
@@ -112,7 +112,7 @@ namespace VMP_Mod.RPC
 
         public static void SendMapToServer()
         {
-            ZLog.Log("-------------------- SENDING VPLUSMAPSYNC DATA");
+            ZLog.Log("-------------------- SENDING MIXONE MAPSYNC DATA");
 
             //Convert exploration data to ranges
             List<MapRange> exploredAreas = ExplorationDataToMapRanges(Minimap.instance.m_explored);
@@ -125,7 +125,7 @@ namespace VMP_Mod.RPC
                 pkg.Write(0); //Number of explored areas we're sending (zero in this case)
                 pkg.Write(true); //Trigger server sync by telling the server this is the last package we'll be sending.
 
-                ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.instance.GetServerPeerID(), "VPlusMapSync",
+                ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.instance.GetServerPeerID(), "VMPMapSync",
                     new object[] { pkg });
             }
             else //We have data to send. Prep it and send it.
@@ -138,7 +138,7 @@ namespace VMP_Mod.RPC
                 {
                     RpcQueue.Enqueue(new RpcData()
                     {
-                        Name = "VPlusMapSync",
+                        Name = "VMPMapSync",
                         Payload = new object[] { pkg },
                         Target = ZRoutedRpc.instance.GetServerPeerID()
                     });
@@ -167,7 +167,7 @@ namespace VMP_Mod.RPC
                     {
                         if (int.TryParse(dataPoint, out int result))
                         {
-                            VPlusMapSync.ServerMapData[result] = true;
+                            ServerMapData[result] = true;
                         }
                     }
 
