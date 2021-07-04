@@ -459,7 +459,7 @@ namespace VMP_Mod
 
         private static int Deconstruct_GetAmount(Piece.Requirement itemResource, int qualityLevel)
         {
-            int multiplier = (int)VMP_Modplugin.returnedpercent.Value;
+            int multiplier = VMP_Modplugin.returnedpercent.Value;
             if (multiplier > 100)
             {
                 multiplier = 100;

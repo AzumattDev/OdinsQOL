@@ -14,10 +14,6 @@ namespace VMP_Mod.Patches
         {
             private static void Prefix(ref ItemDrop __instance)
             {
-                if (NoTeleportPrevention.Value)
-                {
-                    __instance.m_itemData.m_shared.m_teleportable = true;
-                }
 
                 if (itemStackMultiplier.Value > 0)
                 {

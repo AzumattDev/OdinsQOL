@@ -155,15 +155,11 @@ namespace VMP_Mod.RPC
             if (ServerMapData == null) return;
 
             //Load map data
-            if (File.Exists(VMP_Modplugin.VMP_DatadirectoryPath +
-                            Path.DirectorySeparatorChar +
-                            ZNet.instance.GetWorldName() + "_mapSync.dat"))
+            if (File.Exists(VMP_Modplugin.VMP_DatadirectoryPath  + $"{ZNet.instance.GetWorldName()}_mapSync.dat"))
             {
                 try
                 {
-                    string mapData = File.ReadAllText(VMP_Modplugin.VMP_DatadirectoryPath +
-                                                      Path.DirectorySeparatorChar +
-                                                      ZNet.instance.GetWorldName() + "_mapSync.dat");
+                    string mapData = File.ReadAllText(VMP_Modplugin.VMP_DatadirectoryPath  +  ZNet.instance.GetWorldName() + "_mapSync.dat");
 
                     string[] dataPoints = mapData.Split(',');
 
@@ -206,12 +202,8 @@ namespace VMP_Mod.RPC
 
             if (mapDataToDisk.Count > 0)
             {
-                File.Delete(VMP_Modplugin.VMP_DatadirectoryPath +
-                            Path.DirectorySeparatorChar +
-                            ZNet.instance.GetWorldName() + "_mapSync.dat");
-                File.WriteAllText(VMP_Modplugin.VMP_DatadirectoryPath +
-                                  Path.DirectorySeparatorChar +
-                                  ZNet.instance.GetWorldName() + "_mapSync.dat", string.Join(",", mapDataToDisk));
+                File.Delete(VMP_Modplugin.VMP_DatadirectoryPath + $"{ZNet.instance.GetWorldName()}_mapSync.dat");
+                File.WriteAllText(VMP_Modplugin.VMP_DatadirectoryPath + $"{ZNet.instance.GetWorldName()}_mapSync.dat", string.Join(",", mapDataToDisk));
 
                 ZLog.Log($"Saved {mapDataToDisk.Count} map points to disk.");
             }

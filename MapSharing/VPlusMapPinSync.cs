@@ -65,7 +65,7 @@ namespace VMP_Mod.RPC
         /// </summary>
         public static void SendMapPinToServer(Minimap.PinData pinData, bool keepQuiet = false)
         {
-            ZLog.Log("-------------------- SENDING VPLUS MapPin DATA");
+            ZLog.Log("-------------------- SENDING MapPin DATA");
             ZPackage pkg = new ZPackage();
 
             pkg.Write(ZRoutedRpc.instance.m_id); // Sender ID

@@ -22,8 +22,7 @@ namespace VMP_Mod
         public const string Version = "0.0.1";
         public const string ModName = "VMP Mod";
         public const string GUID = "com.vmp.mod";
-        public static readonly string VMP_DatadirectoryPath =
-            Paths.BepInExRootPath + Path.DirectorySeparatorChar + "vmp-data";
+        public static readonly string[] VMP_DatadirectoryPath = { Paths.BepInExRootPath , "/vmp-data/" };
         public static System.Timers.Timer mapSyncSaveTimer =
             new System.Timers.Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
         public static ConfigEntry<bool> mapIsEnabled;
@@ -65,7 +64,7 @@ namespace VMP_Mod
         public static ConfigEntry<int> Playerinvrow;
         public static ConfigEntry<bool> Deconstruct;
         public static ConfigEntry<bool> AutoRepair;
-        public static ConfigEntry<float> returnedpercent;
+        public static ConfigEntry<int> returnedpercent;
 
 
         public static List<Container> containerList = new List<Container>();
@@ -122,16 +121,6 @@ namespace VMP_Mod
             fillAllModKey = Config.Bind<string>("Hot Keys", "FillAllModKey", "left shift", "Modifier key to pull all available fuel or ore when down. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
 
 
-            MapDetails.detailsmodEnabled = Config.Bind<bool>("General", "Map Details Enabled", true, "Enable Map Details showing mod");
-
-            MapDetails.showRange = Config.Bind<float>("Variables", "ShowRange", 50f, "Range in metres around player to show details");
-            MapDetails.updateDelta = Config.Bind<float>("Variables", "UpdateDelta", 5f, "Distance in metres to move before automatically updating the map details");
-            MapDetails.showBuildings = Config.Bind<bool>("Variables", "ShowBuildings", true, "Show building pieces");
-            MapDetails.personalBuildingColor = Config.Bind<Color>("Variables", "PersonalBuildingColor", Color.green, "Color of one's own build pieces");
-            MapDetails.otherBuildingColor = Config.Bind<Color>("Variables", "OtherBuildingColor", Color.red, "Color of other players' build pieces");
-            MapDetails.unownedBuildingColor = Config.Bind<Color>("Variables", "UnownedBuildingColor", Color.yellow, "Color of npc build pieces");
-            MapDetails.customPlayerColors = Config.Bind<string>("Variables", "CustomPlayerColors", "", "Custom color list, comma-separated. Use either <name>:<colorCode> pair entries or just <colorCode> entries. E.g. Erinthe:FF0000 or just FF0000. The latter will assign a color randomly to each connected peer.");
-
             Container_Configs.KarveRow = Config.Bind<int>("Containers", "Karve Rows", 2, new ConfigDescription("Rows for Karve", new AcceptableValueRange<int>(2, 30)));
             Container_Configs.KarveCol = Config.Bind<int>("Containers", "Karve Columns", 2, new ConfigDescription("Columns for Karve", new AcceptableValueRange<int>(2, 8)));
             Container_Configs.LongRow = Config.Bind<int>("Containers", "Longboat Rows", 3, new ConfigDescription("Rows for longboat", new AcceptableValueRange<int>(3, 30)));
@@ -158,7 +147,7 @@ namespace VMP_Mod
             Playerinvrow = Config.Bind<int>("Items", "Player Inventory row count", 12, new ConfigDescription("Player row count for inventory", new AcceptableValueRange<int>(4, 20)));
             Deconstruct = Config.Bind<bool>("Items", "Allow deconstruction of items in crafting menu", true, new ConfigDescription("Deconstructing crafting items for return of mats"));
             AutoRepair = Config.Bind<bool>("Items", "Auto repair your things when interacting with build station", true, new ConfigDescription("Auto repair your things when interacting with build station"));
-            returnedpercent = Config.Bind<float>("Items", "Percent of item materials you would recieve back from deconstruction", 2.4f, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"));
+            returnedpercent = Config.Bind<int>("Items", "Percent of item materials you would recieve back from deconstruction", 2, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"));
             if (!modEnabled.Value)
                 return;
 
@@ -169,11 +158,7 @@ namespace VMP_Mod
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), null);
         }
 
-        private void Update()
-        {
-            if (Minimap.instance && Player.m_localPlayer)
-                StartCoroutine(MapDetails.UpdateMap(false));
-        }
+
 
         private void LateUpdate()
         {

@@ -7,20 +7,6 @@ using VMP_Mod.Patches;
 
 namespace VMP_Mod.GameClasses
 {
-    /// <summary>
-    /// Alters teleportation prevention
-    /// </summary>
-    [HarmonyPatch(typeof(Inventory), "IsTeleportable")]
-    public static class noItemTeleportPrevention
-    {
-        private static void Postfix(ref bool __result)
-        {
-
-            if (ItemDropPatches.NoTeleportPrevention.Value)
-                __result = true;
-
-        }
-    }
 
     /// <summary>
     /// Makes all items fill inventories top to bottom instead of just tools and weapons
@@ -39,25 +25,6 @@ namespace VMP_Mod.GameClasses
         }
     }
 
-    /// <summary>
-    /// Configure player inventory size
-    /// </summary>
-    [HarmonyPatch(typeof(Inventory), MethodType.Constructor, new Type[] { typeof(string), typeof(Sprite), typeof(int), typeof(int) })]
-    public static class Inventory_Constructor_Patch
-    {
-     
-
-        public static void Prefix(string name, ref int w, ref int h)
-        {
-
-            // Player inventory
-            if (h == 4 && w == 8 || name == "Inventory")
-            {
-                h = VMP_Modplugin.Playerinvrow.Value;
-            }
-
-        }
-    }
 
     /// <summary>
     /// When merging another inventory, try to merge items with existing stacks.
