@@ -43,7 +43,6 @@ namespace VMP_Mod
         public static ConfigEntry<int> workbenchAttachmentRange;
 
         public static ConfigEntry<bool> filltoptobottom;
-        public static ConfigEntry<int> Playerinvrow;
         public static ConfigEntry<bool> Deconstruct;
         public static ConfigEntry<bool> AutoRepair;
         public static ConfigEntry<int> returnedpercent;
@@ -124,7 +123,7 @@ namespace VMP_Mod
             itemStackMultiplier = config<float>("Items", "Item Stack Increase", 2f, new ConfigDescription("Multiplier for your item stacks"), true );
             NoTeleportPrevention = config<bool>("Items", "Disable Teleport check for items", false, new ConfigDescription("Disable Teleport check for items"), true );
             filltoptobottom = config<bool>("Items", "Fill your things top to bottom when moving from inv to chest", true, new ConfigDescription("Move your things top to bottom when changing from inv to chest"), true );
-            Playerinvrow = config<int>("Items", "Player Inventory row count", 12, new ConfigDescription("Player row count for inventory", new AcceptableValueRange<int>(4, 20)), true );
+
             Deconstruct = config<bool>("Items", "Allow deconstruction of items in crafting menu", true, new ConfigDescription("Deconstructing crafting items for return of mats"), true );
             AutoRepair = config<bool>("Items", "Auto repair your things when interacting with build station", true, new ConfigDescription("Auto repair your things when interacting with build station"), true );
             returnedpercent = config<int>("Items", "Percent of item materials you would recieve back from deconstruction", 100, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"), true );

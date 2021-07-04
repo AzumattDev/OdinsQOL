@@ -496,6 +496,38 @@ namespace VMP_Mod.Patches
                 
             }
         }
+
+        /// <summary>
+        /// Alters public password requirements
+        /// </summary>
+        [HarmonyPatch(typeof(FejdStartup), "IsPublicPasswordValid")]
+        public static class ChangeServerPasswordBehavior
+        {
+            private static bool Prefix(ref bool __result)
+            {
+                
+                    // return always true
+                    __result = true;
+                    return false;
+        
+            }
+        }
+
+        /// <summary>
+        /// Override password error
+        /// </summary>
+        [HarmonyPatch(typeof(FejdStartup), "GetPublicPasswordError")]
+        public static class RemovePublicPasswordError
+        {
+            private static bool Prefix(ref string __result)
+            {
+               
+                    __result = "";
+                    return false;
+                
+
+            }
+        }
         //////////
         ///
 
