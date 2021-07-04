@@ -23,6 +23,7 @@ namespace VMP_Mod.Patches
             Amount,
             Value
         }
+
         /// <summary>
         /// Alter workbench range
         /// </summary>
@@ -51,6 +52,7 @@ namespace VMP_Mod.Patches
                 }
             }
         }
+
         public static void ResizeChildEffectArea(MonoBehaviour parent, EffectArea.Type includedTypes, float newRadius)
         {
             if (parent != null)
@@ -69,6 +71,7 @@ namespace VMP_Mod.Patches
                 }
             }
         }
+
         /// <summary>
         /// Disable roof requirement on workbench
         /// </summary>
@@ -85,6 +88,7 @@ namespace VMP_Mod.Patches
                 return true;
             }
         }
+
         [HarmonyPatch(typeof(Container), "GetHoverText")]
         static class GetHoverText_Patch
         {
@@ -240,7 +244,6 @@ namespace VMP_Mod.Patches
         }
         public class ItemData
         {
-            public ItemDrop.ItemData idd;
             public ItemDrop.ItemData.SharedData m_shared;
             public int m_stack;
 

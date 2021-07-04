@@ -492,10 +492,10 @@ namespace VMP_Mod.Patches
         {
             private static void Postfix(ref FejdStartup __instance)
             {
-                
-                    __instance.m_minimumPasswordLength = 0;
-                    __instance.m_serverPlayerLimit = maxPlayers.Value;
-                
+
+                __instance.m_minimumPasswordLength = 0;
+                __instance.m_serverPlayerLimit = maxPlayers.Value;
+
             }
         }
 
@@ -507,11 +507,9 @@ namespace VMP_Mod.Patches
         {
             private static bool Prefix(ref bool __result)
             {
-                
-                    // return always true
-                    __result = true;
-                    return false;
-        
+                // return always true
+                __result = true;
+                return false;
             }
         }
 
@@ -523,13 +521,11 @@ namespace VMP_Mod.Patches
         {
             private static bool Prefix(ref string __result)
             {
-               
-                    __result = "";
-                    return false;
-                
-
+                __result = "";
+                return false;
             }
         }
+
         //////////
         ///
         [HarmonyPatch(typeof(InventoryGui), "SetupRequirement", new Type[] { typeof(Transform), typeof(Piece.Requirement), typeof(Player), typeof(bool), typeof(int) })]
