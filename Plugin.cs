@@ -51,6 +51,7 @@ namespace VMP_Mod
         public static ConfigEntry<float> WeightReduction;
         public static ConfigEntry<float> itemStackMultiplier;
         public static ConfigEntry<bool> NoTeleportPrevention;
+        public static ConfigEntry<bool> iHaveArrivedOnSpawn;
 
         public static List<Container> containerList = new List<Container>();
         private static VMP_Modplugin context = null;
@@ -144,6 +145,8 @@ namespace VMP_Mod
             CraftingPatch.sortAsc = Config.Bind<bool>("General", "SortAsc", false, "Sort ascending?");
             CraftingPatch.entryString = Config.Bind<string>("General", "EntryText", "<color=#AAAAAAFF>{0} {1}</color>", "Entry text. {0} is replaced by the total amount, {1} is replaced by the item name.");
             CraftingPatch.overFlowText = Config.Bind<string>("General", "OverFlowText", "<color=#AAAAAAFF>...</color>", "Overflow text if more items than max entries.");
+
+            iHaveArrivedOnSpawn = config<bool>("Game", "I have arrived disable", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
 
 
             if (!modEnabled.Value)
