@@ -144,7 +144,11 @@ namespace VMP_Mod
             CraftingPatch.AlterWorkBench = Config.Bind<bool>("WorkBench", "Change No Roof Behavior", true, "Show building pieces");
             workbenchAttachmentRange = Config.Bind<int>("WorkBench", "WorkBench Extension", 40, new ConfigDescription("Nexus mod ID for updates", new AcceptableValueRange<int>(5, 100)));
 
-
+            ItemDropPatches.WeightReduction = Config.Bind<float>("Items", "Item Weight Increase", 1.25f, new ConfigDescription("Multiplier for your item weight", new AcceptableValueList<float>(0f, 10f)));
+            ItemDropPatches.itemStackMultiplier = Config.Bind<int>("Items", "Item Stack Increase", 2, new ConfigDescription("Multiplier for your item stacks", new AcceptableValueList<int>(0, 10)));
+            ItemDropPatches.NoTeleportPrevention = Config.Bind<bool>("Items", "Disable Teleport check for items", false, new ConfigDescription("Disable Teleport check for items"));
+           
+            
             if (!modEnabled.Value)
                 return;
 
