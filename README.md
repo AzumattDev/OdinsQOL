@@ -31,3 +31,4 @@ This mod is a collection of patches that are core QOL patches for the VMP server
  - cam shake alteration
  - pickup range alter
  - placement distance alter
+ - strict version enforcement (if users dont have this mod they cant join server)
