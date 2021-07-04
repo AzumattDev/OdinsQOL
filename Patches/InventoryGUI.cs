@@ -1,12 +1,9 @@
 using HarmonyLib;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace VMP_Mod.GameClasses
 {
@@ -143,15 +140,9 @@ namespace VMP_Mod.GameClasses
                 if (__instance.m_tabCraft.interactable.Equals(true) && __instance.m_tabUpgrade.interactable.Equals(true) && localPlayer != null)
                 {
                     Deconstruct.Deconstruct_UpdateRecipeList(ref localPlayer);
-                    return false; // skip
-                                  //
-                                  //
-                                  //
-                                  //
-                                  // g original update otherwise recipe list would be overwritten
+                    return false; // skip original update otherwise recipe list would be overwritten
                 }
             }
-
             return true;
         }
     }
