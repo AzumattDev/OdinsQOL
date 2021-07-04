@@ -22,7 +22,7 @@ namespace VMP_Mod.Patches
                 if (itemStackMultiplier.Value > 0)
                 {
 
-                    __instance.m_itemData.m_shared.m_weight = WeightReduction.Value;
+                    __instance.m_itemData.m_shared.m_weight /= WeightReduction.Value;
 
                     if (__instance.m_itemData.m_shared.m_maxStackSize > 1)
                     {
