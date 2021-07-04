@@ -157,6 +157,7 @@ namespace VMP_Mod
             GamePatches.baseMegingjordBuff = config<int>("General", "Base Meginjord Buff", -1, "Max number of entries to show", true);
             GamePatches.honeyProductionSpeed = config<int>("General", "Honey Speed", -1, "Max number of entries to show", true);
             GamePatches.maximumHoneyPerBeehive = config<int>("General", "Honey Count Per Hive", -1, "Max number of entries to show", true);
+            GamePatches.maxPlayers = config<int>("Server", "Max Player Count", -1, "Max number of Players to allow", true);
 
             GamePatches.StaminaIsEnabled = config<bool>("Player", "Stamina alterations enabled", true, "Stamina alterations enabled", true);
             GamePatches.dodgeStaminaUsage = config<float>("Player", "Dodge Stamina Usage", 1f, "Dodge Stamina Usage", true);

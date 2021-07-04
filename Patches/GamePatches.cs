@@ -34,6 +34,7 @@ namespace VMP_Mod.Patches
         public static ConfigEntry<float> disableCameraShake;
         public static ConfigEntry<float> baseMaximumWeight;
         public static ConfigEntry<float> maximumPlacementDistance;
+        public static ConfigEntry<int> maxPlayers;
 
         [HarmonyPatch(typeof(Game), nameof(Game.UpdateRespawn))]
         public static class Game_UpdateRespawn_Patch
@@ -475,11 +476,29 @@ namespace VMP_Mod.Patches
         }
 
 
+        [HarmonyPatch(typeof(InventoryGui), "UpdateRecipe")]
+        class fasterCrafting
+        {
+            static void Prefix(ref InventoryGui __instance)
+            {
+                __instance.m_craftDuration = .25f;
+            }
+        }
 
-
+        [HarmonyPatch(typeof(FejdStartup), "Awake")]
+        public static class HookServerStart
+        {
+            private static void Postfix(ref FejdStartup __instance)
+            {
+                
+                    __instance.m_minimumPasswordLength = 0;
+                    __instance.m_serverPlayerLimit = maxPlayers.Value;
+                
+            }
+        }
         //////////
         ///
-       
+
 
     }
 }
