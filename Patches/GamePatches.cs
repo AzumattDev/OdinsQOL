@@ -20,6 +20,8 @@ namespace VMP_Mod.Patches
         public static ConfigEntry<int> baseMegingjordBuff;
         public static ConfigEntry<int> honeyProductionSpeed;
         public static ConfigEntry<int> maximumHoneyPerBeehive;
+
+
         public static ConfigEntry<float> dodgeStaminaUsage;
         public static ConfigEntry<float> encumberedStaminaDrain;
         public static ConfigEntry<float> sneakStaminaDrain;

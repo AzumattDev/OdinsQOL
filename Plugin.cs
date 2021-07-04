@@ -157,7 +157,19 @@ namespace VMP_Mod
             GamePatches.baseMegingjordBuff = config<int>("General", "Base Meginjord Buff", -1, "Max number of entries to show", true);
             GamePatches.honeyProductionSpeed = config<int>("General", "Honey Speed", -1, "Max number of entries to show", true);
             GamePatches.maximumHoneyPerBeehive = config<int>("General", "Honey Count Per Hive", -1, "Max number of entries to show", true);
-
+            
+            GamePatches.dodgeStaminaUsage = config<float>("Player", "Dodge Stamina Usage 1.00 == no chage .80 = 20% less use", 1, "Dodge Stamina Usage 1.00 == no chage .80 = 20% less use", true);
+            GamePatches.encumberedStaminaDrain = config<float>("Player", "Encumbered Stamina drain", 0, "Encumbered Stamina drain", true);
+            GamePatches.sneakStaminaDrain = config<float>("Player", "Sneak Stamina Drain", 0, "Sneak stamina drain", true);
+            GamePatches.runStaminaDrain = config<float>("Player", "Run Stamina Drain", 0, "Run Stamina Drain", true);
+            GamePatches.staminaRegenDelay = config<float>("Player", "Delay before stamina regeneration starts", 0, "Delay before stamina regeneration starts", true);
+            GamePatches.staminaRegen = config<float>("Player", "Stamina regen factor 1.20 = 20% + ", 0, "Stamina regen factor", true);
+            GamePatches.swimStaminaDrain = config<float>("Player", "Stamina drain from swin", 0, "Stamina drain from swim", true);
+            GamePatches.jumpStaminaDrain = config<float>("Player", "Jump stamina drain factor", 0, "Stamina drain factor for jumping", true);
+            GamePatches.baseAutoPickUpRange = config<float>("Player", "Auto pickup range adjustment", 0, "Auto pickup range adjustment", true);
+            GamePatches.disableCameraShake = config<float>("Player", "Cam shake factor", 0, "Cam Shake factor", true);
+            GamePatches.baseMaximumWeight = config<float>("Player", "Base maximum weight addition for player", 0, "Base max weight addition for player", true);
+            GamePatches.maximumPlacementDistance = config<float>("General", "Build distance alteration", 0, "Build Distance alteration", true);
 
             if (!modEnabled.Value)
                 return;
