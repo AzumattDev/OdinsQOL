@@ -18,6 +18,13 @@ using VMP_Mod.RPC;
 
 namespace VMP_Mod
 {
+    public static class ImprovedBuildHudConfig
+    {
+        public static ConfigEntry<string> InventoryAmountFormat;
+        public static ConfigEntry<string> InventoryAmountColor;
+        public static ConfigEntry<string> CanBuildAmountFormat;
+        public static ConfigEntry<string> CanBuildAmountColor;
+    }
     [BepInPlugin(VMP_Modplugin.GUID, VMP_Modplugin.ModName, VMP_Modplugin.Version)]
     public class VMP_Modplugin : BaseUnityPlugin
     {
@@ -56,7 +63,9 @@ namespace VMP_Mod
         private static VMP_Modplugin context = null;
         public static ServerSync.ConfigSync configSync = new ServerSync.ConfigSync(GUID) { DisplayName = ModName, CurrentVersion = Version };
         private ConfigEntry<bool> serverConfigLocked;
+        private static List<Container> _cachedContainers;
 
+        public static bool CraftFromContainersInstalledAndActive;
         public class ConnectionParams
         {
             public GameObject connection = null;
@@ -172,6 +181,12 @@ namespace VMP_Mod
             GamePatches.baseMaximumWeight = config<float>("Player", "Base maximum weight addition for player", 350f, "Base max weight addition for player", true);
             GamePatches.maximumPlacementDistance = config<float>("General", "Build distance alteration", 15, "Build Distance alteration", true);
 
+
+            ImprovedBuildHudConfig.InventoryAmountFormat = Config.Bind("General", "Inventory Amount Format", "({0})", "Format for the amount of items in the player inventory to show after the required amount. Uses standard C# format rules. Leave empty to hide altogether.");
+            ImprovedBuildHudConfig.InventoryAmountColor = Config.Bind("General", "Inventory Amount Color", "lightblue", "Color to set the inventory amount after the requirement amount. Leave empty to set no color. You can use the #XXXXXX hex color format.");
+            ImprovedBuildHudConfig.CanBuildAmountFormat = Config.Bind("General", "Can Build Amount Color", "({0})", "Format for the amount of times you can build the currently selected item with your current inventory. Uses standard C# format rules. Leave empty to hide altogether.");
+            ImprovedBuildHudConfig.CanBuildAmountColor = Config.Bind("General", "Can Build Amount Color", "white", "Color to set the can-build amount. Leave empty to set no color. You can use the #XXXXXX hex color format.");
+
             if (!modEnabled.Value)
                 return;
 
@@ -182,14 +197,54 @@ namespace VMP_Mod
 
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), null);
         }
+        private void OnDestroy()
+        {
+            CraftFromContainersInstalledAndActive = false;
 
+        }
 
+        private void LateUpdate()
+        {
+            if (CraftFromContainersInstalledAndActive)
+            {
+                if (_cachedContainers != null)
+                {
+                    _cachedContainers.Clear();
+                    _cachedContainers = null;
+                }
+            }
+        }
         private void Update()
         {
             if (Minimap.instance && Player.m_localPlayer && ZNet.instance != null)
                 StartCoroutine(MapDetail.UpdateMap(false));
         }
+         public static int GetAvailableItems(string itemName)
+        {
+            var player = Player.m_localPlayer;
+            if (player == null)
+            {
+                return 0;
+            }
 
+            var playerInventoryCount = player.GetInventory().CountItems(itemName);
+            var containerCount = 0;
+
+            /*if (CraftFromContainersInstalledAndActive)
+            {
+                if (_cachedContainers == null)
+                {
+                    _cachedContainers = CraftFromContainers.BepInExPlugin.GetNearbyContainers(player.transform.position);
+                }
+                foreach (var container in _cachedContainers)
+                {
+                    containerCount += container.GetInventory().CountItems(itemName);
+                }
+            }*/
+
+            return playerInventoryCount + containerCount;
+        }
+    
 
         [HarmonyPatch(typeof(Player), "PlacePiece")]
         static class Player_PlacePiece_Patch
