@@ -27,7 +27,7 @@ namespace VMP_Mod.GameClasses
                 GameObject playerGrid = InventoryGui.instance.m_playerGrid.gameObject;
 
                 // Player inventory background size, only enlarge it up to 6x8 rows, after that use the scroll bar
-                int playerInventoryBackgroundSize = Math.Min(6, Math.Max(4, Configuration.Current.Inventory.playerInventoryRows));
+                int playerInventoryBackgroundSize = Math.Min(6, Math.Max(4, VMP_Modplugin.Playerinvrow.Value));
                 float containerNewY = containerOriginalY - oneRowSize * playerInventoryBackgroundSize;
                 // Resize player inventory
                 player.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, playerInventoryBackgroundSize * oneRowSize);
@@ -78,7 +78,7 @@ namespace VMP_Mod.GameClasses
 
             List<CodeInstruction> il = instructions.ToList();
 
-            if (Configuration.Current.Player.autoRepair)
+            if (VMP_Modplugin.AutoRepair.Value)
             {
                 // We look for a call to EffectList::Create and replace it with our own noop stub.
                 for (int i = 0; i < il.Count; ++i)
@@ -112,7 +112,7 @@ namespace VMP_Mod.GameClasses
         [HarmonyPrefix]
         public static void Prefix(InventoryGui __instance)
         {
-            if (!Configuration.Current.Player.autoRepair) return;
+            if (!VMP_Modplugin.AutoRepair.Value) return;
 
             CraftingStation curr_crafting_station = Player.m_localPlayer.GetCurrentCraftingStation();
 
@@ -142,7 +142,7 @@ namespace VMP_Mod.GameClasses
     {
         private static void Postfix(ref InventoryGui __instance)
         {
-            if (Configuration.Current.Deconstruct.IsEnabled)
+            if (VMP_Modplugin.Deconstruct.Value)
             {
                 Deconstruct.Setup(ref __instance);
             }
@@ -157,7 +157,7 @@ namespace VMP_Mod.GameClasses
     {
         private static void Postfix(ref InventoryGui __instance)
         {
-            if (Configuration.Current.Deconstruct.IsEnabled)
+            if (VMP_Modplugin.Deconstruct.Value)
             {
                 Player localPlayer = Player.m_localPlayer;
 
@@ -185,7 +185,7 @@ namespace VMP_Mod.GameClasses
     {
         private static bool Prefix(ref InventoryGui __instance, List<Recipe> recipes)
         {
-            if (Configuration.Current.Deconstruct.IsEnabled)
+            if (VMP_Modplugin.Deconstruct.Value)
             {
                 Player localPlayer = Player.m_localPlayer;
 
@@ -209,7 +209,7 @@ namespace VMP_Mod.GameClasses
     {
         private static bool Prefix(ref InventoryGui __instance)
         {
-            if (Configuration.Current.Deconstruct.IsEnabled)
+            if (VMP_Modplugin.Deconstruct.Value)
             {
                 Player localPlayer = Player.m_localPlayer;
 
@@ -233,7 +233,7 @@ namespace VMP_Mod.GameClasses
     {
         private static bool Prefix(ref InventoryGui __instance)
         {
-            if (Configuration.Current.Deconstruct.IsEnabled)
+            if (VMP_Modplugin.Deconstruct.Value)
             {
                 if (Deconstruct.InDeconstructTab())
                 {
@@ -254,7 +254,7 @@ namespace VMP_Mod.GameClasses
     {
         private static void Prefix(ref InventoryGui __instance)
         {
-            if (Configuration.Current.Deconstruct.IsEnabled)
+            if (VMP_Modplugin.Deconstruct.Value)
             {
                 Deconstruct.SetDeconstructTab(true);
             }
@@ -269,7 +269,7 @@ namespace VMP_Mod.GameClasses
     {
         private static void Prefix(ref InventoryGui __instance)
         {
-            if (Configuration.Current.Deconstruct.IsEnabled)
+            if (VMP_Modplugin.Deconstruct.Value)
             {
                 Deconstruct.SetDeconstructTab(true);
             }

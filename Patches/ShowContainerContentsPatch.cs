@@ -7,7 +7,7 @@ using VMP_Mod;
 
 namespace VMP_Mod.Patches
 {
-    class ShowContainerContentsPatch
+    public class ShowContainerContentsPatch
     {
         private static VMP_Modplugin context;
         public static ConfigEntry<int> maxEntries;

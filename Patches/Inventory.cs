@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using VMP_Mod.Patches;
 
 namespace VMP_Mod.GameClasses
 {
@@ -15,9 +16,9 @@ namespace VMP_Mod.GameClasses
         private static void Postfix(ref bool __result)
         {
 
-                if (Configuration.Current.Items.noTeleportPrevention)
-                    __result = true;
-            
+            if (ItemDropPatches.NoTeleportPrevention.Value)
+                __result = true;
+
         }
     }
 
@@ -29,7 +30,7 @@ namespace VMP_Mod.GameClasses
     {
         public static bool Prefix(ref bool __result)
         {
-            if (Configurations.Configuration.Current.Inventory.inventoryFillTopToBottom)
+            if (VMP_Modplugin.filltoptobottom.Value)
             {
                 __result = true;
                 return false;
@@ -44,26 +45,18 @@ namespace VMP_Mod.GameClasses
     [HarmonyPatch(typeof(Inventory), MethodType.Constructor, new Type[] { typeof(string), typeof(Sprite), typeof(int), typeof(int) })]
     public static class Inventory_Constructor_Patch
     {
-        private const int playerInventoryMaxRows = 20;
-        private const int playerInventoryMinRows = 4;
+     
 
         public static void Prefix(string name, ref int w, ref int h)
         {
-           
-                // Player inventory
-                if (h == 4 && w == 8 || name == "Inventory")
-                {
-                    h = Helper.Clamp(Configuration.Current.Inventory.playerInventoryRows, playerInventoryMinRows, playerInventoryMaxRows);
-                }
-            
+
+            // Player inventory
+            if (h == 4 && w == 8 || name == "Inventory")
+            {
+                h = VMP_Modplugin.Playerinvrow.Value;
+            }
+
         }
-    }
-
-
-    public static class Inventory_NearbyChests_Cache
-    {
-        public static List<Container> chests = new List<Container>();
-        public static readonly Stopwatch delta = new Stopwatch();
     }
 
     /// <summary>
@@ -74,33 +67,32 @@ namespace VMP_Mod.GameClasses
     {
         private static void Prefix(ref Inventory __instance, ref Inventory fromInventory)
         {
-            if (Configuration.Current.Inventory.IsEnabled && Configuration.Current.Inventory.mergeWithExistingStacks)
+
+            List<ItemDrop.ItemData> list = new List<ItemDrop.ItemData>(fromInventory.GetAllItems());
+            foreach (ItemDrop.ItemData otherItem in list)
             {
-                List<ItemDrop.ItemData> list = new List<ItemDrop.ItemData>(fromInventory.GetAllItems());
-                foreach (ItemDrop.ItemData otherItem in list)
+                if (otherItem.m_shared.m_maxStackSize > 1)
                 {
-                    if (otherItem.m_shared.m_maxStackSize > 1)
+                    foreach (ItemDrop.ItemData myItem in __instance.m_inventory)
                     {
-                        foreach (ItemDrop.ItemData myItem in __instance.m_inventory)
+                        if (myItem.m_shared.m_name == otherItem.m_shared.m_name && myItem.m_quality == otherItem.m_quality)
                         {
-                            if (myItem.m_shared.m_name == otherItem.m_shared.m_name && myItem.m_quality == otherItem.m_quality)
+                            int itemsToMove = Math.Min(myItem.m_shared.m_maxStackSize - myItem.m_stack, otherItem.m_stack);
+                            myItem.m_stack += itemsToMove;
+                            if (otherItem.m_stack == itemsToMove)
                             {
-                                int itemsToMove = Math.Min(myItem.m_shared.m_maxStackSize - myItem.m_stack, otherItem.m_stack);
-                                myItem.m_stack += itemsToMove;
-                                if (otherItem.m_stack == itemsToMove)
-                                {
-                                    fromInventory.RemoveItem(otherItem);
-                                    break;
-                                }
-                                else
-                                {
-                                    otherItem.m_stack -= itemsToMove;
-                                }
+                                fromInventory.RemoveItem(otherItem);
+                                break;
+                            }
+                            else
+                            {
+                                otherItem.m_stack -= itemsToMove;
                             }
                         }
                     }
                 }
             }
+
         }
     }
 
