@@ -14,6 +14,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using ServerSync;
 using VMP_Mod.Patches;
+using VMP_Mod.RPC;
 
 namespace VMP_Mod
 {
@@ -182,7 +183,16 @@ namespace VMP_Mod
                 context.StartCoroutine(MapDetail.UpdateMap(true));
             }
         }
-        
+        [HarmonyPatch(typeof(Game), nameof(Game.Start))]
+        public static class Game_Start_Patch
+        {
+            private static void Prefix()
+            {
+                ZRoutedRpc.instance.Register("VMPMapSync", new Action<long, ZPackage>(MapSync.RPC_VMPMapSync)); //Map Sync
+                ZRoutedRpc.instance.Register("VMPMapPinSync", new Action<long, ZPackage>(VMPMapPinSync.RPC_VMPMapPinSync)); //Map Pin Sync
+                ZRoutedRpc.instance.Register("VMPAck", new Action<long>(VMPAck.RPC_VPlusAck)); //Ack
+            }
+        }
         public static float applyModifierValue(float targetValue, float value)
         {
 

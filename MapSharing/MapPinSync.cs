@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace VMP_Mod.RPC
 {
-    public class VPlusMapPinSync
+    public class VMPMapPinSync
     {
         /// <summary>
 		/// Sync Pin with clients via the server

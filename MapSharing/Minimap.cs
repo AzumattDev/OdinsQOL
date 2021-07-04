@@ -100,9 +100,9 @@ namespace VMP_Mod.GameClasses
                     if (shareablePins.Contains(__result.m_type))
                     {
                         if (__instance.m_mode != Minimap.MapMode.Large)
-                            VPlusMapPinSync.SendMapPinToServer(__result, true);
+                            VMPMapPinSync.SendMapPinToServer(__result, true);
                         else
-                            VPlusMapPinSync.SendMapPinToServer(__result);
+                            VMPMapPinSync.SendMapPinToServer(__result);
                     }
             }
         }
@@ -115,7 +115,7 @@ namespace VMP_Mod.GameClasses
                 Minimap.PinType pintype = iconSelected.value == 4 ? Minimap.PinType.Icon4 : (Minimap.PinType)iconSelected.value;
                 Minimap.PinData addedPin = __instance.AddPin(pinPos, pintype, pinName.text, true, false);
                 if (VMP_Modplugin.shareablePins.Value && sharePin.isOn && !VMP_Modplugin.shareAllPins.Value)
-                    VPlusMapPinSync.SendMapPinToServer(addedPin);
+                    VMPMapPinSync.SendMapPinToServer(addedPin);
                 pinEditorPanel.SetActive(false);
                 __instance.m_wasFocused = false;
             }
