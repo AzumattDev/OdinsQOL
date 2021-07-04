@@ -23,6 +23,18 @@ namespace VMP_Mod.GameClasses
         }
     }
 
+    [HarmonyPatch(typeof(Inventory), "IsTeleportable")]
+    public static class noItemTeleportPrevention
+    {
+        private static void Postfix(ref bool __result)
+        {
+            
+                if (VMP_Modplugin.NoTeleportPrevention.Value)
+                    __result = true;
+            
+        }
+    }
+
     [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.Awake))]
     public static class ItemDrop_Awake_Patch
     {

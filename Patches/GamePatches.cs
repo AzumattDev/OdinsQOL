@@ -288,6 +288,28 @@ namespace VMP_Mod.Patches
             }
         }
 
+        [HarmonyPatch(typeof(TeleportWorld), "GetHoverText")]
+        public static class TeleportWorld_bigPortalText_Patch
+        {
+            private static void Postfix(TeleportWorld __instance, string __result)
+            {
+                string portalName = __instance.GetText();
+
+                
+                    __result = Localization.instance.Localize(string.Concat(new string[]
+                        {
+                    "$piece_portal $piece_portal_tag:",
+                    " ",
+                    "[",portalName,"]"
+                        }));
+
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, __result, 0, null);
+                    return;
+                
+            }
+        }
+
+
         [HarmonyPatch(typeof(UnityEngine.EventSystems.EventSystem), "OnApplicationFocus")]
         public static class EventSystem_OnApplicationFocus_Patch
         {
@@ -302,6 +324,20 @@ namespace VMP_Mod.Patches
                 }
             }
         }
+
+        [HarmonyPatch(typeof(Version), "GetVersionString")]
+        public static class Version_GetVersionString_Patch
+        {
+            private static void Postfix(ref string __result)
+            {
+                Debug.Log($"Version generator started.");
+
+                        __result = __result + "@" + VMP_Modplugin.Version;
+                        Debug.Log($"Version generated with enforced mod : {__result}");
+
+            }
+        }
+
 
     }
 }
