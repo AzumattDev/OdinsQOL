@@ -130,9 +130,9 @@ namespace VMP_Mod
             returnedpercent = config<int>("Items", "Percent of item materials you would recieve back from deconstruction", 2, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"), true );
 
 
-            MapDetail.showRange = Config.Bind<float>("Variables", "ShowRange", 50f, "Range in metres around player to show details");
-            MapDetail.updateDelta = Config.Bind<float>("Variables", "UpdateDelta", 5f, "Distance in metres to move before automatically updating the map details");
-            MapDetail.showBuildings = Config.Bind<bool>("Variables", "ShowBuildings", true, "Show building pieces");
+            MapDetail.showRange = config<float>("Variables", "ShowRange", 50f, "Range in metres around player to show details");
+            MapDetail.updateDelta = config<float>("Variables", "UpdateDelta", 5f, "Distance in metres to move before automatically updating the map details");
+            MapDetail.showBuildings = config<bool>("Variables", "ShowBuildings", true, "Show building pieces");
             MapDetail.personalBuildingColor = Config.Bind<Color>("Variables", "PersonalBuildingColor", Color.green, "Color of one's own build pieces");
             MapDetail.otherBuildingColor = Config.Bind<Color>("Variables", "OtherBuildingColor", Color.red, "Color of other players' build pieces");
             MapDetail.unownedBuildingColor = Config.Bind<Color>("Variables", "UnownedBuildingColor", Color.yellow, "Color of npc build pieces");
