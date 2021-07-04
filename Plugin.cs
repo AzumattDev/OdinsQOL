@@ -130,6 +130,17 @@ namespace VMP_Mod
             returnedpercent = config<int>("Items", "Percent of item materials you would recieve back from deconstruction", 2, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"), true );
 
 
+            MapDetail.showRange = Config.Bind<float>("Variables", "ShowRange", 50f, "Range in metres around player to show details");
+            MapDetail.updateDelta = Config.Bind<float>("Variables", "UpdateDelta", 5f, "Distance in metres to move before automatically updating the map details");
+            MapDetail.showBuildings = Config.Bind<bool>("Variables", "ShowBuildings", true, "Show building pieces");
+            MapDetail.personalBuildingColor = Config.Bind<Color>("Variables", "PersonalBuildingColor", Color.green, "Color of one's own build pieces");
+            MapDetail.otherBuildingColor = Config.Bind<Color>("Variables", "OtherBuildingColor", Color.red, "Color of other players' build pieces");
+            MapDetail.unownedBuildingColor = Config.Bind<Color>("Variables", "UnownedBuildingColor", Color.yellow, "Color of npc build pieces");
+            MapDetail.customPlayerColors = Config.Bind<string>("Variables", "CustomPlayerColors", "", "Custom color list, comma-separated. Use either <name>:<colorCode> pair entries or just <colorCode> entries. E.g. Erinthe:FF0000 or just FF0000. The latter will assign a color randomly to each connected peer.");
+
+
+
+
 
             if (!modEnabled.Value)
                 return;
@@ -143,7 +154,32 @@ namespace VMP_Mod
         }
 
 
+        private void Update()
+        {
+            if (Minimap.instance && Player.m_localPlayer && ZNet.instance != null)
+                StartCoroutine(MapDetail.UpdateMap(false));
+        }
 
+
+        [HarmonyPatch(typeof(Player), "PlacePiece")]
+        static class Player_PlacePiece_Patch
+        {
+            static void Postfix(bool __result)
+            {
+
+                context.StartCoroutine(MapDetail.UpdateMap(true));
+            }
+        }
+        [HarmonyPatch(typeof(Player), "RemovePiece")]
+        static class Player_RemovePiece_Patch
+        {
+            static void Postfix(bool __result)
+            {
+
+                context.StartCoroutine(MapDetail.UpdateMap(true));
+            }
+        }
+        
         public static float applyModifierValue(float targetValue, float value)
         {
 
