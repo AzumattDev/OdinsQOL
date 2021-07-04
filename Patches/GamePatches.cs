@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using System;
+using BepInEx.Configuration;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,6 +11,14 @@ namespace VMP_Mod.Patches
 {
     class GamePatches
     {
+        public static ConfigEntry<bool> DisableGuardianAnimation;
+        public static ConfigEntry<bool> SkipTuts;
+        public static ConfigEntry<bool> reequipItemsAfterSwimming;
+        public static ConfigEntry<bool> enableAreaRepair;
+        public static ConfigEntry<int> areaRepairRadius;
+        public static ConfigEntry<int> baseMegingjordBuff;
+        public static ConfigEntry<int> honeyProductionSpeed;
+        public static ConfigEntry<int> maximumHoneyPerBeehive;
 
         [HarmonyPatch(typeof(Game), nameof(Game.UpdateRespawn))]
         public static class Game_UpdateRespawn_Patch
@@ -39,11 +48,9 @@ namespace VMP_Mod.Patches
                 [HarmonyTranspiler]
                 public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
                 {
-                    if (!Configuration.Current.Building.IsEnabled) return instructions;
-
                     List<CodeInstruction> il = instructions.ToList();
 
-                    if (Configuration.Current.Building.enableAreaRepair)
+                    if (enableAreaRepair.Value)
                     {
                         // Replace call to Player::Repair with our own stub.
                         // Our stub calls the original repair multiple times, one for each nearby piece.
@@ -65,7 +72,7 @@ namespace VMP_Mod.Patches
                     Vector3 position = selected_piece != null ? selected_piece.transform.position : instance.transform.position;
 
                     List<Piece> pieces = new List<Piece>();
-                    Piece.GetAllPiecesInRadius(position, Configuration.Current.Building.areaRepairRadius, pieces);
+                    Piece.GetAllPiecesInRadius(position, areaRepairRadius.Value, pieces);
 
                     m_repair_count = 0;
 
@@ -103,11 +110,9 @@ namespace VMP_Mod.Patches
                 [HarmonyTranspiler]
                 public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
                 {
-                    if (!Configuration.Current.Building.IsEnabled) return instructions;
-
                     List<CodeInstruction> il = instructions.ToList();
 
-                    if (Configuration.Current.Building.enableAreaRepair)
+                    if (enableAreaRepair.Value)
                     {
                         // Replace calls to Character::Message with our own noop stub
                         // We don't want to spam messages for each piece so we patch the messages out here and dispatch our own messages in the other transpiler.
@@ -138,7 +143,7 @@ namespace VMP_Mod.Patches
         {
             private static bool Prefix(ref Player __instance, ref bool __result)
             {
-                if (!Configuration.Current.Player.disableGuardianBuffAnimation || !Configuration.Current.Player.IsEnabled)
+                if (!DisableGuardianAnimation.Value)
                     return true;
 
                 if (__instance.m_guardianSE == null)
@@ -164,7 +169,7 @@ namespace VMP_Mod.Patches
             [HarmonyPrefix]
             private static void Prefix(Player __instance, ref string name)
             {
-                if (Configuration.Current.Player.IsEnabled && Configuration.Current.Player.skipTutorials)
+                if (SkipTuts.Value)
                 {
                     if (!__instance.m_shownTutorials.Contains(name))
                     {
@@ -184,7 +189,7 @@ namespace VMP_Mod.Patches
         {
             private static bool Prefix(Humanoid __instance)
             {
-                if (!Configuration.Current.Player.IsEnabled || !Configuration.Current.Player.reequipItemsAfterSwimming)
+                if (!reequipItemsAfterSwimming.Value)
                     return true;
 
                 if (__instance.IsPlayer() && __instance.IsSwiming() && !__instance.IsOnGround())
@@ -212,53 +217,51 @@ namespace VMP_Mod.Patches
         {
             private static void Postfix(ref SE_Stats __instance)
             {
-                if (Configuration.Current.Player.IsEnabled)
-                    if (__instance.m_addMaxCarryWeight != null && __instance.m_addMaxCarryWeight > 0)
-                        __instance.m_addMaxCarryWeight = (__instance.m_addMaxCarryWeight - 150) + Configuration.Current.Player.baseMegingjordBuff;
+                        if (__instance.m_addMaxCarryWeight != null && __instance.m_addMaxCarryWeight > 0)
+                        __instance.m_addMaxCarryWeight = (__instance.m_addMaxCarryWeight - 150) + baseMegingjordBuff.Value;
             }
         }
 
-        [HarmonyPatch(typeof(Player), "Awake")]
-        public static class Player_Awake_Patch
-        {
-            private static void Postfix(ref Player __instance)
-            {
-                if (Configuration.Current.Stamina.IsEnabled)
-                {
-                    __instance.m_dodgeStaminaUsage = Helper.applyModifierValue(__instance.m_dodgeStaminaUsage, Configuration.Current.Stamina.dodgeStaminaUsage);
-                    __instance.m_encumberedStaminaDrain = Helper.applyModifierValue(__instance.m_encumberedStaminaDrain, Configuration.Current.Stamina.encumberedStaminaDrain);
-                    __instance.m_sneakStaminaDrain = Helper.applyModifierValue(__instance.m_sneakStaminaDrain, Configuration.Current.Stamina.sneakStaminaDrain);
-                    __instance.m_runStaminaDrain = Helper.applyModifierValue(__instance.m_runStaminaDrain, Configuration.Current.Stamina.runStaminaDrain);
-                    __instance.m_staminaRegenDelay = Helper.applyModifierValue(__instance.m_staminaRegenDelay, Configuration.Current.Stamina.staminaRegenDelay);
-                    __instance.m_staminaRegen = Helper.applyModifierValue(__instance.m_staminaRegen, Configuration.Current.Stamina.staminaRegen);
-                    __instance.m_swimStaminaDrainMinSkill = Helper.applyModifierValue(__instance.m_swimStaminaDrainMinSkill, Configuration.Current.Stamina.swimStaminaDrain);
-                    __instance.m_swimStaminaDrainMaxSkill = Helper.applyModifierValue(__instance.m_swimStaminaDrainMaxSkill, Configuration.Current.Stamina.swimStaminaDrain);
-                    __instance.m_jumpStaminaUsage = Helper.applyModifierValue(__instance.m_jumpStaminaUsage, Configuration.Current.Stamina.jumpStaminaDrain);
-                }
-                if (Configuration.Current.Player.IsEnabled)
-                {
-                    __instance.m_autoPickupRange = Configuration.Current.Player.baseAutoPickUpRange;
-                    __instance.m_baseCameraShake = Configuration.Current.Player.disableCameraShake ? 0f : 4f;
-                    __instance.m_maxCarryWeight = Configuration.Current.Player.baseMaximumWeight;
+        //[HarmonyPatch(typeof(Player), "Awake")]
+        //public static class Player_Awake_Patch
+        //{
+        //    private static void Postfix(ref Player __instance)
+        //    {
+        //        if (Configuration.Current.Stamina.IsEnabled)
+        //        {
+        //            __instance.m_dodgeStaminaUsage = Helper.applyModifierValue(__instance.m_dodgeStaminaUsage, Configuration.Current.Stamina.dodgeStaminaUsage);
+        //            __instance.m_encumberedStaminaDrain = Helper.applyModifierValue(__instance.m_encumberedStaminaDrain, Configuration.Current.Stamina.encumberedStaminaDrain);
+        //            __instance.m_sneakStaminaDrain = Helper.applyModifierValue(__instance.m_sneakStaminaDrain, Configuration.Current.Stamina.sneakStaminaDrain);
+        //            __instance.m_runStaminaDrain = Helper.applyModifierValue(__instance.m_runStaminaDrain, Configuration.Current.Stamina.runStaminaDrain);
+        //            __instance.m_staminaRegenDelay = Helper.applyModifierValue(__instance.m_staminaRegenDelay, Configuration.Current.Stamina.staminaRegenDelay);
+        //            __instance.m_staminaRegen = Helper.applyModifierValue(__instance.m_staminaRegen, Configuration.Current.Stamina.staminaRegen);
+        //            __instance.m_swimStaminaDrainMinSkill = Helper.applyModifierValue(__instance.m_swimStaminaDrainMinSkill, Configuration.Current.Stamina.swimStaminaDrain);
+        //            __instance.m_swimStaminaDrainMaxSkill = Helper.applyModifierValue(__instance.m_swimStaminaDrainMaxSkill, Configuration.Current.Stamina.swimStaminaDrain);
+        //            __instance.m_jumpStaminaUsage = Helper.applyModifierValue(__instance.m_jumpStaminaUsage, Configuration.Current.Stamina.jumpStaminaDrain);
+        //        }
+        //        if (Configuration.Current.Player.IsEnabled)
+        //        {
+        //            __instance.m_autoPickupRange = Configuration.Current.Player.baseAutoPickUpRange;
+        //            __instance.m_baseCameraShake = Configuration.Current.Player.disableCameraShake ? 0f : 4f;
+        //            __instance.m_maxCarryWeight = Configuration.Current.Player.baseMaximumWeight;
 
-                }
-                if (Configuration.Current.Building.IsEnabled)
-                {
-                    __instance.m_maxPlaceDistance = Configuration.Current.Building.maximumPlacementDistance;
-                }
-            }
-        }
+        //        }
+        //        if (Configuration.Current.Building.IsEnabled)
+        //        {
+        //            __instance.m_maxPlaceDistance = Configuration.Current.Building.maximumPlacementDistance;
+        //        }
+        //    }
+        //}
 
         [HarmonyPatch(typeof(Beehive), "Awake")]
         public static class Beehive_Awake_Patch
         {
             private static bool Prefix(ref float ___m_secPerUnit, ref int ___m_maxHoney)
             {
-                if (Configuration.Current.Beehive.IsEnabled)
-                {
-                    ___m_secPerUnit = Configuration.Current.Beehive.honeyProductionSpeed;
-                    ___m_maxHoney = Configuration.Current.Beehive.maximumHoneyPerBeehive;
-                }
+                
+                    ___m_secPerUnit = honeyProductionSpeed.Value;
+                    ___m_maxHoney = maximumHoneyPerBeehive.Value;
+                
 
                 return true;
             }
