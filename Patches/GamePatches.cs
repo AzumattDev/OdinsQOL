@@ -217,8 +217,10 @@ namespace VMP_Mod.Patches
         {
             private static void Postfix(ref SE_Stats __instance)
             {
-                        if (__instance.m_addMaxCarryWeight != null && __instance.m_addMaxCarryWeight > 0)
-                        __instance.m_addMaxCarryWeight = (__instance.m_addMaxCarryWeight - 150) + baseMegingjordBuff.Value;
+#pragma warning disable CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
+                if (__instance.m_addMaxCarryWeight != null && __instance.m_addMaxCarryWeight > 0)
+#pragma warning restore CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
+                    __instance.m_addMaxCarryWeight = (__instance.m_addMaxCarryWeight - 150) + baseMegingjordBuff.Value;
             }
         }
 
