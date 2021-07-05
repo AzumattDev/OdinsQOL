@@ -307,6 +307,7 @@
     <Compile Include="MapSharing\MapSync.cs" />
     <Compile Include="MapSharing\ZPackageExtensions.cs" />
     <Compile Include="Patches\ChestSizePatch.cs" />
+    <Compile Include="Patches\SignPatches.cs" />
     <Compile Include="Patches\WearNTear.cs" />
     <Compile Include="Patches\GamePatches.cs" />
     <Compile Include="Patches\MapDetail.cs" />

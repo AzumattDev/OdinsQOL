@@ -178,6 +178,11 @@ namespace VMP_Mod
             ImprovedBuildHudConfig.CanBuildAmountFormat = Config.Bind("General", "Can Build Amount Color", "({0})", "Format for the amount of times you can build the currently selected item with your current inventory. Uses standard C# format rules. Leave empty to hide altogether.");
             ImprovedBuildHudConfig.CanBuildAmountColor = Config.Bind("General", "Can Build Amount Color", "white", "Color to set the can-build amount. Leave empty to set no color. You can use the #XXXXXX hex color format.");
 
+            SignPatches.signScale = Config.Bind<Vector3>("Signs", "SignScale", new Vector3(1, 1, 1), "Sign scale (w,h,d)");
+            SignPatches.textPositionOffset = Config.Bind<Vector2>("Signs", "TextPositionOffset", new Vector2(0, 0), "Default font size");
+            SignPatches.useRichText = Config.Bind<bool>("Signs", "UseRichText", true, "Enable rich text");
+            SignPatches.fontName = Config.Bind<string>("Signs", "FontName", "AveriaSerifLibre-Bold", "Font name");
+
             if (!modEnabled.Value)
                 return;
 
@@ -185,7 +190,8 @@ namespace VMP_Mod
             {
                 Directory.CreateDirectory(VMP_DatadirectoryPath);
             }
-
+            SignPatches.currentFont = SignPatches.GetFont(SignPatches.fontName.Value, 20);
+            SignPatches.lastFontName = SignPatches.currentFont?.name;
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), null);
         }
         private void OnDestroy()
