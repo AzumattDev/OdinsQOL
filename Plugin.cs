@@ -158,7 +158,7 @@ namespace VMP_Mod
             GamePatches.maximumHoneyPerBeehive = config<int>("General", "Honey Count Per Hive", -1, "Max number of entries to show", true);
             GamePatches.maxPlayers = config<int>("Server", "Max Player Count", -1, "Max number of Players to allow", true);
 
-            GamePatches.StaminaIsEnabled = config<bool>("Player", "Stamina alterations enabled", true, "Stamina alterations enabled", true);
+            GamePatches.StaminaIsEnabled = config<bool>("Player", "Stamina alterations enabled", false, "Stamina alterations enabled", true);
             GamePatches.dodgeStaminaUsage = config<float>("Player", "Dodge Stamina Usage", 1f, "Dodge Stamina Usage", true);
             GamePatches.encumberedStaminaDrain = config<float>("Player", "Encumbered Stamina drain", 1f, "Encumbered Stamina drain", true);
             GamePatches.sneakStaminaDrain = config<float>("Player", "Sneak Stamina Drain", 1f, "Sneak stamina drain", true);
@@ -182,6 +182,32 @@ namespace VMP_Mod
             SignPatches.textPositionOffset = Config.Bind<Vector2>("Signs", "TextPositionOffset", new Vector2(0, 0), "Default font size");
             SignPatches.useRichText = Config.Bind<bool>("Signs", "UseRichText", true, "Enable rich text");
             SignPatches.fontName = Config.Bind<string>("Signs", "FontName", "AveriaSerifLibre-Bold", "Font name");
+
+
+            AutoStorePatch.dropRangeChests = Config.Bind<float>("General", "DropRangeChests", 5f, "The maximum range to pull dropped items");
+            AutoStorePatch.dropRangePersonalChests = Config.Bind<float>("General", "DropRangePersonalChests", 5f, "The maximum range to pull dropped items");
+            AutoStorePatch.dropRangeReinforcedChests = Config.Bind<float>("General", "DropRangeReinforcedChests", 5f, "The maximum range to pull dropped items");
+            AutoStorePatch.dropRangeCarts = Config.Bind<float>("General", "DropRangeCarts", 5f, "The maximum range to pull dropped items");
+            AutoStorePatch.dropRangeShips = Config.Bind<float>("General", "DropRangeShips", 5f, "The maximum range to pull dropped items");
+            AutoStorePatch.itemDisallowTypes = Config.Bind<string>("General", "ItemDisallowTypes", "", "Types of item to disallow pulling for, comma-separated.");
+            AutoStorePatch.itemAllowTypes = Config.Bind<string>("General", "ItemAllowTypes", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypes");
+            AutoStorePatch.itemDisallowTypesChests = Config.Bind<string>("General", "ItemDisallowTypesChests", "", "Types of item to disallow pulling for, comma-separated.");
+            AutoStorePatch.itemAllowTypesChests = Config.Bind<string>("General", "ItemAllowTypesChests", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesChests");
+            AutoStorePatch.itemDisallowTypesPersonalChests = Config.Bind<string>("General", "ItemDisallowTypesPersonalChests", "", "Types of item to disallow pulling for, comma-separated.");
+            AutoStorePatch.itemAllowTypesPersonalChests = Config.Bind<string>("General", "ItemAllowTypesPersonalChests", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesPersonalChests");
+            AutoStorePatch.itemDisallowTypesReinforcedChests = Config.Bind<string>("General", "ItemDisallowTypesReinforcedChests", "", "Types of item to disallow pulling for, comma-separated.");
+            AutoStorePatch.itemAllowTypesReinforcedChests = Config.Bind<string>("General", "ItemAllowTypesReinforcedChests", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesReinforcedChests");
+            AutoStorePatch.itemDisallowTypesCarts = Config.Bind<string>("General", "ItemDisallowTypesCarts", "", "Types of item to disallow pulling for, comma-separated.");
+            AutoStorePatch.itemAllowTypesCarts = Config.Bind<string>("General", "ItemAllowTypesCarts", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesCarts");
+            AutoStorePatch.itemDisallowTypesShips = Config.Bind<string>("General", "ItemDisallowTypesShips", "", "Types of item to disallow pulling for, comma-separated.");
+            AutoStorePatch.itemAllowTypesShips = Config.Bind<string>("General", "ItemAllowTypesShips", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesShips");
+            AutoStorePatch.toggleString = Config.Bind<string>("General", "ToggleString", "Auto Pull: {0}", "Text to show on toggle. {0} is replaced with true/false");
+            AutoStorePatch.toggleKey = Config.Bind<string>("General", "ToggleKey", "", "Key to toggle behaviour. Leave blank to disable the toggle key.");
+            AutoStorePatch.mustHaveItemToPull = Config.Bind<bool>("General", "MustHaveItemToPull", false, "If true, a container must already have at least one of the item to pull.");
+            AutoStorePatch.isOn = Config.Bind<bool>("General", "IsOn", true, "Behaviour is currently on or not");
+
+
+
 
             if (!modEnabled.Value)
                 return;
@@ -213,10 +239,30 @@ namespace VMP_Mod
         }
         private void Update()
         {
+            if (Utils.IgnoreKeyPresses())
+                return;
+            if (CheckKeyDown(AutoStorePatch.toggleKey.Value))
+            {
+                AutoStorePatch.isOn.Value = !AutoStorePatch.isOn.Value;
+                Config.Save();
+                Player.m_localPlayer.Message(MessageHud.MessageType.Center, string.Format(AutoStorePatch.toggleString.Value, AutoStorePatch.isOn.Value), 0, null);
+            }
+
             if (Minimap.instance && Player.m_localPlayer && ZNet.instance != null)
                 StartCoroutine(MapDetail.UpdateMap(false));
         }
-         public static int GetAvailableItems(string itemName)
+        private static bool CheckKeyDown(string value)
+        {
+            try
+            {
+                return Input.GetKeyDown(value.ToLower());
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        public static int GetAvailableItems(string itemName)
         {
             var player = Player.m_localPlayer;
             if (player == null)
