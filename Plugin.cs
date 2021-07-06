@@ -130,21 +130,21 @@ namespace VMP_Mod
             returnedpercent = config<int>("Items", "Percent of item materials you would recieve back from deconstruction", 100, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"), true );
 
 
-            MapDetail.showRange = config<float>("Variables", "ShowRange", 50f, "Range in metres around player to show details",true);
-            MapDetail.updateDelta = config<float>("Variables", "UpdateDelta", 5f, "Distance in metres to move before automatically updating the map details", true);
-            MapDetail.showBuildings = config<bool>("Variables", "ShowBuildings", true, "Show building pieces", true);
-            MapDetail.personalBuildingColor = Config.Bind<Color>("Variables", "PersonalBuildingColor", Color.green, "Color of one's own build pieces");
-            MapDetail.otherBuildingColor = Config.Bind<Color>("Variables", "OtherBuildingColor", Color.red, "Color of other players' build pieces");
-            MapDetail.unownedBuildingColor = Config.Bind<Color>("Variables", "UnownedBuildingColor", Color.yellow, "Color of npc build pieces");
-            MapDetail.customPlayerColors = Config.Bind<string>("Variables", "CustomPlayerColors", "", "Custom color list, comma-separated. Use either <name>:<colorCode> pair entries or just <colorCode> entries. E.g. Erinthe:FF0000 or just FF0000. The latter will assign a color randomly to each connected peer.");
+            MapDetail.showRange = config<float>("Map Details", "ShowRange", 50f, "Range in metres around player to show details",true);
+            MapDetail.updateDelta = config<float>("Map Details", "UpdateDelta", 5f, "Distance in metres to move before automatically updating the map details", true);
+            MapDetail.showBuildings = config<bool>("Map Details", "ShowBuildings", true, "Show building pieces", true);
+            MapDetail.personalBuildingColor = Config.Bind<Color>("Map Details", "PersonalBuildingColor", Color.green, "Color of one's own build pieces");
+            MapDetail.otherBuildingColor = Config.Bind<Color>("Map Details", "OtherBuildingColor", Color.red, "Color of other players' build pieces");
+            MapDetail.unownedBuildingColor = Config.Bind<Color>("Map Details", "UnownedBuildingColor", Color.yellow, "Color of npc build pieces");
+            MapDetail.customPlayerColors = Config.Bind<string>("Map Details", "CustomPlayerColors", "", "Custom color list, comma-separated. Use either <name>:<colorCode> pair entries or just <colorCode> entries. E.g. Erinthe:FF0000 or just FF0000. The latter will assign a color randomly to each connected peer.");
 
 
 
-            CraftingPatch.maxEntries = Config.Bind<int>("General", "MaxEntries", -1, "Max number of entries to show");
-            CraftingPatch.sortType = Config.Bind<CraftingPatch.SortType>("General", "SortType", CraftingPatch.SortType.Value, "Type by which to sort entries.");
-            CraftingPatch.sortAsc = Config.Bind<bool>("General", "SortAsc", false, "Sort ascending?");
-            CraftingPatch.entryString = Config.Bind<string>("General", "EntryText", "<color=#AAAAAAFF>{0} {1}</color>", "Entry text. {0} is replaced by the total amount, {1} is replaced by the item name.");
-            CraftingPatch.overFlowText = Config.Bind<string>("General", "OverFlowText", "<color=#AAAAAAFF>...</color>", "Overflow text if more items than max entries.");
+            CraftingPatch.maxEntries = Config.Bind<int>("Show Chest Contents", "MaxEntries", -1, "Max number of entries to show");
+            CraftingPatch.sortType = Config.Bind<CraftingPatch.SortType>("Show Chest Contents", "SortType", CraftingPatch.SortType.Value, "Type by which to sort entries.");
+            CraftingPatch.sortAsc = Config.Bind<bool>("Show Chest Contents", "SortAsc", false, "Sort ascending?");
+            CraftingPatch.entryString = Config.Bind<string>("Show Chest Contents", "EntryText", "<color=#AAAAAAFF>{0} {1}</color>", "Entry text. {0} is replaced by the total amount, {1} is replaced by the item name.");
+            CraftingPatch.overFlowText = Config.Bind<string>("Show Chest Contents", "OverFlowText", "<color=#AAAAAAFF>...</color>", "Overflow text if more items than max entries.");
 
             iHaveArrivedOnSpawn = config<bool>("Game", "I have arrived disable", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
 
@@ -153,10 +153,10 @@ namespace VMP_Mod
             GamePatches.SkipTuts = config<bool>("Game", "Skip Tuts", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
             GamePatches.reequipItemsAfterSwimming = config<bool>("Game", "Re Equip after Swimming", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
             GamePatches.enableAreaRepair = config<bool>("Game", "Area Repair", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
-            GamePatches.areaRepairRadius = config<int>("General", "Area Repair Radius", -1, "Max number of entries to show", true);
-            GamePatches.baseMegingjordBuff = config<int>("General", "Base Meginjord Buff", -1, "Max number of entries to show", true);
-            GamePatches.honeyProductionSpeed = config<int>("General", "Honey Speed", -1, "Max number of entries to show", true);
-            GamePatches.maximumHoneyPerBeehive = config<int>("General", "Honey Count Per Hive", -1, "Max number of entries to show", true);
+            GamePatches.areaRepairRadius = config<int>("Game", "Area Repair Radius", -1, "Max number of entries to show", true);
+            GamePatches.baseMegingjordBuff = config<int>("Game", "Base Meginjord Buff", -1, "Max number of entries to show", true);
+            GamePatches.honeyProductionSpeed = config<int>("Game", "Honey Speed", -1, "Max number of entries to show", true);
+            GamePatches.maximumHoneyPerBeehive = config<int>("Game", "Honey Count Per Hive", -1, "Max number of entries to show", true);
             GamePatches.maxPlayers = config<int>("Server", "Max Player Count", -1, "Max number of Players to allow", true);
 
             GamePatches.StaminaIsEnabled = config<bool>("Player", "Stamina alterations enabled", false, "Stamina alterations enabled", true);
@@ -185,32 +185,32 @@ namespace VMP_Mod
             SignPatches.fontName = Config.Bind<string>("Signs", "FontName", "AveriaSerifLibre-Bold", "Font name");
 
 
-            AutoStorePatch.dropRangeChests = Config.Bind<float>("General", "DropRangeChests", 5f, "The maximum range to pull dropped items");
-            AutoStorePatch.dropRangePersonalChests = Config.Bind<float>("General", "DropRangePersonalChests", 5f, "The maximum range to pull dropped items");
-            AutoStorePatch.dropRangeReinforcedChests = Config.Bind<float>("General", "DropRangeReinforcedChests", 5f, "The maximum range to pull dropped items");
-            AutoStorePatch.dropRangeCarts = Config.Bind<float>("General", "DropRangeCarts", 5f, "The maximum range to pull dropped items");
-            AutoStorePatch.dropRangeShips = Config.Bind<float>("General", "DropRangeShips", 5f, "The maximum range to pull dropped items");
-            AutoStorePatch.itemDisallowTypes = Config.Bind<string>("General", "ItemDisallowTypes", "", "Types of item to disallow pulling for, comma-separated.");
-            AutoStorePatch.itemAllowTypes = Config.Bind<string>("General", "ItemAllowTypes", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypes");
-            AutoStorePatch.itemDisallowTypesChests = Config.Bind<string>("General", "ItemDisallowTypesChests", "", "Types of item to disallow pulling for, comma-separated.");
-            AutoStorePatch.itemAllowTypesChests = Config.Bind<string>("General", "ItemAllowTypesChests", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesChests");
-            AutoStorePatch.itemDisallowTypesPersonalChests = Config.Bind<string>("General", "ItemDisallowTypesPersonalChests", "", "Types of item to disallow pulling for, comma-separated.");
-            AutoStorePatch.itemAllowTypesPersonalChests = Config.Bind<string>("General", "ItemAllowTypesPersonalChests", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesPersonalChests");
-            AutoStorePatch.itemDisallowTypesReinforcedChests = Config.Bind<string>("General", "ItemDisallowTypesReinforcedChests", "", "Types of item to disallow pulling for, comma-separated.");
+            AutoStorePatch.dropRangeChests = Config.Bind<float>("Auto Storage", "DropRangeChests", 5f, "The maximum range to pull dropped items");
+            AutoStorePatch.dropRangePersonalChests = Config.Bind<float>("Auto Storage", "DropRangePersonalChests", 5f, "The maximum range to pull dropped items");
+            AutoStorePatch.dropRangeReinforcedChests = Config.Bind<float>("Auto Storage", "DropRangeReinforcedChests", 5f, "The maximum range to pull dropped items");
+            AutoStorePatch.dropRangeCarts = Config.Bind<float>("Auto Storage", "DropRangeCarts", 5f, "The maximum range to pull dropped items");
+            AutoStorePatch.dropRangeShips = Config.Bind<float>("Auto Storage", "DropRangeShips", 5f, "The maximum range to pull dropped items");
+            AutoStorePatch.itemDisallowTypes = Config.Bind<string>("Auto Storage", "ItemDisallowTypes", "", "Types of item to disallow pulling for, comma-separated.");
+            AutoStorePatch.itemAllowTypes = Config.Bind<string>("Auto Storage", "ItemAllowTypes", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypes");
+            AutoStorePatch.itemDisallowTypesChests = Config.Bind<string>("Auto Storage", "ItemDisallowTypesChests", "", "Types of item to disallow pulling for, comma-separated.");
+            AutoStorePatch.itemAllowTypesChests = Config.Bind<string>("Auto Storage", "ItemAllowTypesChests", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesChests");
+            AutoStorePatch.itemDisallowTypesPersonalChests = Config.Bind<string>("Auto Storage", "ItemDisallowTypesPersonalChests", "", "Types of item to disallow pulling for, comma-separated.");
+            AutoStorePatch.itemAllowTypesPersonalChests = Config.Bind<string>("Auto Storage", "ItemAllowTypesPersonalChests", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesPersonalChests");
+            AutoStorePatch.itemDisallowTypesReinforcedChests = Config.Bind<string>("Auto Storage", "ItemDisallowTypesReinforcedChests", "", "Types of item to disallow pulling for, comma-separated.");
             AutoStorePatch.itemAllowTypesReinforcedChests = Config.Bind<string>("General", "ItemAllowTypesReinforcedChests", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesReinforcedChests");
-            AutoStorePatch.itemDisallowTypesCarts = Config.Bind<string>("General", "ItemDisallowTypesCarts", "", "Types of item to disallow pulling for, comma-separated.");
-            AutoStorePatch.itemAllowTypesCarts = Config.Bind<string>("General", "ItemAllowTypesCarts", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesCarts");
-            AutoStorePatch.itemDisallowTypesShips = Config.Bind<string>("General", "ItemDisallowTypesShips", "", "Types of item to disallow pulling for, comma-separated.");
-            AutoStorePatch.itemAllowTypesShips = Config.Bind<string>("General", "ItemAllowTypesShips", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesShips");
-            AutoStorePatch.toggleString = Config.Bind<string>("General", "ToggleString", "Auto Pull: {0}", "Text to show on toggle. {0} is replaced with true/false");
-            AutoStorePatch.toggleKey = Config.Bind<string>("General", "ToggleKey", "", "Key to toggle behaviour. Leave blank to disable the toggle key.");
-            AutoStorePatch.mustHaveItemToPull = Config.Bind<bool>("General", "MustHaveItemToPull", false, "If true, a container must already have at least one of the item to pull.");
-            AutoStorePatch.isOn = Config.Bind<bool>("General", "IsOn", true, "Behaviour is currently on or not");
+            AutoStorePatch.itemDisallowTypesCarts = Config.Bind<string>("Auto Storage", "ItemDisallowTypesCarts", "", "Types of item to disallow pulling for, comma-separated.");
+            AutoStorePatch.itemAllowTypesCarts = Config.Bind<string>("Auto Storage", "ItemAllowTypesCarts", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesCarts");
+            AutoStorePatch.itemDisallowTypesShips = Config.Bind<string>("Auto Storage", "ItemDisallowTypesShips", "", "Types of item to disallow pulling for, comma-separated.");
+            AutoStorePatch.itemAllowTypesShips = Config.Bind<string>("Auto Storage", "ItemAllowTypesShips", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesShips");
+            AutoStorePatch.toggleString = Config.Bind<string>("Auto Storage", "ToggleString", "Auto Pull: {0}", "Text to show on toggle. {0} is replaced with true/false");
+            AutoStorePatch.toggleKey = Config.Bind<string>("Auto Storage", "ToggleKey", "", "Key to toggle behaviour. Leave blank to disable the toggle key.");
+            AutoStorePatch.mustHaveItemToPull = Config.Bind<bool>("Auto Storage", "MustHaveItemToPull", false, "If true, a container must already have at least one of the item to pull.");
+            AutoStorePatch.isOn = Config.Bind<bool>("Auto Storage", "IsOn", true, "Behaviour is currently on or not");
 
 
             EAQS.EAQS.extraRows = Config.Bind<int>("EAQS", "ExtraRows", 0, "Number of extra ordinary rows.");
             EAQS.EAQS.addEquipmentRow = Config.Bind<bool>("EAQS", "AddEquipmentRow", true, "Add special row for equipped items and quick slots.");
-            EAQS.EAQS.displayEquipmentRowSeparate = Config.Bind<bool>("Toggles", "DisplayEquipmentRowSeparate", true, "Display equipment and quickslots in their own area.");
+            EAQS.EAQS.displayEquipmentRowSeparate = Config.Bind<bool>("EAQS", "DisplayEquipmentRowSeparate", true, "Display equipment and quickslots in their own area.");
 
             EAQS.EAQS.helmetText = Config.Bind<string>("EAQS", "HelmetText", "Head", "Text to show for helmet slot.");
             EAQS.EAQS.chestText = Config.Bind<string>("EAQS", "ChestText", "Chest", "Text to show for chest slot.");
