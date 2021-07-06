@@ -222,9 +222,6 @@ namespace vrp.Patches
 
 		public static SyncedList fresh;
 
-		public static SyncedList classes;
-
-		public static string playerClass = "";
 
 		public static Dictionary<string, int> timers = new Dictionary<string, int>();
 
