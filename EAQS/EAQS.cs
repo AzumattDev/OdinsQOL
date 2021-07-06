@@ -32,8 +32,8 @@ namespace VMP_Mod.EAQS
 
         public static ConfigEntry<string>[] hotkeys;
 
-        private static ConfigEntry<float> quickAccessX;
-        private static ConfigEntry<float> quickAccessY;
+        public static ConfigEntry<float> quickAccessX;
+        public static ConfigEntry<float> quickAccessY;
 
         private static GameObject elementPrefab;
 
