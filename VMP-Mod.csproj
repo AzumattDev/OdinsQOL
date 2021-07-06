@@ -302,6 +302,7 @@
     <Compile Include="EAQS\EAQS.cs" />
     <Compile Include="EAQS\QuickAccessBar.cs" />
     <Compile Include="Patches\ClientPatches.cs" />
+    <Compile Include="Patches\ListPatches.cs" />
     <Compile Include="Patches\ServerPatches.cs" />
     <Compile Include="Patches\WorldPatches.cs" />
     <Compile Include="Utils.cs" />

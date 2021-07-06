@@ -163,22 +163,6 @@ namespace VMP_Mod
 			}
 		}
 
-		[HarmonyPatch(typeof(Game), "SpawnPlayer")]
-		private class respawnclass
-		{
-			private static void Postfix()
-			{
-				try
-				{
-					ZRoutedRpc.instance.Register<string>("ClientSetClass", RPC_SetClass);
-				}
-				catch (Exception)
-				{
-					ZLog.LogError("already registered ClientSetClass");
-				}
-				ZRoutedRpc.instance.InvokeRoutedRPC("ServerGetClass", Player.m_localPlayer.GetPlayerName());
-			}
-		}
 
 
 
@@ -225,8 +209,6 @@ namespace VMP_Mod
 			}
 		}
 
-	
-
 		public static bool admin = false;
 
 		public static string playerClass = "";
@@ -259,13 +241,5 @@ namespace VMP_Mod
 			}
 		}
 
-		public static void RPC_SetClass(long sender, string vclass)
-		{
-			if (ZNet.instance != null && !ZNet.instance.IsServer())
-			{
-				ZLog.LogWarning("vmp got class from server " + vclass);
-				playerClass = vclass;
-			}
-		}
 	}
 }

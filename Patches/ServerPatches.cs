@@ -17,7 +17,6 @@ namespace vrp.Patches
 				if (ZNet.instance.IsServer())
 				{
 					fresh = new SyncedList(Utils.GetSaveDataPath() + "/fresh.txt", "List fresh players ID|name ONE per line");
-					classes = new SyncedList(Utils.GetSaveDataPath() + "/classes.txt", "List player classes ID|class ONE per line");
 				}
 			}
 		}
@@ -31,7 +30,6 @@ namespace vrp.Patches
 			{
 				ZRoutedRpc.instance.Register<string>("ServerModerationLog", RPC_ModerationLog);
 				ZRoutedRpc.instance.Register<string>("ServerAddFresh", RPC_AddFresh);
-				ZRoutedRpc.instance.Register<string>("ServerGetClass", RPC_GetClass);
 			}
 		}
 
@@ -230,31 +228,6 @@ namespace vrp.Patches
 
 		public static Dictionary<string, int> timers = new Dictionary<string, int>();
 
-		public static void RPC_GetClass(long sender, string playername)
-		{
-			string text = "";
-			if (!(ZNet.instance != null) || !ZNet.instance.IsServer() || string.IsNullOrWhiteSpace(playername))
-			{
-				return;
-			}
-			ZNetPeer peerByPlayerName = ZNet.instance.GetPeerByPlayerName(playername);
-			if (!(peerByPlayerName?.IsReady() ?? false))
-			{
-				return;
-			}
-			List<string> list = classes.GetList();
-			foreach (string item in list)
-			{
-				string[] array = item.Split('|');
-				if (array[0] == peerByPlayerName.m_socket.GetHostName())
-				{
-					RPC_ModerationLog(0L, peerByPlayerName.m_socket.GetHostName() + "|" + peerByPlayerName.m_playerName + " sent class " + array[1]);
-					text = array[1];
-				}
-			}
-			ZRoutedRpc.instance.InvokeRoutedRPC(peerByPlayerName.m_uid, "ClientSetClass", text);
-		}
-
 		public static void RPC_AddFresh(long sender, string playername)
 		{
 			ZLog.Log("RPC_AddFresh " + playername);
@@ -274,7 +247,7 @@ namespace vrp.Patches
 		{
 			if (ZNet.instance != null && ZNet.instance.IsServer())
 			{
-				string path = Utils.GetSaveDataPath() + "/moderation.txt";
+				string path = Utils.GetSaveDataPath() + "/PlayerAuditLog.txt";
                 using StreamWriter streamWriter = new StreamWriter(path, append: true);
 				streamWriter.WriteLine(DateTime.Now.ToUniversalTime().ToString() + " " + msg);
 			}
