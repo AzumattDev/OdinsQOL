@@ -229,6 +229,22 @@ namespace VMP_Mod
 
             EAQS.EAQS.quickAccessX = Config.Bind<float>("EAQS", "quickAccessX", 9999, "Current X of Quick Slots");
             EAQS.EAQS.quickAccessY = Config.Bind<float>("EAQS", "quickAccessY", 9999, "Current Y of Quick Slots");
+            
+            
+            PlantGrowth.displayGrowth = config<bool>("PlantGrowth", "DisplayGrowth", true, "Display growth progress in hover text");
+            PlantGrowth.plantAnywhere = config<bool>("PlantGrowth", "PlantAnywhere", false, "Don't require cultivated ground to plant anything");
+            PlantGrowth.ignoreBiome = config<bool>("PlantGrowth", "IgnoreBiome", false, "Allow planting anything in any biome.");
+            PlantGrowth.ignoreSun = config<bool>("PlantGrowth", "IgnoreSun", false, "Allow planting under roofs.");
+            PlantGrowth.preventPlantTooClose = config<bool>("PlantGrowth", "PreventPlantTooClose", true, "Prevent plants from being planted if they are too close together to grow.");
+            PlantGrowth.preventDestroyIfCantGrow = config<bool>("PlantGrowth", "PreventDestroyIfCantGrow", false, "Prevent destruction of plants that normally are destroyed if they can't grow.");
+            PlantGrowth.growthTimeMultTree = config<float>("PlantGrowth", "GrowthTimeMultTree", 1f, "Multiply time taken to grow by this amount.");
+            PlantGrowth.growRadiusMultTree = config<float>("PlantGrowth", "GrowthRadiusMultTree", 1f, "Multiply required space to grow by this amount.");
+            PlantGrowth.minScaleMultTree = config<float>("PlantGrowth", "MinScaleMultTree", 1f, "Multiply minimum size by this amount.");
+            PlantGrowth.maxScaleMultTree = config<float>("PlantGrowth", "MaxScaleMultTree", 1f, "Multiply maximum size by this amount.");
+            PlantGrowth.growthTimeMultPlant = config<float>("PlantGrowth", "GrowthTimeMultPlant", 1f, "Multiply time taken to grow by this amount.");
+            PlantGrowth.growRadiusMultPlant = config<float>("PlantGrowth", "GrowthRadiusMultPlant", 1f, "Multiply required space to grow by this amount.");
+            PlantGrowth.minScaleMultPlant = config<float>("PlantGrowth", "MinScaleMultPlant", 1f, "Multiply minimum size by this amount.");
+            PlantGrowth.maxScaleMultPlant = config<float>("PlantGrowth", "MaxScaleMultPlant", 1f, "Multiply maximum size by this amount.");
 
             if (!modEnabled.Value)
                 return;
@@ -239,11 +255,6 @@ namespace VMP_Mod
                 EAQS.EAQS.hotKey2,
                 EAQS.EAQS.hotKey3,
             };
-
-
-
-            if (!modEnabled.Value)
-                return;
 
             if (!Directory.Exists(VMP_DatadirectoryPath))
             {
