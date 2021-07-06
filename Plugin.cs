@@ -172,6 +172,11 @@ namespace VMP_Mod
             GamePatches.disableCameraShake = config<float>("Player", "Cam shake factor", 0, "Cam Shake factor", true);
             GamePatches.baseMaximumWeight = config<float>("Player", "Base maximum weight addition for player", 350f, "Base max weight addition for player", true);
             GamePatches.maximumPlacementDistance = config<float>("General", "Build distance alteration", 15, "Build Distance alteration", true);
+            GamePatches.savePlayerProfileInterval = Config.Bind("Global","savePlayerProfileInterval",300,"Interval (in seconds) for how often to save the player profile. Game default (and maximum) is 1200s.");
+            GamePatches.setLogoutPointOnSave = Config.Bind("Global","setLogoutPointOnSave", true, "Sets your logout point to your current position when the mod performs a save.");
+            GamePatches.showMessageOnModSave = Config.Bind("Global","saveMessageOnModSave", true, "Show a message (in the middle of your screen) when the mod tries to save.");
+
+
 
 
             ImprovedBuildHudConfig.InventoryAmountFormat = Config.Bind("Building HUD", "Inventory Amount Format", "({0})", "Format for the amount of items in the player inventory to show after the required amount. Uses standard C# format rules. Leave empty to hide altogether.");

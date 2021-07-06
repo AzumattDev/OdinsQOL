@@ -38,6 +38,12 @@ namespace VMP_Mod.Patches
         public static ConfigEntry<float> maximumPlacementDistance;
         public static ConfigEntry<int> maxPlayers;
 
+
+        public static ConfigEntry<int> savePlayerProfileInterval;
+        public static ConfigEntry<bool> setLogoutPointOnSave;
+        public static ConfigEntry<bool> showMessageOnModSave;
+
+
         [HarmonyPatch(typeof(Game), nameof(Game.UpdateRespawn))]
         public static class Game_UpdateRespawn_Patch
         {
@@ -609,6 +615,45 @@ namespace VMP_Mod.Patches
                     }
                     ___m_buildSelection.text = $"{displayName} {canBuildDisplay}";
                 }
+            }
+        }
+
+        [HarmonyPatch(typeof(Game))]
+        private class GamePatch
+        {
+            [HarmonyPostfix]
+            [HarmonyPatch(nameof(Game.UpdateSaving))]
+            private static void UpdateSavingPostfix(ref Game __instance)
+            {
+
+                if (__instance.m_saveTimer == 0f || __instance.m_saveTimer < savePlayerProfileInterval.Value)
+                {
+                    return;
+                }
+
+                if (showMessageOnModSave.Value)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "Saving player profile...");
+                }
+
+                __instance.m_saveTimer = 0f;
+                __instance.SavePlayerProfile(/*setLogoutPoint=*/ setLogoutPointOnSave.Value);
+
+                if (ZNet.instance)
+                {
+                    ZNet.instance.Save(/*sync=*/ false);
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(Player))]
+        private class PlayerPatch
+        {
+            [HarmonyPostfix]
+            [HarmonyPatch(nameof(Player.OnDeath))]
+            private static void PlayerOnDeathPostfix(ref Player __instance)
+            {
+                Game.instance.m_playerProfile.ClearLoguoutPoint();
             }
         }
 
