@@ -646,6 +646,29 @@ namespace VMP_Mod.Patches
             }
         }
 
+
+        //[HarmonyPatch(typeof(Game), nameof(Game.UpdateSaving))]
+        //private static class PatchGameUpdateSaving
+        //{
+        //    private static readonly MethodInfo getAutoSaveInterval = AccessTools.DeclaredMethod(typeof(PatchGameUpdateSaving), nameof(getAutoSaveIntervalSetting));
+        //    private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        //    {
+        //        foreach (CodeInstruction instruction in instructions)
+        //        {
+        //            if (instruction.opcode == OpCodes.Ldc_R4 && instruction.OperandIs(Game.m_saveInterval))
+        //            {
+        //                yield return new CodeInstruction(OpCodes.Call, getAutoSaveInterval);
+        //            }
+        //            else
+        //            {
+        //                yield return instruction;
+        //            }
+        //        }
+        //    }
+
+        //    private static float getAutoSaveIntervalSetting() => ServerCharacters.autoSaveInterval.Value * 60;
+        //}
+
         [HarmonyPatch(typeof(Player))]
         private class PlayerPatch
         {

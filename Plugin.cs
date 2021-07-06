@@ -252,6 +252,16 @@ namespace VMP_Mod
             PlantGrowth.minScaleMultPlant = config<float>("PlantGrowth", "MinScaleMultPlant", 1f, "Multiply minimum size by this amount.");
             PlantGrowth.maxScaleMultPlant = config<float>("PlantGrowth", "MaxScaleMultPlant", 1f, "Multiply maximum size by this amount.");
 
+            WearNTear_Patches.NoWeatherDam = config<bool>("WearNTear_Patches", "No Weather Damgae to bldgs", true, "No Weather Damgae to bldgs");
+            WearNTear_Patches.DisableStructintegrity = config<bool>("WearNTear_Patches", "Disable Structural Integrety system", true, "Disable Structural Integrety system");
+            WearNTear_Patches.DisableBoatDamage = config<bool>("WearNTear_Patches", "Disable Boat Damage", true, "Disable Boat Damage");
+            WearNTear_Patches.NoPlayerStructDam = config<bool>("WearNTear_Patches", "No Damgae to player bldgs", true, "No Damgae to player bldgs");
+
+            WearNTear_Patches.StructuralIntegritywood = config<float>("WearNTear_Patches", "Wood Structural Integrity", 100, "Wood Structural Integrity");
+            WearNTear_Patches.StructuralIntegritystone = config<float>("WearNTear_Patches", "Stone Structural Integrity", 100, "Stone Structural Integrity");
+            WearNTear_Patches.StructuralIntegrityiron = config<float> ("WearNTear_Patches", "Iron Structural Integrity", 100, "Iron Structural Integrity");
+            WearNTear_Patches.StructuralIntegrityhardWood = config<float>("WearNTear_Patches", "Hardwood Structural Integrity", 100, "Hardwood Structural Integrity");
+
             if (!modEnabled.Value)
                 return;
 

@@ -319,7 +319,7 @@
     <Compile Include="Patches\ChestSizePatch.cs" />
     <Compile Include="Patches\AutoStorePatch.cs" />
     <Compile Include="Patches\SignPatches.cs" />
-    <Compile Include="Patches\WearNTear.cs" />
+    <Compile Include="Patches\WearNTear_Patches.cs" />
     <Compile Include="Patches\GamePatches.cs" />
     <Compile Include="Patches\MapDetail.cs" />
     <Compile Include="Patches\Deconstruct.cs" />
