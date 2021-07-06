@@ -196,7 +196,6 @@ namespace VMP_Mod.Patches
             }
             static void Postfix(Plant __instance, ref bool __result)
             {
-                return;
                 if (!__result)
                 {
                     var spaceMask = LayerMask.GetMask(new string[]
