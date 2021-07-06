@@ -297,6 +297,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EAQS\EAQS.cs" />
+    <Compile Include="EAQS\QuickAccessBar.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="MapSharing\GameObjectAssistant.cs" />
     <Compile Include="MapSharing\ListExtensions.cs" />
