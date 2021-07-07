@@ -388,11 +388,14 @@ namespace VMP_Mod.Patches
 
                 return il.AsEnumerable();
             }
+
         }
+
+
         [HarmonyPatch(typeof(Player), nameof(Player.RemovePiece))]
         public static class Player_RemovePiece_Transpiler
         {
-            private static MethodInfo modifyIsInsideMythicalZone = AccessTools.Method(typeof(Player_RemovePiece_Transpiler), nameof(Player_RemovePiece_Transpiler.IsInsideNoBuildLocation));
+            private static readonly MethodInfo modifyIsInsideMythicalZone = AccessTools.Method(typeof(Player_RemovePiece_Transpiler), nameof(Player_RemovePiece_Transpiler.IsInsideNoBuildLocation));
 
             /// <summary>
             //  Replaces the RemovePiece().Location.IsInsideNoBuildLocation with a stub function
@@ -419,6 +422,45 @@ namespace VMP_Mod.Patches
                 return false;
             }
         }
+
+        [HarmonyPatch(typeof(Player), "UpdatePlacementGhost")]
+        public static class Player_UpdatePlacementGhost_Patch
+        {
+            private static bool Prefix(ref Player __instance, bool flashGuardStone)
+            {
+
+                return true;
+            }
+
+            private static void Postfix(ref Player __instance)
+            {
+
+                try
+                {
+                    if (__instance.m_placementStatus == Player.PlacementStatus.Invalid)
+                    {
+                        __instance.m_placementStatus = Player.PlacementStatus.Valid;
+                        __instance.m_placementGhost.GetComponent<Piece>().SetInvalidPlacementHeightlight(false);
+                    }
+                }
+                catch
+                {
+                }
+                try
+                {
+                    if (__instance.m_placementStatus == Player.PlacementStatus.NoBuildZone)
+                    {
+                        __instance.m_placementStatus = Player.PlacementStatus.Valid;
+                        __instance.m_placementGhost.GetComponent<Piece>().SetInvalidPlacementHeightlight(false);
+                    }
+                }
+                catch
+                {
+                }
+
+            }
+        }
+
 
         [HarmonyPatch(typeof(Player), "OnSpawned")]
         public static class Player_OnSpawned_Patch

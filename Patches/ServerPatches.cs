@@ -51,16 +51,6 @@ namespace vrp.Patches
             }
         }
 
-        [HarmonyPatch(typeof(FejdStartup), "IsPublicPasswordValid")]
-        public static class Passwordfix
-        {
-            private static bool Prefix(string password, World world, ref bool __result, FejdStartup __instance)
-            {
-                __result = true;
-                return false;
-            }
-        }
-
         [HarmonyPatch(typeof(ZNet), "IsAllowed")]
         public static class CharWhitelist
         {

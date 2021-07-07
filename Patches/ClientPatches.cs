@@ -87,6 +87,7 @@ namespace VMP_Mod
 		}
 
 
+
 		[HarmonyPatch(typeof(Player), "SetIntro")]
 		public static class SpawnLog
 		{
