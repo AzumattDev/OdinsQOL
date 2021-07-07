@@ -240,36 +240,5 @@ namespace VMP_Mod
         }
 
 
-        [HarmonyPatch(typeof(Console), "InputText")]
-        static class InputText_Patch
-        {
-            static bool Prefix(Console __instance)
-            {
-                if (!modEnabled.Value)
-                    return true;
-                string text = __instance.m_input.text;
-                if (text.ToLower().Equals($"{debugName} reset"))
-                {
-                    context.Config.Reload();
-                    context.Config.Save();
-                    ApplyConfig();
-                    Traverse.Create(__instance).Method("AddString", new object[] { text }).GetValue();
-                    Traverse.Create(__instance).Method("AddString", new object[] { $"{context.Info.Metadata.Name} config reloaded" }).GetValue();
-                    return false;
-                }
-                if (text.ToLower().Equals($"{debugName} osfonts"))
-                {
-                    Traverse.Create(__instance).Method("AddString", new object[] { text }).GetValue();
-                    Traverse.Create(__instance).Method("AddString", new object[] { "OS Fonts dumped to Player.log" }).GetValue();
-                    string[] fonts = Font.GetOSInstalledFontNames();
-                    foreach (string str in fonts)
-                    {
-                        Dbgl(str);
-                    }
-                    return false;
-                }
-                return true;
-            }
-        }
     }
 }

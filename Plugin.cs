@@ -30,6 +30,10 @@ namespace VMP_Mod
         public const string Version = "0.0.2";
         public const string ModName = "VMP Mod";
         public const string GUID = "com.vmp.mod";
+
+        public static VMP_Modplugin context;
+
+
         public static readonly string VMP_DatadirectoryPath = Paths.BepInExRootPath + "/vmp-data/";
         public static System.Timers.Timer mapSyncSaveTimer =
             new System.Timers.Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
@@ -55,20 +59,11 @@ namespace VMP_Mod
         public static ConfigEntry<bool> NoTeleportPrevention;
         public static ConfigEntry<bool> iHaveArrivedOnSpawn;
 
-        public static List<Container> containerList = new List<Container>();
-        private static VMP_Modplugin context = null;
         public static ServerSync.ConfigSync configSync = new ServerSync.ConfigSync(GUID) { DisplayName = ModName, CurrentVersion = Version };
         private ConfigEntry<bool> serverConfigLocked;
         private static List<Container> _cachedContainers;
 
         public static bool CraftFromContainersInstalledAndActive;
-
-
-        public class ConnectionParams
-        {
-            public GameObject connection = null;
-            public Vector3 stationPos;
-        }
 
         public static void Dbgl(string str = "", bool pref = true)
         {
@@ -102,7 +97,7 @@ namespace VMP_Mod
             preventPlayerFromTurningOffPublicPosition = config<bool>("General", "IsDebug", true, "Show debug messages in log", true );
             displayCartsAndBoats = config<bool>("Maps", "Display Boats/Carts", true, "Show Boats and carts on the map", true );
             exploreRadius = config<int>("Maps", "NexusID", 40, "Explore radius addition", true );
-            context = this;
+    
 
             modEnabled = config<bool>("General", "Enabled", true, "Enable this mod", true );
             isDebug = config<bool>("General", "IsDebug", true, "Show debug messages in log", true );
