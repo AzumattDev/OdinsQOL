@@ -23,8 +23,10 @@ namespace VMP_Mod
         public static ConfigEntry<string> CanBuildAmountColor;
     }
     [BepInPlugin(VMP_Modplugin.GUID, VMP_Modplugin.ModName, VMP_Modplugin.Version)]
-    public class VMP_Modplugin : BaseUnityPlugin
+    public partial class VMP_Modplugin : BaseUnityPlugin
     {
+        private static string debugName = "clockmod";
+        private static int windowId = 434343;
         public const string Version = "0.0.2";
         public const string ModName = "VMP Mod";
         public const string GUID = "com.vmp.mod";
@@ -151,7 +153,11 @@ namespace VMP_Mod
             MapDetail.unownedBuildingColor = Config.Bind<Color>("Map Details", "UnownedBuildingColor", Color.yellow, "Color of npc build pieces");
             MapDetail.customPlayerColors = Config.Bind<string>("Map Details", "CustomPlayerColors", "", "Custom color list, comma-separated. Use either <name>:<colorCode> pair entries or just <colorCode> entries. E.g. Erinthe:FF0000 or just FF0000. The latter will assign a color randomly to each connected peer.");
 
+            toggleClockKeyMod = Config.Bind<string>("General", "ShowClockKeyMod", "", "Extra modifier key used to toggle the clock display. Leave blank to not require one. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            toggleClockKey = Config.Bind<string>("General", "ShowClockKey", "home", "Key used to toggle the clock display. use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            clockLocationString = Config.Bind<string>("General", "ClockLocationString", "50%,3%", "Location on the screen to show the clock (x,y) or (x%,y%)");
 
+            LoadConfig();
 
             CraftingPatch.maxEntries = Config.Bind<int>("Show Chest Contents", "MaxEntries", -1, "Max number of entries to show");
             CraftingPatch.sortType = Config.Bind<CraftingPatch.SortType>("Show Chest Contents", "SortType", CraftingPatch.SortType.Value, "Type by which to sort entries.");
@@ -396,7 +402,12 @@ namespace VMP_Mod
             }
 
             CraftingPatch.lastMousePos = Input.mousePosition;
+            if (Utils.IgnoreKeyPresses() || toggleClockKeyOnPress.Value || !PressedToggleKey())
+                return;
 
+            bool show = showingClock.Value;
+            showingClock.Value = !show;
+            Config.Save();
         }
         private static bool CheckKeyDown(string value)
         {
@@ -483,6 +494,20 @@ namespace VMP_Mod
 
             return newValue;
         }
+        private string GetCurrentTimeString()
+        {
+            if (!EnvMan.instance)
+                return "";
+            float fraction = (float)typeof(EnvMan).GetField("m_smoothDayFraction", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(EnvMan.instance);
 
+            int hour = (int)(fraction * 24);
+            int minute = (int)((fraction * 24 - hour) * 60);
+            int second = (int)((((fraction * 24 - hour) * 60) - minute) * 60);
+
+            DateTime now = DateTime.Now;
+            DateTime theTime = new DateTime(now.Year, now.Month, now.Day, hour, minute, second);
+            int days = Traverse.Create(EnvMan.instance).Method("GetCurrentDay").GetValue<int>();
+            return GetCurrentTimeString(theTime, fraction, days);
+        }
     }
 }
