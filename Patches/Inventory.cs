@@ -2,7 +2,6 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using VMP_Mod;
 
 namespace VMP_Mod.GameClasses
 {

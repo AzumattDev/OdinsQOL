@@ -2,7 +2,6 @@
 using HarmonyLib;
 using System;
 using UnityEngine;
-using System.IO;
 
 namespace VMP_Mod
 {

@@ -9,8 +9,6 @@ using UnityEngine;
 using ServerSync;
 using VMP_Mod.Patches;
 using VMP_Mod.RPC;
-using VMP_Mod.EAQS;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 namespace VMP_Mod
@@ -25,9 +23,8 @@ namespace VMP_Mod
     [BepInPlugin(VMP_Modplugin.GUID, VMP_Modplugin.ModName, VMP_Modplugin.Version)]
     public partial class VMP_Modplugin : BaseUnityPlugin
     {
-        private static string debugName = "clockmod";
         private static int windowId = 434343;
-        public const string Version = "0.0.2";
+        public const string Version = "0.0.3";
         public const string ModName = "VMP Mod";
         public const string GUID = "com.vmp.mod";
 
@@ -88,38 +85,38 @@ namespace VMP_Mod
         public void Awake()
         {
 
-            serverConfigLocked = config("General", "Lock Configuration", true, "Lock Configuration", true );
+            serverConfigLocked = config("General", "Lock Configuration", true, "Lock Configuration", true);
             configSync.AddLockingConfigEntry<bool>(serverConfigLocked);
-            shareMapProgression = config<bool>("Maps", "Share Map Progress with others", false, "Share Map Progress with others", true );
-            mapIsEnabled = config<bool>("Maps", "Map Control enabled", true, "Map Control enabled", true );
-            shareablePins = config<bool>("Maps", "Share Pins", true, "Share pins with other players", true );
-            shareAllPins = config<bool>("Maps", "Share ALL pins with other players", false, "Share ALL pins with other players", true );
-            preventPlayerFromTurningOffPublicPosition = config<bool>("General", "IsDebug", true, "Show debug messages in log", true );
-            displayCartsAndBoats = config<bool>("Maps", "Display Boats/Carts", true, "Show Boats and carts on the map", true );
-            exploreRadius = config<int>("Maps", "NexusID", 40, "Explore radius addition", true );
-    
-
-            modEnabled = config<bool>("General", "Enabled", true, "Enable this mod", true );
-            isDebug = config<bool>("General", "IsDebug", true, "Show debug messages in log", true );
-
-            Container_Configs.KarveRow = config<int>("Containers", "Karve Rows", 2, new ConfigDescription("Rows for Karve", new AcceptableValueRange<int>(2, 30)), true );
-            Container_Configs.KarveCol = config<int>("Containers", "Karve Columns", 2, new ConfigDescription("Columns for Karve", new AcceptableValueRange<int>(2, 8)), true );
-            Container_Configs.LongRow = config<int>("Containers", "Longboat Rows", 3, new ConfigDescription("Rows for longboat", new AcceptableValueRange<int>(3, 30)), true );
-            Container_Configs.LongCol = config<int>("Containers", "Longboat Columns", 6, new ConfigDescription("Columns for longboat", new AcceptableValueRange<int>(6, 8)), true );
-            Container_Configs.CartRow = config<int>("Containers", "Cart Rows", 3, new ConfigDescription("Rows for Cart", new AcceptableValueRange<int>(3, 30)), true );
-            Container_Configs.CartCol = config<int>("Containers", "Cart Colums", 6, new ConfigDescription("Columns for Cart", new AcceptableValueRange<int>(6, 8)), true );
-            Container_Configs.PersonalRow = config<int>("Containers", "Personal Chest Rows", 2, new ConfigDescription("Personal Chest Rows", new AcceptableValueRange<int>(2, 20)), true );
-            Container_Configs.PersonalCol = config<int>("Containers", "Personal Chest Colums", 3, new ConfigDescription("Personal Chest Colums", new AcceptableValueRange<int>(3, 8)), true );
-            Container_Configs.WoodRow = config<int>("Containers", "Wood Chest Rows", 2, new ConfigDescription("Wood Chest Rows", new AcceptableValueRange<int>(2, 10)), true );
-            Container_Configs.WoodCol = config<int>("Containers", "Wood Chest Colums", 5, new ConfigDescription("Wood Chest Colums", new AcceptableValueRange<int>(5, 8)), true );
-            Container_Configs.IronRow = config<int>("Containers", "Iron Chest Rows", 3, new ConfigDescription("Iron Chest Rows", new AcceptableValueRange<int>(3, 20)), true );
-            Container_Configs.IronCol = config<int>("Containers", "Iron Chest Colums", 6, new ConfigDescription("Iron Chest Colums", new AcceptableValueRange<int>(6, 8)), true );
+            shareMapProgression = config<bool>("Maps", "Share Map Progress with others", false, "Share Map Progress with others", true);
+            mapIsEnabled = config<bool>("Maps", "Map Control enabled", true, "Map Control enabled", true);
+            shareablePins = config<bool>("Maps", "Share Pins", true, "Share pins with other players", true);
+            shareAllPins = config<bool>("Maps", "Share ALL pins with other players", false, "Share ALL pins with other players", true);
+            preventPlayerFromTurningOffPublicPosition = config<bool>("General", "IsDebug", true, "Show debug messages in log", true);
+            displayCartsAndBoats = config<bool>("Maps", "Display Boats/Carts", true, "Show Boats and carts on the map", true);
+            exploreRadius = config<int>("Maps", "NexusID", 40, "Explore radius addition", true);
 
 
-            CraftingPatch.WorkbenchRange = config<int>("WorkBench", "WorkBenchRange", 40, new ConfigDescription("Range you can build from workbench in meters", new AcceptableValueRange<int>(6, 650)), true );
-            CraftingPatch.workbenchEnemySpawnRange = config<int>("WorkBench", "WorkBenchRange (Playerbase size)", 40, new ConfigDescription("Workbench PlayerBase radius, this is how far away enemies spawn", new AcceptableValueRange<int>(6, 650)), true );
-            CraftingPatch.AlterWorkBench = config<bool>("WorkBench", "Change No Roof Behavior", true, "Show building pieces", true );
-            workbenchAttachmentRange = config<int>("WorkBench", "WorkBench Extension", 40, new ConfigDescription("Range for workbench extensions", new AcceptableValueRange<int>(5, 100)), true );
+            modEnabled = config<bool>("General", "Enabled", true, "Enable this mod", true);
+            isDebug = config<bool>("General", "IsDebug", true, "Show debug messages in log", true);
+
+            Container_Configs.KarveRow = config<int>("Containers", "Karve Rows", 2, new ConfigDescription("Rows for Karve", new AcceptableValueRange<int>(2, 30)), true);
+            Container_Configs.KarveCol = config<int>("Containers", "Karve Columns", 2, new ConfigDescription("Columns for Karve", new AcceptableValueRange<int>(2, 8)), true);
+            Container_Configs.LongRow = config<int>("Containers", "Longboat Rows", 3, new ConfigDescription("Rows for longboat", new AcceptableValueRange<int>(3, 30)), true);
+            Container_Configs.LongCol = config<int>("Containers", "Longboat Columns", 6, new ConfigDescription("Columns for longboat", new AcceptableValueRange<int>(6, 8)), true);
+            Container_Configs.CartRow = config<int>("Containers", "Cart Rows", 3, new ConfigDescription("Rows for Cart", new AcceptableValueRange<int>(3, 30)), true);
+            Container_Configs.CartCol = config<int>("Containers", "Cart Colums", 6, new ConfigDescription("Columns for Cart", new AcceptableValueRange<int>(6, 8)), true);
+            Container_Configs.PersonalRow = config<int>("Containers", "Personal Chest Rows", 2, new ConfigDescription("Personal Chest Rows", new AcceptableValueRange<int>(2, 20)), true);
+            Container_Configs.PersonalCol = config<int>("Containers", "Personal Chest Colums", 3, new ConfigDescription("Personal Chest Colums", new AcceptableValueRange<int>(3, 8)), true);
+            Container_Configs.WoodRow = config<int>("Containers", "Wood Chest Rows", 2, new ConfigDescription("Wood Chest Rows", new AcceptableValueRange<int>(2, 10)), true);
+            Container_Configs.WoodCol = config<int>("Containers", "Wood Chest Colums", 5, new ConfigDescription("Wood Chest Colums", new AcceptableValueRange<int>(5, 8)), true);
+            Container_Configs.IronRow = config<int>("Containers", "Iron Chest Rows", 3, new ConfigDescription("Iron Chest Rows", new AcceptableValueRange<int>(3, 20)), true);
+            Container_Configs.IronCol = config<int>("Containers", "Iron Chest Colums", 6, new ConfigDescription("Iron Chest Colums", new AcceptableValueRange<int>(6, 8)), true);
+
+
+            CraftingPatch.WorkbenchRange = config<int>("WorkBench", "WorkBenchRange", 40, new ConfigDescription("Range you can build from workbench in meters", new AcceptableValueRange<int>(6, 650)), true);
+            CraftingPatch.workbenchEnemySpawnRange = config<int>("WorkBench", "WorkBenchRange (Playerbase size)", 40, new ConfigDescription("Workbench PlayerBase radius, this is how far away enemies spawn", new AcceptableValueRange<int>(6, 650)), true);
+            CraftingPatch.AlterWorkBench = config<bool>("WorkBench", "Change No Roof Behavior", true, "Show building pieces", true);
+            workbenchAttachmentRange = config<int>("WorkBench", "WorkBench Extension", 40, new ConfigDescription("Range for workbench extensions", new AcceptableValueRange<int>(5, 100)), true);
 
             CraftingPatch.useScrollWheel = Config.Bind<bool>("Settings", "ScrollWheel", true, "Use scroll wheel to switch filter");
             CraftingPatch.showMenu = Config.Bind<bool>("Settings", "ShowMenu", true, "Show filter menu on hover");
@@ -130,17 +127,17 @@ namespace VMP_Mod
             CraftingPatch.assetPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), typeof(VMP_Modplugin).Namespace);
 
 
-            WeightReduction = config<float>("Items", "Item Weight Increase", 1.25f, new ConfigDescription("Multiplier for your item weight"), true );
-            itemStackMultiplier = config<float>("Items", "Item Stack Increase", 2f, new ConfigDescription("Multiplier for your item stacks"), true );
-            NoTeleportPrevention = config<bool>("Items", "Disable Teleport check for items", false, new ConfigDescription("Disable Teleport check for items"), true );
-            filltoptobottom = config<bool>("Items", "Fill your things top to bottom when moving from inv to chest", true, new ConfigDescription("Move your things top to bottom when changing from inv to chest"), true );
+            WeightReduction = config<float>("Items", "Item Weight Increase", 1.25f, new ConfigDescription("Multiplier for your item weight"), true);
+            itemStackMultiplier = config<float>("Items", "Item Stack Increase", 2f, new ConfigDescription("Multiplier for your item stacks"), true);
+            NoTeleportPrevention = config<bool>("Items", "Disable Teleport check for items", false, new ConfigDescription("Disable Teleport check for items"), true);
+            filltoptobottom = config<bool>("Items", "Fill your things top to bottom when moving from inv to chest", true, new ConfigDescription("Move your things top to bottom when changing from inv to chest"), true);
 
-            Deconstruct = config<bool>("Items", "Allow deconstruction of items in crafting menu", true, new ConfigDescription("Deconstructing crafting items for return of mats"), true );
-            AutoRepair = config<bool>("Items", "Auto repair your things when interacting with build station", true, new ConfigDescription("Auto repair your things when interacting with build station"), true );
-            returnedpercent = config<int>("Items", "Percent of item materials you would recieve back from deconstruction", 100, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"), true );
+            Deconstruct = config<bool>("Items", "Allow deconstruction of items in crafting menu", true, new ConfigDescription("Deconstructing crafting items for return of mats"), true);
+            AutoRepair = config<bool>("Items", "Auto repair your things when interacting with build station", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
+            returnedpercent = config<int>("Items", "Percent of item materials you would recieve back from deconstruction", 100, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"), true);
 
 
-            MapDetail.showRange = config<float>("Map Details", "ShowRange", 50f, "Range in metres around player to show details",true);
+            MapDetail.showRange = config<float>("Map Details", "ShowRange", 50f, "Range in metres around player to show details", true);
             MapDetail.updateDelta = config<float>("Map Details", "UpdateDelta", 5f, "Distance in metres to move before automatically updating the map details", true);
             MapDetail.showBuildings = config<bool>("Map Details", "ShowBuildings", true, "Show building pieces", true);
             MapDetail.personalBuildingColor = Config.Bind<Color>("Map Details", "PersonalBuildingColor", Color.green, "Color of one's own build pieces");
@@ -187,7 +184,7 @@ namespace VMP_Mod
             GamePatches.baseMaximumWeight = config<float>("Player", "Base maximum weight addition for player", 350f, "Base max weight addition for player", true);
             GamePatches.maximumPlacementDistance = config<float>("General", "Build distance alteration", 15, "Build Distance alteration", true);
 
-            GamePatches.savePlayerProfileInterval = Config.Bind("PlayerSaves","savePlayerProfileInterval",300,"Interval (in seconds) for how often to save the player profile. Game default (and maximum) is 1200s.");
+            GamePatches.savePlayerProfileInterval = Config.Bind("PlayerSaves", "savePlayerProfileInterval", 300, "Interval (in seconds) for how often to save the player profile. Game default (and maximum) is 1200s.");
             GamePatches.setLogoutPointOnSave = Config.Bind("PlayerSaves", "setLogoutPointOnSave", true, "Sets your logout point to your current position when the mod performs a save.");
             GamePatches.showMessageOnModSave = Config.Bind("PlayerSaves", "saveMessageOnModSave", true, "Show a message (in the middle of your screen) when the mod tries to save.");
 
@@ -249,8 +246,8 @@ namespace VMP_Mod
 
             EAQS.EAQS.quickAccessX = Config.Bind<float>("EAQS", "quickAccessX", 9999, "Current X of Quick Slots");
             EAQS.EAQS.quickAccessY = Config.Bind<float>("EAQS", "quickAccessY", 9999, "Current Y of Quick Slots");
-            
-            
+
+
             PlantGrowth.displayGrowth = config<bool>("PlantGrowth", "DisplayGrowth", true, "Display growth progress in hover text");
             PlantGrowth.plantAnywhere = config<bool>("PlantGrowth", "PlantAnywhere", false, "Don't require cultivated ground to plant anything");
             PlantGrowth.ignoreBiome = config<bool>("PlantGrowth", "IgnoreBiome", false, "Allow planting anything in any biome.");
@@ -273,7 +270,7 @@ namespace VMP_Mod
 
             WearNTear_Patches.StructuralIntegritywood = config<float>("WearNTear_Patches", "Wood Structural Integrity", 100, "Wood Structural Integrity");
             WearNTear_Patches.StructuralIntegritystone = config<float>("WearNTear_Patches", "Stone Structural Integrity", 100, "Stone Structural Integrity");
-            WearNTear_Patches.StructuralIntegrityiron = config<float> ("WearNTear_Patches", "Iron Structural Integrity", 100, "Iron Structural Integrity");
+            WearNTear_Patches.StructuralIntegrityiron = config<float>("WearNTear_Patches", "Iron Structural Integrity", 100, "Iron Structural Integrity");
             WearNTear_Patches.StructuralIntegrityhardWood = config<float>("WearNTear_Patches", "Hardwood Structural Integrity", 100, "Hardwood Structural Integrity");
 
             if (!modEnabled.Value)
@@ -440,7 +437,7 @@ namespace VMP_Mod
 
             return playerInventoryCount + containerCount;
         }
-    
+
 
         [HarmonyPatch(typeof(Player), "PlacePiece")]
         static class Player_PlacePiece_Patch
