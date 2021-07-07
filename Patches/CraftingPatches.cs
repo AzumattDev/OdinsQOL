@@ -2,6 +2,9 @@
 using HarmonyLib;
 using UnityEngine;
 using System.Collections.Generic;
+using System;
+using UnityEngine.UI;
+using System.IO;
 
 namespace VMP_Mod.Patches
 {
@@ -15,6 +18,22 @@ namespace VMP_Mod.Patches
         public static ConfigEntry<bool> sortAsc;
         public static ConfigEntry<string> entryString;
         public static ConfigEntry<string> overFlowText;
+        public static ConfigEntry<bool> useScrollWheel;
+        public static ConfigEntry<bool> showMenu;
+        public static ConfigEntry<string> scrollModKey;
+        public static ConfigEntry<string> prevHotKey;
+        public static ConfigEntry<string> nextHotKey;
+        public static ConfigEntry<string> categoryFile;
+        public static Dictionary<string, List<ItemDrop.ItemData.ItemType>> categoryDict = new Dictionary<string, List<ItemDrop.ItemData.ItemType>>();
+        public static List<string> categoryNames = new List<string>();
+        public static List<GameObject> dropDownList = new List<GameObject>();
+
+        public static int lastCategoryIndex = 0;
+        public static Vector3 lastMousePos;
+        public static bool isShowing = false;
+        public static string craftText = "Craft";
+        public static string assetPath;
+        public static int tabCraftPressed = 0;
 
         public enum SortType
         {
@@ -253,6 +272,238 @@ namespace VMP_Mod.Patches
                 m_stack = idd.m_stack;
             }
         }
-    }
 
+
+
+
+        public static void LoadCategories()
+        {
+            if (!Directory.Exists(assetPath))
+            {
+               VMP_Modplugin.Dbgl("Creating mod folder");
+                Directory.CreateDirectory(assetPath);
+            }
+
+            string file = Path.Combine(assetPath, categoryFile.Value);
+            CategoryData data;
+            if (!File.Exists(file))
+            {
+                VMP_Modplugin.Dbgl("Creating category file");
+                data = new CategoryData();
+                File.WriteAllText(file, JsonUtility.ToJson(data));
+
+            }
+            else
+            {
+                data = JsonUtility.FromJson<CategoryData>(File.ReadAllText(file));
+            }
+            VMP_Modplugin.Dbgl("Loaded" + data.categories.Count + " categories");
+
+            categoryDict.Clear();
+            categoryNames.Clear();
+
+            foreach (string cat in data.categories)
+            {
+                if (!cat.Contains(":"))
+                    continue;
+                string[] parts = cat.Split(':');
+                string[] types = parts[1].Split(',');
+                categoryNames.Add(parts[0]);
+
+                categoryDict[parts[0]] = new List<ItemDrop.ItemData.ItemType>();
+                foreach (string type in types)
+                {
+                    if (Enum.TryParse(type, out ItemDrop.ItemData.ItemType result))
+                    {
+                        categoryDict[parts[0]].Add(result);
+                    }
+                }
+            }
+
+            categoryNames.Sort(delegate (string a, string b)
+            {
+                if (categoryDict[a].Contains(ItemDrop.ItemData.ItemType.None))
+                    return -1;
+                if (categoryDict[b].Contains(ItemDrop.ItemData.ItemType.None))
+                    return 1;
+                return (a).CompareTo(b);
+            });
+
+        }
+        private static void SwitchFilter(int idx)
+        {
+            VMP_Modplugin.Dbgl($"switching to filter {idx}");
+
+            lastCategoryIndex = idx;
+            UpdateDropDown(false);
+            SwitchFilter();
+        }
+
+        public static void SwitchFilter(bool next)
+        {
+            //Dbgl($"switching to {(next ? "next" : "last")} filter");
+
+            if (next)
+            {
+                lastCategoryIndex++;
+                lastCategoryIndex %= categoryNames.Count;
+            }
+            else
+            {
+                lastCategoryIndex--;
+                if (lastCategoryIndex < 0)
+                    lastCategoryIndex = categoryNames.Count - 1;
+            }
+            List<Recipe> recipes = new List<Recipe>();
+            Player.m_localPlayer.GetAvailableRecipes(ref recipes);
+            int count = 0;
+            while (!categoryDict[categoryNames[lastCategoryIndex]].Contains(ItemDrop.ItemData.ItemType.None) && recipes.FindAll(r => categoryDict[categoryNames[lastCategoryIndex]].Contains(r.m_item.m_itemData.m_shared.m_itemType)).Count == 0 && count < categoryNames.Count)
+            {
+                count++;
+                if (next)
+                {
+                    lastCategoryIndex++;
+                    lastCategoryIndex %= categoryNames.Count;
+                }
+                else
+                {
+                    lastCategoryIndex--;
+                    if (lastCategoryIndex < 0)
+                        lastCategoryIndex = categoryNames.Count - 1;
+                }
+            }
+
+            SwitchFilter();
+        }
+
+        private static void SwitchFilter()
+        {
+            List<Recipe> recipes = new List<Recipe>();
+            Player.m_localPlayer.GetAvailableRecipes(ref recipes);
+            VMP_Modplugin.Dbgl($"Switching to filter {categoryNames[lastCategoryIndex]} {recipes.Count} total recipes ");
+            Traverse t = Traverse.Create(InventoryGui.instance);
+            t.Method("UpdateRecipeList", new object[] { recipes }).GetValue();
+            t.Method("SetRecipe", new object[] { 0, true }).GetValue();
+            InventoryGui.instance.m_tabCraft.gameObject.GetComponentInChildren<Text>().text = craftText + (categoryDict[categoryNames[lastCategoryIndex]].Contains(ItemDrop.ItemData.ItemType.None) ? "" : "\n" + categoryNames[lastCategoryIndex]);
+        }
+
+        private static void GetFilteredRecipes(ref List<Recipe> recipes)
+        {
+            if (InventoryGui.instance.InCraftTab() && !categoryDict[categoryNames[lastCategoryIndex]].Contains(ItemDrop.ItemData.ItemType.None))
+            {
+                recipes = recipes.FindAll(r => categoryDict[categoryNames[lastCategoryIndex]].Contains(r.m_item.m_itemData.m_shared.m_itemType));
+                VMP_Modplugin.Dbgl($"using filter {categoryNames[lastCategoryIndex]}, {recipes.Count} filtered recipes");
+            }
+        }
+
+
+        public static void UpdateDropDown(bool show)
+        {
+            if (show == isShowing)
+                return;
+            if (show)
+            {
+                List<Recipe> recipes = new List<Recipe>();
+                Player.m_localPlayer.GetAvailableRecipes(ref recipes);
+
+                float gameScale = GameObject.Find("GUI").GetComponent<CanvasScaler>().scaleFactor;
+                Vector2 pos = InventoryGui.instance.m_tabCraft.gameObject.transform.GetComponent<RectTransform>().position;
+                float height = InventoryGui.instance.m_tabCraft.gameObject.transform.GetComponent<RectTransform>().rect.height * gameScale;
+
+                int showCount = 0;
+                for (int i = 0; i < categoryNames.Count; i++)
+                {
+                    int count = recipes.FindAll(r => categoryDict[categoryNames[i]].Contains(r.m_item.m_itemData.m_shared.m_itemType)).Count;
+                    dropDownList[i].SetActive(count > 0 || categoryDict[categoryNames[i]].Contains(ItemDrop.ItemData.ItemType.None));
+                    if (count > 0 || categoryDict[categoryNames[i]].Contains(ItemDrop.ItemData.ItemType.None))
+                    {
+                        dropDownList[i].GetComponent<RectTransform>().position = pos - new Vector2(0, height * (showCount++ + 1));
+                        dropDownList[i].GetComponentInChildren<Text>().text = categoryNames[i] + (count == 0 ? "" : $" ({count})");
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < categoryNames.Count; i++)
+                {
+                    dropDownList[i].SetActive(false);
+                }
+
+            }
+            isShowing = show;
+        }
+
+        [HarmonyPatch(typeof(InventoryGui), "UpdateRecipeList")]
+        static class UpdateRecipeList_Patch
+        {
+
+            static void Prefix(ref List<Recipe> recipes)
+            {
+                VMP_Modplugin.Dbgl($"updating recipes");
+
+                GetFilteredRecipes(ref recipes);
+            }
+        }
+
+        [HarmonyPatch(typeof(InventoryGui), "Hide")]
+        static class Hide_Patch
+        {
+
+            static void Prefix()
+            {
+                InventoryGui.instance.m_tabCraft.gameObject.GetComponentInChildren<Text>().text = craftText;
+                lastCategoryIndex = 0;
+            }
+        }
+
+        [HarmonyPatch(typeof(InventoryGui), "OnTabCraftPressed")]
+        static class OnTabCraftPressed_Patch
+        {
+
+            static void Prefix()
+            {
+                VMP_Modplugin.Dbgl("Tab craft pressed");
+                tabCraftPressed = 2;
+            }
+        }
+
+        [HarmonyPatch(typeof(InventoryGui), "Awake")]
+        static class InventoryGui_Awake_Patch
+        {
+            static void Postfix(InventoryGui __instance)
+            {
+
+                dropDownList.Clear();
+
+                //buttonObj.transform.parent.SetAsLastSibling();
+                craftText = __instance.m_tabCraft.gameObject.GetComponentInChildren<Text>().text;
+                for (int i = 0; i < categoryNames.Count; i++)
+                {
+                    int idx = i;
+                    GameObject go = VMP_Modplugin.Instantiate(__instance.m_tabCraft.gameObject);
+                    go.name = categoryNames[i];
+                    go.transform.SetParent(__instance.m_tabCraft.gameObject.transform.parent.parent);
+                    go.GetComponent<Button>().interactable = true;
+                    go.GetComponent<Button>().onClick = new Button.ButtonClickedEvent();
+                    go.GetComponent<Button>().onClick.AddListener(() => SwitchFilter(idx));
+                    go.SetActive(false);
+                    dropDownList.Add(go);
+                }
+            }
+        }
+
+
+
+    }
+    public class CategoryData
+    {
+        public List<string> categories = new List<string>();
+        public CategoryData()
+        {
+            foreach (string type in Enum.GetNames(typeof(ItemDrop.ItemData.ItemType)))
+            {
+                categories.Add(type + ":" + type);
+            }
+        }
+    }
 }

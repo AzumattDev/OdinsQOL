@@ -10,6 +10,8 @@ using ServerSync;
 using VMP_Mod.Patches;
 using VMP_Mod.RPC;
 using VMP_Mod.EAQS;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace VMP_Mod
 {
@@ -58,6 +60,8 @@ namespace VMP_Mod
         private static List<Container> _cachedContainers;
 
         public static bool CraftFromContainersInstalledAndActive;
+
+
         public class ConnectionParams
         {
             public GameObject connection = null;
@@ -119,6 +123,15 @@ namespace VMP_Mod
             CraftingPatch.workbenchEnemySpawnRange = config<int>("WorkBench", "WorkBenchRange (Playerbase size)", 40, new ConfigDescription("Workbench PlayerBase radius, this is how far away enemies spawn", new AcceptableValueRange<int>(6, 650)), true );
             CraftingPatch.AlterWorkBench = config<bool>("WorkBench", "Change No Roof Behavior", true, "Show building pieces", true );
             workbenchAttachmentRange = config<int>("WorkBench", "WorkBench Extension", 40, new ConfigDescription("Range for workbench extensions", new AcceptableValueRange<int>(5, 100)), true );
+
+            CraftingPatch.useScrollWheel = Config.Bind<bool>("Settings", "ScrollWheel", true, "Use scroll wheel to switch filter");
+            CraftingPatch.showMenu = Config.Bind<bool>("Settings", "ShowMenu", true, "Show filter menu on hover");
+            CraftingPatch.scrollModKey = Config.Bind<string>("Settings", "ScrollModKey", "", "Modifer key to allow scroll wheel change. Use https://docs.unity3d.com/Manual/class-InputManager.html");
+            CraftingPatch.categoryFile = Config.Bind<string>("Settings", "CategoryFile", "categories.json", "Category file name");
+            CraftingPatch.prevHotKey = Config.Bind<string>("Settings", "HotKeyPrev", "", "Hotkey to switch to previous filter. Use https://docs.unity3d.com/Manual/class-InputManager.html");
+            CraftingPatch.nextHotKey = Config.Bind<string>("Settings", "HotKeyNext", "", "Hotkey to switch to next filter. Use https://docs.unity3d.com/Manual/class-InputManager.html");
+            CraftingPatch.assetPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), typeof(VMP_Modplugin).Namespace);
+
 
             WeightReduction = config<float>("Items", "Item Weight Increase", 1.25f, new ConfigDescription("Multiplier for your item weight"), true );
             itemStackMultiplier = config<float>("Items", "Item Stack Increase", 2f, new ConfigDescription("Multiplier for your item stacks"), true );
@@ -278,6 +291,7 @@ namespace VMP_Mod
             }
             SignPatches.currentFont = SignPatches.GetFont(SignPatches.fontName.Value, 20);
             SignPatches.lastFontName = SignPatches.currentFont?.name;
+            CraftingPatch.LoadCategories();
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), null);
         }
         private void OnDestroy()
@@ -310,6 +324,79 @@ namespace VMP_Mod
 
             if (Minimap.instance && Player.m_localPlayer && ZNet.instance != null)
                 StartCoroutine(MapDetail.UpdateMap(false));
+
+            if (!modEnabled.Value || !Player.m_localPlayer || !InventoryGui.IsVisible() || (!Player.m_localPlayer.GetCurrentCraftingStation() && !Player.m_localPlayer.NoCostCheat()))
+            {
+                CraftingPatch.lastCategoryIndex = 0;
+                CraftingPatch.UpdateDropDown(false);
+                return;
+            }
+            if (!InventoryGui.instance.InCraftTab())
+            {
+                CraftingPatch.UpdateDropDown(false);
+                return;
+            }
+
+            bool hover = false;
+
+            Vector3 mousePos = Input.mousePosition;
+
+            if (CraftingPatch.lastMousePos == Vector3.zero)
+                CraftingPatch.lastMousePos = mousePos;
+
+            PointerEventData eventData = new PointerEventData(EventSystem.current)
+            {
+                position = CraftingPatch.lastMousePos
+            };
+
+            List<RaycastResult> raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, raycastResults);
+            foreach (RaycastResult rcr in raycastResults)
+            {
+                if (rcr.gameObject.layer == LayerMask.NameToLayer("UI"))
+                {
+
+                    if (rcr.gameObject.name == "Craft")
+                    {
+                        hover = true;
+                        if (CraftingPatch.tabCraftPressed == 0)
+                        {
+                            if (CraftingPatch.useScrollWheel.Value && Utils.CheckKeyHeld(CraftingPatch.scrollModKey.Value, false) && Input.mouseScrollDelta.y != 0)
+                            {
+                                CraftingPatch.SwitchFilter(Input.mouseScrollDelta.y < 0);
+                            }
+                            if (CraftingPatch.showMenu.Value)
+                            {
+                                CraftingPatch.UpdateDropDown(true);
+                            }
+                        }
+                    }
+                    else if (CraftingPatch.dropDownList.Contains(rcr.gameObject))
+                    {
+                        hover = true;
+                    }
+
+                }
+            }
+
+            if (!hover)
+            {
+                if (CraftingPatch.tabCraftPressed > 0)
+                    CraftingPatch.tabCraftPressed--;
+                CraftingPatch.UpdateDropDown(false);
+            }
+
+            if (Utils.CheckKeyDown(CraftingPatch.prevHotKey.Value))
+            {
+                CraftingPatch.SwitchFilter(false);
+            }
+            else if (Utils.CheckKeyDown(CraftingPatch.nextHotKey.Value))
+            {
+                CraftingPatch.SwitchFilter(true);
+            }
+
+            CraftingPatch.lastMousePos = Input.mousePosition;
+
         }
         private static bool CheckKeyDown(string value)
         {
@@ -396,7 +483,6 @@ namespace VMP_Mod
 
             return newValue;
         }
-
 
     }
 }
