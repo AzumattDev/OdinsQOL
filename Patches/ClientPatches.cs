@@ -165,6 +165,18 @@ namespace VMP_Mod
 		}
 
 
+		[HarmonyPatch(typeof(ItemStand), "Interact")]
+		private class standFix
+		{
+			private static bool Prefix(Humanoid user, bool hold, ItemStand __instance)
+			{
+				if (PrivateArea.CheckAccess(__instance.transform.position))
+				{
+					return true;
+				}
+				return false;
+			}
+		}
 
 
 		[HarmonyPatch(typeof(ItemStand), "CanAttach")]

@@ -9,17 +9,6 @@ namespace vrp.Patches
 {
     internal class ServerPatches
     {
-        [HarmonyPatch(typeof(ZNet), "Awake")]
-        public static class Znetawakfix
-        {
-            private static void Postfix()
-            {
-                if (ZNet.instance.IsServer())
-                {
-                    fresh = new SyncedList(Utils.GetSaveDataPath() + "/fresh.txt", "List fresh players ID|name ONE per line");
-                }
-            }
-        }
 
         [HarmonyPatch(typeof(ZDOMan))]
         [HarmonyPatch(MethodType.Constructor)]
@@ -29,7 +18,6 @@ namespace vrp.Patches
             private static void Postfix()
             {
                 ZRoutedRpc.instance.Register<string>("ServerModerationLog", RPC_ModerationLog);
-                ZRoutedRpc.instance.Register<string>("ServerAddFresh", RPC_AddFresh);
             }
         }
 
@@ -215,20 +203,6 @@ namespace vrp.Patches
 
         public static Dictionary<string, int> timers = new Dictionary<string, int>();
 
-        public static void RPC_AddFresh(long sender, string playername)
-        {
-            ZLog.Log("RPC_AddFresh " + playername);
-            if (ZNet.instance != null && ZNet.instance.IsServer() && !string.IsNullOrWhiteSpace(playername))
-            {
-                ZNetPeer peerByPlayerName = ZNet.instance.GetPeerByPlayerName(playername);
-                if (peerByPlayerName?.IsReady() ?? false)
-                {
-                    string text = peerByPlayerName.m_socket.GetHostName() + "|" + peerByPlayerName.m_playerName;
-                    fresh.Add(text);
-                    RPC_ModerationLog(0L, text + " added to fresh list");
-                }
-            }
-        }
 
         public static void RPC_ModerationLog(long sender, string msg)
         {
