@@ -162,9 +162,9 @@ namespace VMP_Mod
 
             GamePatches.DisableGuardianAnimation = config<bool>("Game", "I have arrived disable", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
             GamePatches.SkipTuts = config<bool>("Game", "Skip Tuts", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
-            GamePatches.reequipItemsAfterSwimming = config<bool>("Game", "Re Equip after Swimming", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
-            GamePatches.enableAreaRepair = config<bool>("Game", "Area Repair", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
-            GamePatches.areaRepairRadius = config<int>("Game", "Area Repair Radius", -1, "Max number of entries to show", true);
+            GamePatches.reequipItemsAfterSwimming = config<bool>("Player", "Re Equip after Swimming", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
+            GamePatches.enableAreaRepair = config<bool>("Player", "Area Repair", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
+            GamePatches.areaRepairRadius = config<int>("Player", "Area Repair Radius", -1, "Max number of entries to show", true);
             GamePatches.baseMegingjordBuff = config<int>("Game", "Base Meginjord Buff", -1, "Max number of entries to show", true);
             GamePatches.honeyProductionSpeed = config<int>("Game", "Honey Speed", -1, "Max number of entries to show", true);
             GamePatches.maximumHoneyPerBeehive = config<int>("Game", "Honey Count Per Hive", -1, "Max number of entries to show", true);
@@ -182,7 +182,7 @@ namespace VMP_Mod
             GamePatches.baseAutoPickUpRange = config<float>("Player", "Auto pickup range adjustment", 2f, "Auto pickup range adjustment", true);
             GamePatches.disableCameraShake = config<float>("Player", "Cam shake factor", 0, "Cam Shake factor", true);
             GamePatches.baseMaximumWeight = config<float>("Player", "Base maximum weight addition for player", 350f, "Base max weight addition for player", true);
-            GamePatches.maximumPlacementDistance = config<float>("General", "Build distance alteration", 15, "Build Distance alteration", true);
+            GamePatches.maximumPlacementDistance = config<float>("WorkBench", "Build distance alteration", 15, "Build Distance alteration", true);
 
             GamePatches.savePlayerProfileInterval = Config.Bind("PlayerSaves", "savePlayerProfileInterval", 300, "Interval (in seconds) for how often to save the player profile. Game default (and maximum) is 1200s.");
             GamePatches.setLogoutPointOnSave = Config.Bind("PlayerSaves", "setLogoutPointOnSave", true, "Sets your logout point to your current position when the mod performs a save.");
@@ -272,6 +272,27 @@ namespace VMP_Mod
             WearNTear_Patches.StructuralIntegritystone = config<float>("WearNTear_Patches", "Stone Structural Integrity", 100, "Stone Structural Integrity");
             WearNTear_Patches.StructuralIntegrityiron = config<float>("WearNTear_Patches", "Iron Structural Integrity", 100, "Iron Structural Integrity");
             WearNTear_Patches.StructuralIntegrityhardWood = config<float>("WearNTear_Patches", "Hardwood Structural Integrity", 100, "Hardwood Structural Integrity");
+
+            InventoryHUD.modKey = Config.Bind<string>("General", "ModKey", "left alt", "Modifier key to allow moving with the mouse.");
+            InventoryHUD.hudPosition = Config.Bind<Vector2>("General", "HudPosition", new Vector2(Screen.width - 40, Screen.height / 2), "Weight icon file to use in InventoryHUD folder");
+
+            InventoryHUD.extraSlots = Config.Bind<int>("General", "ExtraSlots", 0, "Extra slots added by mods outside of the actual player inventory. Use this for mods that add extra inventories or other hacky things. E.g. Equipment and Quick Slots mods adds eight extra slots outside of the actual player inventory. Set this to 8 if you use that mod.");
+
+
+            InventoryHUD.infoStringOffset = Config.Bind<Vector2>("Info", "InfoStringOffset", new Vector2(-64, 0), "Inventory info string offset");
+            InventoryHUD.infoString = Config.Bind<string>("Info", "InfoString", "{0}/{1}\r\n{2}/{3}", "Inventory info string to show. {0} is replaced by current number of items. {1} is replaced by number of slots total. {2} is replaced by current weight. {3} is replaced by total weight. See string.Format API for advanced usage.");
+            InventoryHUD.infoStringSize = Config.Bind<int>("Info", "InfoStringSize", 12, "Inventory info string size.");
+            InventoryHUD.infoStringFont = Config.Bind<string>("Info", "InfoStringFont", "AveriaSerifLibre-Bold", "Inventory info string font.");
+            InventoryHUD.infoStringAlignment = Config.Bind<TextAnchor>("Info", "InfoStringAlignment", TextAnchor.MiddleCenter, "Info string alignment");
+            InventoryHUD.infoStringColor = Config.Bind<Color>("Info", "InfoStringColor", new Color(1, 1, 1, 0.5f), "Info string color");
+
+            InventoryHUD.weightOffset = Config.Bind<Vector2>("Weight", "WeightOffset", new Vector2(0, 0), "Weight icon offset");
+            InventoryHUD.weightFile = Config.Bind<string>("Weight", "WeightFile", "bag.png", "Weight icon file to use in InventoryHUD folder");
+            InventoryHUD.weightScale = Config.Bind<float>("Weight", "WeightScale", 1f, "Weight icon scale");
+            InventoryHUD.weightColor = Config.Bind<Color>("Weight", "WeightColor", new Color(1, 1, 1, 0.5f), "Weight icon color");
+            InventoryHUD.fillColor = Config.Bind<Color>("Weight", "WeightFillColor", new Color(1, 1, 0.5f, 1f), "Weight icon fill color");
+
+
 
             if (!modEnabled.Value)
                 return;
