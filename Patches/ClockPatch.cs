@@ -46,24 +46,24 @@ namespace VMP_Mod
         {
             context = this;
 
-            modEnabled = Config.Bind<bool>("General", "Enabled", true, "Enable this mod");
-            showingClock = Config.Bind<bool>("General", "ShowClock", true, "Show the clock?");
-            showClockOnChange = Config.Bind<bool>("General", "ShowClockOnChange", false, "Only show the clock when the time changes?");
-            showClockOnChangeFadeTime = Config.Bind<float>("General", "ShowClockOnChangeFadeTime", 5f, "If only showing on change, length in seconds to show the clock before begining to fade");
-            showClockOnChangeFadeLength = Config.Bind<float>("General", "ShowClockOnChangeFadeLength", 1f, "How long fade should take in seconds");
-            clockUseOSFont = Config.Bind<bool>("General", "ClockUseOSFont", false, "Set to true to specify the name of a font from your OS; otherwise limited to fonts in the game resources");
-            clockUseShadow = Config.Bind<bool>("General", "ClockUseShadow", false, "Add a shadow behind the text");
-            clockShadowOffset = Config.Bind<int>("General", "ClockShadowOffset", 2, "Shadow offset in pixels");
-            clockFontName = Config.Bind<string>("General", "ClockFontName", "AveriaSerifLibre-Bold", "Name of the font to use");
-            clockFontSize = Config.Bind<int>("General", "ClockFontSize", 24, "Location on the screen in pixels to show the clock");
-            clockFontColor = Config.Bind<Color>("General", "ClockFontColor", Color.white, "Font color for the clock");
-            clockShadowColor = Config.Bind<Color>("General", "ClockShadowColor", Color.black, "Color for the shadow");
-            toggleClockKeyMod = Config.Bind<string>("General", "ShowClockKeyMod", "", "Extra modifier key used to toggle the clock display. Leave blank to not require one. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            toggleClockKeyOnPress = Config.Bind<bool>("General", "ShowClockKeyOnPress", false, "If true, limit clock display to when the hotkey is down");
-            clockFormat = Config.Bind<string>("General", "ClockFormat", "HH:mm", "Time format; set to 'fuzzy' for fuzzy time");
-            clockString = Config.Bind<string>("General", "ClockString", "<b>{0}</b>", "Formatted clock string - {0} is replaced by the actual time string, {1} is replaced by the fuzzy string, {2} is replaced by the current day");
-            clockTextAlignment = Config.Bind<TextAnchor>("General", "ClockTextAlignment", TextAnchor.MiddleCenter, "Clock text alignment.");
-            clockFuzzyStrings = Config.Bind<string>("General", "ClockFuzzyStrings", "Midnight,Early Morning,Early Morning,Before Dawn,Before Dawn,Dawn,Dawn,Morning,Morning,Late Morning,Late Morning,Midday,Midday,Early Afternoon,Early Afternoon,Afternoon,Afternoon,Evening,Evening,Night,Night,Late Night,Late Night,Midnight", "Fuzzy time strings to split up the day into custom periods if ClockFormat is set to 'fuzzy'; comma-separated");
+            modEnabled = Config.Bind<bool>("Clock", "Enabled", true, "Enable this mod");
+            showingClock = Config.Bind<bool>("Clock", "ShowClock", true, "Show the clock?");
+            showClockOnChange = Config.Bind<bool>("Clock", "ShowClockOnChange", false, "Only show the clock when the time changes?");
+            showClockOnChangeFadeTime = Config.Bind<float>("Clock", "ShowClockOnChangeFadeTime", 5f, "If only showing on change, length in seconds to show the clock before begining to fade");
+            showClockOnChangeFadeLength = Config.Bind<float>("Clock", "ShowClockOnChangeFadeLength", 1f, "How long fade should take in seconds");
+            clockUseOSFont = Config.Bind<bool>("Clock", "ClockUseOSFont", false, "Set to true to specify the name of a font from your OS; otherwise limited to fonts in the game resources");
+            clockUseShadow = Config.Bind<bool>("Clock", "ClockUseShadow", false, "Add a shadow behind the text");
+            clockShadowOffset = Config.Bind<int>("Clock", "ClockShadowOffset", 2, "Shadow offset in pixels");
+            clockFontName = Config.Bind<string>("Clock", "ClockFontName", "AveriaSerifLibre-Bold", "Name of the font to use");
+            clockFontSize = Config.Bind<int>("Clock", "ClockFontSize", 24, "Location on the screen in pixels to show the clock");
+            clockFontColor = Config.Bind<Color>("Clock", "ClockFontColor", Color.white, "Font color for the clock");
+            clockShadowColor = Config.Bind<Color>("Clock", "ClockShadowColor", Color.black, "Color for the shadow");
+            toggleClockKeyMod = Config.Bind<string>("Clock", "ShowClockKeyMod", "", "Extra modifier key used to toggle the clock display. Leave blank to not require one. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            toggleClockKeyOnPress = Config.Bind<bool>("Clock", "ShowClockKeyOnPress", false, "If true, limit clock display to when the hotkey is down");
+            clockFormat = Config.Bind<string>("Clock", "ClockFormat", "HH:mm", "Time format; set to 'fuzzy' for fuzzy time");
+            clockString = Config.Bind<string>("Clock", "ClockString", "<b>{0}</b>", "Formatted clock string - {0} is replaced by the actual time string, {1} is replaced by the fuzzy string, {2} is replaced by the current day");
+            clockTextAlignment = Config.Bind<TextAnchor>("Clock", "ClockTextAlignment", TextAnchor.MiddleCenter, "Clock text alignment.");
+            clockFuzzyStrings = Config.Bind<string>("Clock", "ClockFuzzyStrings", "Midnight,Early Morning,Early Morning,Before Dawn,Before Dawn,Dawn,Dawn,Morning,Morning,Late Morning,Late Morning,Midday,Midday,Early Afternoon,Early Afternoon,Afternoon,Afternoon,Evening,Evening,Night,Night,Late Night,Late Night,Midnight", "Fuzzy time strings to split up the day into custom periods if ClockFormat is set to 'fuzzy'; comma-separated");
 
             newTimeString = "";
             style = new GUIStyle

@@ -145,9 +145,9 @@ namespace VMP_Mod
             MapDetail.unownedBuildingColor = Config.Bind<Color>("Map Details", "UnownedBuildingColor", Color.yellow, "Color of npc build pieces");
             MapDetail.customPlayerColors = Config.Bind<string>("Map Details", "CustomPlayerColors", "", "Custom color list, comma-separated. Use either <name>:<colorCode> pair entries or just <colorCode> entries. E.g. Erinthe:FF0000 or just FF0000. The latter will assign a color randomly to each connected peer.");
 
-            toggleClockKeyMod = Config.Bind<string>("General", "ShowClockKeyMod", "", "Extra modifier key used to toggle the clock display. Leave blank to not require one. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            toggleClockKey = Config.Bind<string>("General", "ShowClockKey", "home", "Key used to toggle the clock display. use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            clockLocationString = Config.Bind<string>("General", "ClockLocationString", "50%,3%", "Location on the screen to show the clock (x,y) or (x%,y%)");
+            toggleClockKeyMod = Config.Bind<string>("Clock", "ShowClockKeyMod", "", "Extra modifier key used to toggle the clock display. Leave blank to not require one. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            toggleClockKey = Config.Bind<string>("Clock", "ShowClockKey", "home", "Key used to toggle the clock display. use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            clockLocationString = Config.Bind<string>("Clock", "ClockLocationString", "50%,3%", "Location on the screen to show the clock (x,y) or (x%,y%)");
 
             LoadConfig();
 
@@ -164,11 +164,11 @@ namespace VMP_Mod
             GamePatches.SkipTuts = config<bool>("Game", "Skip Tuts", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
             GamePatches.reequipItemsAfterSwimming = config<bool>("Player", "Re Equip after Swimming", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
             GamePatches.enableAreaRepair = config<bool>("Player", "Area Repair", true, new ConfigDescription("Auto repair your things when interacting with build station"), true);
-            GamePatches.areaRepairRadius = config<int>("Player", "Area Repair Radius", -1, "Max number of entries to show", true);
-            GamePatches.baseMegingjordBuff = config<int>("Game", "Base Meginjord Buff", -1, "Max number of entries to show", true);
+            GamePatches.areaRepairRadius = config<int>("Player", "Area Repair Radius", 15, "Max number of entries to show", true);
+            GamePatches.baseMegingjordBuff = config<int>("Player", "Base Meginjord Buff", 150, "Max number of entries to show", true);
             GamePatches.honeyProductionSpeed = config<int>("Game", "Honey Speed", -1, "Max number of entries to show", true);
-            GamePatches.maximumHoneyPerBeehive = config<int>("Game", "Honey Count Per Hive", -1, "Max number of entries to show", true);
-            GamePatches.maxPlayers = config<int>("Server", "Max Player Count", -1, "Max number of Players to allow", true);
+            GamePatches.maximumHoneyPerBeehive = config<int>("Game", "Honey Count Per Hive", 4, "Max number of entries to show", true);
+            GamePatches.maxPlayers = config<int>("Server", "Max Player Count", 50, "Max number of Players to allow", true);
 
             GamePatches.StaminaIsEnabled = config<bool>("Player", "Stamina alterations enabled", false, "Stamina alterations enabled", true);
             GamePatches.dodgeStaminaUsage = config<float>("Player", "Dodge Stamina Usage", 1f, "Dodge Stamina Usage", true);
@@ -184,12 +184,9 @@ namespace VMP_Mod
             GamePatches.baseMaximumWeight = config<float>("Player", "Base maximum weight addition for player", 350f, "Base max weight addition for player", true);
             GamePatches.maximumPlacementDistance = config<float>("WorkBench", "Build distance alteration", 15, "Build Distance alteration", true);
 
-            GamePatches.savePlayerProfileInterval = Config.Bind("PlayerSaves", "savePlayerProfileInterval", 300, "Interval (in seconds) for how often to save the player profile. Game default (and maximum) is 1200s.");
+            GamePatches.savePlayerProfileInterval = Config.Bind("PlayerSaves", "savePlayerProfileInterval", 700, "Interval (in seconds) for how often to save the player profile. Game default (and maximum) is 1200s.");
             GamePatches.setLogoutPointOnSave = Config.Bind("PlayerSaves", "setLogoutPointOnSave", true, "Sets your logout point to your current position when the mod performs a save.");
             GamePatches.showMessageOnModSave = Config.Bind("PlayerSaves", "saveMessageOnModSave", true, "Show a message (in the middle of your screen) when the mod tries to save.");
-
-
-
 
             ImprovedBuildHudConfig.InventoryAmountFormat = Config.Bind("Building HUD", "Inventory Amount Format", "({0})", "Format for the amount of items in the player inventory to show after the required amount. Uses standard C# format rules. Leave empty to hide altogether.");
             ImprovedBuildHudConfig.InventoryAmountColor = Config.Bind("Building HUD", "Inventory Amount Color", "lightblue", "Color to set the inventory amount after the requirement amount. Leave empty to set no color. You can use the #XXXXXX hex color format.");
@@ -214,7 +211,7 @@ namespace VMP_Mod
             AutoStorePatch.itemDisallowTypesPersonalChests = Config.Bind<string>("Auto Storage", "ItemDisallowTypesPersonalChests", "", "Types of item to disallow pulling for, comma-separated.");
             AutoStorePatch.itemAllowTypesPersonalChests = Config.Bind<string>("Auto Storage", "ItemAllowTypesPersonalChests", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesPersonalChests");
             AutoStorePatch.itemDisallowTypesReinforcedChests = Config.Bind<string>("Auto Storage", "ItemDisallowTypesReinforcedChests", "", "Types of item to disallow pulling for, comma-separated.");
-            AutoStorePatch.itemAllowTypesReinforcedChests = Config.Bind<string>("General", "ItemAllowTypesReinforcedChests", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesReinforcedChests");
+            AutoStorePatch.itemAllowTypesReinforcedChests = Config.Bind<string>("Auto Storage", "ItemAllowTypesReinforcedChests", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesReinforcedChests");
             AutoStorePatch.itemDisallowTypesCarts = Config.Bind<string>("Auto Storage", "ItemDisallowTypesCarts", "", "Types of item to disallow pulling for, comma-separated.");
             AutoStorePatch.itemAllowTypesCarts = Config.Bind<string>("Auto Storage", "ItemAllowTypesCarts", "", "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesCarts");
             AutoStorePatch.itemDisallowTypesShips = Config.Bind<string>("Auto Storage", "ItemDisallowTypesShips", "", "Types of item to disallow pulling for, comma-separated.");
@@ -276,9 +273,6 @@ namespace VMP_Mod
             InventoryHUD.modKey = Config.Bind<string>("General", "ModKey", "left alt", "Modifier key to allow moving with the mouse.");
             InventoryHUD.hudPosition = Config.Bind<Vector2>("General", "HudPosition", new Vector2(Screen.width - 40, Screen.height / 2), "Weight icon file to use in InventoryHUD folder");
 
-            InventoryHUD.extraSlots = Config.Bind<int>("General", "ExtraSlots", 0, "Extra slots added by mods outside of the actual player inventory. Use this for mods that add extra inventories or other hacky things. E.g. Equipment and Quick Slots mods adds eight extra slots outside of the actual player inventory. Set this to 8 if you use that mod.");
-
-
             InventoryHUD.infoStringOffset = Config.Bind<Vector2>("Info", "InfoStringOffset", new Vector2(-64, 0), "Inventory info string offset");
             InventoryHUD.infoString = Config.Bind<string>("Info", "InfoString", "{0}/{1}\r\n{2}/{3}", "Inventory info string to show. {0} is replaced by current number of items. {1} is replaced by number of slots total. {2} is replaced by current weight. {3} is replaced by total weight. See string.Format API for advanced usage.");
             InventoryHUD.infoStringSize = Config.Bind<int>("Info", "InfoStringSize", 12, "Inventory info string size.");
@@ -291,7 +285,6 @@ namespace VMP_Mod
             InventoryHUD.weightScale = Config.Bind<float>("Weight", "WeightScale", 1f, "Weight icon scale");
             InventoryHUD.weightColor = Config.Bind<Color>("Weight", "WeightColor", new Color(1, 1, 1, 0.5f), "Weight icon color");
             InventoryHUD.fillColor = Config.Bind<Color>("Weight", "WeightFillColor", new Color(1, 1, 0.5f, 1f), "Weight icon fill color");
-
 
             SkillPatches.ChangeSkills = config<bool>("Skills", "Change the skill gain factor", false, "Change skill gain factor");
             SkillPatches.experienceGainedNotifications = Config.Bind<bool>("Skills", "Display notifications for skills gained", false, "Display notifications for skills gained");
@@ -347,14 +340,12 @@ namespace VMP_Mod
 
         private void LateUpdate()
         {
-            if (CraftFromContainersInstalledAndActive)
-            {
                 if (_cachedContainers != null)
                 {
                     _cachedContainers.Clear();
                     _cachedContainers = null;
                 }
-            }
+            
         }
         private void Update()
         {
