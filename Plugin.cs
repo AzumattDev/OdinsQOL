@@ -312,6 +312,11 @@ namespace VMP_Mod
             SignPatches.lastFontName = SignPatches.currentFont?.name;
             CraftingPatch.LoadCategories();
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), null);
+            if (ZNet.m_isServer && shareMapProgression.Value)
+            {
+                mapSyncSaveTimer.AutoReset = true;
+                mapSyncSaveTimer.Elapsed += (sender, args) => MapSync.SaveMapDataToDisk();
+            }
         }
         private void OnDestroy()
         {
