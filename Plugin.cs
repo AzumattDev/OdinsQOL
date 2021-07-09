@@ -340,12 +340,14 @@ namespace VMP_Mod
 
         private void LateUpdate()
         {
+            if (CraftFromContainersInstalledAndActive)
+            {
                 if (_cachedContainers != null)
                 {
                     _cachedContainers.Clear();
                     _cachedContainers = null;
                 }
-            
+            }
         }
         private void Update()
         {
