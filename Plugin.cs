@@ -270,22 +270,6 @@ namespace VMP_Mod
             WearNTear_Patches.StructuralIntegrityiron = config<float>("WearNTear_Patches", "Iron Structural Integrity", 100, "Iron Structural Integrity");
             WearNTear_Patches.StructuralIntegrityhardWood = config<float>("WearNTear_Patches", "Hardwood Structural Integrity", 100, "Hardwood Structural Integrity");
 
-            InventoryHUD.modKey = Config.Bind<string>("General", "ModKey", "left alt", "Modifier key to allow moving with the mouse.");
-            InventoryHUD.hudPosition = Config.Bind<Vector2>("General", "HudPosition", new Vector2(Screen.width - 40, Screen.height / 2), "Weight icon file to use in InventoryHUD folder");
-
-            InventoryHUD.infoStringOffset = Config.Bind<Vector2>("Info", "InfoStringOffset", new Vector2(-64, 0), "Inventory info string offset");
-            InventoryHUD.infoString = Config.Bind<string>("Info", "InfoString", "{0}/{1}\r\n{2}/{3}", "Inventory info string to show. {0} is replaced by current number of items. {1} is replaced by number of slots total. {2} is replaced by current weight. {3} is replaced by total weight. See string.Format API for advanced usage.");
-            InventoryHUD.infoStringSize = Config.Bind<int>("Info", "InfoStringSize", 12, "Inventory info string size.");
-            InventoryHUD.infoStringFont = Config.Bind<string>("Info", "InfoStringFont", "AveriaSerifLibre-Bold", "Inventory info string font.");
-            InventoryHUD.infoStringAlignment = Config.Bind<TextAnchor>("Info", "InfoStringAlignment", TextAnchor.MiddleCenter, "Info string alignment");
-            InventoryHUD.infoStringColor = Config.Bind<Color>("Info", "InfoStringColor", new Color(1, 1, 1, 0.5f), "Info string color");
-
-            InventoryHUD.weightOffset = Config.Bind<Vector2>("Weight", "WeightOffset", new Vector2(0, 0), "Weight icon offset");
-            InventoryHUD.weightFile = Config.Bind<string>("Weight", "WeightFile", "bag.png", "Weight icon file to use in InventoryHUD folder");
-            InventoryHUD.weightScale = Config.Bind<float>("Weight", "WeightScale", 1f, "Weight icon scale");
-            InventoryHUD.weightColor = Config.Bind<Color>("Weight", "WeightColor", new Color(1, 1, 1, 0.5f), "Weight icon color");
-            InventoryHUD.fillColor = Config.Bind<Color>("Weight", "WeightFillColor", new Color(1, 1, 0.5f, 1f), "Weight icon fill color");
-
             SkillPatches.ChangeSkills = config<bool>("Skills", "Change the skill gain factor", false, "Change skill gain factor");
             SkillPatches.experienceGainedNotifications = Config.Bind<bool>("Skills", "Display notifications for skills gained", false, "Display notifications for skills gained");
             SkillPatches.swordskill = config<float>("Skills", "Sword Skill gain factor", 0f, "Sword skill gain factor");
