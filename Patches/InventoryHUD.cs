@@ -200,7 +200,7 @@ namespace VMP_Mod.Patches
 
                     float maskOffset = (1 - weight / totalWeight) * weightTexture.height * weightScale.Value * hudScale;
 
-                    if (Utils.CheckKeyHeld(modKey.Value, true) && Input.GetKeyDown(KeyCode.Mouse0))
+                    if (Utilities.CheckKeyHeld(modKey.Value, true) && Input.GetKeyDown(KeyCode.Mouse0))
                     {
                         VMP_Modplugin.Dbgl($"{lastPosition} {hudPos} {Vector3.Distance(lastPosition, hudPos)} {(weightTexture.height + weightTexture.width) / 4f} {maskOffset}");
 
@@ -210,7 +210,7 @@ namespace VMP_Mod.Patches
                             lastPosition = Input.mousePosition;
                         }
                     }
-                    else if (Utils.CheckKeyHeld(modKey.Value, true) && Input.GetKey(KeyCode.Mouse0) && Vector3.Distance(lastPosition, weightPos) < (weightTexture.height + weightTexture.width) / 4f * weightScale.Value * hudScale)
+                    else if (Utilities.CheckKeyHeld(modKey.Value, true) && Input.GetKey(KeyCode.Mouse0) && Vector3.Distance(lastPosition, weightPos) < (weightTexture.height + weightTexture.width) / 4f * weightScale.Value * hudScale)
                     {
                         hudPos += Input.mousePosition - lastPosition;
                         hudPosition.Value = new Vector2(hudPos.x, hudPos.y);

@@ -102,18 +102,18 @@ namespace VMP_Mod.EAQS
                 __instance.m_tombstone.GetComponent<Container>().m_height = height;
 
 
-                if (VMP_Mod.Utils.IgnoreKeyPresses(true) || !addEquipmentRow.Value)
+                if (VMP_Mod.Utilities.IgnoreKeyPresses(true) || !addEquipmentRow.Value)
                     return;
 
-                if (VMP_Mod.Utils.CheckKeyDown("9"))
+                if (VMP_Mod.Utilities.CheckKeyDown("9"))
                     CreateTombStone();
 
                 int which;
-                if (VMP_Mod.Utils.CheckKeyDown(hotKey1.Value))
+                if (VMP_Mod.Utilities.CheckKeyDown(hotKey1.Value))
                     which = 1;
-                else if (VMP_Mod.Utils.CheckKeyDown(hotKey2.Value))
+                else if (VMP_Mod.Utilities.CheckKeyDown(hotKey2.Value))
                     which = 2;
-                else if (VMP_Mod.Utils.CheckKeyDown(hotKey3.Value))
+                else if (VMP_Mod.Utilities.CheckKeyDown(hotKey3.Value))
                     which = 3;
                 else return;
 
@@ -439,7 +439,7 @@ namespace VMP_Mod.EAQS
                 Transform hudRoot = Hud.instance.transform.Find("hudroot");
 
 
-                if (VMP_Mod.Utils.CheckKeyHeld(modKeyOne.Value) && VMP_Mod.Utils.CheckKeyHeld(modKeyTwo.Value))
+                if (VMP_Mod.Utilities.CheckKeyHeld(modKeyOne.Value) && VMP_Mod.Utilities.CheckKeyHeld(modKeyTwo.Value))
                 {
 
 

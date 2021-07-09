@@ -338,7 +338,7 @@ namespace VMP_Mod
         }
         private void Update()
         {
-            if (Utils.IgnoreKeyPresses())
+            if (Utilities.IgnoreKeyPresses())
                 return;
             if (CheckKeyDown(AutoStorePatch.toggleKey.Value))
             {
@@ -386,7 +386,7 @@ namespace VMP_Mod
                         hover = true;
                         if (CraftingPatch.tabCraftPressed == 0)
                         {
-                            if (CraftingPatch.useScrollWheel.Value && Utils.CheckKeyHeld(CraftingPatch.scrollModKey.Value, false) && Input.mouseScrollDelta.y != 0)
+                            if (CraftingPatch.useScrollWheel.Value && Utilities.CheckKeyHeld(CraftingPatch.scrollModKey.Value, false) && Input.mouseScrollDelta.y != 0)
                             {
                                 CraftingPatch.SwitchFilter(Input.mouseScrollDelta.y < 0);
                             }
@@ -411,17 +411,17 @@ namespace VMP_Mod
                 CraftingPatch.UpdateDropDown(false);
             }
 
-            if (Utils.CheckKeyDown(CraftingPatch.prevHotKey.Value))
+            if (Utilities.CheckKeyDown(CraftingPatch.prevHotKey.Value))
             {
                 CraftingPatch.SwitchFilter(false);
             }
-            else if (Utils.CheckKeyDown(CraftingPatch.nextHotKey.Value))
+            else if (Utilities.CheckKeyDown(CraftingPatch.nextHotKey.Value))
             {
                 CraftingPatch.SwitchFilter(true);
             }
 
             CraftingPatch.lastMousePos = Input.mousePosition;
-            if (Utils.IgnoreKeyPresses() || toggleClockKeyOnPress.Value || !PressedToggleKey())
+            if (Utilities.IgnoreKeyPresses() || toggleClockKeyOnPress.Value || !PressedToggleKey())
                 return;
 
             bool show = showingClock.Value;

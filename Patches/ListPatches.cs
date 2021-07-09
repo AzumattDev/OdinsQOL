@@ -2,7 +2,7 @@ using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace vrp.Patches
+namespace VMP_Mod.Patches
 {
 	internal class ListPatches
 	{

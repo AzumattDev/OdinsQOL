@@ -9,7 +9,7 @@ using HarmonyLib;
 using Steamworks;
 using UnityEngine;
 
-namespace VMP_Mod
+namespace VMP_Mod.Patches
 {
 	public class ClientPatches
 	{

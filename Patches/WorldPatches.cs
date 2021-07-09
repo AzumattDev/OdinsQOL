@@ -1,7 +1,7 @@
 using System;
 using HarmonyLib;
 
-namespace VMP_Mod
+namespace VMP_Mod.Patches
 {
 	internal class WorldPatches
 	{

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using HarmonyLib;
 
-namespace vrp.Patches
+namespace VMP_Mod.Patches
 {
     internal class ServerPatches
     {

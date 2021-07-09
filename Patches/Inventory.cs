@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace VMP_Mod.GameClasses
+namespace VMP_Mod.Patches
 {
 
     /// <summary>

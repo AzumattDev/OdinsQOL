@@ -2,7 +2,7 @@
 
 namespace VMP_Mod
 {
-    class Utils
+    class Utilities
     {
         public static bool IgnoreKeyPresses(bool extra = false)
         {

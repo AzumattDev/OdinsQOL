@@ -394,7 +394,7 @@
     <Compile Include="Patches\ListPatches.cs" />
     <Compile Include="Patches\ServerPatches.cs" />
     <Compile Include="Patches\WorldPatches.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="Utilities.cs" />
     <Compile Include="MapSharing\GameObjectAssistant.cs" />
     <Compile Include="MapSharing\ListExtensions.cs" />
     <Compile Include="MapSharing\Minimap.cs" />

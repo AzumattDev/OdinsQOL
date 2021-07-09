@@ -4,7 +4,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace VMP_Mod
+namespace VMP_Mod.Patches
 {
 
     public static class Deconstruct
