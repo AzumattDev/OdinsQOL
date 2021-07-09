@@ -293,6 +293,26 @@ namespace VMP_Mod
             InventoryHUD.fillColor = Config.Bind<Color>("Weight", "WeightFillColor", new Color(1, 1, 0.5f, 1f), "Weight icon fill color");
 
 
+            SkillPatches.ChangeSkills = config<bool>("Skills", "Change the skill gain factor", false, "Change skill gain factor");
+            SkillPatches.experienceGainedNotifications = Config.Bind<bool>("Skills", "Display notifications for skills gained", false, "Display notifications for skills gained");
+            SkillPatches.swordskill = config<float>("Skills", "Sword Skill gain factor", 0f, "Sword skill gain factor");
+            SkillPatches.kniveskill = config<float>("Skills", "Knives Skill gain factor", 0f, "Knives skill gain factor");
+            SkillPatches.clubskill = config<float>("Skills", "Clubs Skill gain factor", 0f, "Clubs skill gain factor");
+            SkillPatches.polearmskill = config<float>("Skills", "Polearm Skill gain factor", 0f, "Polearm skill gain factor");
+            SkillPatches.spearskill = config<float>("Skills", "Spear Skill gain factor", 0f, "Spear skill gain factor");
+            SkillPatches.blockskill = config<float>("Skills", "Block Skill gain factor", 0f, "Block skill gain factor");
+            SkillPatches.axeskill = config<float>("Skills", "Axe Skill gain factor", 0f, "Axe skill gain factor"); ;
+            SkillPatches.bowskill = config<float>("Skills", "Bow Skill gain factor", 0f, "Bow skill gain factor");
+            SkillPatches.frostmagic = config<float>("Skills", "FrostMagic Skill gain factor", 0f, "FrostMagic skill gain factor");
+            SkillPatches.firemagic = config<float>("Skills", "FireMagic Skill gain factor", 0f, "FireMagic skill gain factor");
+            SkillPatches.unarmed = config<float>("Skills", "Unarmed Skill gain factor", 0f, "SwoUnarmedrd skill gain factor");
+            SkillPatches.pickaxe = config<float>("Skills", "Pickaxe Skill gain factor", 0f, "Pickaxe skill gain factor");
+            SkillPatches.woodcutting = config<float>("Skills", "WoodCutting Skill gain factor", 0f, "WoodCutting skill gain factor");
+            SkillPatches.jump = config<float>("Skills", "Jump Skill gain factor", 0f, "Jump skill gain factor");
+            SkillPatches.run = config<float>("Skills", "Run Skill gain factor", 0f, "Run skill gain factor");
+            SkillPatches.sneak = config<float>("Skills", "Sneak Skill gain factor", 0f, "Sneak skill gain factor");
+            SkillPatches.swim = config<float>("Skills", "Swim Skill gain factor", 0f, "Swim skill gain factor");
+            SkillPatches.deathPenaltyMultiplier = config<float>("Skills", "Death Penalty Factor Multiplier", 0f, "Death Penalty Factor Multiplier");
 
             if (!modEnabled.Value)
                 return;
