@@ -432,4 +432,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetDir)VMP-Mod.dll" "C:\Program Files (x86)\Steam\steamapps\common\Valheim-jotunn\BepInEx\plugins\VMP-Mod.dll</PostBuildEvent>
+  </PropertyGroup>
 </Project>

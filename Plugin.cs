@@ -280,8 +280,6 @@ namespace VMP_Mod
             SkillPatches.blockskill = config<float>("Skills", "Block Skill gain factor", 0f, "Block skill gain factor");
             SkillPatches.axeskill = config<float>("Skills", "Axe Skill gain factor", 0f, "Axe skill gain factor"); ;
             SkillPatches.bowskill = config<float>("Skills", "Bow Skill gain factor", 0f, "Bow skill gain factor");
-            SkillPatches.frostmagic = config<float>("Skills", "FrostMagic Skill gain factor", 0f, "FrostMagic skill gain factor");
-            SkillPatches.firemagic = config<float>("Skills", "FireMagic Skill gain factor", 0f, "FireMagic skill gain factor");
             SkillPatches.unarmed = config<float>("Skills", "Unarmed Skill gain factor", 0f, "SwoUnarmedrd skill gain factor");
             SkillPatches.pickaxe = config<float>("Skills", "Pickaxe Skill gain factor", 0f, "Pickaxe skill gain factor");
             SkillPatches.woodcutting = config<float>("Skills", "WoodCutting Skill gain factor", 0f, "WoodCutting skill gain factor");

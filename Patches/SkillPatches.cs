@@ -10,26 +10,24 @@ namespace VMP_Mod.Patches
 {
     public static class SkillPatches
 	{
-		new public static ConfigEntry<bool> ChangeSkills;
-		new public static ConfigEntry<bool> experienceGainedNotifications;
-		new public static ConfigEntry<float> swordskill;
-		new public static ConfigEntry<float> kniveskill;
-		new public static ConfigEntry<float> clubskill;
-		new public static ConfigEntry<float> polearmskill;
-		new public static ConfigEntry<float> spearskill;
-		new public static ConfigEntry<float> blockskill;
-		new public static ConfigEntry<float> axeskill;
-		new public static ConfigEntry<float> bowskill;
-		new public static ConfigEntry<float> frostmagic;
-		new public static ConfigEntry<float> firemagic;
-		new public static ConfigEntry<float> unarmed;
-		new public static ConfigEntry<float> pickaxe;
-		new public static ConfigEntry<float> woodcutting;
-		new public static ConfigEntry<float> jump;
-		new public static ConfigEntry<float> sneak;
-		new public static ConfigEntry<float> run;
-		new public static ConfigEntry<float> swim;
-		new public static ConfigEntry<float> deathPenaltyMultiplier;
+		public static ConfigEntry<bool> ChangeSkills;
+		public static ConfigEntry<bool> experienceGainedNotifications;
+		public static ConfigEntry<float> swordskill;
+		public static ConfigEntry<float> kniveskill;
+		public static ConfigEntry<float> clubskill;
+		public static ConfigEntry<float> polearmskill;
+		public static ConfigEntry<float> spearskill;
+		public static ConfigEntry<float> blockskill;
+		public static ConfigEntry<float> axeskill;
+		public static ConfigEntry<float> bowskill;
+		public static ConfigEntry<float> unarmed;
+		public static ConfigEntry<float> pickaxe;
+		public static ConfigEntry<float> woodcutting;
+		public static ConfigEntry<float> jump;
+		public static ConfigEntry<float> sneak;
+		public static ConfigEntry<float> run;
+		public static ConfigEntry<float> swim;
+		public static ConfigEntry<float> deathPenaltyMultiplier;
 		public static float tFloat(this float value, int digits)
 		{
 			double mult = Math.Pow(10.0, digits);
@@ -72,12 +70,6 @@ namespace VMP_Mod.Patches
 							break;
 						case SkillType.Bows:
 							factor = VMP_Modplugin.applyModifierValue(factor, SkillPatches.bowskill.Value);
-							break;
-						case SkillType.FireMagic:
-							factor = VMP_Modplugin.applyModifierValue(factor, SkillPatches.firemagic.Value);
-							break;
-						case SkillType.FrostMagic:
-							factor = VMP_Modplugin.applyModifierValue(factor, SkillPatches.frostmagic.Value);
 							break;
 						case SkillType.Unarmed:
 							factor = VMP_Modplugin.applyModifierValue(factor, SkillPatches.unarmed.Value);
