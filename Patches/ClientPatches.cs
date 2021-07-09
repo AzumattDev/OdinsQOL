@@ -38,12 +38,13 @@ namespace VMP_Mod
 						{
 							if (allArea.IsEnabled() && allArea.IsInside(hit.m_point, 1f))
 							{
-								if (player.GetPlayerName().ToUpper().Contains("ADMIN"))
+								if (player.GetPlayerName().ToUpper().Contains("Haus"))
 								{
 									result = true;
 								}
 								else if (allArea.m_piece.m_creator != player.GetPlayerID() && !allArea.IsPermitted(player.GetPlayerID()))
 								{
+									SendModerationLog(player.GetPlayerName());
 									allArea.FlashShield(flashConnected: false);
 									result = false;
 								}
@@ -64,14 +65,6 @@ namespace VMP_Mod
 			}
 		}
 
-		[HarmonyPatch(typeof(Humanoid), "UnequipItem")]
-		public static class PlayerUnEquip
-		{
-			private static void Postfix(ItemDrop.ItemData item, bool triggerEquipEffects, ref Humanoid __instance)
-			{
-				playerEqp(ref item, ref __instance);
-			}
-		}
 
 		[HarmonyPatch(typeof(Player), "ConsumeItem")]
 		public static class ConsumeLog
@@ -87,20 +80,6 @@ namespace VMP_Mod
 		}
 
 
-
-		[HarmonyPatch(typeof(Player), "SetIntro")]
-		public static class SpawnLog
-		{
-			private static void Postfix(bool intro, Player __instance)
-			{
-				if (!ZNet.instance.IsServer() && __instance != null && __instance.m_nview.IsValid() && ZRoutedRpc.instance != null)
-				{
-					ZLog.LogWarning("FRESH " + __instance.GetPlayerName());
-					SendModerationLog(__instance.GetPlayerName() + " : FRESH CHARACTER");
-					ZRoutedRpc.instance.InvokeRoutedRPC("ServerAddFresh", __instance.GetPlayerName());
-				}
-			}
-		}
 
         [HarmonyPatch(typeof(ZSteamMatchmaking))]
         [HarmonyPatch("GetServers")]
@@ -138,6 +117,14 @@ namespace VMP_Mod
 						SendModerationLog("ship created " + component.gameObject.name + " " + Game.instance.GetPlayerProfile().GetName());
 					}
 				}
+
+				CraftingStation craftings = __instance.gameObject.GetComponent<CraftingStation>();
+				if ((bool)craftings && (bool)craftings.m_nview && craftings.m_nview.IsValid())
+				{
+					craftings.m_nview.GetZDO().Set("creatorName", Game.instance.GetPlayerProfile().GetName());
+					SendModerationLog("Crafting station created " + craftings.gameObject.name + " " + Game.instance.GetPlayerProfile().GetName());
+				}
+
 			}
 		}
 
@@ -250,6 +237,7 @@ namespace VMP_Mod
 				if (player.m_nview.IsValid() && Player.m_localPlayer != null)
 				{
 					string text = ((item.m_crafterID == 0L) ? " : uncrafted : " : (" : crafted by : " + item.m_crafterName + " "));
+					SendModerationLog("Item Equipped:" + item.m_shared.m_name + Player.m_localPlayer.GetPlayerName());
 				}
 			}
 		}
