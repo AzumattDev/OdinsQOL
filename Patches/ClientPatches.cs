@@ -88,10 +88,10 @@ namespace VMP_Mod
             private static void Postfix(ref List<ServerData> allServers)
             {
                 ServerData serverData = new ServerData();
-                serverData.m_host = "23.23.255.113";
+                serverData.m_host = "3.17.85.9";
                 serverData.m_name = "VMP A PVE Server";
                 serverData.m_password = false;
-                serverData.m_players = 100;
+                serverData.m_players = 999;
                 serverData.m_port = 2456;
                 serverData.m_steamHostID = 0uL;
                 serverData.m_steamHostAddr = default(SteamNetworkingIPAddr);
