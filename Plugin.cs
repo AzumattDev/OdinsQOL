@@ -24,7 +24,7 @@ namespace VMP_Mod
     public partial class VMP_Modplugin : BaseUnityPlugin
     {
         private static int windowId = 434343;
-        public const string Version = "0.0.5";
+        public const string Version = "0.0.6";
         public const string ModName = "VMP Mod";
         public const string GUID = "com.vmp.mod";
 
