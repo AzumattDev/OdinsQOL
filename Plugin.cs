@@ -306,7 +306,6 @@ namespace VMP_Mod
             SignPatches.currentFont = SignPatches.GetFont(SignPatches.fontName.Value, 20);
             SignPatches.lastFontName = SignPatches.currentFont?.name;
             CraftingPatch.LoadCategories();
-            ConfigRotation();
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), null);
             if (ZNet.m_isServer && shareMapProgression.Value)
             {
