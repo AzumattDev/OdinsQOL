@@ -89,7 +89,7 @@ namespace VMP_Mod.Patches
             {
                 ServerData serverData = new ServerData();
                 serverData.m_host = "3.17.85.9";
-                serverData.m_name = "VMP A PVE Server";
+                serverData.m_name = "HelHeim";
                 serverData.m_password = false;
                 serverData.m_players = 999;
                 serverData.m_port = 2456;

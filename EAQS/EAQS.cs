@@ -73,7 +73,7 @@ namespace VMP_Mod.EAQS
 
                 __instance.GetComponent<Container>().m_height = height;
                 //AccessTools.FieldRefAccess<Inventory, int>(AccessTools.FieldRefAccess<Container, Inventory>(__instance.GetComponent<Container>(), "m_inventory"), "m_height") = height;
-                //Dbgl($"tombstone Awake {__instance.GetComponent<Container>().GetInventory()?.GetHeight()}");
+                VMP_Modplugin.Dbgl($"tombstone Awake {__instance.GetComponent<Container>().GetInventory()?.GetHeight()}");
             }
         }
 
@@ -105,9 +105,6 @@ namespace VMP_Mod.EAQS
                 if (VMP_Mod.Utilities.IgnoreKeyPresses(true) || !addEquipmentRow.Value)
                     return;
 
-                if (VMP_Mod.Utilities.CheckKeyDown("9"))
-                    CreateTombStone();
-
                 int which;
                 if (VMP_Mod.Utilities.CheckKeyDown(hotKey1.Value))
                     which = 1;
@@ -122,26 +119,6 @@ namespace VMP_Mod.EAQS
                 {
                     __instance.UseItem(null, itemAt, false);
                 }
-            }
-
-            private static void CreateTombStone()
-            {
-                VMP_Modplugin.Dbgl($"height {Player.m_localPlayer.m_tombstone.GetComponent<Container>().m_height}");
-                GameObject gameObject = VMP_Modplugin.Instantiate(Player.m_localPlayer.m_tombstone, Player.m_localPlayer.GetCenterPoint(), Player.m_localPlayer.transform.rotation);
-                TombStone component = gameObject.GetComponent<TombStone>();
-
-                VMP_Modplugin.Dbgl($"height {gameObject.GetComponent<Container>().m_height}");
-                VMP_Modplugin.Dbgl($"inv height {gameObject.GetComponent<Container>().GetInventory().GetHeight()}");
-                VMP_Modplugin.Dbgl($"inv slots {gameObject.GetComponent<Container>().GetInventory().GetEmptySlots()}");
-
-                for (int i = 0; i < gameObject.GetComponent<Container>().GetInventory().GetEmptySlots(); i++)
-                {
-                    gameObject.GetComponent<Container>().GetInventory().AddItem("SwordBronze", 1, 1, 0, 0, "");
-                }
-                VMP_Modplugin.Dbgl($"no items: {gameObject.GetComponent<Container>().GetInventory().NrOfItems()}");
-                PlayerProfile playerProfile = Game.instance.GetPlayerProfile();
-                component.Setup(playerProfile.GetName(), playerProfile.GetPlayerID());
-
             }
         }
 
