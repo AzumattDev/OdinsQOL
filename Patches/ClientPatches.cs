@@ -23,38 +23,6 @@ namespace VMP_Mod.Patches
             }
         }
 
-        [HarmonyPatch(typeof(WearNTear), "RPC_Damage")]
-        public static class DamageWard
-        {
-            private static bool Prefix(long sender, HitData hit, WearNTear __instance)
-            {
-                bool result = true;
-                if (hit != null && hit.GetAttacker() != null && hit.GetAttacker().IsPlayer() && __instance.gameObject != null)
-                {
-                    Player player = (Player)hit.GetAttacker();
-                    if (__instance.gameObject.name.Contains("piece_chest") || __instance.gameObject.name.Contains("guard_stone"))
-                    {
-                        foreach (PrivateArea allArea in PrivateArea.m_allAreas)
-                        {
-                            if (allArea.IsEnabled() && allArea.IsInside(hit.m_point, 1f))
-                            {
-                                if (player.GetPlayerName().ToUpper().Contains("Haus"))
-                                {
-                                    result = true;
-                                }
-                                else if (allArea.m_piece.m_creator != player.GetPlayerID() && !allArea.IsPermitted(player.GetPlayerID()))
-                                {
-                                    SendModerationLog(player.GetPlayerName());
-                                    allArea.FlashShield(flashConnected: false);
-                                    result = false;
-                                }
-                            }
-                        }
-                    }
-                }
-                return result;
-            }
-        }
 
         [HarmonyPatch(typeof(Humanoid), "EquipItem")]
         public static class PlayerEquip
@@ -116,7 +84,7 @@ namespace VMP_Mod.Patches
                         component.m_nview.GetZDO().Set("creatorName", Game.instance.GetPlayerProfile().GetName());
                         SendModerationLog("ship created " + component.gameObject.name + " " + Game.instance.GetPlayerProfile().GetName());
                     }
-
+               
                     CraftingStation craftings = __instance.gameObject.GetComponent<CraftingStation>();
                     if ((bool)craftings && (bool)craftings.m_nview && craftings.m_nview.IsValid())
                     {

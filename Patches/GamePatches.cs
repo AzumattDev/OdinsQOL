@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
 using UnityEngine.UI;
-
+using Steamworks;
 
 namespace VMP_Mod.Patches
 {
@@ -38,10 +38,6 @@ namespace VMP_Mod.Patches
         public static ConfigEntry<float> maximumPlacementDistance;
         public static ConfigEntry<int> maxPlayers;
 
-
-        public static ConfigEntry<int> savePlayerProfileInterval;
-        public static ConfigEntry<bool> setLogoutPointOnSave;
-        public static ConfigEntry<bool> showMessageOnModSave;
 
 
         [HarmonyPatch(typeof(Game), nameof(Game.UpdateRespawn))]
@@ -547,6 +543,37 @@ namespace VMP_Mod.Patches
             }
         }
 
+        [HarmonyPatch(typeof(SteamGameServer), "SetMaxPlayerCount")]
+        public static class ChangeSteamServerVariables
+        {
+            private static void Prefix(ref int cPlayersMax)
+            {
+                
+                    int maxPlayers = GamePatches.maxPlayers.Value;
+                    if (maxPlayers >= 1)
+                    {
+                        cPlayersMax = maxPlayers;
+                    }
+                
+            }
+        }
+
+        [HarmonyPatch(typeof(ZNet), "Awake")]
+        public static class ChangeGameServerVariables
+        {
+            private static void Postfix(ref ZNet __instance)
+            {
+                
+                    int maxPlayers = GamePatches.maxPlayers.Value;
+                    if (maxPlayers >= 1)
+                    {
+                        // Set Server Instance Max Players
+                        __instance.m_serverPlayerLimit = maxPlayers;
+                    }
+                
+            }
+        }
+
         /// <summary>
         /// Alters public password requirements
         /// </summary>
@@ -659,68 +686,5 @@ namespace VMP_Mod.Patches
                 }
             }
         }
-
-        [HarmonyPatch(typeof(Game))]
-        private class GamePatch
-        {
-            [HarmonyPostfix]
-            [HarmonyPatch(nameof(Game.UpdateSaving))]
-            private static void UpdateSavingPostfix(ref Game __instance)
-            {
-
-                if (__instance.m_saveTimer == 0f || __instance.m_saveTimer < savePlayerProfileInterval.Value)
-                {
-                    return;
-                }
-
-                if (showMessageOnModSave.Value)
-                {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "Saving player profile...");
-                }
-
-                __instance.m_saveTimer = 0f;
-                __instance.SavePlayerProfile(/*setLogoutPoint=*/ setLogoutPointOnSave.Value);
-
-                if (ZNet.instance)
-                {
-                    ZNet.instance.Save(/*sync=*/ false);
-                }
-            }
-        }
-
-
-        //[HarmonyPatch(typeof(Game), nameof(Game.UpdateSaving))]
-        //private static class PatchGameUpdateSaving
-        //{
-        //    private static readonly MethodInfo getAutoSaveInterval = AccessTools.DeclaredMethod(typeof(PatchGameUpdateSaving), nameof(getAutoSaveIntervalSetting));
-        //    private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        //    {
-        //        foreach (CodeInstruction instruction in instructions)
-        //        {
-        //            if (instruction.opcode == OpCodes.Ldc_R4 && instruction.OperandIs(Game.m_saveInterval))
-        //            {
-        //                yield return new CodeInstruction(OpCodes.Call, getAutoSaveInterval);
-        //            }
-        //            else
-        //            {
-        //                yield return instruction;
-        //            }
-        //        }
-        //    }
-
-        //    private static float getAutoSaveIntervalSetting() => ServerCharacters.autoSaveInterval.Value * 60;
-        //}
-
-        [HarmonyPatch(typeof(Player))]
-        private class PlayerPatch
-        {
-            [HarmonyPostfix]
-            [HarmonyPatch(nameof(Player.OnDeath))]
-            private static void PlayerOnDeathPostfix(ref Player __instance)
-            {
-                Game.instance.m_playerProfile.ClearLoguoutPoint();
-            }
-        }
-
     }
 }
