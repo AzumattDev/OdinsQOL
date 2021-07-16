@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿/*using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
@@ -526,4 +526,4 @@ namespace VMP_Mod.Patches
         public static void SetDeconstructTab(bool isInteractable) => m_tabDeconstruct.interactable = isInteractable;
     }
 
-}
+}*/
