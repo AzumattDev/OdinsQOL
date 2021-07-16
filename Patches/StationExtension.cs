@@ -9,9 +9,7 @@ namespace VMP_Mod.Patches
         public static void Prefix(ref float ___m_maxStationDistance)
         {
             if (CraftingPatch.AlterWorkBench.Value)
-            {
                 ___m_maxStationDistance = VMP_Modplugin.workbenchAttachmentRange.Value;
-            }
         }
     }
 }

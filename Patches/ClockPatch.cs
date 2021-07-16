@@ -1,13 +1,12 @@
-﻿using BepInEx.Configuration;
+﻿using System;
+using BepInEx.Configuration;
 using HarmonyLib;
-using System;
 using UnityEngine;
 
 namespace VMP_Mod
 {
     public partial class VMP_Modplugin
     {
-     
         public static ConfigEntry<bool> showingClock;
         public static ConfigEntry<bool> showClockOnChange;
         public static ConfigEntry<float> showClockOnChangeFadeTime;
@@ -33,60 +32,19 @@ namespace VMP_Mod
         private static Font clockFont;
         private static GUIStyle style;
         private static GUIStyle style2;
-        private static bool configApplied = false;
+        private static bool configApplied;
         private static Vector2 clockPosition;
-        private static float shownTime = 0;
+        private static float shownTime;
         private static string lastTimeString = "";
         private static Rect windowRect;
-        private string newTimeString;
         private static Rect timeRect;
+        private string newTimeString;
 
-   
-        public void LoadConfig()
-        {
-            context = this;
-
-            modEnabled = Config.Bind<bool>("Clock", "Enabled", true, "Enable this mod");
-            showingClock = Config.Bind<bool>("Clock", "ShowClock", true, "Show the clock?");
-            showClockOnChange = Config.Bind<bool>("Clock", "ShowClockOnChange", false, "Only show the clock when the time changes?");
-            showClockOnChangeFadeTime = Config.Bind<float>("Clock", "ShowClockOnChangeFadeTime", 5f, "If only showing on change, length in seconds to show the clock before begining to fade");
-            showClockOnChangeFadeLength = Config.Bind<float>("Clock", "ShowClockOnChangeFadeLength", 1f, "How long fade should take in seconds");
-            clockUseOSFont = Config.Bind<bool>("Clock", "ClockUseOSFont", false, "Set to true to specify the name of a font from your OS; otherwise limited to fonts in the game resources");
-            clockUseShadow = Config.Bind<bool>("Clock", "ClockUseShadow", false, "Add a shadow behind the text");
-            clockShadowOffset = Config.Bind<int>("Clock", "ClockShadowOffset", 2, "Shadow offset in pixels");
-            clockFontName = Config.Bind<string>("Clock", "ClockFontName", "AveriaSerifLibre-Bold", "Name of the font to use");
-            clockFontSize = Config.Bind<int>("Clock", "ClockFontSize", 24, "Location on the screen in pixels to show the clock");
-            clockFontColor = Config.Bind<Color>("Clock", "ClockFontColor", Color.white, "Font color for the clock");
-            clockShadowColor = Config.Bind<Color>("Clock", "ClockShadowColor", Color.black, "Color for the shadow");
-            toggleClockKeyMod = Config.Bind<string>("Clock", "ShowClockKeyMod", "", "Extra modifier key used to toggle the clock display. Leave blank to not require one. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            toggleClockKeyOnPress = Config.Bind<bool>("Clock", "ShowClockKeyOnPress", false, "If true, limit clock display to when the hotkey is down");
-            clockFormat = Config.Bind<string>("Clock", "ClockFormat", "HH:mm", "Time format; set to 'fuzzy' for fuzzy time");
-            clockString = Config.Bind<string>("Clock", "ClockString", "<b>{0}</b>", "Formatted clock string - {0} is replaced by the actual time string, {1} is replaced by the fuzzy string, {2} is replaced by the current day");
-            clockTextAlignment = Config.Bind<TextAnchor>("Clock", "ClockTextAlignment", TextAnchor.MiddleCenter, "Clock text alignment.");
-            clockFuzzyStrings = Config.Bind<string>("Clock", "ClockFuzzyStrings", "Midnight,Early Morning,Early Morning,Before Dawn,Before Dawn,Dawn,Dawn,Morning,Morning,Late Morning,Late Morning,Midday,Midday,Early Afternoon,Early Afternoon,Afternoon,Afternoon,Evening,Evening,Night,Night,Late Night,Late Night,Midnight", "Fuzzy time strings to split up the day into custom periods if ClockFormat is set to 'fuzzy'; comma-separated");
-
-            newTimeString = "";
-            style = new GUIStyle
-            {
-                richText = true,
-                fontSize = clockFontSize.Value,
-                alignment = clockTextAlignment.Value,
-            };
-            style2 = new GUIStyle
-            {
-                richText = true,
-                fontSize = clockFontSize.Value,
-                alignment = clockTextAlignment.Value,
-            };
-
-            
-            
-    }
         private void OnGUI()
         {
             if (modEnabled.Value && configApplied && Player.m_localPlayer && Hud.instance)
             {
-                float alpha = 1f;
+                var alpha = 1f;
                 newTimeString = GetCurrentTimeString();
                 if (showClockOnChange.Value)
                 {
@@ -97,6 +55,7 @@ namespace VMP_Mod
                         if (!toggleClockKeyOnPress.Value || !CheckKeyHeld(toggleClockKey.Value))
                             return;
                     }
+
                     if (shownTime > showClockOnChangeFadeTime.Value)
                     {
                         if (shownTime > showClockOnChangeFadeTime.Value + showClockOnChangeFadeLength.Value)
@@ -106,19 +65,29 @@ namespace VMP_Mod
                             if (!toggleClockKeyOnPress.Value || !CheckKeyHeld(toggleClockKey.Value))
                                 return;
                         }
-                        alpha = (showClockOnChangeFadeLength.Value + showClockOnChangeFadeTime.Value - shownTime) / showClockOnChangeFadeLength.Value;
+
+                        alpha = (showClockOnChangeFadeLength.Value + showClockOnChangeFadeTime.Value - shownTime) /
+                                showClockOnChangeFadeLength.Value;
                     }
+
                     shownTime += Time.deltaTime;
                 }
-                style.normal.textColor = new Color(clockFontColor.Value.r, clockFontColor.Value.g, clockFontColor.Value.b, clockFontColor.Value.a * alpha);
-                style2.normal.textColor = new Color(clockShadowColor.Value.r, clockShadowColor.Value.g, clockShadowColor.Value.b, clockShadowColor.Value.a * alpha);
-                if (((!toggleClockKeyOnPress.Value && showingClock.Value) || (toggleClockKeyOnPress.Value && (showClockOnChange.Value || CheckKeyHeld(toggleClockKey.Value)))) && Traverse.Create(Hud.instance).Method("IsVisible").GetValue<bool>())
+
+                style.normal.textColor = new Color(clockFontColor.Value.r, clockFontColor.Value.g,
+                    clockFontColor.Value.b, clockFontColor.Value.a * alpha);
+                style2.normal.textColor = new Color(clockShadowColor.Value.r, clockShadowColor.Value.g,
+                    clockShadowColor.Value.b, clockShadowColor.Value.a * alpha);
+                if ((!toggleClockKeyOnPress.Value && showingClock.Value || toggleClockKeyOnPress.Value &&
+                        (showClockOnChange.Value || CheckKeyHeld(toggleClockKey.Value))) &&
+                    Traverse.Create(Hud.instance).Method("IsVisible").GetValue<bool>())
                 {
                     GUI.backgroundColor = Color.clear;
-                    windowRect = GUILayout.Window(windowId, new Rect(windowRect.position, timeRect.size), new GUI.WindowFunction(WindowBuilder), "");
+                    windowRect = GUILayout.Window(windowId, new Rect(windowRect.position, timeRect.size), WindowBuilder,
+                        "");
                     //Dbgl(""+windowRect.size);
                 }
             }
+
             if (!Input.GetKey(KeyCode.Mouse0) && (windowRect.x != clockPosition.x || windowRect.y != clockPosition.y))
             {
                 clockPosition = new Vector2(windowRect.x, windowRect.y);
@@ -128,44 +97,99 @@ namespace VMP_Mod
         }
 
 
+        public void LoadConfig()
+        {
+            context = this;
+
+            modEnabled = Config.Bind("Clock", "Enabled", true, "Enable this mod");
+            showingClock = Config.Bind("Clock", "ShowClock", true, "Show the clock?");
+            showClockOnChange = Config.Bind("Clock", "ShowClockOnChange", false,
+                "Only show the clock when the time changes?");
+            showClockOnChangeFadeTime = Config.Bind("Clock", "ShowClockOnChangeFadeTime", 5f,
+                "If only showing on change, length in seconds to show the clock before begining to fade");
+            showClockOnChangeFadeLength = Config.Bind("Clock", "ShowClockOnChangeFadeLength", 1f,
+                "How long fade should take in seconds");
+            clockUseOSFont = Config.Bind("Clock", "ClockUseOSFont", false,
+                "Set to true to specify the name of a font from your OS; otherwise limited to fonts in the game resources");
+            clockUseShadow = Config.Bind("Clock", "ClockUseShadow", false, "Add a shadow behind the text");
+            clockShadowOffset = Config.Bind("Clock", "ClockShadowOffset", 2, "Shadow offset in pixels");
+            clockFontName = Config.Bind("Clock", "ClockFontName", "AveriaSerifLibre-Bold", "Name of the font to use");
+            clockFontSize = Config.Bind("Clock", "ClockFontSize", 24,
+                "Location on the screen in pixels to show the clock");
+            clockFontColor = Config.Bind("Clock", "ClockFontColor", Color.white, "Font color for the clock");
+            clockShadowColor = Config.Bind("Clock", "ClockShadowColor", Color.black, "Color for the shadow");
+            toggleClockKeyMod = Config.Bind("Clock", "ShowClockKeyMod", "",
+                "Extra modifier key used to toggle the clock display. Leave blank to not require one. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            toggleClockKeyOnPress = Config.Bind("Clock", "ShowClockKeyOnPress", false,
+                "If true, limit clock display to when the hotkey is down");
+            clockFormat = Config.Bind("Clock", "ClockFormat", "HH:mm", "Time format; set to 'fuzzy' for fuzzy time");
+            clockString = Config.Bind("Clock", "ClockString", "<b>{0}</b>",
+                "Formatted clock string - {0} is replaced by the actual time string, {1} is replaced by the fuzzy string, {2} is replaced by the current day");
+            clockTextAlignment = Config.Bind("Clock", "ClockTextAlignment", TextAnchor.MiddleCenter,
+                "Clock text alignment.");
+            clockFuzzyStrings = Config.Bind("Clock", "ClockFuzzyStrings",
+                "Midnight,Early Morning,Early Morning,Before Dawn,Before Dawn,Dawn,Dawn,Morning,Morning,Late Morning,Late Morning,Midday,Midday,Early Afternoon,Early Afternoon,Afternoon,Afternoon,Evening,Evening,Night,Night,Late Night,Late Night,Midnight",
+                "Fuzzy time strings to split up the day into custom periods if ClockFormat is set to 'fuzzy'; comma-separated");
+
+            newTimeString = "";
+            style = new GUIStyle
+            {
+                richText = true,
+                fontSize = clockFontSize.Value,
+                alignment = clockTextAlignment.Value
+            };
+            style2 = new GUIStyle
+            {
+                richText = true,
+                fontSize = clockFontSize.Value,
+                alignment = clockTextAlignment.Value
+            };
+        }
+
+
         private void WindowBuilder(int id)
         {
-
             timeRect = GUILayoutUtility.GetRect(new GUIContent(newTimeString), style);
 
             GUI.DragWindow(timeRect);
 
             if (clockUseShadow.Value)
-            {
-                GUI.Label(new Rect(timeRect.position + new Vector2(-clockShadowOffset.Value, clockShadowOffset.Value), timeRect.size), newTimeString, style2);
-            }
+                GUI.Label(
+                    new Rect(timeRect.position + new Vector2(-clockShadowOffset.Value, clockShadowOffset.Value),
+                        timeRect.size), newTimeString, style2);
             GUI.Label(timeRect, newTimeString, style);
         }
 
         private static void ApplyConfig()
         {
-
-            string[] split = clockLocationString.Value.Split(',');
-            clockPosition = new Vector2(split[0].Trim().EndsWith("%") ? (float.Parse(split[0].Trim().Substring(0, split[0].Trim().Length - 1)) / 100f) * Screen.width : float.Parse(split[0].Trim()), split[1].Trim().EndsWith("%") ? (float.Parse(split[1].Trim().Substring(0, split[1].Trim().Length - 1)) / 100f) * Screen.height : float.Parse(split[1].Trim()));
+            var split = clockLocationString.Value.Split(',');
+            clockPosition = new Vector2(
+                split[0].Trim().EndsWith("%")
+                    ? float.Parse(split[0].Trim().Substring(0, split[0].Trim().Length - 1)) / 100f * Screen.width
+                    : float.Parse(split[0].Trim()),
+                split[1].Trim().EndsWith("%")
+                    ? float.Parse(split[1].Trim().Substring(0, split[1].Trim().Length - 1)) / 100f * Screen.height
+                    : float.Parse(split[1].Trim()));
 
             windowRect = new Rect(clockPosition, new Vector2(1000, 100));
 
             if (clockUseOSFont.Value)
+            {
                 clockFont = Font.CreateDynamicFontFromOSFont(clockFontName.Value, clockFontSize.Value);
+            }
             else
             {
-                Debug.Log($"getting fonts");
-                Font[] fonts = Resources.FindObjectsOfTypeAll<Font>();
-                foreach (Font font in fonts)
-                {
+                Debug.Log("getting fonts");
+                var fonts = Resources.FindObjectsOfTypeAll<Font>();
+                foreach (var font in fonts)
                     if (font.name == clockFontName.Value)
                     {
                         clockFont = font;
                         Debug.Log($"got font {font.name}");
                         break;
                     }
-                }
             }
+
             style = new GUIStyle
             {
                 richText = true,
@@ -186,20 +210,20 @@ namespace VMP_Mod
 
         private string GetCurrentTimeString(DateTime theTime, float fraction, int days)
         {
+            var fuzzyStringArray = clockFuzzyStrings.Value.Split(',');
 
-            string[] fuzzyStringArray = clockFuzzyStrings.Value.Split(',');
-
-            int idx = Math.Min((int)(fuzzyStringArray.Length * fraction), fuzzyStringArray.Length - 1);
+            var idx = Math.Min((int) (fuzzyStringArray.Length * fraction), fuzzyStringArray.Length - 1);
 
             if (clockFormat.Value == "fuzzy")
                 return string.Format(clockString.Value, fuzzyStringArray[idx]);
 
-            return string.Format(clockString.Value, theTime.ToString(clockFormat.Value), fuzzyStringArray[idx], days.ToString());
+            return string.Format(clockString.Value, theTime.ToString(clockFormat.Value), fuzzyStringArray[idx],
+                days.ToString());
         }
 
         private static string GetFuzzyFileName(string lang)
-        {            
-            return context.Info.Location.Replace("ClockMod.dll","") + string.Format("clockmod.lang.{0}.cfg",lang);
+        {
+            return context.Info.Location.Replace("ClockMod.dll", "") + string.Format("clockmod.lang.{0}.cfg", lang);
         }
 
         private static bool CheckKeyHeld(string value)
@@ -213,6 +237,7 @@ namespace VMP_Mod
                 return true;
             }
         }
+
         private bool PressedToggleKey()
         {
             try
@@ -226,18 +251,15 @@ namespace VMP_Mod
         }
 
         [HarmonyPatch(typeof(ZNetScene), "Awake")]
-        static class ZNetScene_Awake_Patch
+        private static class ZNetScene_Awake_Patch
         {
-            static void Postfix()
+            private static void Postfix()
             {
                 if (!modEnabled.Value)
                     return;
 
                 ApplyConfig();
-
             }
         }
-
-
     }
 }

@@ -1,45 +1,39 @@
-using HarmonyLib;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using HarmonyLib;
 using UnityEngine;
-using UnityEngine.UI;
-using VMP_Mod.EAQS;
 
 namespace VMP_Mod.Patches
 {
-
     [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.RepairOneItem))]
     public static class InventoryGui_RepairOneItem_Transpiler
     {
-        private static MethodInfo method_EffectList_Create = AccessTools.Method(typeof(EffectList), nameof(EffectList.Create));
-        private static MethodInfo method_CreateNoop = AccessTools.Method(typeof(InventoryGui_RepairOneItem_Transpiler), nameof(InventoryGui_RepairOneItem_Transpiler.CreateNoop));
+        private static readonly MethodInfo method_EffectList_Create =
+            AccessTools.Method(typeof(EffectList), nameof(EffectList.Create));
+
+        private static readonly MethodInfo method_CreateNoop =
+            AccessTools.Method(typeof(InventoryGui_RepairOneItem_Transpiler), nameof(CreateNoop));
 
         /// <summary>
-        /// Patches out the code that spawns an effect for each item repaired - when we repair multiple items, we only want
-        /// one effect, otherwise it looks and sounds bad. The patch for InventoryGui.UpdateRepair will spawn the effect instead.
+        ///     Patches out the code that spawns an effect for each item repaired - when we repair multiple items, we only want
+        ///     one effect, otherwise it looks and sounds bad. The patch for InventoryGui.UpdateRepair will spawn the effect
+        ///     instead.
         /// </summary>
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> Transpile(IEnumerable<CodeInstruction> instructions)
         {
-            
-
-            List<CodeInstruction> il = instructions.ToList();
+            var il = instructions.ToList();
 
             if (VMP_Modplugin.AutoRepair.Value)
-            {
                 // We look for a call to EffectList::Create and replace it with our own noop stub.
-                for (int i = 0; i < il.Count; ++i)
-                {
+                for (var i = 0; i < il.Count; ++i)
                     if (il[i].Calls(method_EffectList_Create))
                     {
                         il[i].opcode = OpCodes.Call; // original is callvirt, so we need to tweak it
                         il[i].operand = method_CreateNoop;
                     }
-                }
-            }
 
             return il.AsEnumerable();
         }
@@ -54,21 +48,21 @@ namespace VMP_Mod.Patches
     public static class InventoryGui_UpdateRepair_Patch
     {
         /// <summary>
-        /// When we're in a state where the InventoryGui is open and we have items available to repair,
-        /// and we have an active crafting station, this patch is responsible for repairing all items
-        /// that can be repaired and then spawning one instance of the repair effect if at least one item
-        /// has been repaired.
+        ///     When we're in a state where the InventoryGui is open and we have items available to repair,
+        ///     and we have an active crafting station, this patch is responsible for repairing all items
+        ///     that can be repaired and then spawning one instance of the repair effect if at least one item
+        ///     has been repaired.
         /// </summary>
         [HarmonyPrefix]
         public static void Prefix(InventoryGui __instance)
         {
             if (!VMP_Modplugin.AutoRepair.Value) return;
 
-            CraftingStation curr_crafting_station = Player.m_localPlayer.GetCurrentCraftingStation();
+            var curr_crafting_station = Player.m_localPlayer.GetCurrentCraftingStation();
 
             if (curr_crafting_station != null)
             {
-                int repair_count = 0;
+                var repair_count = 0;
 
                 while (__instance.HaveRepairableItems())
                 {
@@ -77,9 +71,8 @@ namespace VMP_Mod.Patches
                 }
 
                 if (repair_count > 0)
-                {
-                    curr_crafting_station.m_repairItemDoneEffects.Create(curr_crafting_station.transform.position, Quaternion.identity, null, 1.0f);
-                }
+                    curr_crafting_station.m_repairItemDoneEffects.Create(curr_crafting_station.transform.position,
+                        Quaternion.identity);
             }
         }
     }
@@ -224,5 +217,4 @@ namespace VMP_Mod.Patches
               }
           }
       }*/
-
 }

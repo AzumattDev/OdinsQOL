@@ -1,13 +1,12 @@
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using HarmonyLib;
 
 namespace VMP_Mod.Patches
 {
-
     /// <summary>
-    /// Makes all items fill inventories top to bottom instead of just tools and weapons
+    ///     Makes all items fill inventories top to bottom instead of just tools and weapons
     /// </summary>
     [HarmonyPatch(typeof(Inventory), "TopFirst")]
     public static class Inventory_TopFirst_Patch
@@ -19,7 +18,8 @@ namespace VMP_Mod.Patches
                 __result = true;
                 return false;
             }
-            else return true;
+
+            return true;
         }
     }
 
@@ -28,10 +28,8 @@ namespace VMP_Mod.Patches
     {
         private static void Postfix(ref bool __result)
         {
-            
-                if (VMP_Modplugin.NoTeleportPrevention.Value)
-                    __result = true;
-            
+            if (VMP_Modplugin.NoTeleportPrevention.Value)
+                __result = true;
         }
     }
 
@@ -40,19 +38,16 @@ namespace VMP_Mod.Patches
     {
         private static void Prefix(ref ItemDrop __instance)
         {
-
             if (VMP_Modplugin.itemStackMultiplier.Value > 0)
             {
-                __instance.m_itemData.m_shared.m_weight = VMP_Modplugin.applyModifierValue(__instance.m_itemData.m_shared.m_weight, VMP_Modplugin.WeightReduction.Value);
+                __instance.m_itemData.m_shared.m_weight =
+                    VMP_Modplugin.applyModifierValue(__instance.m_itemData.m_shared.m_weight,
+                        VMP_Modplugin.WeightReduction.Value);
 
                 if (__instance.m_itemData.m_shared.m_maxStackSize > 1)
-                {
                     if (VMP_Modplugin.itemStackMultiplier.Value >= 1)
-                    {
-                        __instance.m_itemData.m_shared.m_maxStackSize = (int)VMP_Modplugin.applyModifierValue(__instance.m_itemData.m_shared.m_maxStackSize, VMP_Modplugin.itemStackMultiplier.Value);
-
-                    }
-                }
+                        __instance.m_itemData.m_shared.m_maxStackSize = (int) VMP_Modplugin.applyModifierValue(
+                            __instance.m_itemData.m_shared.m_maxStackSize, VMP_Modplugin.itemStackMultiplier.Value);
             }
         }
     }
@@ -64,42 +59,31 @@ namespace VMP_Mod.Patches
     }
 
     /// <summary>
-    /// When merging another inventory, try to merge items with existing stacks.
+    ///     When merging another inventory, try to merge items with existing stacks.
     /// </summary>
     [HarmonyPatch(typeof(Inventory), "MoveAll")]
     public static class Inventory_MoveAll_Patch
     {
         private static void Prefix(ref Inventory __instance, ref Inventory fromInventory)
         {
-
-            List<ItemDrop.ItemData> list = new List<ItemDrop.ItemData>(fromInventory.GetAllItems());
-            foreach (ItemDrop.ItemData otherItem in list)
-            {
+            var list = new List<ItemDrop.ItemData>(fromInventory.GetAllItems());
+            foreach (var otherItem in list)
                 if (otherItem.m_shared.m_maxStackSize > 1)
-                {
-                    foreach (ItemDrop.ItemData myItem in __instance.m_inventory)
-                    {
-                        if (myItem.m_shared.m_name == otherItem.m_shared.m_name && myItem.m_quality == otherItem.m_quality)
+                    foreach (var myItem in __instance.m_inventory)
+                        if (myItem.m_shared.m_name == otherItem.m_shared.m_name &&
+                            myItem.m_quality == otherItem.m_quality)
                         {
-                            int itemsToMove = Math.Min(myItem.m_shared.m_maxStackSize - myItem.m_stack, otherItem.m_stack);
+                            var itemsToMove = Math.Min(myItem.m_shared.m_maxStackSize - myItem.m_stack,
+                                otherItem.m_stack);
                             myItem.m_stack += itemsToMove;
                             if (otherItem.m_stack == itemsToMove)
                             {
                                 fromInventory.RemoveItem(otherItem);
                                 break;
                             }
-                            else
-                            {
-                                otherItem.m_stack -= itemsToMove;
-                            }
-                        }
-                    }
-                }
-            }
 
+                            otherItem.m_stack -= itemsToMove;
+                        }
         }
     }
-
-
-
 }

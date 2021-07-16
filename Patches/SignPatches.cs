@@ -1,11 +1,10 @@
-﻿using BepInEx;
-using BepInEx.Configuration;
+﻿using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
 
 namespace VMP_Mod.Patches
 {
-    class SignPatches
+    internal class SignPatches
     {
         public static ConfigEntry<bool> useRichText;
         public static ConfigEntry<string> fontName;
@@ -14,22 +13,6 @@ namespace VMP_Mod.Patches
         public static Font currentFont;
         public static string lastFontName;
 
-        [HarmonyPatch(typeof(Sign), "Awake")]
-        static class Sign_Awake_Patch
-        {
-            static void Postfix(Sign __instance)
-            {
-                FixSign(ref __instance);
-            }
-        }
-        [HarmonyPatch(typeof(Sign), "UpdateText")]
-        static class Sign_UpdateText_Patch
-        {
-            static void Postfix(Sign __instance)
-            {
-                FixSign(ref __instance);
-            }
-        }
         public static void FixSign(ref Sign sign)
         {
             sign.transform.localScale = signScale.Value;
@@ -43,32 +26,45 @@ namespace VMP_Mod.Patches
             {
                 lastFontName = fontName.Value;
                 VMP_Modplugin.Dbgl($"new font {fontName.Value}");
-                Font font = GetFont(fontName.Value, 20);
+                var font = GetFont(fontName.Value, 20);
                 if (font == null)
-                    VMP_Modplugin.Dbgl($"new font not found");
+                    VMP_Modplugin.Dbgl("new font not found");
                 else
                     currentFont = font;
             }
+
             if (currentFont != null && sign.m_textWidget.font?.name != currentFont.name)
             {
                 VMP_Modplugin.Dbgl($"setting font {currentFont.name}");
                 sign.m_textWidget.font = currentFont;
             }
         }
+
         public static Font GetFont(string fontName, int fontSize)
         {
-            Font[] fonts = Resources.FindObjectsOfTypeAll<Font>();
-            foreach (Font font in fonts)
-            {
+            var fonts = Resources.FindObjectsOfTypeAll<Font>();
+            foreach (var font in fonts)
                 if (font.name == fontName)
-                {
                     return font;
-                }
-            }
             return Font.CreateDynamicFontFromOSFont(fontName, fontSize);
         }
 
+        [HarmonyPatch(typeof(Sign), "Awake")]
+        private static class Sign_Awake_Patch
+        {
+            private static void Postfix(Sign __instance)
+            {
+                FixSign(ref __instance);
+            }
+        }
 
-
+        [HarmonyPatch(typeof(Sign), "UpdateText")]
+        private static class Sign_UpdateText_Patch
+        {
+            private static void Postfix(Sign __instance)
+            {
+                FixSign(ref __instance);
+            }
+        }
     }
 }

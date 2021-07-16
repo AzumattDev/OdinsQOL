@@ -3,7 +3,7 @@ using HarmonyLib;
 
 namespace VMP_Mod.Patches
 {
-    class Container_Configs
+    internal class Container_Configs
     {
         public static ConfigEntry<int> KarveRow;
         public static ConfigEntry<int> KarveCol;
@@ -17,64 +17,61 @@ namespace VMP_Mod.Patches
         public static ConfigEntry<int> WoodCol;
         public static ConfigEntry<int> IronRow;
         public static ConfigEntry<int> IronCol;
-    
-    [HarmonyPatch(typeof(Container), "Awake")]
-    public static class Container_Awake_Patch
-    {
-       
-        static void Postfix(Container __instance, ref Inventory ___m_inventory)
+
+        [HarmonyPatch(typeof(Container), "Awake")]
+        public static class Container_Awake_Patch
         {
-           
-            if (__instance == null || ___m_inventory == null || !__instance.transform.parent) return;
+            private static void Postfix(Container __instance, ref Inventory ___m_inventory)
+            {
+                if (__instance == null || ___m_inventory == null || !__instance.transform.parent) return;
 
-            string containerName = __instance.transform.parent.name;
-            string inventoryName = ___m_inventory.m_name;
-            ref int inventoryColumns = ref ___m_inventory.m_width;
-            ref int inventoryRows = ref ___m_inventory.m_height;
+                var containerName = __instance.transform.parent.name;
+                var inventoryName = ___m_inventory.m_name;
+                ref var inventoryColumns = ref ___m_inventory.m_width;
+                ref var inventoryRows = ref ___m_inventory.m_height;
 
-            // Karve (small boat)
-            // Use Contains because the actual name is "Karve (Clone)"
-            if (containerName.Contains("Karve"))
-            {
-                inventoryRows = Container_Configs.KarveRow.Value;
-                inventoryColumns = Container_Configs.KarveCol.Value;
-            }
-            // Longboat (Large boat)
-            else if (containerName.Contains("VikingShip"))
-            {
-                inventoryRows = Container_Configs.LongRow.Value;
-                inventoryColumns = Container_Configs.LongCol.Value;
-            }
-            // Cart (Wagon)
-            else if (containerName.Contains("Cart"))
-            {
-                inventoryRows = Container_Configs.CartRow.Value;
-                inventoryColumns = Container_Configs.CartCol.Value;
-            }
-            // Chests (containerName is _NetSceneRoot)
-            else
-            {
-                // Personal chest
-                if (inventoryName == "$piece_chestprivate")
+                // Karve (small boat)
+                // Use Contains because the actual name is "Karve (Clone)"
+                if (containerName.Contains("Karve"))
                 {
-                    inventoryRows = Container_Configs.PersonalRow.Value;
-                    inventoryColumns = Container_Configs.PersonalCol.Value;
+                    inventoryRows = KarveRow.Value;
+                    inventoryColumns = KarveCol.Value;
                 }
-                // Wood chest
-                else if (inventoryName == "$piece_chestwood")
+                // Longboat (Large boat)
+                else if (containerName.Contains("VikingShip"))
                 {
-                    inventoryRows = Container_Configs.WoodRow.Value;
-                    inventoryColumns = Container_Configs.WoodCol.Value;
+                    inventoryRows = LongRow.Value;
+                    inventoryColumns = LongCol.Value;
                 }
-                // Iron chest
-                else if (inventoryName == "$piece_chest")
+                // Cart (Wagon)
+                else if (containerName.Contains("Cart"))
                 {
-                    inventoryRows = Container_Configs.IronRow.Value;
-                    inventoryColumns = IronCol.Value;
+                    inventoryRows = CartRow.Value;
+                    inventoryColumns = CartCol.Value;
+                }
+                // Chests (containerName is _NetSceneRoot)
+                else
+                {
+                    // Personal chest
+                    if (inventoryName == "$piece_chestprivate")
+                    {
+                        inventoryRows = PersonalRow.Value;
+                        inventoryColumns = PersonalCol.Value;
+                    }
+                    // Wood chest
+                    else if (inventoryName == "$piece_chestwood")
+                    {
+                        inventoryRows = WoodRow.Value;
+                        inventoryColumns = WoodCol.Value;
+                    }
+                    // Iron chest
+                    else if (inventoryName == "$piece_chest")
+                    {
+                        inventoryRows = IronRow.Value;
+                        inventoryColumns = IronCol.Value;
+                    }
                 }
             }
-
         }
     }
-   }
 }

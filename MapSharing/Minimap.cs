@@ -1,59 +1,51 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Reflection;
+using HarmonyLib;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using VMP_Mod.RPC;
-using VMP_Mod.Utility;
-using VMP_Mod;
-using Random = UnityEngine.Random;
-using BepInEx.Configuration;
-using System.Reflection;
+using Object = UnityEngine.Object;
 
 // ToDo add packet system to convey map markers
 namespace VMP_Mod.GameClasses
 {
-    
     /// <summary>
-    /// Hooks base explore method
+    ///     Hooks base explore method
     /// </summary>
     [HarmonyPatch(typeof(Minimap))]
     public class HookExplore
     {
         [HarmonyReversePatch]
-        [HarmonyPatch(typeof(Minimap), "Explore", new Type[] { typeof(Vector3), typeof(float) })]
-        public static void call_Explore(object instance, Vector3 p, float radius) => throw new NotImplementedException();
+        [HarmonyPatch(typeof(Minimap), "Explore", typeof(Vector3), typeof(float))]
+        public static void call_Explore(object instance, Vector3 p, float radius)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     /// <summary>
-    /// Update exploration for all players
+    ///     Update exploration for all players
     /// </summary>
     [HarmonyPatch(typeof(Minimap), "UpdateExplore")]
     public static class ChangeMapBehavior
     {
-        private static void Prefix(ref float dt, ref Player player, ref Minimap __instance, ref float ___m_exploreTimer, ref float ___m_exploreInterval)
+        private static void Prefix(ref float dt, ref Player player, ref Minimap __instance, ref float ___m_exploreTimer,
+            ref float ___m_exploreInterval)
         {
-            
-
             if (!VMP_Modplugin.mapIsEnabled.Value) return;
 
             if (VMP_Modplugin.shareMapProgression.Value)
             {
-                float explorerTime = ___m_exploreTimer;
+                var explorerTime = ___m_exploreTimer;
                 explorerTime += Time.deltaTime;
                 if (explorerTime > ___m_exploreInterval)
-                {
                     if (ZNet.instance.m_players.Any())
-                    {
-                        foreach (ZNet.PlayerInfo m_Player in ZNet.instance.m_players)
-                        {
-                            HookExplore.call_Explore(__instance, m_Player.m_position, VMP_Modplugin.exploreRadius.Value);
-                        }
-                    }
-                }
+                        foreach (var m_Player in ZNet.instance.m_players)
+                            HookExplore.call_Explore(__instance, m_Player.m_position,
+                                VMP_Modplugin.exploreRadius.Value);
             }
 
             // Always reveal for your own, we do this non the less to apply the potentially bigger exploreRadius
@@ -83,11 +75,23 @@ namespace VMP_Mod.GameClasses
     public static class MapPinEditor_Patches
     {
         public static GameObject pinEditorPanel;
-        public static AssetBundle mapPinBundle = null;
+        public static AssetBundle mapPinBundle;
         public static Dropdown iconSelected;
         public static InputField pinName;
         public static Toggle sharePin;
         public static Vector3 pinPos;
+
+        private static AssetBundle GetAssetBundleFromResources(string filename)
+        {
+            var execAssembly = Assembly.GetExecutingAssembly();
+            var resourceName = execAssembly.GetManifestResourceNames()
+                .Single(str => str.EndsWith(filename));
+
+            using (var stream = execAssembly.GetManifestResourceStream(resourceName))
+            {
+                return AssetBundle.LoadFromStream(stream);
+            }
+        }
 
         [HarmonyPatch(typeof(Minimap), nameof(Minimap.AddPin))]
         public static class Minimap_AddPin_Patch
@@ -112,8 +116,8 @@ namespace VMP_Mod.GameClasses
         {
             public static void AddPin(ref Minimap __instance)
             {
-                Minimap.PinType pintype = iconSelected.value == 4 ? Minimap.PinType.Icon4 : (Minimap.PinType)iconSelected.value;
-                Minimap.PinData addedPin = __instance.AddPin(pinPos, pintype, pinName.text, true, false);
+                var pintype = iconSelected.value == 4 ? Minimap.PinType.Icon4 : (Minimap.PinType) iconSelected.value;
+                var addedPin = __instance.AddPin(pinPos, pintype, pinName.text, true, false);
                 if (VMP_Modplugin.shareablePins.Value && sharePin.isOn && !VMP_Modplugin.shareAllPins.Value)
                     VMPMapPinSync.SendMapPinToServer(addedPin);
                 pinEditorPanel.SetActive(false);
@@ -124,23 +128,23 @@ namespace VMP_Mod.GameClasses
             {
                 if (VMP_Modplugin.mapIsEnabled.Value)
                 {
-                    Minimap_AddPin_Patch.shareablePins = new List<Minimap.PinType>() {
-                        Minimap.PinType.Icon0, Minimap.PinType.Icon1, Minimap.PinType.Icon2,
-                        Minimap.PinType.Icon3, Minimap.PinType.Icon4 };
-                    GameObject iconPanelOld = GameObjectAssistant.GetChildComponentByName<Transform>("IconPanel", __instance.m_largeRoot).gameObject;
-                    for (int i = 0; i < 5; i++)
+                    Minimap_AddPin_Patch.shareablePins = new List<Minimap.PinType>
                     {
-                        GameObjectAssistant.GetChildComponentByName<Transform>("Icon" + i.ToString(), iconPanelOld).gameObject.SetActive(false);
-                    }
-                    GameObjectAssistant.GetChildComponentByName<Transform>("Bkg", iconPanelOld).gameObject.SetActive(false);
+                        Minimap.PinType.Icon0, Minimap.PinType.Icon1, Minimap.PinType.Icon2,
+                        Minimap.PinType.Icon3, Minimap.PinType.Icon4
+                    };
+                    var iconPanelOld = GameObjectAssistant
+                        .GetChildComponentByName<Transform>("IconPanel", __instance.m_largeRoot).gameObject;
+                    for (var i = 0; i < 5; i++)
+                        GameObjectAssistant.GetChildComponentByName<Transform>("Icon" + i, iconPanelOld).gameObject
+                            .SetActive(false);
+                    GameObjectAssistant.GetChildComponentByName<Transform>("Bkg", iconPanelOld).gameObject
+                        .SetActive(false);
                     iconPanelOld.SetActive(false);
                     __instance.m_nameInput.gameObject.SetActive(false);
-                    if (mapPinBundle == null)
-                    {
-                        mapPinBundle = GetAssetBundleFromResources("map-pin-ui");
-                    }
-                    GameObject pinEditorPanelParent = mapPinBundle.LoadAsset<GameObject>("MapPinEditor");
-                    pinEditorPanel = GameObject.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject);
+                    if (mapPinBundle == null) mapPinBundle = GetAssetBundleFromResources("map-pin-ui");
+                    var pinEditorPanelParent = mapPinBundle.LoadAsset<GameObject>("MapPinEditor");
+                    pinEditorPanel = Object.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject);
                     pinEditorPanel.transform.SetParent(__instance.m_largeRoot.transform, false);
                     var image = pinEditorPanel.GetComponentInChildren<Image>();
                     image.gameObject.SetActive(false);
@@ -149,18 +153,25 @@ namespace VMP_Mod.GameClasses
                     pinName = pinEditorPanel.GetComponentInChildren<InputField>();
                     if (pinName != null)
                         Debug.Log("Pin Name loaded properly");
-                    Minimap theInstance = __instance;
-                    GameObjectAssistant.GetChildComponentByName<Transform>("OK", pinEditorPanel).gameObject.GetComponent<Button>().onClick.AddListener(delegate { AddPin(ref theInstance); });
-                    GameObjectAssistant.GetChildComponentByName<Transform>("Cancel", pinEditorPanel).gameObject.GetComponent<Button>().onClick.AddListener(delegate { Minimap.instance.m_wasFocused = false; pinEditorPanel.SetActive(false); });
+                    var theInstance = __instance;
+                    GameObjectAssistant.GetChildComponentByName<Transform>("OK", pinEditorPanel).gameObject
+                        .GetComponent<Button>().onClick.AddListener(delegate { AddPin(ref theInstance); });
+                    GameObjectAssistant.GetChildComponentByName<Transform>("Cancel", pinEditorPanel).gameObject
+                        .GetComponent<Button>().onClick.AddListener(delegate
+                        {
+                            Minimap.instance.m_wasFocused = false;
+                            pinEditorPanel.SetActive(false);
+                        });
                     iconSelected = pinEditorPanel.GetComponentInChildren<Dropdown>();
                     iconSelected.options.Clear();
-                    int ind = 0;
-                    List<string> list = new List<string> { "Fire", "Home", "Hammer", "Circle", "Rune" };
-                    foreach (string option in list)
+                    var ind = 0;
+                    var list = new List<string> {"Fire", "Home", "Hammer", "Circle", "Rune"};
+                    foreach (var option in list)
                     {
                         iconSelected.options.Add(new Dropdown.OptionData(option, Minimap.instance.m_icons[ind].m_icon));
                         ind++;
                     }
+
                     if (iconSelected != null)
                         Debug.Log("Dropdown loaded properly");
                     sharePin = pinEditorPanel.GetComponentInChildren<Toggle>();
@@ -171,62 +182,64 @@ namespace VMP_Mod.GameClasses
                 }
             }
         }
-        private static AssetBundle GetAssetBundleFromResources(string filename)
-        {
-            var execAssembly = Assembly.GetExecutingAssembly();
-            var resourceName = execAssembly.GetManifestResourceNames()
-                .Single(str => str.EndsWith(filename));
 
-            using (var stream = execAssembly.GetManifestResourceStream(resourceName))
-            {
-                return AssetBundle.LoadFromStream(stream);
-            }
-        }
         [HarmonyPatch(typeof(Minimap), "OnMapDblClick")]
         public static class MapPinEditor_Patches_OnMapDblClick
         {
-            public static bool imageoff = false;
+            public static bool imageoff;
+
             private static bool Prefix(ref Minimap __instance)
             {
                 if (VMP_Modplugin.mapIsEnabled.Value)
                 {
                     if (pinEditorPanel == null)
                     {
-                        Minimap_AddPin_Patch.shareablePins = new List<Minimap.PinType>() {
-                        Minimap.PinType.Icon0, Minimap.PinType.Icon1, Minimap.PinType.Icon2,
-                        Minimap.PinType.Icon3, Minimap.PinType.Icon4 };
-                        GameObject iconPanelOld = GameObjectAssistant.GetChildComponentByName<Transform>("IconPanel", __instance.m_largeRoot).gameObject;
-                        for (int i = 0; i < 5; i++)
+                        Minimap_AddPin_Patch.shareablePins = new List<Minimap.PinType>
                         {
-                            GameObjectAssistant.GetChildComponentByName<Transform>("Icon" + i.ToString(), iconPanelOld).gameObject.SetActive(false);
-                        }
-                        GameObjectAssistant.GetChildComponentByName<Transform>("Bkg", iconPanelOld).gameObject.SetActive(false);
+                            Minimap.PinType.Icon0, Minimap.PinType.Icon1, Minimap.PinType.Icon2,
+                            Minimap.PinType.Icon3, Minimap.PinType.Icon4
+                        };
+                        var iconPanelOld = GameObjectAssistant
+                            .GetChildComponentByName<Transform>("IconPanel", __instance.m_largeRoot).gameObject;
+                        for (var i = 0; i < 5; i++)
+                            GameObjectAssistant.GetChildComponentByName<Transform>("Icon" + i, iconPanelOld).gameObject
+                                .SetActive(false);
+                        GameObjectAssistant.GetChildComponentByName<Transform>("Bkg", iconPanelOld).gameObject
+                            .SetActive(false);
                         iconPanelOld.SetActive(false);
                         __instance.m_nameInput.gameObject.SetActive(false);
-                        if (mapPinBundle == null)
-                        {
-                            mapPinBundle = GetAssetBundleFromResources("map-pin-ui");
-                        }
-                        GameObject pinEditorPanelParent = mapPinBundle.LoadAsset<GameObject>("MapPinEditor");
-                        pinEditorPanel = GameObject.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject);
+                        if (mapPinBundle == null) mapPinBundle = GetAssetBundleFromResources("map-pin-ui");
+                        var pinEditorPanelParent = mapPinBundle.LoadAsset<GameObject>("MapPinEditor");
+                        pinEditorPanel = Object.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject);
                         pinEditorPanel.transform.SetParent(__instance.m_largeRoot.transform, false);
 
 
                         pinName = pinEditorPanel.GetComponentInChildren<InputField>();
                         if (pinName != null)
                             Debug.Log("Pin Name loaded properly");
-                        Minimap theInstance = __instance;
-                        GameObjectAssistant.GetChildComponentByName<Transform>("OK", pinEditorPanel).gameObject.GetComponent<Button>().onClick.AddListener(delegate { MapPinEditor_Patches_Awake.AddPin(ref theInstance); });
-                        GameObjectAssistant.GetChildComponentByName<Transform>("Cancel", pinEditorPanel).gameObject.GetComponent<Button>().onClick.AddListener(delegate { Minimap.instance.m_wasFocused = false; pinEditorPanel.SetActive(false); });
+                        var theInstance = __instance;
+                        GameObjectAssistant.GetChildComponentByName<Transform>("OK", pinEditorPanel).gameObject
+                            .GetComponent<Button>().onClick.AddListener(delegate
+                            {
+                                MapPinEditor_Patches_Awake.AddPin(ref theInstance);
+                            });
+                        GameObjectAssistant.GetChildComponentByName<Transform>("Cancel", pinEditorPanel).gameObject
+                            .GetComponent<Button>().onClick.AddListener(delegate
+                            {
+                                Minimap.instance.m_wasFocused = false;
+                                pinEditorPanel.SetActive(false);
+                            });
                         iconSelected = pinEditorPanel.GetComponentInChildren<Dropdown>();
                         iconSelected.options.Clear();
-                        int ind = 0;
-                        List<string> list = new List<string> { "Fire", "Home", "Hammer", "Circle", "Rune" };
-                        foreach (string option in list)
+                        var ind = 0;
+                        var list = new List<string> {"Fire", "Home", "Hammer", "Circle", "Rune"};
+                        foreach (var option in list)
                         {
-                            iconSelected.options.Add(new Dropdown.OptionData(option, Minimap.instance.m_icons[ind].m_icon));
+                            iconSelected.options.Add(new Dropdown.OptionData(option,
+                                Minimap.instance.m_icons[ind].m_icon));
                             ind++;
                         }
+
                         if (iconSelected != null)
                             Debug.Log("Dropdown loaded properly");
                         sharePin = pinEditorPanel.GetComponentInChildren<Toggle>();
@@ -235,27 +248,27 @@ namespace VMP_Mod.GameClasses
                         if (!VMP_Modplugin.shareablePins.Value || VMP_Modplugin.shareAllPins.Value)
                             sharePin.gameObject.SetActive(false);
                     }
+
                     if (!pinEditorPanel.activeSelf)
                     {
                         pinEditorPanel.SetActive(true);
-                        
-                         if (imageoff == false)
-                        { 
-                        var title = pinEditorPanel.transform.Find("Title");
-                        var picture = title.GetComponentInChildren<Image>();
-                        picture.gameObject.SetActive(false);
+
+                        if (imageoff == false)
+                        {
+                            var title = pinEditorPanel.transform.Find("Title");
+                            var picture = title.GetComponentInChildren<Image>();
+                            picture.gameObject.SetActive(false);
                             imageoff = true;
                         }
                     }
-                    if (!pinName.isFocused)
-                    {
-                        EventSystem.current.SetSelectedGameObject(pinName.gameObject);
-                    }
+
+                    if (!pinName.isFocused) EventSystem.current.SetSelectedGameObject(pinName.gameObject);
                     pinPos = __instance.ScreenToWorldPoint(Input.mousePosition);
                     __instance.m_wasFocused = true;
                     //iconPanel.transform.localPosition = pinPos;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -266,10 +279,8 @@ namespace VMP_Mod.GameClasses
             private static bool Prefix(ref Minimap __instance)
             {
                 if (VMP_Modplugin.mapIsEnabled.Value)
-                {
                     // Break out of this unnecessary thing
                     return false;
-                }
                 return true;
             }
         }
@@ -284,6 +295,7 @@ namespace VMP_Mod.GameClasses
                     __result = Minimap.m_instance.m_mode == Minimap.MapMode.Large && Minimap.m_instance.m_wasFocused;
                     return false;
                 }
+
                 return true;
             }
         }
@@ -294,7 +306,6 @@ namespace VMP_Mod.GameClasses
             private static void Postfix(ref Minimap __instance)
             {
                 if (VMP_Modplugin.mapIsEnabled.Value)
-                {
                     if (Minimap.InTextInput())
                     {
                         if (Input.GetKeyDown(KeyCode.Escape))
@@ -307,25 +318,24 @@ namespace VMP_Mod.GameClasses
                             MapPinEditor_Patches_Awake.AddPin(ref __instance);
                         }
                     }
-                }
             }
         }
     }
 
 
     /// <summary>
-    /// Show boats and carts on map
+    ///     Show boats and carts on map
     /// </summary>
     public class displayCartsAndBoatsOnMap
     {
-        static Dictionary<ZDO, Minimap.PinData> customPins = new Dictionary<ZDO, Minimap.PinData>();
-        static Dictionary<int, Sprite> icons = new Dictionary<int, Sprite>();
-        static int CartHashcode = "Cart".GetStableHashCode();
-        static int RaftHashcode = "Raft".GetStableHashCode();
-        static int KarveHashcode = "Karve".GetStableHashCode();
-        static int LongshipHashcode = "VikingShip".GetStableHashCode();
-        static int hammerHashCode = "Hammer".GetStableHashCode();
-        static float updateInterval = 5.0f;
+        private static readonly Dictionary<ZDO, Minimap.PinData> customPins = new Dictionary<ZDO, Minimap.PinData>();
+        private static readonly Dictionary<int, Sprite> icons = new Dictionary<int, Sprite>();
+        private static readonly int CartHashcode = "Cart".GetStableHashCode();
+        private static readonly int RaftHashcode = "Raft".GetStableHashCode();
+        private static readonly int KarveHashcode = "Karve".GetStableHashCode();
+        private static readonly int LongshipHashcode = "VikingShip".GetStableHashCode();
+        private static readonly int hammerHashCode = "Hammer".GetStableHashCode();
+        private static readonly float updateInterval = 5.0f;
 
         // clear dictionary if the user logs out
         [HarmonyPatch(typeof(Minimap), "OnDestroy")]
@@ -341,20 +351,20 @@ namespace VMP_Mod.GameClasses
         [HarmonyPatch(typeof(Minimap), "UpdateMap")]
         public static class Minimap_UpdateMap_Patch
         {
-            static float timeCounter = updateInterval;
+            private static float timeCounter = updateInterval;
 
             private static void FindIcons()
             {
-                GameObject hammer = ObjectDB.instance.m_itemByHash[hammerHashCode];
+                var hammer = ObjectDB.instance.m_itemByHash[hammerHashCode];
                 if (!hammer)
                     return;
-                ItemDrop hammerDrop = hammer.GetComponent<ItemDrop>();
+                var hammerDrop = hammer.GetComponent<ItemDrop>();
                 if (!hammerDrop)
                     return;
-                PieceTable hammerPieceTable = hammerDrop.m_itemData.m_shared.m_buildPieces;
-                foreach (GameObject piece in hammerPieceTable.m_pieces)
+                var hammerPieceTable = hammerDrop.m_itemData.m_shared.m_buildPieces;
+                foreach (var piece in hammerPieceTable.m_pieces)
                 {
-                    Piece p = piece.GetComponent<Piece>();
+                    var p = piece.GetComponent<Piece>();
                     icons.Add(p.name.GetStableHashCode(), p.m_icon);
                 }
             }
@@ -365,10 +375,10 @@ namespace VMP_Mod.GameClasses
                     return false;
 
                 Minimap.PinData customPin;
-                bool pinWasFound = customPins.TryGetValue(zdo, out customPin);
+                var pinWasFound = customPins.TryGetValue(zdo, out customPin);
 
                 // turn off associated pin if player controlled ship is in that position
-                Ship controlledShip = player.GetControlledShip();
+                var controlledShip = player.GetControlledShip();
                 if (controlledShip && Vector3.Distance(controlledShip.transform.position, zdo.m_position) < 0.01f)
                 {
                     if (pinWasFound)
@@ -376,6 +386,7 @@ namespace VMP_Mod.GameClasses
                         __instance.RemovePin(customPin);
                         customPins.Remove(zdo);
                     }
+
                     return true;
                 }
 
@@ -391,7 +402,9 @@ namespace VMP_Mod.GameClasses
                     customPins.Add(zdo, customPin);
                 }
                 else
+                {
                     customPin.m_pos = zdo.m_position;
+                }
 
                 return true;
             }
@@ -400,7 +413,8 @@ namespace VMP_Mod.GameClasses
             {
                 timeCounter += dt;
 
-                if (timeCounter < updateInterval || !VMP_Modplugin.mapIsEnabled.Value || !VMP_Modplugin.displayCartsAndBoats.Value)
+                if (timeCounter < updateInterval || !VMP_Modplugin.mapIsEnabled.Value ||
+                    !VMP_Modplugin.displayCartsAndBoats.Value)
                     return;
 
                 timeCounter -= updateInterval;
@@ -409,11 +423,9 @@ namespace VMP_Mod.GameClasses
                     FindIcons();
 
                 // search zones for ships and carts
-                foreach (List<ZDO> zdoarray in ZDOMan.instance.m_objectsBySector)
-                {
+                foreach (var zdoarray in ZDOMan.instance.m_objectsBySector)
                     if (zdoarray != null)
-                    {
-                        foreach (ZDO zdo in zdoarray)
+                        foreach (var zdo in zdoarray)
                         {
                             if (CheckPin(__instance, player, zdo, CartHashcode, "Cart"))
                                 continue;
@@ -424,18 +436,14 @@ namespace VMP_Mod.GameClasses
                             if (CheckPin(__instance, player, zdo, LongshipHashcode, "Longship"))
                                 continue;
                         }
-                    }
-                }
 
                 // clear pins for destroyed objects
-                foreach (KeyValuePair<ZDO, Minimap.PinData> pin in customPins)
-                {
+                foreach (var pin in customPins)
                     if (!pin.Key.IsValid())
                     {
                         __instance.RemovePin(pin.Value);
                         customPins.Remove(pin.Key);
                     }
-                }
             }
         }
     }

@@ -1,14 +1,12 @@
-﻿using BepInEx;
+﻿using System.Linq;
+using System.Reflection;
 using BepInEx.Configuration;
 using HarmonyLib;
-using System.Linq;
-using System.Reflection;
 using UnityEngine;
-
 
 namespace VMP_Mod.Patches
 {
-    class AutoStorePatch 
+    internal class AutoStorePatch
     {
         public static ConfigEntry<float> dropRangeChests;
         public static ConfigEntry<float> dropRangePersonalChests;
@@ -33,10 +31,12 @@ namespace VMP_Mod.Patches
 
         public static ConfigEntry<bool> mustHaveItemToPull;
         public static ConfigEntry<bool> isOn;
+
         private static bool DisallowItem(Container container, ItemDrop.ItemData item)
         {
-            string name = item.m_dropPrefab.name;
-            if (itemAllowTypes.Value != null && itemAllowTypes.Value.Length > 0 && !itemAllowTypes.Value.Split(',').Contains(name))
+            var name = item.m_dropPrefab.name;
+            if (itemAllowTypes.Value != null && itemAllowTypes.Value.Length > 0 &&
+                !itemAllowTypes.Value.Split(',').Contains(name))
                 return true;
             if (itemDisallowTypes.Value.Split(',').Contains(name))
                 return true;
@@ -44,47 +44,57 @@ namespace VMP_Mod.Patches
             if (mustHaveItemToPull.Value && !container.GetInventory().HaveItem(item.m_shared.m_name))
                 return true;
 
-            Ship ship = container.gameObject.transform.parent?.GetComponent<Ship>();
+            var ship = container.gameObject.transform.parent?.GetComponent<Ship>();
             if (ship != null)
             {
-                if (itemAllowTypesShips.Value != null && itemAllowTypesShips.Value.Length > 0 && !itemAllowTypesShips.Value.Split(',').Contains(name))
+                if (itemAllowTypesShips.Value != null && itemAllowTypesShips.Value.Length > 0 &&
+                    !itemAllowTypesShips.Value.Split(',').Contains(name))
                     return true;
                 if (itemDisallowTypesShips.Value.Split(',').Contains(name))
                     return true;
                 return false;
             }
-            else if (container.m_wagon)
+
+            if (container.m_wagon)
             {
-                if (itemAllowTypesCarts.Value != null && itemAllowTypesCarts.Value.Length > 0 && !itemAllowTypesCarts.Value.Split(',').Contains(name))
+                if (itemAllowTypesCarts.Value != null && itemAllowTypesCarts.Value.Length > 0 &&
+                    !itemAllowTypesCarts.Value.Split(',').Contains(name))
                     return true;
                 if (itemDisallowTypesCarts.Value.Split(',').Contains(name))
                     return true;
                 return false;
             }
-            else if (container.name.StartsWith("piece_chest_wood"))
+
+            if (container.name.StartsWith("piece_chest_wood"))
             {
-                if (itemAllowTypesChests.Value != null && itemAllowTypesChests.Value.Length > 0 && !itemAllowTypesChests.Value.Split(',').Contains(name))
+                if (itemAllowTypesChests.Value != null && itemAllowTypesChests.Value.Length > 0 &&
+                    !itemAllowTypesChests.Value.Split(',').Contains(name))
                     return true;
                 if (itemDisallowTypesChests.Value.Split(',').Contains(name))
                     return true;
                 return false;
             }
-            else if (container.name.StartsWith("piece_chest_private"))
+
+            if (container.name.StartsWith("piece_chest_private"))
             {
-                if (itemAllowTypesPersonalChests.Value != null && itemAllowTypesPersonalChests.Value.Length > 0 && !itemAllowTypesPersonalChests.Value.Split(',').Contains(name))
+                if (itemAllowTypesPersonalChests.Value != null && itemAllowTypesPersonalChests.Value.Length > 0 &&
+                    !itemAllowTypesPersonalChests.Value.Split(',').Contains(name))
                     return true;
                 if (itemDisallowTypesPersonalChests.Value.Split(',').Contains(name))
                     return true;
                 return false;
             }
-            else if (container.name.StartsWith("piece_chest"))
+
+            if (container.name.StartsWith("piece_chest"))
             {
-                if (itemAllowTypesReinforcedChests.Value != null && itemAllowTypesReinforcedChests.Value.Length > 0 && !itemAllowTypesReinforcedChests.Value.Split(',').Contains(name))
+                if (itemAllowTypesReinforcedChests.Value != null && itemAllowTypesReinforcedChests.Value.Length > 0 &&
+                    !itemAllowTypesReinforcedChests.Value.Split(',').Contains(name))
                     return true;
                 if (itemDisallowTypesReinforcedChests.Value.Split(',').Contains(name))
                     return true;
                 return false;
             }
+
             return true;
         }
 
@@ -93,48 +103,37 @@ namespace VMP_Mod.Patches
             if (container.GetInventory() == null)
                 return -1f;
 
-            Ship ship = container.gameObject.transform.parent?.GetComponent<Ship>();
+            var ship = container.gameObject.transform.parent?.GetComponent<Ship>();
             if (ship != null)
-            {
-
                 return dropRangeShips.Value;
-            }
-            else if (container.m_wagon)
-            {
+            if (container.m_wagon)
                 return dropRangeCarts.Value;
-            }
-            else if (container.name.StartsWith("piece_chest_wood"))
-            {
+            if (container.name.StartsWith("piece_chest_wood"))
                 return dropRangeChests.Value;
-            }
-            else if (container.name.StartsWith("piece_chest_private"))
-            {
+            if (container.name.StartsWith("piece_chest_private"))
                 return dropRangePersonalChests.Value;
-            }
-            else if (container.name.StartsWith("piece_chest"))
-            {
-                return dropRangeReinforcedChests.Value;
-            }
+            if (container.name.StartsWith("piece_chest")) return dropRangeReinforcedChests.Value;
             return -1f;
         }
 
         [HarmonyPatch(typeof(Container), "CheckForChanges")]
-        static class Container_CheckForChanges_Patch
+        private static class Container_CheckForChanges_Patch
         {
-            static void Postfix(Container __instance, ZNetView ___m_nview)
+            private static void Postfix(Container __instance, ZNetView ___m_nview)
             {
                 if (!isOn.Value || ___m_nview == null || ___m_nview.GetZDO() == null)
                     return;
 
-                Vector3 position = __instance.transform.position + Vector3.up;
-                foreach (Collider collider in Physics.OverlapSphere(position, ContainerRange(__instance), LayerMask.GetMask(new string[] { "item" })))
-                {
+                var position = __instance.transform.position + Vector3.up;
+                foreach (var collider in Physics.OverlapSphere(position, ContainerRange(__instance),
+                    LayerMask.GetMask("item")))
                     if (collider?.attachedRigidbody)
                     {
-                        ItemDrop item = collider.attachedRigidbody.GetComponent<ItemDrop>();
+                        var item = collider.attachedRigidbody.GetComponent<ItemDrop>();
                         //Dbgl($"nearby item name: {item.m_itemData.m_dropPrefab.name}");
 
-                        if (item?.GetComponent<ZNetView>()?.IsValid() != true || !item.GetComponent<ZNetView>().IsOwner())
+                        if (item?.GetComponent<ZNetView>()?.IsValid() != true ||
+                            !item.GetComponent<ZNetView>().IsOwner())
                             continue;
 
                         if (DisallowItem(__instance, item.m_itemData))
@@ -146,29 +145,32 @@ namespace VMP_Mod.Patches
                         while (item.m_itemData.m_stack > 1 && __instance.GetInventory().CanAddItem(item.m_itemData, 1))
                         {
                             item.m_itemData.m_stack--;
-                            ItemDrop.ItemData newItem = item.m_itemData.Clone();
+                            var newItem = item.m_itemData.Clone();
                             newItem.m_stack = 1;
                             __instance.GetInventory().AddItem(newItem);
                             Traverse.Create(item).Method("Save").GetValue();
-                            typeof(Container).GetMethod("Save", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(__instance, new object[] { });
-                            typeof(Inventory).GetMethod("Changed", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(__instance.GetInventory(), new object[] { });
+                            typeof(Container).GetMethod("Save", BindingFlags.NonPublic | BindingFlags.Instance)
+                                .Invoke(__instance, new object[] { });
+                            typeof(Inventory).GetMethod("Changed", BindingFlags.NonPublic | BindingFlags.Instance)
+                                .Invoke(__instance.GetInventory(), new object[] { });
                         }
 
                         if (item.m_itemData.m_stack == 1 && __instance.GetInventory().CanAddItem(item.m_itemData, 1))
                         {
-                            ItemDrop.ItemData newItem = item.m_itemData.Clone();
+                            var newItem = item.m_itemData.Clone();
                             item.m_itemData.m_stack = 0;
                             Traverse.Create(item).Method("Save").GetValue();
                             if (___m_nview.GetZDO() == null)
-                                VMP_Modplugin.DestroyImmediate(item.gameObject);
+                                Object.DestroyImmediate(item.gameObject);
                             else
                                 ZNetScene.instance.Destroy(item.gameObject);
                             __instance.GetInventory().AddItem(newItem);
-                            typeof(Container).GetMethod("Save", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(__instance, new object[] { });
-                            typeof(Inventory).GetMethod("Changed", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(__instance.GetInventory(), new object[] { });
+                            typeof(Container).GetMethod("Save", BindingFlags.NonPublic | BindingFlags.Instance)
+                                .Invoke(__instance, new object[] { });
+                            typeof(Inventory).GetMethod("Changed", BindingFlags.NonPublic | BindingFlags.Instance)
+                                .Invoke(__instance.GetInventory(), new object[] { });
                         }
                     }
-                }
             }
         }
     }

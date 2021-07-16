@@ -6,13 +6,13 @@ namespace VMP_Mod.Utility
     public class RpcData
     {
         public string Name;
-        public long Target = ZRoutedRpc.Everybody;
         public object[] Payload;
+        public long Target = ZRoutedRpc.Everybody;
     }
 
     public static class RpcQueue
     {
-        private static Queue<RpcData> _rpcQueue = new Queue<RpcData>();
+        private static readonly Queue<RpcData> _rpcQueue = new Queue<RpcData>();
         private static bool _ack = true;
 
         public static void Enqueue(RpcData rpc)
@@ -24,13 +24,11 @@ namespace VMP_Mod.Utility
         {
             if (_rpcQueue.Count == 0 || !_ack) return false;
 
-            RpcData rpc = _rpcQueue.Dequeue();
+            var rpc = _rpcQueue.Dequeue();
 
             if (rpc.Name.IsNullOrWhiteSpace() ||
                 rpc.Payload == null)
-            {
                 return false;
-            }
 
             ZRoutedRpc.instance.InvokeRoutedRPC(rpc.Target, rpc.Name, rpc.Payload);
             _ack = false;

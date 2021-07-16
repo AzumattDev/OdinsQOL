@@ -1,16 +1,18 @@
-﻿using UnityEngine;
-using static VMP_Mod.VPlusDataObjects;
+﻿using static VMP_Mod.VPlusDataObjects;
 
 namespace VMP_Mod.Utility
 {
     public static class ZPackageExtensions
     {
-        public static MapRange ReadVPlusMapRange(this ZPackage pkg) => new MapRange()
+        public static MapRange ReadVPlusMapRange(this ZPackage pkg)
         {
-            StartingX = pkg.m_reader.ReadInt32(),
-            EndingX = pkg.m_reader.ReadInt32(),
-            Y = pkg.m_reader.ReadInt32()
-        };
+            return new MapRange
+            {
+                StartingX = pkg.m_reader.ReadInt32(),
+                EndingX = pkg.m_reader.ReadInt32(),
+                Y = pkg.m_reader.ReadInt32()
+            };
+        }
 
         public static void WriteVPlusMapRange(this ZPackage pkg, MapRange mapRange)
         {
