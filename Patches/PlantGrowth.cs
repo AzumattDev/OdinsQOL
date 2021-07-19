@@ -54,7 +54,14 @@ namespace VMP_Mod.Patches
                             return false;
                     }
                 }
-                else if (false) ;
+                else if (array[i] != plant &&
+                         Vector3.Distance(
+                             plant.transform.GetComponent<CapsuleCollider>().ClosestPoint(array[i].transform.position),
+                             array[i].transform.GetComponent<Collider>().ClosestPoint(plant.transform.position)) <
+                         plant.m_growRadius)
+                {
+                    return false;
+                }
                     
 
             if (plant.m_needCultivatedGround && !Heightmap.FindHeightmap(plant.transform.position)
