@@ -2,11 +2,11 @@
 using System.Diagnostics;
 using UnityEngine;
 
-namespace VMP_Mod
+namespace VMP_Mod.MapSharing
 {
     internal static class GameObjectAssistant
     {
-        private static readonly ConcurrentDictionary<float, Stopwatch> stopwatches =
+        private static readonly ConcurrentDictionary<float, Stopwatch> Stopwatches =
             new ConcurrentDictionary<float, Stopwatch>();
 
         public static Stopwatch GetStopwatch(GameObject o)
@@ -14,10 +14,10 @@ namespace VMP_Mod
             var hash = GetGameObjectPosHash(o);
             Stopwatch stopwatch = null;
 
-            if (!stopwatches.TryGetValue(hash, out stopwatch))
+            if (!Stopwatches.TryGetValue(hash, out stopwatch))
             {
                 stopwatch = new Stopwatch();
-                stopwatches.TryAdd(hash, stopwatch);
+                Stopwatches.TryAdd(hash, stopwatch);
             }
 
             return stopwatch;

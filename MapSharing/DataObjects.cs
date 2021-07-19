@@ -1,4 +1,4 @@
-﻿namespace VMP_Mod
+﻿namespace VMP_Mod.MapSharing
 {
     public static class VPlusDataObjects
     {

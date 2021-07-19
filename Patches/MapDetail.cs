@@ -27,8 +27,9 @@ namespace VMP_Mod.Patches
             if (force)
                 yield return null;
 
-            var coords = new Vector2(Player.m_localPlayer.transform.position.x,
-                Player.m_localPlayer.transform.position.z);
+            var position = Player.m_localPlayer.transform.position;
+            var coords = new Vector2(position.x,
+                position.z);
 
             if (!force && Vector2.Distance(lastPos, coords) < updateDelta.Value)
                 yield break;

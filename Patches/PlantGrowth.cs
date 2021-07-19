@@ -54,14 +54,8 @@ namespace VMP_Mod.Patches
                             return false;
                     }
                 }
-                else if (array[i] != plant &&
-                         Vector3.Distance(
-                             plant.transform.GetComponent<CapsuleCollider>().ClosestPoint(array[i].transform.position),
-                             array[i].transform.GetComponent<Collider>().ClosestPoint(plant.transform.position)) <
-                         plant.m_growRadius)
-                {
-                    return false;
-                }
+                else if (false) ;
+                    
 
             if (plant.m_needCultivatedGround && !Heightmap.FindHeightmap(plant.transform.position)
                 .IsCultivated(plant.transform.position))
@@ -82,10 +76,10 @@ namespace VMP_Mod.Patches
                         if (!HaveGrowSpace(plant))
                         {
                             typeof(Player).GetField("m_placementStatus", BindingFlags.NonPublic | BindingFlags.Instance)
-                                .SetValue(__instance, 5);
+                                ?.SetValue(__instance, 5);
                             typeof(Player)
                                 .GetMethod("SetPlacementGhostValid", BindingFlags.NonPublic | BindingFlags.Instance)
-                                .Invoke(__instance, new object[] {false});
+                                ?.Invoke(__instance, new object[] {false});
                         }
                     }
             }

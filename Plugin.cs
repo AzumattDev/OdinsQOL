@@ -8,8 +8,8 @@ using HarmonyLib;
 using ServerSync;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using VMP_Mod.MapSharing;
 using VMP_Mod.Patches;
-using VMP_Mod.RPC;
 
 namespace VMP_Mod
 {
@@ -24,7 +24,7 @@ namespace VMP_Mod
     [BepInPlugin(GUID, ModName, Version)]
     public partial class VMP_Modplugin : BaseUnityPlugin
     {
-        public const string Version = "0.0.8";
+        public const string Version = "0.0.9";
         public const string ModName = "VMP Mod";
         public const string GUID = "com.vmp.mod";
         private static readonly int windowId = 434343;
@@ -291,35 +291,35 @@ namespace VMP_Mod
             AutoStorePatch.isOn = Config.Bind("Auto Storage", "IsOn", true, "Behaviour is currently on or not");
 
 
-            EAQS.EAQS.extraRows = Config.Bind("EAQS", "ExtraRows", 0, "Number of extra ordinary rows.");
-            EAQS.EAQS.addEquipmentRow = Config.Bind("EAQS", "AddEquipmentRow", true,
+            EAQS.Eaqs.ExtraRows = Config.Bind("EAQS", "ExtraRows", 0, "Number of extra ordinary rows.");
+            EAQS.Eaqs.AddEquipmentRow = Config.Bind("EAQS", "AddEquipmentRow", true,
                 "Add special row for equipped items and quick slots.");
-            EAQS.EAQS.displayEquipmentRowSeparate = Config.Bind("EAQS", "DisplayEquipmentRowSeparate", true,
+            EAQS.Eaqs.DisplayEquipmentRowSeparate = Config.Bind("EAQS", "DisplayEquipmentRowSeparate", true,
                 "Display equipment and quickslots in their own area.");
 
-            EAQS.EAQS.helmetText = Config.Bind("EAQS", "HelmetText", "Head", "Text to show for helmet slot.");
-            EAQS.EAQS.chestText = Config.Bind("EAQS", "ChestText", "Chest", "Text to show for chest slot.");
-            EAQS.EAQS.legsText = Config.Bind("EAQS", "LegsText", "Legs", "Text to show for legs slot.");
-            EAQS.EAQS.backText = Config.Bind("EAQS", "BackText", "Back", "Text to show for back slot.");
-            EAQS.EAQS.utilityText = Config.Bind("EAQS", "UtilityText", "Utility", "Text to show for utility slot.");
+            EAQS.Eaqs.HelmetText = Config.Bind("EAQS", "HelmetText", "Head", "Text to show for helmet slot.");
+            EAQS.Eaqs.ChestText = Config.Bind("EAQS", "ChestText", "Chest", "Text to show for chest slot.");
+            EAQS.Eaqs.LegsText = Config.Bind("EAQS", "LegsText", "Legs", "Text to show for legs slot.");
+            EAQS.Eaqs.BackText = Config.Bind("EAQS", "BackText", "Back", "Text to show for back slot.");
+            EAQS.Eaqs.UtilityText = Config.Bind("EAQS", "UtilityText", "Utility", "Text to show for utility slot.");
 
-            EAQS.EAQS.quickAccessScale =
+            EAQS.Eaqs.QuickAccessScale =
                 Config.Bind<float>("EAQS", "QuickAccessScale", 1, "Scale of quick access bar.");
 
-            EAQS.EAQS.hotKey1 = Config.Bind("EAQS", "HotKey1", "z",
+            EAQS.Eaqs.HotKey1 = Config.Bind("EAQS", "HotKey1", "z",
                 "Hotkey 1 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            EAQS.EAQS.hotKey2 = Config.Bind("EAQS", "HotKey2", "x",
+            EAQS.Eaqs.HotKey2 = Config.Bind("EAQS", "HotKey2", "x",
                 "Hotkey 2 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            EAQS.EAQS.hotKey3 = Config.Bind("EAQS", "HotKey3", "c",
+            EAQS.Eaqs.HotKey3 = Config.Bind("EAQS", "HotKey3", "c",
                 "Hotkey 3 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
 
-            EAQS.EAQS.modKeyOne = Config.Bind("EAQS", "ModKey1", "mouse 0",
+            EAQS.Eaqs.ModKeyOne = Config.Bind("EAQS", "ModKey1", "mouse 0",
                 "First modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.");
-            EAQS.EAQS.modKeyTwo = Config.Bind("EAQS", "ModKey2", "left ctrl",
+            EAQS.Eaqs.ModKeyTwo = Config.Bind("EAQS", "ModKey2", "left ctrl",
                 "Second modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.");
 
-            EAQS.EAQS.quickAccessX = Config.Bind<float>("EAQS", "quickAccessX", 9999, "Current X of Quick Slots");
-            EAQS.EAQS.quickAccessY = Config.Bind<float>("EAQS", "quickAccessY", 9999, "Current Y of Quick Slots");
+            EAQS.Eaqs.QuickAccessX = Config.Bind<float>("EAQS", "quickAccessX", 9999, "Current X of Quick Slots");
+            EAQS.Eaqs.QuickAccessY = Config.Bind<float>("EAQS", "quickAccessY", 9999, "Current Y of Quick Slots");
 
 
             PlantGrowth.displayGrowth =
@@ -395,11 +395,11 @@ namespace VMP_Mod
             if (!modEnabled.Value)
                 return;
 
-            EAQS.EAQS.hotkeys = new[]
+            EAQS.Eaqs.Hotkeys = new[]
             {
-                EAQS.EAQS.hotKey1,
-                EAQS.EAQS.hotKey2,
-                EAQS.EAQS.hotKey3
+                EAQS.Eaqs.HotKey1,
+                EAQS.Eaqs.HotKey2,
+                EAQS.Eaqs.HotKey3
             };
 
             if (!Directory.Exists(VMP_DatadirectoryPath)) Directory.CreateDirectory(VMP_DatadirectoryPath);
@@ -630,7 +630,7 @@ namespace VMP_Mod
                 ZRoutedRpc.instance.Register("VMPMapSync",
                     new Action<long, ZPackage>(MapSync.RPC_VMPMapSync)); //Map Sync
                 ZRoutedRpc.instance.Register("VMPMapPinSync",
-                    new Action<long, ZPackage>(VMPMapPinSync.RPC_VMPMapPinSync)); //Map Pin Sync
+                    new Action<long, ZPackage>(VmpMapPinSync.RPC_VMPMapPinSync)); //Map Pin Sync
                 ZRoutedRpc.instance.Register("VMPAck", VMPAck.RPC_VPlusAck); //Ack
             }
         }

@@ -1,6 +1,6 @@
-﻿namespace VMP_Mod.RPC
+﻿namespace VMP_Mod.MapSharing
 {
-    public class VMPMapPinSync
+    public class VmpMapPinSync
     {
         /// <summary>
         ///     Sync Pin with clients via the server

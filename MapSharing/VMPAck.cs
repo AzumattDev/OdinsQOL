@@ -1,6 +1,4 @@
-﻿using VMP_Mod.Utility;
-
-namespace VMP_Mod.RPC
+﻿namespace VMP_Mod.MapSharing
 {
     public class VMPAck
     {

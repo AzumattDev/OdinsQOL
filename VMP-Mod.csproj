@@ -385,7 +385,6 @@
   <ItemGroup>
     <Compile Include="EAQS\EAQS.cs" />
     <Compile Include="EAQS\QuickAccessBar.cs" />
-    <Compile Include="Patches\ListPatches.cs" />
     <Compile Include="Patches\SkillPatches.cs" />
     <Compile Include="Patches\ClockPatch.cs" />
     <Compile Include="Patches\PlantGrowth.cs" />
@@ -408,7 +407,6 @@
     <Compile Include="Patches\WearNTear_Patches.cs" />
     <Compile Include="Patches\GamePatches.cs" />
     <Compile Include="Patches\MapDetail.cs" />
-    <Compile Include="Patches\Deconstruct.cs" />
     <Compile Include="Patches\Inventory.cs" />
     <Compile Include="Patches\InventoryGUI.cs" />
     <Compile Include="Patches\CraftingPatches.cs" />

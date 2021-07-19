@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using VMP_Mod.Utility;
-using static VMP_Mod.VPlusDataObjects;
+using static VMP_Mod.MapSharing.VPlusDataObjects;
 
-namespace VMP_Mod.RPC
+namespace VMP_Mod.MapSharing
 {
     public class MapSync
     {

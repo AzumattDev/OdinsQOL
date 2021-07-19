@@ -64,7 +64,7 @@ namespace VMP_Mod.EAQS
                     var elementData = new ElementData();
                     elementData.m_go = Instantiate(m_elementPrefab, transform);
                     elementData.m_go.transform.localPosition = new Vector3(i * m_elementSpace, 0f, 0f);
-                    elementData.m_go.transform.Find("binding").GetComponent<Text>().text = EAQS.hotkeys[i].Value;
+                    elementData.m_go.transform.Find("binding").GetComponent<Text>().text = Eaqs.Hotkeys[i].Value;
                     elementData.m_icon = elementData.m_go.transform.transform.Find("icon").GetComponent<Image>();
                     elementData.m_durability = elementData.m_go.transform.Find("durability").GetComponent<GuiBar>();
                     elementData.m_amount = elementData.m_go.transform.Find("amount").GetComponent<Text>();

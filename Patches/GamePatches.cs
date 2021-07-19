@@ -8,7 +8,7 @@ using Steamworks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using VMP_Mod.RPC;
+using VMP_Mod.MapSharing;
 
 namespace VMP_Mod.Patches
 {

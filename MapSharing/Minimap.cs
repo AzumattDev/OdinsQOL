@@ -6,7 +6,7 @@ using HarmonyLib;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using VMP_Mod.RPC;
+using VMP_Mod.MapSharing;
 using Object = UnityEngine.Object;
 
 // ToDo add packet system to convey map markers
@@ -104,9 +104,9 @@ namespace VMP_Mod.GameClasses
                     if (shareablePins.Contains(__result.m_type))
                     {
                         if (__instance.m_mode != Minimap.MapMode.Large)
-                            VMPMapPinSync.SendMapPinToServer(__result, true);
+                            VmpMapPinSync.SendMapPinToServer(__result, true);
                         else
-                            VMPMapPinSync.SendMapPinToServer(__result);
+                            VmpMapPinSync.SendMapPinToServer(__result);
                     }
             }
         }
@@ -119,7 +119,7 @@ namespace VMP_Mod.GameClasses
                 var pintype = iconSelected.value == 4 ? Minimap.PinType.Icon4 : (Minimap.PinType) iconSelected.value;
                 var addedPin = __instance.AddPin(pinPos, pintype, pinName.text, true, false);
                 if (VMP_Modplugin.shareablePins.Value && sharePin.isOn && !VMP_Modplugin.shareAllPins.Value)
-                    VMPMapPinSync.SendMapPinToServer(addedPin);
+                    VmpMapPinSync.SendMapPinToServer(addedPin);
                 pinEditorPanel.SetActive(false);
                 __instance.m_wasFocused = false;
             }
@@ -144,8 +144,7 @@ namespace VMP_Mod.GameClasses
                     __instance.m_nameInput.gameObject.SetActive(false);
                     if (mapPinBundle == null) mapPinBundle = GetAssetBundleFromResources("map-pin-ui");
                     var pinEditorPanelParent = mapPinBundle.LoadAsset<GameObject>("MapPinEditor");
-                    pinEditorPanel = Object.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject);
-                    pinEditorPanel.transform.SetParent(__instance.m_largeRoot.transform, false);
+                    pinEditorPanel = Object.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject, __instance.m_largeRoot.transform, false);
                     var image = pinEditorPanel.GetComponentInChildren<Image>();
                     image.gameObject.SetActive(false);
                     pinEditorPanel.SetActive(false);
@@ -186,7 +185,7 @@ namespace VMP_Mod.GameClasses
         [HarmonyPatch(typeof(Minimap), "OnMapDblClick")]
         public static class MapPinEditor_Patches_OnMapDblClick
         {
-            public static bool imageoff;
+            public static bool Imageoff;
 
             private static bool Prefix(ref Minimap __instance)
             {
@@ -210,8 +209,7 @@ namespace VMP_Mod.GameClasses
                         __instance.m_nameInput.gameObject.SetActive(false);
                         if (mapPinBundle == null) mapPinBundle = GetAssetBundleFromResources("map-pin-ui");
                         var pinEditorPanelParent = mapPinBundle.LoadAsset<GameObject>("MapPinEditor");
-                        pinEditorPanel = Object.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject);
-                        pinEditorPanel.transform.SetParent(__instance.m_largeRoot.transform, false);
+                        pinEditorPanel = Object.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject, __instance.m_largeRoot.transform, false);
 
 
                         pinName = pinEditorPanel.GetComponentInChildren<InputField>();
@@ -253,12 +251,12 @@ namespace VMP_Mod.GameClasses
                     {
                         pinEditorPanel.SetActive(true);
 
-                        if (imageoff == false)
+                        if (Imageoff == false)
                         {
                             var title = pinEditorPanel.transform.Find("Title");
                             var picture = title.GetComponentInChildren<Image>();
                             picture.gameObject.SetActive(false);
-                            imageoff = true;
+                            Imageoff = true;
                         }
                     }
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace VMP_Mod.Utility
+namespace VMP_Mod.MapSharing
 {
     public static class ListExtensions
     {

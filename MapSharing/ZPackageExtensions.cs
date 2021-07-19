@@ -1,6 +1,6 @@
-﻿using static VMP_Mod.VPlusDataObjects;
+﻿using static VMP_Mod.MapSharing.VPlusDataObjects;
 
-namespace VMP_Mod.Utility
+namespace VMP_Mod.MapSharing
 {
     public static class ZPackageExtensions
     {

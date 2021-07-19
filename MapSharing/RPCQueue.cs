@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using BepInEx;
 
-namespace VMP_Mod.Utility
+namespace VMP_Mod.MapSharing
 {
     public class RpcData
     {
@@ -12,19 +12,19 @@ namespace VMP_Mod.Utility
 
     public static class RpcQueue
     {
-        private static readonly Queue<RpcData> _rpcQueue = new Queue<RpcData>();
+        private static readonly Queue<RpcData> RPCQueue = new Queue<RpcData>();
         private static bool _ack = true;
 
         public static void Enqueue(RpcData rpc)
         {
-            _rpcQueue.Enqueue(rpc);
+            RPCQueue.Enqueue(rpc);
         }
 
         public static bool SendNextRpc()
         {
-            if (_rpcQueue.Count == 0 || !_ack) return false;
+            if (RPCQueue.Count == 0 || !_ack) return false;
 
-            var rpc = _rpcQueue.Dequeue();
+            var rpc = RPCQueue.Dequeue();
 
             if (rpc.Name.IsNullOrWhiteSpace() ||
                 rpc.Payload == null)

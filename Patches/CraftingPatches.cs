@@ -151,8 +151,8 @@ namespace VMP_Mod.Patches
         public static int CompareStrings(string a, string b, bool asc)
         {
             if (asc)
-                return a.CompareTo(b);
-            return b.CompareTo(a);
+                return String.Compare(a, b, StringComparison.Ordinal);
+            return String.Compare(b, a, StringComparison.Ordinal);
         }
 
         public static int CompareFloats(float a, float b, bool asc)
@@ -216,7 +216,7 @@ namespace VMP_Mod.Patches
                     return -1;
                 if (categoryDict[b].Contains(ItemDrop.ItemData.ItemType.None))
                     return 1;
-                return a.CompareTo(b);
+                return String.Compare(a, b, StringComparison.Ordinal);
             });
         }
 
@@ -486,9 +486,9 @@ namespace VMP_Mod.Patches
                 for (var i = 0; i < categoryNames.Count; i++)
                 {
                     var idx = i;
-                    var go = Object.Instantiate(__instance.m_tabCraft.gameObject);
+                    var gameObject = __instance.m_tabCraft.gameObject;
+                    var go = Object.Instantiate(gameObject, gameObject.transform.parent.parent, true);
                     go.name = categoryNames[i];
-                    go.transform.SetParent(__instance.m_tabCraft.gameObject.transform.parent.parent);
                     go.GetComponent<Button>().interactable = true;
                     go.GetComponent<Button>().onClick = new Button.ButtonClickedEvent();
                     go.GetComponent<Button>().onClick.AddListener(() => SwitchFilter(idx));

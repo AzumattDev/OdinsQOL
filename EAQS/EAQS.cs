@@ -9,33 +9,33 @@ using Object = UnityEngine.Object;
 
 namespace VMP_Mod.EAQS
 {
-    internal class EAQS
+    internal static class Eaqs
     {
-        public static ConfigEntry<bool> addEquipmentRow;
-        public static ConfigEntry<bool> displayEquipmentRowSeparate;
-        public static ConfigEntry<int> extraRows;
+        public static ConfigEntry<bool> AddEquipmentRow;
+        public static ConfigEntry<bool> DisplayEquipmentRowSeparate;
+        public static ConfigEntry<int> ExtraRows;
 
-        public static ConfigEntry<string> helmetText;
-        public static ConfigEntry<string> chestText;
-        public static ConfigEntry<string> legsText;
-        public static ConfigEntry<string> backText;
-        public static ConfigEntry<string> utilityText;
-        public static ConfigEntry<float> quickAccessScale;
+        public static ConfigEntry<string> HelmetText;
+        public static ConfigEntry<string> ChestText;
+        public static ConfigEntry<string> LegsText;
+        public static ConfigEntry<string> BackText;
+        public static ConfigEntry<string> UtilityText;
+        public static ConfigEntry<float> QuickAccessScale;
 
-        public static ConfigEntry<string> hotKey1;
-        public static ConfigEntry<string> hotKey2;
-        public static ConfigEntry<string> hotKey3;
-        public static ConfigEntry<string> modKeyOne;
-        public static ConfigEntry<string> modKeyTwo;
+        public static ConfigEntry<string> HotKey1;
+        public static ConfigEntry<string> HotKey2;
+        public static ConfigEntry<string> HotKey3;
+        public static ConfigEntry<string> ModKeyOne;
+        public static ConfigEntry<string> ModKeyTwo;
 
-        public static ConfigEntry<string>[] hotkeys;
+        public static ConfigEntry<string>[] Hotkeys;
 
-        public static ConfigEntry<float> quickAccessX;
-        public static ConfigEntry<float> quickAccessY;
+        public static ConfigEntry<float> QuickAccessX;
+        public static ConfigEntry<float> QuickAccessY;
 
-        private static GameObject elementPrefab;
+        private static GameObject _elementPrefab;
 
-        private static readonly ItemDrop.ItemData.ItemType[] typeEnums =
+        private static readonly ItemDrop.ItemData.ItemType[] TypeEnums =
         {
             ItemDrop.ItemData.ItemType.Helmet,
             ItemDrop.ItemData.ItemType.Chest,
@@ -44,15 +44,15 @@ namespace VMP_Mod.EAQS
             ItemDrop.ItemData.ItemType.Utility
         };
 
-        private static ItemDrop.ItemData[] equipItems = new ItemDrop.ItemData[5];
+        private static ItemDrop.ItemData[] _equipItems = new ItemDrop.ItemData[5];
 
-        private static Vector3 lastMousePos;
-        private static string currentlyDragging;
+        private static Vector3 _lastMousePos;
+        private static string _currentlyDragging;
 
         public static void SetSlotText(string value, Transform transform, bool center = true)
         {
             var t = transform.Find("binding");
-            if (!t) t = Object.Instantiate(elementPrefab.transform.Find("binding"), transform);
+            if (!t) t = Object.Instantiate(_elementPrefab.transform.Find("binding"), transform);
             t.GetComponent<Text>().enabled = true;
             t.GetComponent<Text>().text = value;
             if (center)
@@ -64,13 +64,13 @@ namespace VMP_Mod.EAQS
 
         private static bool IsEquipmentSlotFree(Inventory inventory, ItemDrop.ItemData item, out int which)
         {
-            which = Array.IndexOf(typeEnums, item.m_shared.m_itemType);
+            which = Array.IndexOf(TypeEnums, item.m_shared.m_itemType);
             return which >= 0 && inventory.GetItemAt(which, inventory.GetHeight() - 1) == null;
         }
 
         private static bool IsAtEquipmentSlot(Inventory inventory, ItemDrop.ItemData item, out int which)
         {
-            if (!addEquipmentRow.Value || item.m_gridPos.x > 4 || item.m_gridPos.y < inventory.GetHeight() - 1)
+            if (!AddEquipmentRow.Value || item.m_gridPos.x > 4 || item.m_gridPos.y < inventory.GetHeight() - 1)
             {
                 which = -1;
                 return false;
@@ -86,17 +86,17 @@ namespace VMP_Mod.EAQS
 
             if (hudRoot.Find("QuickAccessBar")?.GetComponent<RectTransform>() != null)
             {
-                if (quickAccessX.Value == 9999)
-                    quickAccessX.Value = hudRoot.Find("healthpanel").GetComponent<RectTransform>().anchoredPosition.x -
+                if (Math.Abs(QuickAccessX.Value - 9999) < 9999)
+                    QuickAccessX.Value = hudRoot.Find("healthpanel").GetComponent<RectTransform>().anchoredPosition.x -
                                          32;
-                if (quickAccessY.Value == 9999)
-                    quickAccessY.Value = hudRoot.Find("healthpanel").GetComponent<RectTransform>().anchoredPosition.y -
+                if (Math.Abs(QuickAccessY.Value - 9999) < 9999)
+                    QuickAccessY.Value = hudRoot.Find("healthpanel").GetComponent<RectTransform>().anchoredPosition.y -
                                          870;
 
                 hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().anchoredPosition =
-                    new Vector2(quickAccessX.Value, quickAccessY.Value);
+                    new Vector2(QuickAccessX.Value, QuickAccessY.Value);
                 hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().localScale =
-                    new Vector3(quickAccessScale.Value, quickAccessScale.Value, 1);
+                    new Vector3(QuickAccessScale.Value, QuickAccessScale.Value, 1);
             }
         }
 
@@ -107,7 +107,7 @@ namespace VMP_Mod.EAQS
             {
                 VMP_Modplugin.Dbgl("Player_Awake");
 
-                var height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
+                var height = ExtraRows.Value + (AddEquipmentRow.Value ? 5 : 4);
 
                 AccessTools.FieldRefAccess<Inventory, int>(___m_inventory, "m_height") = height;
                 __instance.m_tombstone.GetComponent<Container>().m_height = height;
@@ -121,7 +121,7 @@ namespace VMP_Mod.EAQS
             {
                 VMP_Modplugin.Dbgl("TombStone_Awake");
 
-                var height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
+                var height = ExtraRows.Value + (AddEquipmentRow.Value ? 5 : 4);
 
                 __instance.GetComponent<Container>().m_height = height;
                 //AccessTools.FieldRefAccess<Inventory, int>(AccessTools.FieldRefAccess<Container, Inventory>(__instance.GetComponent<Container>(), "m_inventory"), "m_height") = height;
@@ -137,7 +137,7 @@ namespace VMP_Mod.EAQS
             {
                 VMP_Modplugin.Dbgl("TombStone_Interact");
 
-                var height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
+                var height = ExtraRows.Value + (AddEquipmentRow.Value ? 5 : 4);
 
                 __instance.GetComponent<Container>().m_height = height;
 
@@ -171,21 +171,21 @@ namespace VMP_Mod.EAQS
         {
             private static void Postfix(Player __instance, Inventory ___m_inventory)
             {
-                var height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
+                var height = ExtraRows.Value + (AddEquipmentRow.Value ? 5 : 4);
 
                 AccessTools.FieldRefAccess<Inventory, int>(___m_inventory, "m_height") = height;
                 __instance.m_tombstone.GetComponent<Container>().m_height = height;
 
 
-                if (Utilities.IgnoreKeyPresses(true) || !addEquipmentRow.Value)
+                if (Utilities.IgnoreKeyPresses(true) || !AddEquipmentRow.Value)
                     return;
 
                 int which;
-                if (Utilities.CheckKeyDown(hotKey1.Value))
+                if (Utilities.CheckKeyDown(HotKey1.Value))
                     which = 1;
-                else if (Utilities.CheckKeyDown(hotKey2.Value))
+                else if (Utilities.CheckKeyDown(HotKey2.Value))
                     which = 2;
-                else if (Utilities.CheckKeyDown(hotKey3.Value))
+                else if (Utilities.CheckKeyDown(HotKey3.Value))
                     which = 3;
                 else return;
 
@@ -199,7 +199,7 @@ namespace VMP_Mod.EAQS
         {
             private static void Postfix(InventoryGui __instance, InventoryGrid ___m_playerGrid, Animator ___m_animator)
             {
-                if (!addEquipmentRow.Value || !Player.m_localPlayer)
+                if (!AddEquipmentRow.Value || !Player.m_localPlayer)
                     return;
 
                 var t = Traverse.Create(Player.m_localPlayer);
@@ -214,22 +214,21 @@ namespace VMP_Mod.EAQS
                 var back = t.Field("m_shoulderItem").GetValue<ItemDrop.ItemData>();
                 var utility = t.Field("m_utilityItem").GetValue<ItemDrop.ItemData>();
 
-                for (var i = 0; i < items.Count; i++)
-                    //Dbgl($"{items[i].m_gridPos} {inv.GetHeight() - 1},0 {items[i] != helmet}");
-                    if (IsAtEquipmentSlot(inv, items[i], out var which))
+                foreach (var t1 in items)
+                    if (IsAtEquipmentSlot(inv, t1, out var which))
                     {
                         if ( // in right slot and equipped
-                            which == 0 && items[i] == helmet ||
-                            which == 1 && items[i] == chest ||
-                            which == 2 && items[i] == legs ||
-                            which == 3 && items[i] == back ||
-                            which == 4 && items[i] == utility
+                            which == 0 && t1 == helmet ||
+                            which == 1 && t1 == chest ||
+                            which == 2 && t1 == legs ||
+                            which == 3 && t1 == back ||
+                            which == 4 && t1 == utility
                         )
                             continue;
 
-                        if (which > -1 && items[i].m_shared.m_itemType == typeEnums[which] &&
-                            equipItems[which] != items[i] &&
-                            Player.m_localPlayer.EquipItem(items[i], false)) // in right slot and new
+                        if (which > -1 && t1.m_shared.m_itemType == TypeEnums[which] &&
+                            _equipItems[which] != t1 &&
+                            Player.m_localPlayer.EquipItem(t1, false)) // in right slot and new
                             continue;
 
                         // in wrong slot or unequipped in slot or can't equip
@@ -238,16 +237,16 @@ namespace VMP_Mod.EAQS
                             .Invoke(inv, new object[] {true});
                         if (newPos.x < 0 || newPos.y < 0 || newPos.y == inv.GetHeight() - 1)
                         {
-                            Player.m_localPlayer.DropItem(inv, items[i], items[i].m_stack);
+                            Player.m_localPlayer.DropItem(inv, t1, t1.m_stack);
                         }
                         else
                         {
-                            items[i].m_gridPos = newPos;
+                            t1.m_gridPos = newPos;
                             ___m_playerGrid.UpdateInventory(inv, Player.m_localPlayer, null);
                         }
                     }
 
-                equipItems = new[] {helmet, chest, legs, back, utility};
+                _equipItems = new[] {helmet, chest, legs, back, utility};
 
                 if (!___m_animator.GetBool("visible"))
                     return;
@@ -281,9 +280,9 @@ namespace VMP_Mod.EAQS
 
 
                 __instance.m_player.Find("Bkg").GetComponent<RectTransform>().anchorMin = new Vector2(0,
-                    (extraRows.Value + (addEquipmentRow.Value && !displayEquipmentRowSeparate.Value ? 1 : 0)) * -0.25f);
+                    (ExtraRows.Value + (AddEquipmentRow.Value && !DisplayEquipmentRowSeparate.Value ? 1 : 0)) * -0.25f);
 
-                if (displayEquipmentRowSeparate.Value && __instance.m_player.Find("EquipmentBkg") == null)
+                if (DisplayEquipmentRowSeparate.Value && __instance.m_player.Find("EquipmentBkg") == null)
                 {
                     var bkg = Object.Instantiate(__instance.m_player.Find("Bkg"), __instance.m_player);
                     bkg.SetAsFirstSibling();
@@ -291,7 +290,7 @@ namespace VMP_Mod.EAQS
                     bkg.GetComponent<RectTransform>().anchorMin = new Vector2(1, 0);
                     bkg.GetComponent<RectTransform>().anchorMax = new Vector2(1.5f, 1);
                 }
-                else if (!displayEquipmentRowSeparate.Value && __instance.m_player.Find("EquipmentBkg"))
+                else if (!DisplayEquipmentRowSeparate.Value && __instance.m_player.Find("EquipmentBkg"))
                 {
                     Object.Destroy(__instance.m_player.Find("EquipmentBkg").gameObject);
                 }
@@ -304,7 +303,7 @@ namespace VMP_Mod.EAQS
         {
             private static void Postfix(InventoryGrid ___m_playerGrid)
             {
-                if (!addEquipmentRow.Value)
+                if (!AddEquipmentRow.Value)
                     return;
 
                 var t = Traverse.Create(Player.m_localPlayer);
@@ -313,16 +312,16 @@ namespace VMP_Mod.EAQS
 
                 var offset = inv.GetWidth() * (inv.GetHeight() - 1);
 
-                SetSlotText(helmetText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(chestText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(legsText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(backText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(utilityText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(hotKey1.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
-                SetSlotText(hotKey2.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
-                SetSlotText(hotKey3.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
+                SetSlotText(HelmetText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
+                SetSlotText(ChestText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
+                SetSlotText(LegsText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
+                SetSlotText(BackText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
+                SetSlotText(UtilityText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
+                SetSlotText(HotKey1.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
+                SetSlotText(HotKey2.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
+                SetSlotText(HotKey3.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset), false);
 
-                if (displayEquipmentRowSeparate.Value)
+                if (DisplayEquipmentRowSeparate.Value)
                 {
                     offset = inv.GetWidth() * (inv.GetHeight() - 1);
                     ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
@@ -339,7 +338,7 @@ namespace VMP_Mod.EAQS
                         .anchoredPosition = new Vector2(643, -210);
                     ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
                         .anchoredPosition = new Vector2(713, -210);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
+                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset).GetComponent<RectTransform>()
                         .anchoredPosition = new Vector2(783, -210);
                 }
             }
@@ -350,7 +349,7 @@ namespace VMP_Mod.EAQS
         {
             private static void Prefix(Inventory __instance, ref int ___m_height)
             {
-                if (!addEquipmentRow.Value || !Player.m_localPlayer ||
+                if (!AddEquipmentRow.Value || !Player.m_localPlayer ||
                     __instance != Player.m_localPlayer.GetInventory())
                     return;
                 VMP_Modplugin.Dbgl("FindEmptySlot");
@@ -360,7 +359,7 @@ namespace VMP_Mod.EAQS
 
             private static void Postfix(Inventory __instance, ref int ___m_height)
             {
-                if (!addEquipmentRow.Value || !Player.m_localPlayer ||
+                if (!AddEquipmentRow.Value || !Player.m_localPlayer ||
                     __instance != Player.m_localPlayer.GetInventory())
                     return;
 
@@ -374,7 +373,7 @@ namespace VMP_Mod.EAQS
             private static bool Prefix(Inventory __instance, ref int __result, List<ItemDrop.ItemData> ___m_inventory,
                 int ___m_width, int ___m_height)
             {
-                if (!addEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
+                if (!AddEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
                     return true;
                 VMP_Modplugin.Dbgl("GetEmptySlots");
                 var count = ___m_inventory.FindAll(i => i.m_gridPos.y < ___m_height - 1).Count;
@@ -389,7 +388,7 @@ namespace VMP_Mod.EAQS
             private static bool Prefix(Inventory __instance, ref bool __result, List<ItemDrop.ItemData> ___m_inventory,
                 int ___m_width, int ___m_height)
             {
-                if (!addEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
+                if (!AddEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
                     return true;
 
                 var count = ___m_inventory.FindAll(i => i.m_gridPos.y < ___m_height - 1).Count;
@@ -405,7 +404,7 @@ namespace VMP_Mod.EAQS
             private static bool Prefix(Inventory __instance, ref bool __result, List<ItemDrop.ItemData> ___m_inventory,
                 ItemDrop.ItemData item)
             {
-                if (!addEquipmentRow.Value || !Player.m_localPlayer ||
+                if (!AddEquipmentRow.Value || !Player.m_localPlayer ||
                     __instance != Player.m_localPlayer.GetInventory())
                     return true;
 
@@ -418,7 +417,7 @@ namespace VMP_Mod.EAQS
                 ___m_inventory.Add(item);
                 Player.m_localPlayer.EquipItem(item, false);
                 typeof(Inventory).GetMethod("Changed", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .Invoke(__instance, new object[] { });
+                    ?.Invoke(__instance, new object[] { });
                 __result = true;
                 return false;
             }
@@ -440,17 +439,16 @@ namespace VMP_Mod.EAQS
         {
             private static void Postfix(Hud __instance)
             {
-                if (!addEquipmentRow.Value)
+                if (!AddEquipmentRow.Value)
                     return;
 
-                var newBar = Object.Instantiate(__instance.m_rootObject.transform.Find("HotKeyBar"));
+                var newBar = Object.Instantiate(__instance.m_rootObject.transform.Find("HotKeyBar"), __instance.m_rootObject.transform, true);
                 newBar.name = "QuickAccessBar";
-                newBar.SetParent(__instance.m_rootObject.transform);
                 newBar.GetComponent<RectTransform>().localPosition = Vector3.zero;
                 var go = newBar.GetComponent<HotkeyBar>().m_elementPrefab;
                 var qab = newBar.gameObject.AddComponent<QuickAccessBar>();
                 qab.m_elementPrefab = go;
-                elementPrefab = go;
+                _elementPrefab = go;
                 Object.Destroy(newBar.GetComponent<HotkeyBar>());
             }
         }
@@ -460,7 +458,7 @@ namespace VMP_Mod.EAQS
         {
             private static void Postfix(Hud __instance)
             {
-                if (!addEquipmentRow.Value || Player.m_localPlayer == null)
+                if (!AddEquipmentRow.Value || Player.m_localPlayer == null)
                     return;
 
                 var gameScale = GameObject.Find("GUI").GetComponent<CanvasScaler>().scaleFactor;
@@ -469,14 +467,14 @@ namespace VMP_Mod.EAQS
 
                 SetElementPositions();
 
-                if (lastMousePos == Vector3.zero)
-                    lastMousePos = mousePos;
+                if (_lastMousePos == Vector3.zero)
+                    _lastMousePos = mousePos;
 
 
                 var hudRoot = Hud.instance.transform.Find("hudroot");
 
 
-                if (Utilities.CheckKeyHeld(modKeyOne.Value) && Utilities.CheckKeyHeld(modKeyTwo.Value))
+                if (Utilities.CheckKeyHeld(ModKeyOne.Value) && Utilities.CheckKeyHeld(ModKeyTwo.Value))
                 {
                     var quickSlotsRect = Rect.zero;
                     if (hudRoot.Find("QuickAccessBar")?.GetComponent<RectTransform>() != null)
@@ -485,31 +483,31 @@ namespace VMP_Mod.EAQS
                             hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().anchoredPosition.y *
                             gameScale + Screen.height -
                             hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.y * gameScale *
-                            quickAccessScale.Value,
+                            QuickAccessScale.Value,
                             hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.x * gameScale *
-                            quickAccessScale.Value * (3 / 8f),
+                            QuickAccessScale.Value * (3 / 8f),
                             hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.y * gameScale *
-                            quickAccessScale.Value
+                            QuickAccessScale.Value
                         );
 
-                    if (quickSlotsRect.Contains(lastMousePos) &&
-                        (currentlyDragging == "" || currentlyDragging == "QuickAccessBar"))
+                    if (quickSlotsRect.Contains(_lastMousePos) &&
+                        (_currentlyDragging == "" || _currentlyDragging == "QuickAccessBar"))
                     {
-                        quickAccessX.Value += (mousePos.x - lastMousePos.x) / gameScale;
-                        quickAccessY.Value += (mousePos.y - lastMousePos.y) / gameScale;
-                        currentlyDragging = "QuickAccessBar";
+                        QuickAccessX.Value += (mousePos.x - _lastMousePos.x) / gameScale;
+                        QuickAccessY.Value += (mousePos.y - _lastMousePos.y) / gameScale;
+                        _currentlyDragging = "QuickAccessBar";
                     }
                     else
                     {
-                        currentlyDragging = "";
+                        _currentlyDragging = "";
                     }
                 }
                 else
                 {
-                    currentlyDragging = "";
+                    _currentlyDragging = "";
                 }
 
-                lastMousePos = mousePos;
+                _lastMousePos = mousePos;
             }
         }
     }
