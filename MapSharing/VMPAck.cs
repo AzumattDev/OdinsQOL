@@ -2,14 +2,14 @@
 {
     public class VMPAck
     {
-        public static void RPC_VPlusAck(long sender)
+        public static void RPC_VMPAck(long sender)
         {
             RpcQueue.GotAck();
         }
 
         public static void SendAck(long target)
         {
-            ZRoutedRpc.instance.InvokeRoutedRPC(target, "VPlusAck");
+            ZRoutedRpc.instance.InvokeRoutedRPC(target, "VMPAck");
         }
     }
 }

@@ -478,7 +478,7 @@ namespace VMP_Mod.Patches
 
                 if (!Tutorial.instance.m_texts.Contains(introTutorial)) Tutorial.instance.m_texts.Add(introTutorial);
 
-                Player.m_localPlayer.ShowTutorial("vplus");
+                Player.m_localPlayer.ShowTutorial("vmp");
 
                 //Only sync on first spawn
                 if (MapSync.ShouldSyncOnSpawn && VMP_Modplugin.shareMapProgression.Value)

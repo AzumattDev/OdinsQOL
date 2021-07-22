@@ -42,11 +42,12 @@ namespace VMP_Mod.Patches
     ///     Removes the integrity check for having a connected piece to the ground.
     /// </summary>
     [HarmonyPatch(typeof(WearNTear), "HaveSupport")]
-    public static class WearNTear_HaveSupport_Patch
+    public static class WearNTearHaveSupportPatch
     {
         private static void Postfix(ref bool __result)
         {
             if (WearNTear_Patches.DisableStructintegrity.Value) __result = true;
+            
         }
     }
 
@@ -54,7 +55,7 @@ namespace VMP_Mod.Patches
     ///     Disable damage to player structures
     /// </summary>
     [HarmonyPatch(typeof(WearNTear), "ApplyDamage")]
-    public static class WearNTear_ApplyDamage_Patch
+    public static class WearNTearApplyDamagePatch
     {
         private static bool Prefix(ref WearNTear __instance, ref float damage)
         {

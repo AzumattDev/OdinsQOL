@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using VMP_Mod.MapSharing;
 using VMP_Mod.Patches;
+using static VMP_Mod.Patches.SignPatches;
 
 namespace VMP_Mod
 {
@@ -239,11 +240,11 @@ namespace VMP_Mod
             ImprovedBuildHudConfig.CanBuildAmountColor = Config.Bind("Building HUD", "Can Build Amount Color", "white",
                 "Color to set the can-build amount. Leave empty to set no color. You can use the #XXXXXX hex color format.");
 
-            SignPatches.signScale = Config.Bind("Signs", "SignScale", new Vector3(1, 1, 1), "Sign scale (w,h,d)");
-            SignPatches.textPositionOffset =
+            signScale = Config.Bind("Signs", "SignScale", new Vector3(1, 1, 1), "Sign scale (w,h,d)");
+            textPositionOffset =
                 Config.Bind("Signs", "TextPositionOffset", new Vector2(0, 0), "Default font size");
-            SignPatches.useRichText = Config.Bind("Signs", "UseRichText", true, "Enable rich text");
-            SignPatches.fontName = Config.Bind("Signs", "FontName", "AveriaSerifLibre-Bold", "Font name");
+            useRichText = Config.Bind("Signs", "UseRichText", true, "Enable rich text");
+            fontName = Config.Bind("Signs", "FontName", "AveriaSerifLibre-Bold", "Font name");
 
 
             AutoStorePatch.dropRangeChests = Config.Bind("Auto Storage", "DropRangeChests", 5f,
@@ -291,35 +292,28 @@ namespace VMP_Mod
             AutoStorePatch.isOn = Config.Bind("Auto Storage", "IsOn", true, "Behaviour is currently on or not");
 
 
-            EAQS.Eaqs.ExtraRows = Config.Bind("EAQS", "ExtraRows", 0, "Number of extra ordinary rows.");
-            EAQS.Eaqs.AddEquipmentRow = Config.Bind("EAQS", "AddEquipmentRow", true,
-                "Add special row for equipped items and quick slots.");
-            EAQS.Eaqs.DisplayEquipmentRowSeparate = Config.Bind("EAQS", "DisplayEquipmentRowSeparate", true,
-                "Display equipment and quickslots in their own area.");
+            EAQS.EAQS.extraRows = Config.Bind<int>("EAQS", "ExtraRows", 0, "Number of extra ordinary rows.");
+            EAQS.EAQS.addEquipmentRow = Config.Bind<bool>("EAQS", "AddEquipmentRow", true, "Add special row for equipped items and quick slots.");
+            EAQS.EAQS.displayEquipmentRowSeparate = Config.Bind<bool>("EAQS", "DisplayEquipmentRowSeparate", true, "Display equipment and quickslots in their own area.");
 
-            EAQS.Eaqs.HelmetText = Config.Bind("EAQS", "HelmetText", "Head", "Text to show for helmet slot.");
-            EAQS.Eaqs.ChestText = Config.Bind("EAQS", "ChestText", "Chest", "Text to show for chest slot.");
-            EAQS.Eaqs.LegsText = Config.Bind("EAQS", "LegsText", "Legs", "Text to show for legs slot.");
-            EAQS.Eaqs.BackText = Config.Bind("EAQS", "BackText", "Back", "Text to show for back slot.");
-            EAQS.Eaqs.UtilityText = Config.Bind("EAQS", "UtilityText", "Utility", "Text to show for utility slot.");
+            EAQS.EAQS.helmetText = Config.Bind<string>("EAQS", "HelmetText", "Head", "Text to show for helmet slot.");
+            EAQS.EAQS.chestText = Config.Bind<string>("EAQS", "ChestText", "Chest", "Text to show for chest slot.");
+            EAQS.EAQS.legsText = Config.Bind<string>("EAQS", "LegsText", "Legs", "Text to show for legs slot.");
+            EAQS.EAQS.backText = Config.Bind<string>("EAQS", "BackText", "Back", "Text to show for back slot.");
+            EAQS.EAQS.utilityText = Config.Bind<string>("EAQS", "UtilityText", "Utility", "Text to show for utility slot.");
 
-            EAQS.Eaqs.QuickAccessScale =
-                Config.Bind<float>("EAQS", "QuickAccessScale", 1, "Scale of quick access bar.");
+            EAQS.EAQS.quickAccessScale = Config.Bind<float>("EAQS", "QuickAccessScale", 1, "Scale of quick access bar.");
 
-            EAQS.Eaqs.HotKey1 = Config.Bind("EAQS", "HotKey1", "z",
-                "Hotkey 1 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            EAQS.Eaqs.HotKey2 = Config.Bind("EAQS", "HotKey2", "x",
-                "Hotkey 2 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            EAQS.Eaqs.HotKey3 = Config.Bind("EAQS", "HotKey3", "c",
-                "Hotkey 3 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            EAQS.EAQS.hotKey1 = Config.Bind<string>("EAQS", "HotKey1", "z", "Hotkey 1 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            EAQS.EAQS.hotKey2 = Config.Bind<string>("EAQS", "HotKey2", "x", "Hotkey 2 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            EAQS.EAQS.hotKey3 = Config.Bind<string>("EAQS", "HotKey3", "c", "Hotkey 3 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
 
-            EAQS.Eaqs.ModKeyOne = Config.Bind("EAQS", "ModKey1", "mouse 0",
-                "First modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.");
-            EAQS.Eaqs.ModKeyTwo = Config.Bind("EAQS", "ModKey2", "left ctrl",
-                "Second modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.");
+            EAQS.EAQS.modKeyOne = Config.Bind<string>("EAQS", "ModKey1", "mouse 0", "First modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.");
+            EAQS.EAQS.modKeyTwo = Config.Bind<string>("EAQS", "ModKey2", "left ctrl", "Second modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.");
 
-            EAQS.Eaqs.QuickAccessX = Config.Bind<float>("EAQS", "quickAccessX", 9999, "Current X of Quick Slots");
-            EAQS.Eaqs.QuickAccessY = Config.Bind<float>("EAQS", "quickAccessY", 9999, "Current Y of Quick Slots");
+            EAQS.EAQS.quickAccessX = Config.Bind<float>("EAQS", "quickAccessX", 9999, "Current X of Quick Slots");
+            EAQS.EAQS.quickAccessY = Config.Bind<float>("EAQS", "quickAccessY", 9999, "Current Y of Quick Slots");
+
 
 
             PlantGrowth.displayGrowth =
@@ -395,16 +389,16 @@ namespace VMP_Mod
             if (!modEnabled.Value)
                 return;
 
-            EAQS.Eaqs.Hotkeys = new[]
+            EAQS.EAQS.hotkeys = new ConfigEntry<string>[]
             {
-                EAQS.Eaqs.HotKey1,
-                EAQS.Eaqs.HotKey2,
-                EAQS.Eaqs.HotKey3
+                EAQS.EAQS.hotKey1,
+                EAQS.EAQS.hotKey2,
+                EAQS.EAQS.hotKey3,
             };
 
             if (!Directory.Exists(VMP_DatadirectoryPath)) Directory.CreateDirectory(VMP_DatadirectoryPath);
-            SignPatches.currentFont = SignPatches.GetFont(SignPatches.fontName.Value, 20);
-            SignPatches.lastFontName = SignPatches.currentFont?.name;
+            currentFont = GetFont(fontName.Value, 20);
+            lastFontName = currentFont?.name;
             CraftingPatch.LoadCategories();
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
             if (ZNet.m_isServer && shareMapProgression.Value)
@@ -631,7 +625,7 @@ namespace VMP_Mod
                     new Action<long, ZPackage>(MapSync.RPC_VMPMapSync)); //Map Sync
                 ZRoutedRpc.instance.Register("VMPMapPinSync",
                     new Action<long, ZPackage>(VmpMapPinSync.RPC_VMPMapPinSync)); //Map Pin Sync
-                ZRoutedRpc.instance.Register("VMPAck", VMPAck.RPC_VPlusAck); //Ack
+                ZRoutedRpc.instance.Register("VMPAck", VMPAck.RPC_VMPAck); //Ack
             }
         }
     }

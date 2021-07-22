@@ -4,8 +4,8 @@
     {
         public class MapRange
         {
-            public int EndingX;
             public int StartingX;
+            public int EndingX;
             public int Y;
         }
     }

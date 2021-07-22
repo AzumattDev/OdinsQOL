@@ -21,17 +21,19 @@ namespace VMP_Mod.MapSharing
                 if (mapPkg == null) return;
 
                 //Get number of explored areas
-                var exploredAreaCount = mapPkg.ReadInt();
+                int exploredAreaCount = mapPkg.ReadInt();
 
                 if (exploredAreaCount > 0)
                 {
                     //Iterate and add them to server's combined map data.
-                    for (var i = 0; i < exploredAreaCount; i++)
+                    for (int i = 0; i < exploredAreaCount; i++)
                     {
-                        var exploredArea = mapPkg.ReadVPlusMapRange();
+                        MapRange exploredArea = mapPkg.ReadVPlusMapRange();
 
-                        for (var x = exploredArea.StartingX; x < exploredArea.EndingX; x++)
+                        for (int x = exploredArea.StartingX; x < exploredArea.EndingX; x++)
+                        {
                             ServerMapData[exploredArea.Y * Minimap.instance.m_textureSize + x] = true;
+                        }
                     }
 
                     ZLog.Log($"Received {exploredAreaCount} map ranges from peer #{sender}.");
@@ -41,30 +43,30 @@ namespace VMP_Mod.MapSharing
                 }
 
                 //Check if this is the last chunk from the client.
-                var lastMapPackage = mapPkg.ReadBool();
+                bool lastMapPackage = mapPkg.ReadBool();
 
-                if (!lastMapPackage)
-                    return; //This package is one of many chunks, so don't update clients until we get all of them.
+                if (!lastMapPackage) return; //This package is one of many chunks, so don't update clients until we get all of them.
 
                 //Convert map data into ranges
-                var serverExploredAreas = ExplorationDataToMapRanges(ServerMapData);
+                List<MapRange> serverExploredAreas = ExplorationDataToMapRanges(ServerMapData);
 
                 //Chunk up the map data
-                var packages = ChunkMapData(serverExploredAreas);
+                List<ZPackage> packages = ChunkMapData(serverExploredAreas);
 
                 //Send the updated server map to all clients
-                foreach (var pkg in packages)
-                    RpcQueue.Enqueue(new RpcData
+                foreach (ZPackage pkg in packages)
+                {
+                    RpcQueue.Enqueue(new RpcData()
                     {
                         Name = "VMPMapSync",
-                        Payload = new object[] {pkg},
+                        Payload = new object[] { pkg },
                         Target = ZRoutedRpc.Everybody
                     });
+                }
 
                 ZLog.Log($"-------------------------- Packages: {packages.Count}");
 
-                ZLog.Log(
-                    $"Sent map updates to all clients ({serverExploredAreas.Count} map ranges, {packages.Count} chunks)");
+                ZLog.Log($"Sent map updates to all clients ({serverExploredAreas.Count} map ranges, {packages.Count} chunks)");
             }
             else //Client
             {
@@ -77,17 +79,19 @@ namespace VMP_Mod.MapSharing
                 }
 
                 //Get number of explored areas
-                var exploredAreaCount = mapPkg.ReadInt();
+                int exploredAreaCount = mapPkg.ReadInt();
 
                 if (exploredAreaCount > 0)
                 {
                     //Iterate and add them to explored map
-                    for (var i = 0; i < exploredAreaCount; i++)
+                    for (int i = 0; i < exploredAreaCount; i++)
                     {
-                        var exploredArea = mapPkg.ReadVPlusMapRange();
+                        MapRange exploredArea = mapPkg.ReadVPlusMapRange();
 
-                        for (var x = exploredArea.StartingX; x < exploredArea.EndingX; x++)
+                        for (int x = exploredArea.StartingX; x < exploredArea.EndingX; x++)
+                        {
                             Minimap.instance.Explore(x, exploredArea.Y);
+                        }
                     }
 
                     //Update fog texture
@@ -110,31 +114,34 @@ namespace VMP_Mod.MapSharing
             ZLog.Log("-------------------- SENDING MIXONE MAPSYNC DATA");
 
             //Convert exploration data to ranges
-            var exploredAreas = ExplorationDataToMapRanges(Minimap.instance.m_explored);
+            List<MapRange> exploredAreas = ExplorationDataToMapRanges(Minimap.instance.m_explored);
 
             //If we have no data to send, just send an empty RPC to trigger the server end to sync.
             if (exploredAreas.Count == 0)
             {
-                var pkg = new ZPackage();
+                ZPackage pkg = new ZPackage();
 
                 pkg.Write(0); //Number of explored areas we're sending (zero in this case)
                 pkg.Write(true); //Trigger server sync by telling the server this is the last package we'll be sending.
 
-                ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.instance.GetServerPeerID(), "VMPMapSync", pkg);
+                ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.instance.GetServerPeerID(), "VMPMapSync",
+                    new object[] { pkg });
             }
             else //We have data to send. Prep it and send it.
             {
                 //Chunk map data
-                var packages = ChunkMapData(exploredAreas);
+                List<ZPackage> packages = ChunkMapData(exploredAreas);
 
                 //Route all chunks to the server
-                foreach (var pkg in packages)
-                    RpcQueue.Enqueue(new RpcData
+                foreach (ZPackage pkg in packages)
+                {
+                    RpcQueue.Enqueue(new RpcData()
                     {
                         Name = "VMPMapSync",
-                        Payload = new object[] {pkg},
+                        Payload = new object[] { pkg },
                         Target = ZRoutedRpc.instance.GetServerPeerID()
                     });
+                }
 
                 ZLog.Log($"Sent my map data to the server ({exploredAreas.Count} map ranges, {packages.Count} chunks)");
             }
@@ -147,17 +154,21 @@ namespace VMP_Mod.MapSharing
             if (ServerMapData == null) return;
 
             //Load map data
-            if (File.Exists(VMP_Modplugin.VMP_DatadirectoryPath + $"{ZNet.instance.GetWorldName()}_mapSync.dat"))
+            if (File.Exists(VMP_Modplugin.VMP_DatadirectoryPath  + $"{ZNet.instance.GetWorldName()}_mapSync.dat"))
+            {
                 try
                 {
-                    var mapData = File.ReadAllText(Path.Combine(VMP_Modplugin.VMP_DatadirectoryPath +
-                                                                $"{ZNet.instance.GetWorldName()}_mapSync.dat"));
+                    string mapData = File.ReadAllText(Path.Combine(VMP_Modplugin.VMP_DatadirectoryPath+$"{ZNet.instance.GetWorldName()}_mapSync.dat"));
 
-                    var dataPoints = mapData.Split(',');
+                    string[] dataPoints = mapData.Split(',');
 
-                    foreach (var dataPoint in dataPoints)
-                        if (int.TryParse(dataPoint, out var result))
+                    foreach (string dataPoint in dataPoints)
+                    {
+                        if (int.TryParse(dataPoint, out int result))
+                        {
                             ServerMapData[result] = true;
+                        }
+                    }
 
                     ZLog.Log($"Loaded {dataPoints.Length} map points from disk.");
                 }
@@ -166,6 +177,7 @@ namespace VMP_Mod.MapSharing
                     ZLog.LogError("Failed to load synchronized map data.");
                     ZLog.LogError(ex);
                 }
+            }
         }
 
         public static void SaveMapDataToDisk()
@@ -174,20 +186,23 @@ namespace VMP_Mod.MapSharing
 
             if (ServerMapData == null) return;
 
-            var mapDataToDisk = new List<int>();
+            List<int> mapDataToDisk = new List<int>();
 
-            for (var y = 0; y < Minimap.instance.m_textureSize; ++y)
-            for (var x = 0; x < Minimap.instance.m_textureSize; ++x)
-                if (ServerMapData[y * Minimap.instance.m_textureSize + x])
-                    mapDataToDisk.Add(y * Minimap.instance.m_textureSize + x);
+            for (int y = 0; y < Minimap.instance.m_textureSize; ++y)
+            {
+                for (int x = 0; x < Minimap.instance.m_textureSize; ++x)
+                {
+                    if (ServerMapData[y * Minimap.instance.m_textureSize + x])
+                    {
+                        mapDataToDisk.Add(y * Minimap.instance.m_textureSize + x);
+                    }
+                }
+            }
 
             if (mapDataToDisk.Count > 0)
             {
-                File.Delete(Path.Combine(VMP_Modplugin.VMP_DatadirectoryPath +
-                                         $"{ZNet.instance.GetWorldName()}_mapSync.dat"));
-                File.WriteAllText(
-                    Path.Combine(VMP_Modplugin.VMP_DatadirectoryPath + $"{ZNet.instance.GetWorldName()}_mapSync.dat"),
-                    string.Join(",", mapDataToDisk));
+                File.Delete(Path.Combine(VMP_Modplugin.VMP_DatadirectoryPath + $"{ZNet.instance.GetWorldName()}_mapSync.dat"));
+                File.WriteAllText(Path.Combine(VMP_Modplugin.VMP_DatadirectoryPath + $"{ZNet.instance.GetWorldName()}_mapSync.dat"), string.Join(",", mapDataToDisk));
 
                 ZLog.Log($"Saved {mapDataToDisk.Count} map points to disk.");
             }
@@ -196,13 +211,13 @@ namespace VMP_Mod.MapSharing
         private static List<MapRange> ExplorationDataToMapRanges(bool[] explorationData)
         {
             //Iterate the explored map and convert to ranges
-            var exploredAreas = new List<MapRange>();
+            List<MapRange> exploredAreas = new List<MapRange>();
 
-            for (var y = 0; y < Minimap.instance.m_textureSize; ++y)
+            for (int y = 0; y < Minimap.instance.m_textureSize; ++y)
             {
                 int startX = -1, endX = -1;
 
-                for (var x = 0; x < Minimap.instance.m_textureSize; ++x)
+                for (int x = 0; x < Minimap.instance.m_textureSize; ++x)
                 {
                     //Find the first X value that is true
                     if (explorationData[y * Minimap.instance.m_textureSize + x] && startX == -1 && endX == -1)
@@ -221,7 +236,7 @@ namespace VMP_Mod.MapSharing
                     //If we have both X values in the range, save it for this Y value.
                     if (startX > -1 && endX > -1)
                     {
-                        exploredAreas.Add(new MapRange
+                        exploredAreas.Add(new MapRange()
                         {
                             StartingX = startX,
                             EndingX = endX,
@@ -235,13 +250,15 @@ namespace VMP_Mod.MapSharing
 
                 //If we got a starting X coordinate but never got an end coordinate, this range is completely explored.
                 if (startX > -1 && endX == -1)
+                {
                     //The row is true til the end, create a range for it.
-                    exploredAreas.Add(new MapRange
+                    exploredAreas.Add(new MapRange()
                     {
                         StartingX = startX,
                         EndingX = Minimap.instance.m_textureSize,
                         Y = y
                     });
+                }
             }
 
             return exploredAreas;
@@ -252,26 +269,33 @@ namespace VMP_Mod.MapSharing
             if (mapData == null || mapData.Count == 0) return null;
 
             //Chunk the map data into pieces based on the maximum possible map data
-            var chunkedData = mapData.ChunkBy(chunkSize);
+            List<List<MapRange>> chunkedData = mapData.ChunkBy(chunkSize);
 
-            var packageList = new List<ZPackage>();
+            List<ZPackage> packageList = new List<ZPackage>();
 
             //Iterate the chunks
-            foreach (var thisChunk in chunkedData)
+            foreach (List<MapRange> thisChunk in chunkedData)
             {
-                var pkg = new ZPackage();
+                ZPackage pkg = new ZPackage();
 
                 //Write number of MapRanges in this package
                 pkg.Write(thisChunk.Count);
 
                 //Write each MapRange in this chunk to this package.
-                foreach (var mapRange in thisChunk) pkg.WriteVPlusMapRange(mapRange);
+                foreach (MapRange mapRange in thisChunk)
+                {
+                    pkg.WriteVPlusMapRange(mapRange);
+                }
 
                 //Write boolean dictating if this is the last chunk in the ZPackage sequence
                 if (thisChunk == chunkedData.Last())
+                {
                     pkg.Write(true);
+                }
                 else
+                {
                     pkg.Write(false);
+                }
 
                 //Add the package to the package list
                 packageList.Add(pkg);

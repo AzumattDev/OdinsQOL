@@ -1,113 +1,60 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
+using Debug = UnityEngine.Debug;
 
 namespace VMP_Mod.EAQS
 {
-    internal static class Eaqs
+    class EAQS
     {
-        public static ConfigEntry<bool> AddEquipmentRow;
-        public static ConfigEntry<bool> DisplayEquipmentRowSeparate;
-        public static ConfigEntry<int> ExtraRows;
 
-        public static ConfigEntry<string> HelmetText;
-        public static ConfigEntry<string> ChestText;
-        public static ConfigEntry<string> LegsText;
-        public static ConfigEntry<string> BackText;
-        public static ConfigEntry<string> UtilityText;
-        public static ConfigEntry<float> QuickAccessScale;
+        public static ConfigEntry<bool> addEquipmentRow;
+        public static ConfigEntry<bool> displayEquipmentRowSeparate;
+        public static ConfigEntry<int> extraRows;
 
-        public static ConfigEntry<string> HotKey1;
-        public static ConfigEntry<string> HotKey2;
-        public static ConfigEntry<string> HotKey3;
-        public static ConfigEntry<string> ModKeyOne;
-        public static ConfigEntry<string> ModKeyTwo;
+        public static ConfigEntry<string> helmetText;
+        public static ConfigEntry<string> chestText;
+        public static ConfigEntry<string> legsText;
+        public static ConfigEntry<string> backText;
+        public static ConfigEntry<string> utilityText;
+        public static ConfigEntry<float> quickAccessScale;
 
-        public static ConfigEntry<string>[] Hotkeys;
+        public static ConfigEntry<string> hotKey1;
+        public static ConfigEntry<string> hotKey2;
+        public static ConfigEntry<string> hotKey3;
+        public static ConfigEntry<string> modKeyOne;
+        public static ConfigEntry<string> modKeyTwo;
 
-        public static ConfigEntry<float> QuickAccessX;
-        public static ConfigEntry<float> QuickAccessY;
+        public static ConfigEntry<string>[] hotkeys;
 
-        private static GameObject _elementPrefab;
+        public static ConfigEntry<float> quickAccessX;
+        public static ConfigEntry<float> quickAccessY;
 
-        private static readonly ItemDrop.ItemData.ItemType[] TypeEnums =
+        private static GameObject elementPrefab;
+
+        private static ItemDrop.ItemData.ItemType[] typeEnums = new ItemDrop.ItemData.ItemType[]
         {
             ItemDrop.ItemData.ItemType.Helmet,
             ItemDrop.ItemData.ItemType.Chest,
             ItemDrop.ItemData.ItemType.Legs,
             ItemDrop.ItemData.ItemType.Shoulder,
-            ItemDrop.ItemData.ItemType.Utility
+            ItemDrop.ItemData.ItemType.Utility,
         };
 
-        private static ItemDrop.ItemData[] _equipItems = new ItemDrop.ItemData[5];
-
-        private static Vector3 _lastMousePos;
-        private static string _currentlyDragging;
-
-        public static void SetSlotText(string value, Transform transform, bool center = true)
-        {
-            var t = transform.Find("binding");
-            if (!t) t = Object.Instantiate(_elementPrefab.transform.Find("binding"), transform);
-            t.GetComponent<Text>().enabled = true;
-            t.GetComponent<Text>().text = value;
-            if (center)
-            {
-                t.GetComponent<RectTransform>().sizeDelta = new Vector2(80, 17);
-                t.GetComponent<RectTransform>().anchoredPosition = new Vector2(30, -10);
-            }
-        }
-
-        private static bool IsEquipmentSlotFree(Inventory inventory, ItemDrop.ItemData item, out int which)
-        {
-            which = Array.IndexOf(TypeEnums, item.m_shared.m_itemType);
-            return which >= 0 && inventory.GetItemAt(which, inventory.GetHeight() - 1) == null;
-        }
-
-        private static bool IsAtEquipmentSlot(Inventory inventory, ItemDrop.ItemData item, out int which)
-        {
-            if (!AddEquipmentRow.Value || item.m_gridPos.x > 4 || item.m_gridPos.y < inventory.GetHeight() - 1)
-            {
-                which = -1;
-                return false;
-            }
-
-            which = item.m_gridPos.x;
-            return true;
-        }
-
-        private static void SetElementPositions()
-        {
-            var hudRoot = Hud.instance.transform.Find("hudroot");
-
-            if (hudRoot.Find("QuickAccessBar")?.GetComponent<RectTransform>() != null)
-            {
-                if (Math.Abs(QuickAccessX.Value - 9999) < 9999)
-                    QuickAccessX.Value = hudRoot.Find("healthpanel").GetComponent<RectTransform>().anchoredPosition.x -
-                                         32;
-                if (Math.Abs(QuickAccessY.Value - 9999) < 9999)
-                    QuickAccessY.Value = hudRoot.Find("healthpanel").GetComponent<RectTransform>().anchoredPosition.y -
-                                         870;
-
-                hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().anchoredPosition =
-                    new Vector2(QuickAccessX.Value, QuickAccessY.Value);
-                hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().localScale =
-                    new Vector3(QuickAccessScale.Value, QuickAccessScale.Value, 1);
-            }
-        }
-
+        private static ItemDrop.ItemData[] equipItems = new ItemDrop.ItemData[5];
         [HarmonyPatch(typeof(Player), "Awake")]
-        private static class Player_Awake_Patch
+        static class Player_Awake_Patch
         {
-            private static void Prefix(Player __instance, Inventory ___m_inventory)
+            static void Prefix(Player __instance, Inventory ___m_inventory)
             {
                 VMP_Modplugin.Dbgl("Player_Awake");
 
-                var height = ExtraRows.Value + (AddEquipmentRow.Value ? 5 : 4);
+                int height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
 
                 AccessTools.FieldRefAccess<Inventory, int>(___m_inventory, "m_height") = height;
                 __instance.m_tombstone.GetComponent<Container>().m_height = height;
@@ -115,49 +62,25 @@ namespace VMP_Mod.EAQS
         }
 
         [HarmonyPatch(typeof(TombStone), "Awake")]
-        private static class TombStone_Awake_Patch
+        static class TombStone_Awake_Patch
         {
-            private static void Prefix(TombStone __instance)
+            static void Prefix(TombStone __instance)
             {
+              
                 VMP_Modplugin.Dbgl("TombStone_Awake");
 
-                var height = ExtraRows.Value + (AddEquipmentRow.Value ? 5 : 4);
+                int height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
 
                 __instance.GetComponent<Container>().m_height = height;
                 //AccessTools.FieldRefAccess<Inventory, int>(AccessTools.FieldRefAccess<Container, Inventory>(__instance.GetComponent<Container>(), "m_inventory"), "m_height") = height;
-                VMP_Modplugin.Dbgl(
-                    $"tombstone Awake {__instance.GetComponent<Container>().GetInventory()?.GetHeight()}");
+                //Dbgl($"tombstone Awake {__instance.GetComponent<Container>().GetInventory()?.GetHeight()}");
             }
         }
-
-        [HarmonyPatch(typeof(TombStone), "Interact")]
-        private static class TombStone_Interact_Patch
-        {
-            private static void Prefix(TombStone __instance, Container ___m_container)
-            {
-                VMP_Modplugin.Dbgl("TombStone_Interact");
-
-                var height = ExtraRows.Value + (AddEquipmentRow.Value ? 5 : 4);
-
-                __instance.GetComponent<Container>().m_height = height;
-
-                var t = Traverse.Create(___m_container);
-                var dataString = t.Field("m_nview").GetValue<ZNetView>().GetZDO().GetString("items");
-                if (string.IsNullOrEmpty(dataString)) return;
-                var pkg = new ZPackage(dataString);
-                t.Field("m_loading").SetValue(true);
-                t.Field("m_inventory").GetValue<Inventory>().Load(pkg);
-                t.Field("m_loading").SetValue(false);
-                t.Field("m_lastRevision").SetValue(t.Field("m_nview").GetValue<ZNetView>().GetZDO().m_dataRevision);
-                t.Field("m_lastDataString").SetValue(dataString);
-            }
-        }
-
 
         [HarmonyPatch(typeof(Inventory), "MoveInventoryToGrave")]
-        private static class MoveInventoryToGrave_Patch
+        static class MoveInventoryToGrave_Patch
         {
-            private static void Postfix(Inventory __instance, Inventory original)
+            static void Postfix(Inventory __instance, Inventory original)
             {
                 VMP_Modplugin.Dbgl("MoveInventoryToGrave");
 
@@ -167,44 +90,72 @@ namespace VMP_Mod.EAQS
 
 
         [HarmonyPatch(typeof(Player), "Update")]
-        private static class Player_Update_Patch
+        static class Player_Update_Patch
         {
-            private static void Postfix(Player __instance, Inventory ___m_inventory)
+            static void Postfix(Player __instance, Inventory ___m_inventory)
             {
-                var height = ExtraRows.Value + (AddEquipmentRow.Value ? 5 : 4);
+                
+
+                int height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
 
                 AccessTools.FieldRefAccess<Inventory, int>(___m_inventory, "m_height") = height;
                 __instance.m_tombstone.GetComponent<Container>().m_height = height;
 
 
-                if (Utilities.IgnoreKeyPresses(true) || !AddEquipmentRow.Value)
+                if (VMP_Mod.Utilities.IgnoreKeyPresses(true) || !addEquipmentRow.Value)
                     return;
 
+                if (VMP_Mod.Utilities.CheckKeyDown("9"))
+                    CreateTombStone();
+
                 int which;
-                if (Utilities.CheckKeyDown(HotKey1.Value))
+                if (VMP_Mod.Utilities.CheckKeyDown(hotKey1.Value))
                     which = 1;
-                else if (Utilities.CheckKeyDown(HotKey2.Value))
+                else if (VMP_Mod.Utilities.CheckKeyDown(hotKey2.Value))
                     which = 2;
-                else if (Utilities.CheckKeyDown(HotKey3.Value))
+                else if (VMP_Mod.Utilities.CheckKeyDown(hotKey3.Value))
                     which = 3;
                 else return;
 
-                var itemAt = ___m_inventory.GetItemAt(which + 4, ___m_inventory.GetHeight() - 1);
-                if (itemAt != null) __instance.UseItem(null, itemAt, false);
+                ItemDrop.ItemData itemAt = ___m_inventory.GetItemAt(which + 4, ___m_inventory.GetHeight() - 1);
+                if (itemAt != null)
+                {
+                    __instance.UseItem(null, itemAt, false);
+                }
+            }
+
+            private static void CreateTombStone()
+            {
+                VMP_Modplugin.Dbgl($"height {Player.m_localPlayer.m_tombstone.GetComponent<Container>().m_height}");
+                GameObject gameObject = VMP_Modplugin.Instantiate(Player.m_localPlayer.m_tombstone, Player.m_localPlayer.GetCenterPoint(), Player.m_localPlayer.transform.rotation);
+                TombStone component = gameObject.GetComponent<TombStone>();
+
+                VMP_Modplugin.Dbgl($"height {gameObject.GetComponent<Container>().m_height}");
+                VMP_Modplugin.Dbgl($"inv height {gameObject.GetComponent<Container>().GetInventory().GetHeight()}");
+                VMP_Modplugin.Dbgl($"inv slots {gameObject.GetComponent<Container>().GetInventory().GetEmptySlots()}");
+
+                for (int i = 0; i < gameObject.GetComponent<Container>().GetInventory().GetEmptySlots(); i++)
+                {
+                    gameObject.GetComponent<Container>().GetInventory().AddItem("SwordBronze", 1, 1, 0, 0, "");
+                }
+                VMP_Modplugin.Dbgl($"no items: {gameObject.GetComponent<Container>().GetInventory().NrOfItems()}");
+                PlayerProfile playerProfile = Game.instance.GetPlayerProfile();
+                component.Setup(playerProfile.GetName(), playerProfile.GetPlayerID());
+
             }
         }
 
         [HarmonyPatch(typeof(InventoryGui), "Update")]
-        private static class InventoryGui_Update_Patch
+        static class InventoryGui_Update_Patch
         {
-            private static void Postfix(InventoryGui __instance, InventoryGrid ___m_playerGrid, Animator ___m_animator)
+            static void Postfix(InventoryGui __instance, InventoryGrid ___m_playerGrid, Animator ___m_animator)
             {
-                if (!AddEquipmentRow.Value || !Player.m_localPlayer)
+                if (!addEquipmentRow.Value || !Player.m_localPlayer)
                     return;
 
-                var t = Traverse.Create(Player.m_localPlayer);
+                Traverse t = Traverse.Create(Player.m_localPlayer);
 
-                var inv = Player.m_localPlayer.GetInventory();
+                Inventory inv = Player.m_localPlayer.GetInventory();
 
                 var items = inv.GetAllItems();
 
@@ -214,153 +165,157 @@ namespace VMP_Mod.EAQS
                 var back = t.Field("m_shoulderItem").GetValue<ItemDrop.ItemData>();
                 var utility = t.Field("m_utilityItem").GetValue<ItemDrop.ItemData>();
 
-                foreach (var t1 in items)
-                    if (IsAtEquipmentSlot(inv, t1, out var which))
+                for (int i = 0; i < items.Count; i++)
+                {
+                    //Dbgl($"{items[i].m_gridPos} {inv.GetHeight() - 1},0 {items[i] != helmet}");
+                    if (IsAtEquipmentSlot(inv, items[i], out int which))
                     {
                         if ( // in right slot and equipped
-                            which == 0 && t1 == helmet ||
-                            which == 1 && t1 == chest ||
-                            which == 2 && t1 == legs ||
-                            which == 3 && t1 == back ||
-                            which == 4 && t1 == utility
-                        )
+                            (which == 0 && items[i] == helmet) ||
+                            (which == 1 && items[i] == chest) ||
+                            (which == 2 && items[i] == legs) ||
+                            (which == 3 && items[i] == back) ||
+                            (which == 4 && items[i] == utility)
+                            )
                             continue;
 
-                        if (which > -1 && t1.m_shared.m_itemType == TypeEnums[which] &&
-                            _equipItems[which] != t1 &&
-                            Player.m_localPlayer.EquipItem(t1, false)) // in right slot and new
-                            continue;
-
-                        // in wrong slot or unequipped in slot or can't equip
-                        var newPos = (Vector2i) typeof(Inventory)
-                            .GetMethod("FindEmptySlot", BindingFlags.NonPublic | BindingFlags.Instance)
-                            .Invoke(inv, new object[] {true});
-                        if (newPos.x < 0 || newPos.y < 0 || newPos.y == inv.GetHeight() - 1)
+                        if (which > -1 && items[i].m_shared.m_itemType == typeEnums[which] && equipItems[which] != items[i]) // in right slot and new
                         {
-                            Player.m_localPlayer.DropItem(inv, t1, t1.m_stack);
+                            if (!Player.m_localPlayer.IsItemQueued(items[i]))
+                                typeof(Player).GetMethod("QueueEquipItem", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(Player.m_localPlayer, new object[] { items[i] });
                         }
-                        else
+                        else // in wrong slot or unequipped in slot
                         {
-                            t1.m_gridPos = newPos;
-                            ___m_playerGrid.UpdateInventory(inv, Player.m_localPlayer, null);
+                            Vector2i newPos = (Vector2i)typeof(Inventory).GetMethod("FindEmptySlot", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(inv, new object[] { true });
+                            if (newPos.x < 0 || newPos.y < 0 || newPos.y == inv.GetHeight() - 1)
+                            {
+                                Player.m_localPlayer.DropItem(inv, items[i], items[i].m_stack);
+                            }
+                            else
+                            {
+                                items[i].m_gridPos = newPos;
+                                ___m_playerGrid.UpdateInventory(inv, Player.m_localPlayer, null);
+                            }
                         }
                     }
-
-                _equipItems = new[] {helmet, chest, legs, back, utility};
+                }
+                equipItems = new ItemDrop.ItemData[] { helmet, chest, legs, back, utility };
 
                 if (!___m_animator.GetBool("visible"))
                     return;
 
-                var width = inv.GetWidth();
-                var offset = width * (inv.GetHeight() - 1);
+                int width = inv.GetWidth();
+                int offset = width * (inv.GetHeight() - 1);
 
                 if (helmet != null)
-                    t.Field("m_helmetItem").GetValue<ItemDrop.ItemData>().m_gridPos =
-                        new Vector2i(offset % width, offset / width);
+                    t.Field("m_helmetItem").GetValue<ItemDrop.ItemData>().m_gridPos = new Vector2i(offset % width, offset / width);
                 offset++;
 
                 if (chest != null)
-                    t.Field("m_chestItem").GetValue<ItemDrop.ItemData>().m_gridPos =
-                        new Vector2i(offset % width, offset / width);
+                    t.Field("m_chestItem").GetValue<ItemDrop.ItemData>().m_gridPos = new Vector2i(offset % width, offset / width);
                 offset++;
 
                 if (legs != null)
-                    t.Field("m_legItem").GetValue<ItemDrop.ItemData>().m_gridPos =
-                        new Vector2i(offset % width, offset / width);
+                    t.Field("m_legItem").GetValue<ItemDrop.ItemData>().m_gridPos = new Vector2i(offset % width, offset / width);
                 offset++;
 
                 if (back != null)
-                    t.Field("m_shoulderItem").GetValue<ItemDrop.ItemData>().m_gridPos =
-                        new Vector2i(offset % width, offset / width);
+                    t.Field("m_shoulderItem").GetValue<ItemDrop.ItemData>().m_gridPos = new Vector2i(offset % width, offset / width);
                 offset++;
 
                 if (utility != null)
-                    t.Field("m_utilityItem").GetValue<ItemDrop.ItemData>().m_gridPos =
-                        new Vector2i(offset % width, offset / width);
+                    t.Field("m_utilityItem").GetValue<ItemDrop.ItemData>().m_gridPos = new Vector2i(offset % width, offset / width);
 
 
-                __instance.m_player.Find("Bkg").GetComponent<RectTransform>().anchorMin = new Vector2(0,
-                    (ExtraRows.Value + (AddEquipmentRow.Value && !DisplayEquipmentRowSeparate.Value ? 1 : 0)) * -0.25f);
+                __instance.m_player.Find("Bkg").GetComponent<RectTransform>().anchorMin = new Vector2(0, (extraRows.Value + (addEquipmentRow.Value && !displayEquipmentRowSeparate.Value ? 1 : 0)) * -0.25f);
 
-                if (DisplayEquipmentRowSeparate.Value && __instance.m_player.Find("EquipmentBkg") == null)
+                if (displayEquipmentRowSeparate.Value && __instance.m_player.Find("EquipmentBkg") == null)
                 {
-                    var bkg = Object.Instantiate(__instance.m_player.Find("Bkg"), __instance.m_player);
+                    Transform bkg = VMP_Modplugin.Instantiate(__instance.m_player.Find("Bkg"), __instance.m_player);
                     bkg.SetAsFirstSibling();
                     bkg.name = "EquipmentBkg";
                     bkg.GetComponent<RectTransform>().anchorMin = new Vector2(1, 0);
                     bkg.GetComponent<RectTransform>().anchorMax = new Vector2(1.5f, 1);
                 }
-                else if (!DisplayEquipmentRowSeparate.Value && __instance.m_player.Find("EquipmentBkg"))
+                else if (!displayEquipmentRowSeparate.Value && __instance.m_player.Find("EquipmentBkg"))
                 {
-                    Object.Destroy(__instance.m_player.Find("EquipmentBkg").gameObject);
+                    VMP_Modplugin.Destroy(__instance.m_player.Find("EquipmentBkg").gameObject);
                 }
+
             }
         }
 
 
         [HarmonyPatch(typeof(InventoryGui), "UpdateInventory")]
-        private static class UpdateInventory_Patch
+        static class UpdateInventory_Patch
         {
-            private static void Postfix(InventoryGrid ___m_playerGrid)
+            static void Postfix(InventoryGrid ___m_playerGrid)
             {
-                if (!AddEquipmentRow.Value)
+                if (!addEquipmentRow.Value)
                     return;
 
-                var t = Traverse.Create(Player.m_localPlayer);
+                Traverse t = Traverse.Create(Player.m_localPlayer);
 
-                var inv = Player.m_localPlayer.GetInventory();
+                Inventory inv = Player.m_localPlayer.GetInventory();
 
-                var offset = inv.GetWidth() * (inv.GetHeight() - 1);
+                int offset = inv.GetWidth() * (inv.GetHeight() - 1);
 
-                SetSlotText(HelmetText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(ChestText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(LegsText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(BackText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(UtilityText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(HotKey1.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
-                SetSlotText(HotKey2.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
-                SetSlotText(HotKey3.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset), false);
+                SetSlotText(helmetText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
+                SetSlotText(chestText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
+                SetSlotText(legsText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
+                SetSlotText(backText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
+                SetSlotText(utilityText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
+                SetSlotText(hotKey1.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
+                SetSlotText(hotKey2.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
+                SetSlotText(hotKey3.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
 
-                if (DisplayEquipmentRowSeparate.Value)
+                if (displayEquipmentRowSeparate.Value)
                 {
                     offset = inv.GetWidth() * (inv.GetHeight() - 1);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(678, 0);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(748, -35);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(678, -70);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(748, -105);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(678, -140);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(643, -210);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(713, -210);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(783, -210);
+                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>().anchoredPosition = new Vector2(678, 0);
+                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>().anchoredPosition = new Vector2(748, -35);
+                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>().anchoredPosition = new Vector2(678, -70);
+                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>().anchoredPosition = new Vector2(748, -105);
+                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>().anchoredPosition = new Vector2(678, -140);
+                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>().anchoredPosition = new Vector2(643, -210);
+                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>().anchoredPosition = new Vector2(713, -210);
+                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>().anchoredPosition = new Vector2(783, -210);
                 }
+
+            }
+        }
+
+        public static void SetSlotText(string value, Transform transform, bool center = true)
+        {
+            Transform t = transform.Find("binding");
+            if (!t)
+            {
+                t = VMP_Modplugin.Instantiate(elementPrefab.transform.Find("binding"), transform);
+            }
+            t.GetComponent<Text>().enabled = true;
+            t.GetComponent<Text>().text = value;
+            if (center)
+            {
+                t.GetComponent<RectTransform>().sizeDelta = new Vector2(80, 17);
+                t.GetComponent<RectTransform>().anchoredPosition = new Vector2(30, -10);
             }
         }
 
         [HarmonyPatch(typeof(Inventory), "FindEmptySlot")]
-        private static class FindEmptySlot_Patch
+        static class FindEmptySlot_Patch
         {
-            private static void Prefix(Inventory __instance, ref int ___m_height)
+
+            static void Prefix(Inventory __instance, ref int ___m_height)
             {
-                if (!AddEquipmentRow.Value || !Player.m_localPlayer ||
-                    __instance != Player.m_localPlayer.GetInventory())
+                if (!addEquipmentRow.Value || !Player.m_localPlayer || __instance != Player.m_localPlayer.GetInventory())
                     return;
                 VMP_Modplugin.Dbgl("FindEmptySlot");
 
                 ___m_height--;
             }
-
-            private static void Postfix(Inventory __instance, ref int ___m_height)
+            static void Postfix(Inventory __instance, ref int ___m_height)
             {
-                if (!AddEquipmentRow.Value || !Player.m_localPlayer ||
-                    __instance != Player.m_localPlayer.GetInventory())
+                if (!addEquipmentRow.Value || !Player.m_localPlayer || __instance != Player.m_localPlayer.GetInventory())
                     return;
 
                 ___m_height++;
@@ -368,147 +323,172 @@ namespace VMP_Mod.EAQS
         }
 
         [HarmonyPatch(typeof(Inventory), "GetEmptySlots")]
-        private static class GetEmptySlots_Patch
+        static class GetEmptySlots_Patch
         {
-            private static bool Prefix(Inventory __instance, ref int __result, List<ItemDrop.ItemData> ___m_inventory,
-                int ___m_width, int ___m_height)
+
+            static bool Prefix(Inventory __instance, ref int __result, List<ItemDrop.ItemData> ___m_inventory, int ___m_width, int ___m_height)
             {
-                if (!AddEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
+                if (!addEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
                     return true;
                 VMP_Modplugin.Dbgl("GetEmptySlots");
-                var count = ___m_inventory.FindAll(i => i.m_gridPos.y < ___m_height - 1).Count;
+                int count = ___m_inventory.FindAll(i => i.m_gridPos.y < ___m_height - 1).Count;
                 __result = (___m_height - 1) * ___m_width - count;
                 return false;
             }
         }
 
         [HarmonyPatch(typeof(Inventory), "HaveEmptySlot")]
-        private static class HaveEmptySlot_Patch
+        static class HaveEmptySlot_Patch
         {
-            private static bool Prefix(Inventory __instance, ref bool __result, List<ItemDrop.ItemData> ___m_inventory,
-                int ___m_width, int ___m_height)
+
+            static bool Prefix(Inventory __instance, ref bool __result, List<ItemDrop.ItemData> ___m_inventory, int ___m_width, int ___m_height)
             {
-                if (!AddEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
+                if (!addEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
                     return true;
 
-                var count = ___m_inventory.FindAll(i => i.m_gridPos.y < ___m_height - 1).Count;
+                int count = ___m_inventory.FindAll(i => i.m_gridPos.y < ___m_height - 1).Count;
 
                 __result = count < ___m_width * (___m_height - 1);
                 return false;
             }
         }
 
-        [HarmonyPatch(typeof(Inventory), "AddItem", typeof(ItemDrop.ItemData))]
-        private static class Inventory_AddItem_Patch
+        [HarmonyPatch(typeof(Inventory), "AddItem", new Type[] { typeof(ItemDrop.ItemData) })]
+        static class Inventory_AddItem_Patch
         {
-            private static bool Prefix(Inventory __instance, ref bool __result, List<ItemDrop.ItemData> ___m_inventory,
-                ItemDrop.ItemData item)
+            static bool Prefix(Inventory __instance, ref bool __result, List<ItemDrop.ItemData> ___m_inventory, ItemDrop.ItemData item)
             {
-                if (!AddEquipmentRow.Value || !Player.m_localPlayer ||
-                    __instance != Player.m_localPlayer.GetInventory())
+                if (!addEquipmentRow.Value || !Player.m_localPlayer || __instance != Player.m_localPlayer.GetInventory())
                     return true;
 
                 VMP_Modplugin.Dbgl("AddItem");
 
-                if (IsEquipmentSlotFree(__instance, item, out var which))
+                if (IsEquipmentSlotFree(__instance, item, out int which))
+                {
                     item.m_gridPos = new Vector2i(which, __instance.GetHeight() - 1);
+                }
                 else
                     return true;
                 ___m_inventory.Add(item);
                 Player.m_localPlayer.EquipItem(item, false);
-                typeof(Inventory).GetMethod("Changed", BindingFlags.NonPublic | BindingFlags.Instance)
-                    ?.Invoke(__instance, new object[] { });
+                typeof(Inventory).GetMethod("Changed", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(__instance, new object[] { });
                 __result = true;
                 return false;
             }
         }
 
-
-        [HarmonyPatch(typeof(Inventory), "AddItem", typeof(ItemDrop.ItemData), typeof(int), typeof(int), typeof(int))]
-        private static class Inventory_AddItem_Patch2
+        private static bool IsEquipmentSlotFree(Inventory inventory, ItemDrop.ItemData item, out int which)
         {
-            private static void Prefix(Inventory __instance, ref int ___m_width, ref int ___m_height, int x, int y)
+            which = Array.IndexOf(typeEnums, item.m_shared.m_itemType);
+            return which >= 0 && inventory.GetItemAt(which, inventory.GetHeight() - 1) == null;
+        }
+
+        private static bool IsAtEquipmentSlot(Inventory inventory, ItemDrop.ItemData item, out int which)
+        {
+            if (!addEquipmentRow.Value || item.m_gridPos.x > 4 || item.m_gridPos.y < inventory.GetHeight() - 1)
             {
-                if (x >= ___m_width) ___m_width = x + 1;
-                if (y >= ___m_height) ___m_height = y + 1;
+                which = -1;
+                return false;
             }
+            which = item.m_gridPos.x;
+            return true;
         }
 
         [HarmonyPatch(typeof(Hud), "Awake")]
-        private static class Hud_Awake_Patch
+        static class Hud_Awake_Patch
         {
-            private static void Postfix(Hud __instance)
+
+            static void Postfix(Hud __instance)
             {
-                if (!AddEquipmentRow.Value)
+                if (!addEquipmentRow.Value)
                     return;
 
-                var newBar = Object.Instantiate(__instance.m_rootObject.transform.Find("HotKeyBar"), __instance.m_rootObject.transform, true);
+                Transform newBar = VMP_Modplugin.Instantiate(__instance.m_rootObject.transform.Find("HotKeyBar"));
                 newBar.name = "QuickAccessBar";
+                newBar.SetParent(__instance.m_rootObject.transform);
                 newBar.GetComponent<RectTransform>().localPosition = Vector3.zero;
-                var go = newBar.GetComponent<HotkeyBar>().m_elementPrefab;
-                var qab = newBar.gameObject.AddComponent<QuickAccessBar>();
+                GameObject go = newBar.GetComponent<HotkeyBar>().m_elementPrefab;
+                QuickAccessBar qab = newBar.gameObject.AddComponent<QuickAccessBar>();
                 qab.m_elementPrefab = go;
-                _elementPrefab = go;
-                Object.Destroy(newBar.GetComponent<HotkeyBar>());
+                elementPrefab = go;
+                VMP_Modplugin.Destroy(newBar.GetComponent<HotkeyBar>());
             }
         }
 
+        private static Vector3 lastMousePos;
+        private static string currentlyDragging;
+
         [HarmonyPatch(typeof(Hud), "Update")]
-        private static class Hud_Update_Patch
+        static class Hud_Update_Patch
         {
-            private static void Postfix(Hud __instance)
+            static void Postfix(Hud __instance)
             {
-                if (!AddEquipmentRow.Value || Player.m_localPlayer == null)
+                if (!addEquipmentRow.Value || Player.m_localPlayer == null || InventoryGui.IsVisible() == true)
                     return;
 
-                var gameScale = GameObject.Find("GUI").GetComponent<CanvasScaler>().scaleFactor;
+                float gameScale = GameObject.Find("GUI").GetComponent<CanvasScaler>().scaleFactor;
 
-                var mousePos = Input.mousePosition;
+                Vector3 mousePos = Input.mousePosition;
 
                 SetElementPositions();
 
-                if (_lastMousePos == Vector3.zero)
-                    _lastMousePos = mousePos;
+                if (lastMousePos == Vector3.zero)
+                    lastMousePos = mousePos;
 
 
-                var hudRoot = Hud.instance.transform.Find("hudroot");
+                Transform hudRoot = Hud.instance.transform.Find("hudroot");
 
 
-                if (Utilities.CheckKeyHeld(ModKeyOne.Value) && Utilities.CheckKeyHeld(ModKeyTwo.Value))
+                if (VMP_Mod.Utilities.CheckKeyHeld(modKeyOne.Value) && VMP_Mod.Utilities.CheckKeyHeld(modKeyTwo.Value))
                 {
-                    var quickSlotsRect = Rect.zero;
+
+
+                    Rect quickSlotsRect = Rect.zero;
                     if (hudRoot.Find("QuickAccessBar")?.GetComponent<RectTransform>() != null)
+                    {
                         quickSlotsRect = new Rect(
                             hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().anchoredPosition.x * gameScale,
-                            hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().anchoredPosition.y *
-                            gameScale + Screen.height -
-                            hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.y * gameScale *
-                            QuickAccessScale.Value,
-                            hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.x * gameScale *
-                            QuickAccessScale.Value * (3 / 8f),
-                            hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.y * gameScale *
-                            QuickAccessScale.Value
+                            hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().anchoredPosition.y * gameScale + Screen.height - hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.y * gameScale * quickAccessScale.Value,
+                            hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.x * gameScale * quickAccessScale.Value * (3 / 8f),
+                            hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.y * gameScale * quickAccessScale.Value
                         );
+                    }
 
-                    if (quickSlotsRect.Contains(_lastMousePos) &&
-                        (_currentlyDragging == "" || _currentlyDragging == "QuickAccessBar"))
+                    if (quickSlotsRect.Contains(lastMousePos) && (currentlyDragging == "" || currentlyDragging == "QuickAccessBar"))
                     {
-                        QuickAccessX.Value += (mousePos.x - _lastMousePos.x) / gameScale;
-                        QuickAccessY.Value += (mousePos.y - _lastMousePos.y) / gameScale;
-                        _currentlyDragging = "QuickAccessBar";
+                        quickAccessX.Value += (mousePos.x - lastMousePos.x) / gameScale;
+                        quickAccessY.Value += (mousePos.y - lastMousePos.y) / gameScale;
+                        currentlyDragging = "QuickAccessBar";
                     }
                     else
                     {
-                        _currentlyDragging = "";
+                        currentlyDragging = "";
                     }
                 }
                 else
-                {
-                    _currentlyDragging = "";
-                }
+                    currentlyDragging = "";
 
-                _lastMousePos = mousePos;
+                lastMousePos = mousePos;
             }
         }
+
+        private static void SetElementPositions()
+        {
+            Transform hudRoot = Hud.instance.transform.Find("hudroot");
+
+            if (hudRoot.Find("QuickAccessBar")?.GetComponent<RectTransform>() != null)
+            {
+                if (quickAccessX.Value == 9999)
+                    quickAccessX.Value = hudRoot.Find("healthpanel").GetComponent<RectTransform>().anchoredPosition.x - 32;
+                if (quickAccessY.Value == 9999)
+                    quickAccessY.Value = hudRoot.Find("healthpanel").GetComponent<RectTransform>().anchoredPosition.y - 870;
+
+                hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().anchoredPosition = new Vector2(quickAccessX.Value, quickAccessY.Value);
+                hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().localScale = new Vector3(quickAccessScale.Value, quickAccessScale.Value, 1);
+            }
+        }
+
+
+
     }
 }
