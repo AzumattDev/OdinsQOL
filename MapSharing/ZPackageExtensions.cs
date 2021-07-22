@@ -1,4 +1,4 @@
-﻿using static VMP_Mod.MapSharing.VPlusDataObjects;
+﻿using static VMP_Mod.MapSharing.VmpObjects;
 
 namespace VMP_Mod.MapSharing
 {

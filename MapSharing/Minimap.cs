@@ -235,9 +235,9 @@ namespace VMP_Mod.MapSharing
                         
                          if (imageoff == false)
                         { 
-                        var title = pinEditorPanel.transform.Find("Title");
-                        var picture = title.GetComponentInChildren<Image>();
-                        picture.gameObject.SetActive(false);
+                            var title = pinEditorPanel.transform.Find("Title");
+                            var picture = title.GetComponentInChildren<Image>();
+                            picture.gameObject.SetActive(false);
                             imageoff = true;
                         }
                     }
@@ -305,132 +305,132 @@ namespace VMP_Mod.MapSharing
             }
         }
     }
-
-
-    /// <summary>
-    /// Show boats and carts on map
-    /// </summary>
-    public class displayCartsAndBoatsOnMap
-    {
-        static Dictionary<ZDO, Minimap.PinData> customPins = new Dictionary<ZDO, Minimap.PinData>();
-        static Dictionary<int, Sprite> icons = new Dictionary<int, Sprite>();
-        static int CartHashcode = "Cart".GetStableHashCode();
-        static int RaftHashcode = "Raft".GetStableHashCode();
-        static int KarveHashcode = "Karve".GetStableHashCode();
-        static int LongshipHashcode = "VikingShip".GetStableHashCode();
-        static int hammerHashCode = "Hammer".GetStableHashCode();
-        static float updateInterval = 5.0f;
-
-        // clear dictionary if the user logs out
-        [HarmonyPatch(typeof(Minimap), "OnDestroy")]
-        public static class Minimap_OnDestroy_Patch
+        /// <summary>
+        /// Show boats and carts on map
+        /// </summary>
+        public class DisplayCartsAndBoatsOnMap
         {
-            private static void Postfix()
-            {
-                customPins.Clear();
-                icons.Clear();
-            }
-        }
+            static Dictionary<ZDO, Minimap.PinData> customPins = new Dictionary<ZDO, Minimap.PinData>();
+            static Dictionary<int, Sprite> icons = new Dictionary<int, Sprite>();
+            static int CartHashcode = "Cart".GetStableHashCode();
+            static int RaftHashcode = "Raft".GetStableHashCode();
+            static int KarveHashcode = "Karve".GetStableHashCode();
+            static int LongshipHashcode = "VikingShip".GetStableHashCode();
+            static int hammerHashCode = "Hammer".GetStableHashCode();
+            static float updateInterval = 5.0f;
 
-        [HarmonyPatch(typeof(Minimap), "UpdateMap")]
-        public static class Minimap_UpdateMap_Patch
-        {
-            static float timeCounter = updateInterval;
-
-            private static void FindIcons()
+            // clear dictionary if the user logs out
+            [HarmonyPatch(typeof(Minimap), "OnDestroy")]
+            public static class Minimap_OnDestroy_Patch
             {
-                GameObject hammer = ObjectDB.instance.m_itemByHash[hammerHashCode];
-                if (!hammer)
-                    return;
-                ItemDrop hammerDrop = hammer.GetComponent<ItemDrop>();
-                if (!hammerDrop)
-                    return;
-                PieceTable hammerPieceTable = hammerDrop.m_itemData.m_shared.m_buildPieces;
-                foreach (GameObject piece in hammerPieceTable.m_pieces)
+                private static void Postfix()
                 {
-                    Piece p = piece.GetComponent<Piece>();
-                    icons.Add(p.name.GetStableHashCode(), p.m_icon);
+                    customPins.Clear();
+                    icons.Clear();
                 }
             }
 
-            private static bool CheckPin(Minimap __instance, Player player, ZDO zdo, int hashCode, string pinName)
+            [HarmonyPatch(typeof(Minimap), "UpdateMap")]
+            public static class Minimap_UpdateMap_Patch
             {
-                if (zdo.m_prefab != hashCode)
-                    return false;
+                static float timeCounter = updateInterval;
 
-                Minimap.PinData customPin;
-                bool pinWasFound = customPins.TryGetValue(zdo, out customPin);
-
-                // turn off associated pin if player controlled ship is in that position
-                Ship controlledShip = player.GetControlledShip();
-                if (controlledShip && Vector3.Distance(controlledShip.transform.position, zdo.m_position) < 0.01f)
+                private static void FindIcons()
                 {
-                    if (pinWasFound)
+                    GameObject hammer = ObjectDB.instance.m_itemByHash[hammerHashCode];
+                    if (!hammer)
+                        return;
+                    ItemDrop hammerDrop = hammer.GetComponent<ItemDrop>();
+                    if (!hammerDrop)
+                        return;
+                    PieceTable hammerPieceTable = hammerDrop.m_itemData.m_shared.m_buildPieces;
+                    foreach (GameObject piece in hammerPieceTable.m_pieces)
                     {
-                        __instance.RemovePin(customPin);
-                        customPins.Remove(zdo);
+                        Piece p = piece.GetComponent<Piece>();
+                        icons.Add(p.name.GetStableHashCode(), p.m_icon);
                     }
+                }
+
+                private static bool CheckPin(Minimap __instance, Player player, ZDO zdo, int hashCode, string pinName)
+                {
+                    if (zdo.m_prefab != hashCode)
+                        return false;
+
+                    Minimap.PinData customPin;
+                    bool pinWasFound = customPins.TryGetValue(zdo, out customPin);
+
+                    // turn off associated pin if player controlled ship is in that position
+                    Ship controlledShip = player.GetControlledShip();
+                    if (controlledShip && Vector3.Distance(controlledShip.transform.position, zdo.m_position) < 0.01f)
+                    {
+                        if (pinWasFound)
+                        {
+                            __instance.RemovePin(customPin);
+                            customPins.Remove(zdo);
+                        }
+
+                        return true;
+                    }
+
+                    if (!pinWasFound)
+                    {
+                        customPin = __instance.AddPin(zdo.m_position, Minimap.PinType.Death, pinName, false, false);
+
+                        Sprite sprite;
+                        if (icons.TryGetValue(hashCode, out sprite))
+                            customPin.m_icon = sprite;
+
+                        customPin.m_doubleSize = true;
+                        customPins.Add(zdo, customPin);
+                    }
+                    else
+                        customPin.m_pos = zdo.m_position;
+
                     return true;
                 }
 
-                if (!pinWasFound)
+                public static void Postfix(ref Minimap __instance, Player player, float dt, bool takeInput)
                 {
-                    customPin = __instance.AddPin(zdo.m_position, Minimap.PinType.Death, pinName, false, false);
+                    timeCounter += dt;
 
-                    Sprite sprite;
-                    if (icons.TryGetValue(hashCode, out sprite))
-                        customPin.m_icon = sprite;
+                    if (timeCounter < updateInterval || !VMP_Modplugin.mapIsEnabled.Value ||
+                        !VMP_Modplugin.displayCartsAndBoats.Value)
+                        return;
 
-                    customPin.m_doubleSize = true;
-                    customPins.Add(zdo, customPin);
-                }
-                else
-                    customPin.m_pos = zdo.m_position;
+                    timeCounter -= updateInterval;
 
-                return true;
-            }
+                    if (icons.Count == 0)
+                        FindIcons();
 
-            public static void Postfix(ref Minimap __instance, Player player, float dt, bool takeInput)
-            {
-                timeCounter += dt;
-
-                if (timeCounter < updateInterval || !VMP_Modplugin.mapIsEnabled.Value || !VMP_Modplugin.displayCartsAndBoats.Value)
-                    return;
-
-                timeCounter -= updateInterval;
-
-                if (icons.Count == 0)
-                    FindIcons();
-
-                // search zones for ships and carts
-                foreach (List<ZDO> zdoarray in ZDOMan.instance.m_objectsBySector)
-                {
-                    if (zdoarray != null)
+                    // search zones for ships and carts
+                    foreach (List<ZDO> zdoarray in ZDOMan.instance.m_objectsBySector)
                     {
-                        foreach (ZDO zdo in zdoarray)
+                        if (zdoarray != null)
                         {
-                            if (CheckPin(__instance, player, zdo, CartHashcode, "Cart"))
-                                continue;
-                            if (CheckPin(__instance, player, zdo, RaftHashcode, "Raft"))
-                                continue;
-                            if (CheckPin(__instance, player, zdo, KarveHashcode, "Karve"))
-                                continue;
-                            if (CheckPin(__instance, player, zdo, LongshipHashcode, "Longship"))
-                                continue;
+                            foreach (ZDO zdo in zdoarray)
+                            {
+                                if (CheckPin(__instance, player, zdo, CartHashcode, "Cart"))
+                                    continue;
+                                if (CheckPin(__instance, player, zdo, RaftHashcode, "Raft"))
+                                    continue;
+                                if (CheckPin(__instance, player, zdo, KarveHashcode, "Karve"))
+                                    continue;
+                                if (CheckPin(__instance, player, zdo, LongshipHashcode, "Longship"))
+                                    continue;
+                            }
                         }
                     }
-                }
 
-                // clear pins for destroyed objects
-                foreach (KeyValuePair<ZDO, Minimap.PinData> pin in customPins)
-                {
-                    if (!pin.Key.IsValid())
+                    // clear pins for destroyed objects
+                    foreach (KeyValuePair<ZDO, Minimap.PinData> pin in customPins)
                     {
-                        __instance.RemovePin(pin.Value);
-                        customPins.Remove(pin.Key);
+                        if (!pin.Key.IsValid())
+                        {
+                            __instance.RemovePin(pin.Value);
+                            customPins.Remove(pin.Key);
+                        }
                     }
                 }
             }
         }
     }
-}

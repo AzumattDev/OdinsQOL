@@ -1,6 +1,6 @@
 ﻿namespace VMP_Mod.MapSharing
 {
-    public static class VPlusDataObjects
+    public static class VmpObjects
     {
         public class MapRange
         {

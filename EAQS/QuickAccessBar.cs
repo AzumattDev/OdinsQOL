@@ -31,6 +31,7 @@ namespace VMP_Mod.EAQS
 			UpdateIcons(localPlayer);
 		}
 
+		// ReSharper disable Unity.PerformanceAnalysis
 		private void UpdateIcons(Player player)
 		{
 			if (!player || player.IsDead())

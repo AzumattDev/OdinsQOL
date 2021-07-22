@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static VMP_Mod.MapSharing.VPlusDataObjects;
+using static VMP_Mod.MapSharing.VmpObjects;
 
 namespace VMP_Mod.MapSharing
 {
