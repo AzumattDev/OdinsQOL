@@ -314,7 +314,9 @@ namespace VMP_Mod
             EAQS.EAQS.quickAccessX = Config.Bind<float>("EAQS", "quickAccessX", 9999, "Current X of Quick Slots");
             EAQS.EAQS.quickAccessY = Config.Bind<float>("EAQS", "quickAccessY", 9999, "Current Y of Quick Slots");
 
-
+            ClientPatches._chatPlayerName =
+                Config.Bind<string>(
+                    "Names", "chatPlayerName", string.Empty, "Override your player name shown in-game and in the chat box.");
 
             PlantGrowth.displayGrowth =
                 config("PlantGrowth", "DisplayGrowth", true, "Display growth progress in hover text");
@@ -406,6 +408,14 @@ namespace VMP_Mod
                 mapSyncSaveTimer.AutoReset = true;
                 mapSyncSaveTimer.Elapsed += (sender, args) => MapSync.SaveMapDataToDisk();
             }
+            
+            On.Chat.SendText += ClientPatches.ChatSendTextPrefix;
+            On.Chat.SendPing += ClientPatches.ChatSendPingPrefix;
+
+            On.Player.GetPlayerName += ClientPatches.PlayerGetPlayerNamePrefix;
+            On.PlayerProfile.GetName += ClientPatches.PlayerProfileGetNamePrefix;
+
+            On.Game.SpawnPlayer += ClientPatches.GameSpawnPlayerPostfix;
         }
 
         private void Update()

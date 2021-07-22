@@ -1,19 +1,22 @@
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace VMP_Mod.Patches
 {
     public class ClientPatches
     {
-        public static bool admin = false;
+        
+        public static ConfigEntry<string> _chatPlayerName;
 
-        public static string playerClass = "";
-
+        private static bool _overridePlayerName;
         public static bool Contains(string source, string toCheck, StringComparison comp)
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
@@ -205,19 +208,45 @@ namespace VMP_Mod.Patches
             }
         }
 
-        [HarmonyPatch(typeof(VisEquipment), "EnableEquipedEffects")]
-        private class VariantColors
-        {
-            private static void Postfix(ref GameObject instance, ref VisEquipment __instance)
-            {
-                if ((bool) instance)
-                {
-                    var component = __instance.gameObject.GetComponent<Player>();
-                    if (!(component != null))
-                    {
-                    }
-                }
-            }
+        internal static void ChatSendTextPrefix(On.Chat.orig_SendText orig, Chat self, Talker.Type type, string text) {
+            _overridePlayerName = true;
+            orig(self, type, text);
+            _overridePlayerName = false;
         }
+
+        public static void ChatSendPingPrefix(On.Chat.orig_SendPing orig, Chat self, Vector3 position) {
+            _overridePlayerName = true;
+            orig(self, position);
+            _overridePlayerName = false;
+        }
+
+        public static string PlayerGetPlayerNamePrefix(On.Player.orig_GetPlayerName orig, Player self) {
+            if ( _overridePlayerName
+                && self == Player.m_localPlayer
+                && !string.IsNullOrEmpty(_chatPlayerName.Value)) {
+                return _chatPlayerName.Value;
+            }
+
+            return orig(self);
+        }
+
+        public static string PlayerProfileGetNamePrefix(On.PlayerProfile.orig_GetName orig, PlayerProfile self) {
+            if ( _overridePlayerName && !string.IsNullOrEmpty(_chatPlayerName.Value)) {
+                return _chatPlayerName.Value;
+            }
+
+            return orig(self);
+        }
+
+        public static Player GameSpawnPlayerPostfix(On.Game.orig_SpawnPlayer orig, Game self, Vector3 spawnPoint) {
+            var player = orig(self, spawnPoint);
+
+            if (!string.IsNullOrEmpty(_chatPlayerName.Value)) {
+                player.m_nview.GetZDO().Set("playerName", _chatPlayerName.Value);
+            }
+
+            return player;
+        }
+        
     }
 }
