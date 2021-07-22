@@ -70,49 +70,49 @@ namespace VMP_Mod.Patches
                     switch ((SkillType) skillType)
                     {
                         case SkillType.Swords:
-                            factor = VMP_Modplugin.applyModifierValue(factor, swordskill.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, swordskill.Value);
                             break;
                         case SkillType.Knives:
-                            factor = VMP_Modplugin.applyModifierValue(factor, kniveskill.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, kniveskill.Value);
                             break;
                         case SkillType.Clubs:
-                            factor = VMP_Modplugin.applyModifierValue(factor, clubskill.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, clubskill.Value);
                             break;
                         case SkillType.Polearms:
-                            factor = VMP_Modplugin.applyModifierValue(factor, polearmskill.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, polearmskill.Value);
                             break;
                         case SkillType.Spears:
-                            factor = VMP_Modplugin.applyModifierValue(factor, spearskill.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, spearskill.Value);
                             break;
                         case SkillType.Blocking:
-                            factor = VMP_Modplugin.applyModifierValue(factor, blockskill.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, blockskill.Value);
                             break;
                         case SkillType.Axes:
-                            factor = VMP_Modplugin.applyModifierValue(factor, axeskill.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, axeskill.Value);
                             break;
                         case SkillType.Bows:
-                            factor = VMP_Modplugin.applyModifierValue(factor, bowskill.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, bowskill.Value);
                             break;
                         case SkillType.Unarmed:
-                            factor = VMP_Modplugin.applyModifierValue(factor, unarmed.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, unarmed.Value);
                             break;
                         case SkillType.Pickaxes:
-                            factor = VMP_Modplugin.applyModifierValue(factor, pickaxe.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, pickaxe.Value);
                             break;
                         case SkillType.WoodCutting:
-                            factor = VMP_Modplugin.applyModifierValue(factor, woodcutting.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, woodcutting.Value);
                             break;
                         case SkillType.Jump:
-                            factor = VMP_Modplugin.applyModifierValue(factor, jump.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, jump.Value);
                             break;
                         case SkillType.Sneak:
-                            factor = VMP_Modplugin.applyModifierValue(factor, sneak.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, sneak.Value);
                             break;
                         case SkillType.Run:
-                            factor = VMP_Modplugin.applyModifierValue(factor, run.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, run.Value);
                             break;
                         case SkillType.Swim:
-                            factor = VMP_Modplugin.applyModifierValue(factor, swim.Value);
+                            factor = VMP_Modplugin.ApplyModifierValue(factor, swim.Value);
                             break;
                     }
             }
@@ -167,7 +167,7 @@ namespace VMP_Mod.Patches
             public static void LowerAllSkills(Skills instance, float factor)
             {
                 if (deathPenaltyMultiplier.Value > -100.0f)
-                    instance.LowerAllSkills(VMP_Modplugin.applyModifierValue(factor, deathPenaltyMultiplier.Value));
+                    instance.LowerAllSkills(VMP_Modplugin.ApplyModifierValue(factor, deathPenaltyMultiplier.Value));
             }
         }
     }

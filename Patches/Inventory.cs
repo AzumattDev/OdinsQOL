@@ -41,12 +41,12 @@ namespace VMP_Mod.Patches
             if (VMP_Modplugin.itemStackMultiplier.Value > 0)
             {
                 __instance.m_itemData.m_shared.m_weight =
-                    VMP_Modplugin.applyModifierValue(__instance.m_itemData.m_shared.m_weight,
+                    VMP_Modplugin.ApplyModifierValue(__instance.m_itemData.m_shared.m_weight,
                         VMP_Modplugin.WeightReduction.Value);
 
                 if (__instance.m_itemData.m_shared.m_maxStackSize > 1)
                     if (VMP_Modplugin.itemStackMultiplier.Value >= 1)
-                        __instance.m_itemData.m_shared.m_maxStackSize = (int) VMP_Modplugin.applyModifierValue(
+                        __instance.m_itemData.m_shared.m_maxStackSize = (int) VMP_Modplugin.ApplyModifierValue(
                             __instance.m_itemData.m_shared.m_maxStackSize, VMP_Modplugin.itemStackMultiplier.Value);
             }
         }

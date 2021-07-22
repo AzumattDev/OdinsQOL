@@ -296,17 +296,17 @@ namespace VMP_Mod
             EAQS.EAQS.addEquipmentRow = Config.Bind<bool>("EAQS", "AddEquipmentRow", true, "Add special row for equipped items and quick slots.");
             EAQS.EAQS.displayEquipmentRowSeparate = Config.Bind<bool>("EAQS", "DisplayEquipmentRowSeparate", true, "Display equipment and quickslots in their own area.");
 
-            EAQS.EAQS.helmetText = Config.Bind<string>("EAQS", "HelmetText", "Head", "Text to show for helmet slot.");
-            EAQS.EAQS.chestText = Config.Bind<string>("EAQS", "ChestText", "Chest", "Text to show for chest slot.");
-            EAQS.EAQS.legsText = Config.Bind<string>("EAQS", "LegsText", "Legs", "Text to show for legs slot.");
-            EAQS.EAQS.backText = Config.Bind<string>("EAQS", "BackText", "Back", "Text to show for back slot.");
-            EAQS.EAQS.utilityText = Config.Bind<string>("EAQS", "UtilityText", "Utility", "Text to show for utility slot.");
+            EAQS.EAQS.helmetText = Config.Bind("EAQS", "HelmetText", "Head", "Text to show for helmet slot.");
+            EAQS.EAQS.chestText = Config.Bind("EAQS", "ChestText", "Chest", "Text to show for chest slot.");
+            EAQS.EAQS.legsText = Config.Bind("EAQS", "LegsText", "Legs", "Text to show for legs slot.");
+            EAQS.EAQS.backText = Config.Bind("EAQS", "BackText", "Back", "Text to show for back slot.");
+            EAQS.EAQS.utilityText = Config.Bind("EAQS", "UtilityText", "Utility", "Text to show for utility slot.");
 
             EAQS.EAQS.quickAccessScale = Config.Bind<float>("EAQS", "QuickAccessScale", 1, "Scale of quick access bar.");
 
-            EAQS.EAQS.hotKey1 = Config.Bind<string>("EAQS", "HotKey1", "z", "Hotkey 1 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            EAQS.EAQS.hotKey2 = Config.Bind<string>("EAQS", "HotKey2", "x", "Hotkey 2 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            EAQS.EAQS.hotKey3 = Config.Bind<string>("EAQS", "HotKey3", "c", "Hotkey 3 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            EAQS.EAQS.hotKey1 = Config.Bind("EAQS", "HotKey1", "z", "Hotkey 1 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            EAQS.EAQS.hotKey2 = Config.Bind("EAQS", "HotKey2", "x", "Hotkey 2 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            EAQS.EAQS.hotKey3 = Config.Bind("EAQS", "HotKey3", "c", "Hotkey 3 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
 
             EAQS.EAQS.modKeyOne = Config.Bind<string>("EAQS", "ModKey1", "mouse 0", "First modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.");
             EAQS.EAQS.modKeyTwo = Config.Bind<string>("EAQS", "ModKey2", "left ctrl", "Second modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.");
@@ -574,12 +574,12 @@ namespace VMP_Mod
             return playerInventoryCount + containerCount;
         }
 
-        public static float applyModifierValue(float targetValue, float value)
+        public static float ApplyModifierValue(float targetValue, float value)
         {
             if (value <= -100)
                 value = -100;
 
-            var newValue = targetValue;
+            float newValue;
 
             if (value >= 0)
                 newValue = targetValue + targetValue / 100 * value;

@@ -127,10 +127,6 @@ namespace VMP_Mod.EAQS
 
                 if (Utilities.IgnoreKeyPresses(true) || !addEquipmentRow.Value)
                     return;
-
-                //if (AedenthornUtils.CheckKeyDown("9"))
-                    //CreateTombStone();
-
                 int which;
                 if (Utilities.CheckKeyDown(hotKey1.Value))
                     which = 1;
@@ -156,11 +152,6 @@ namespace VMP_Mod.EAQS
                 VMP_Modplugin.Dbgl($"height {gameObject.GetComponent<Container>().m_height}");
                 VMP_Modplugin.Dbgl($"inv height {gameObject.GetComponent<Container>().GetInventory().GetHeight()}");
                 VMP_Modplugin.Dbgl($"inv slots {gameObject.GetComponent<Container>().GetInventory().GetEmptySlots()}");
-
-                for (int i = 0; i < gameObject.GetComponent<Container>().GetInventory().GetEmptySlots(); i++)
-                {
-                    gameObject.GetComponent<Container>().GetInventory().AddItem("SwordBronze", 1, 1, 0, 0, "");
-                }
                 VMP_Modplugin.Dbgl($"no items: {gameObject.GetComponent<Container>().GetInventory().NrOfItems()}");
                 PlayerProfile playerProfile = Game.instance.GetPlayerProfile();
                 component.Setup(playerProfile.GetName(), playerProfile.GetPlayerID());
@@ -286,7 +277,7 @@ namespace VMP_Mod.EAQS
                 SetSlotText(utilityText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
                 SetSlotText(hotKey1.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
                 SetSlotText(hotKey2.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
-                SetSlotText(hotKey3.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
+                SetSlotText(hotKey3.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset), false);
 
                 if (displayEquipmentRowSeparate.Value)
                 {
@@ -298,7 +289,7 @@ namespace VMP_Mod.EAQS
                     ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>().anchoredPosition = new Vector2(678, -140);
                     ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>().anchoredPosition = new Vector2(643, -210);
                     ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>().anchoredPosition = new Vector2(713, -210);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>().anchoredPosition = new Vector2(783, -210);
+                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset).GetComponent<RectTransform>().anchoredPosition = new Vector2(783, -210);
                 }
 
             }
@@ -390,7 +381,7 @@ namespace VMP_Mod.EAQS
                     return true;
                 ___m_inventory.Add(item);
                 Player.m_localPlayer.EquipItem(item, false);
-                typeof(Inventory).GetMethod("Changed", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(__instance, new object[] { });
+                typeof(Inventory).GetMethod("Changed", BindingFlags.NonPublic | BindingFlags.Instance)?.Invoke(__instance, new object[] { });
                 __result = true;
                 return false;
             }

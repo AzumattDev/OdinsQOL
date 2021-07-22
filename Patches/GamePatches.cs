@@ -341,7 +341,7 @@ namespace VMP_Mod.Patches
 
             private static float ComputeModifiedDT(float dt)
             {
-                return dt / VMP_Modplugin.applyModifierValue(1.0f, 10f);
+                return dt / VMP_Modplugin.ApplyModifierValue(1.0f, 10f);
             }
         }
 
