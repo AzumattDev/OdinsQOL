@@ -372,6 +372,18 @@ namespace VMP_Mod
             On.PlayerProfile.GetName += ClientPatches.PlayerProfileGetNamePrefix;
 
             On.Game.SpawnPlayer += ClientPatches.GameSpawnPlayerPostfix;
+            // On.Humanoid.GetInventory += GamePatches.Humanoid_GetInventory;
+            CraftFromContainersInstalledAndActive = false;
+            var bepInExManager = GameObject.Find("BepInEx_Manager");
+            var plugins = bepInExManager.GetComponentsInChildren<BaseUnityPlugin>();
+            foreach (var plugin in plugins)
+            {
+                if (plugin.Info.Metadata.GUID == "aedenthorn.CraftFromContainers")
+                {
+                    CraftFromContainersInstalledAndActive = CraftFromContainers.BepInExPlugin.modEnabled.Value;
+                    Debug.Log("Found CraftFromContainers");
+                }
+            }
         }
 
         private void Update()
@@ -454,7 +466,7 @@ namespace VMP_Mod
             var playerInventoryCount = player.GetInventory().CountItems(itemName);
             var containerCount = 0;
 
-            /*if (CraftFromContainersInstalledAndActive)
+            if (CraftFromContainersInstalledAndActive)
             {
                 if (_cachedContainers == null)
                 {
@@ -464,7 +476,7 @@ namespace VMP_Mod
                 {
                     containerCount += container.GetInventory().CountItems(itemName);
                 }
-            }*/
+            }
 
             return playerInventoryCount + containerCount;
         }

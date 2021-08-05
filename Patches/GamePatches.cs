@@ -639,6 +639,14 @@ namespace VMP_Mod.Patches
             }
         }
 
+       
+        // internal static Inventory  Humanoid_GetInventory( On.Humanoid.orig_GetInventory orig, Humanoid self)
+        // {
+        //     var result =  orig(self);
+        //     self.m_inventory.m_height = 8;
+        //     return result;
+        // }
+
         [HarmonyPatch(typeof(Hud), "SetupPieceInfo", typeof(Piece))]
         public static class Hud_Patch
         {
@@ -667,5 +675,14 @@ namespace VMP_Mod.Patches
                 }
             }
         }
+
+        // [HarmonyPatch(typeof(Humanoid), "GetInventory")]
+        // public static class HeightPatch
+        // {
+        //     private static void Postfix()
+        //     {
+        //         Player.m_localPlayer.m_inventory.m_height = 8;
+        //     }
+        // }
     }
 }

@@ -87,6 +87,9 @@
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\core\BepInEx.Preloader.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="CraftFromContainers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\source\repos\Aeden\CraftFromContainers\bin\Release\net462\CraftFromContainers.dll</HintPath>
+    </Reference>
     <Reference Include="HarmonyXInterop">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\core\HarmonyXInterop.dll</HintPath>
       <Private>False</Private>
