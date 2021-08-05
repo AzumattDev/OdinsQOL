@@ -417,8 +417,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EAQS\EAQS.cs" />
-    <Compile Include="EAQS\QuickAccessBar.cs" />
     <Compile Include="Patches\SkillPatches.cs" />
     <Compile Include="Patches\ClockPatch.cs" />
     <Compile Include="Patches\PlantGrowth.cs" />

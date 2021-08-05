@@ -122,20 +122,6 @@ namespace VMP_Mod
             workbenchAttachmentRange = config("WorkBench", "WorkBench Extension", 40,
                 new ConfigDescription("Range for workbench extensions", new AcceptableValueRange<int>(5, 100)));
 
-            CraftingPatch.useScrollWheel =
-                Config.Bind("Settings", "ScrollWheel", true, "Use scroll wheel to switch filter");
-            CraftingPatch.showMenu = Config.Bind("Settings", "ShowMenu", true, "Show filter menu on hover");
-            CraftingPatch.scrollModKey = Config.Bind("Settings", "ScrollModKey", "",
-                "Modifer key to allow scroll wheel change. Use https://docs.unity3d.com/Manual/class-InputManager.html");
-            CraftingPatch.categoryFile =
-                Config.Bind("Settings", "CategoryFile", "categories.json", "Category file name");
-            CraftingPatch.prevHotKey = Config.Bind("Settings", "HotKeyPrev", "",
-                "Hotkey to switch to previous filter. Use https://docs.unity3d.com/Manual/class-InputManager.html");
-            CraftingPatch.nextHotKey = Config.Bind("Settings", "HotKeyNext", "",
-                "Hotkey to switch to next filter. Use https://docs.unity3d.com/Manual/class-InputManager.html");
-            CraftingPatch.assetPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                typeof(VMP_Modplugin).Namespace);
-
 
             WeightReduction = config("Items", "Item Weight Increase", 1.25f,
                 new ConfigDescription("Multiplier for your item weight"));
@@ -292,28 +278,6 @@ namespace VMP_Mod
             AutoStorePatch.isOn = Config.Bind("Auto Storage", "IsOn", true, "Behaviour is currently on or not");
 
 
-            EAQS.EAQS.extraRows = Config.Bind<int>("EAQS", "ExtraRows", 0, "Number of extra ordinary rows.");
-            EAQS.EAQS.addEquipmentRow = Config.Bind<bool>("EAQS", "AddEquipmentRow", true, "Add special row for equipped items and quick slots.");
-            EAQS.EAQS.displayEquipmentRowSeparate = Config.Bind<bool>("EAQS", "DisplayEquipmentRowSeparate", true, "Display equipment and quickslots in their own area.");
-
-            EAQS.EAQS.helmetText = Config.Bind("EAQS", "HelmetText", "Head", "Text to show for helmet slot.");
-            EAQS.EAQS.chestText = Config.Bind("EAQS", "ChestText", "Chest", "Text to show for chest slot.");
-            EAQS.EAQS.legsText = Config.Bind("EAQS", "LegsText", "Legs", "Text to show for legs slot.");
-            EAQS.EAQS.backText = Config.Bind("EAQS", "BackText", "Back", "Text to show for back slot.");
-            EAQS.EAQS.utilityText = Config.Bind("EAQS", "UtilityText", "Utility", "Text to show for utility slot.");
-
-            EAQS.EAQS.quickAccessScale = Config.Bind<float>("EAQS", "QuickAccessScale", 1, "Scale of quick access bar.");
-
-            EAQS.EAQS.hotKey1 = Config.Bind("EAQS", "HotKey1", "z", "Hotkey 1 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            EAQS.EAQS.hotKey2 = Config.Bind("EAQS", "HotKey2", "x", "Hotkey 2 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            EAQS.EAQS.hotKey3 = Config.Bind("EAQS", "HotKey3", "c", "Hotkey 3 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-
-            EAQS.EAQS.modKeyOne = Config.Bind<string>("EAQS", "ModKey1", "mouse 0", "First modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.");
-            EAQS.EAQS.modKeyTwo = Config.Bind<string>("EAQS", "ModKey2", "left ctrl", "Second modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.");
-
-            EAQS.EAQS.quickAccessX = Config.Bind<float>("EAQS", "quickAccessX", 9999, "Current X of Quick Slots");
-            EAQS.EAQS.quickAccessY = Config.Bind<float>("EAQS", "quickAccessY", 9999, "Current Y of Quick Slots");
-
             ClientPatches._chatPlayerName =
                 Config.Bind<string>(
                     "Names", "chatPlayerName", string.Empty, "Override your player name shown in-game and in the chat box.");
@@ -391,17 +355,9 @@ namespace VMP_Mod
             if (!modEnabled.Value)
                 return;
 
-            EAQS.EAQS.hotkeys = new ConfigEntry<string>[]
-            {
-                EAQS.EAQS.hotKey1,
-                EAQS.EAQS.hotKey2,
-                EAQS.EAQS.hotKey3,
-            };
-
             if (!Directory.Exists(VMP_DatadirectoryPath)) Directory.CreateDirectory(VMP_DatadirectoryPath);
             currentFont = GetFont(fontName.Value, 20);
             lastFontName = currentFont?.name;
-            CraftingPatch.LoadCategories();
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
             if (ZNet.m_isServer && shareMapProgression.Value)
             {
@@ -433,69 +389,8 @@ namespace VMP_Mod
             if (Minimap.instance && Player.m_localPlayer && ZNet.instance != null)
                 StartCoroutine(MapDetail.UpdateMap(false));
 
-            if (!modEnabled.Value || !Player.m_localPlayer || !InventoryGui.IsVisible() ||
-                !Player.m_localPlayer.GetCurrentCraftingStation() && !Player.m_localPlayer.NoCostCheat())
-            {
-                CraftingPatch.lastCategoryIndex = 0;
-                CraftingPatch.UpdateDropDown(false);
-                return;
-            }
-
-            if (!InventoryGui.instance.InCraftTab())
-            {
-                CraftingPatch.UpdateDropDown(false);
-                return;
-            }
-
-            var hover = false;
-
-            var mousePos = Input.mousePosition;
-
-            if (CraftingPatch.lastMousePos == Vector3.zero)
-                CraftingPatch.lastMousePos = mousePos;
-
-            var eventData = new PointerEventData(EventSystem.current)
-            {
-                position = CraftingPatch.lastMousePos
-            };
-
-            var raycastResults = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(eventData, raycastResults);
-            foreach (var rcr in raycastResults)
-                if (rcr.gameObject.layer == LayerMask.NameToLayer("UI"))
-                {
-                    if (rcr.gameObject.name == "Craft")
-                    {
-                        hover = true;
-                        if (CraftingPatch.tabCraftPressed == 0)
-                        {
-                            if (CraftingPatch.useScrollWheel.Value &&
-                                Utilities.CheckKeyHeld(CraftingPatch.scrollModKey.Value, false) &&
-                                Input.mouseScrollDelta.y != 0) CraftingPatch.SwitchFilter(Input.mouseScrollDelta.y < 0);
-                            if (CraftingPatch.showMenu.Value) CraftingPatch.UpdateDropDown(true);
-                        }
-                    }
-                    else if (CraftingPatch.dropDownList.Contains(rcr.gameObject))
-                    {
-                        hover = true;
-                    }
-                }
-
-            if (!hover)
-            {
-                if (CraftingPatch.tabCraftPressed > 0)
-                    CraftingPatch.tabCraftPressed--;
-                CraftingPatch.UpdateDropDown(false);
-            }
-
-            if (Utilities.CheckKeyDown(CraftingPatch.prevHotKey.Value))
-                CraftingPatch.SwitchFilter(false);
-            else if (Utilities.CheckKeyDown(CraftingPatch.nextHotKey.Value)) CraftingPatch.SwitchFilter(true);
-
-            CraftingPatch.lastMousePos = Input.mousePosition;
             if (Utilities.IgnoreKeyPresses() || toggleClockKeyOnPress.Value || !PressedToggleKey())
                 return;
-
             var show = showingClock.Value;
             showingClock.Value = !show;
             Config.Save();
