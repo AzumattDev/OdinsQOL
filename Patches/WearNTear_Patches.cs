@@ -63,7 +63,7 @@ namespace VMP_Mod.Patches
             var stackTrace = new StackTrace();
             var callingMethod = stackTrace.GetFrame(2).GetMethod().Name;
 
-            if (!(WearNTear_Patches.DisableStructintegrity.Value && __instance.m_piece &&
+            if (!(WearNTear_Patches.NoPlayerStructDam.Value && __instance.m_piece &&
                   __instance.m_piece.IsPlacedByPlayer() && callingMethod != "UpdateWear"))
                 return true;
 
@@ -74,7 +74,7 @@ namespace VMP_Mod.Patches
                 return true;
             }
 
-            return !WearNTear_Patches.NoPlayerStructDam.Value;
+            return !WearNTear_Patches.DisableStructintegrity.Value;
         }
     }
 

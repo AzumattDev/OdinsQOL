@@ -39,7 +39,6 @@
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\core\0Harmony.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="assembly_googleanalytics_publicized">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed\publicized_assemblies\assembly_googleanalytics_publicized.dll</HintPath>
@@ -79,7 +78,6 @@
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\core\BepInEx.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="BepInEx.Harmony">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\core\BepInEx.Harmony.dll</HintPath>
@@ -95,30 +93,39 @@
     </Reference>
     <Reference Include="MMHOOK_assembly_googleanalytics, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim-jotunn\BepInEx\plugins\MMHOOK\MMHOOK_assembly_googleanalytics.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MMHOOK_assembly_guiutils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim-jotunn\BepInEx\plugins\MMHOOK\MMHOOK_assembly_guiutils.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MMHOOK_assembly_lux, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim-jotunn\BepInEx\plugins\MMHOOK\MMHOOK_assembly_lux.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MMHOOK_assembly_postprocessing, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim-jotunn\BepInEx\plugins\MMHOOK\MMHOOK_assembly_postprocessing.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MMHOOK_assembly_simplemeshcombine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim-jotunn\BepInEx\plugins\MMHOOK\MMHOOK_assembly_simplemeshcombine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MMHOOK_assembly_steamworks, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim-jotunn\BepInEx\plugins\MMHOOK\MMHOOK_assembly_steamworks.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MMHOOK_assembly_sunshafts, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim-jotunn\BepInEx\plugins\MMHOOK\MMHOOK_assembly_sunshafts.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MMHOOK_assembly_utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim-jotunn\BepInEx\plugins\MMHOOK\MMHOOK_assembly_utils.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MMHOOK_assembly_valheim, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim-jotunn\BepInEx\plugins\MMHOOK\MMHOOK_assembly_valheim.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\core\Mono.Cecil.dll</HintPath>
