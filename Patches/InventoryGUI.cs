@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace VMP_Mod.Patches
 {
-    [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.RepairOneItem))]
+    /*[HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.RepairOneItem))]
     public static class InventoryGui_RepairOneItem_Transpiler
     {
         private static readonly MethodInfo method_EffectList_Create =
@@ -41,6 +41,23 @@ namespace VMP_Mod.Patches
         private static GameObject[] CreateNoop(Vector3 _0, Quaternion _1, Transform _2, float _3)
         {
             return null;
+        }
+    }*/
+    
+    /*Replace IL stuff above with H&H compat code */ 
+    [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.RepairOneItem))]
+    public static class InventoryGui_RepairOneItem_Transpiler
+    {
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var il = instructions.ToList();
+            if (VMP_Modplugin.AutoRepair.Value)
+            {
+                il.RemoveRange(52, 11);
+            }
+
+            return il.AsEnumerable();
+            
         }
     }
 

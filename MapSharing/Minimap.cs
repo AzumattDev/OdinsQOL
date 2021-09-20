@@ -18,14 +18,14 @@ namespace VMP_Mod.MapSharing
     public class HookExplore
     {
         [HarmonyReversePatch]
-        [HarmonyPatch(typeof(Minimap), "Explore", new Type[] { typeof(Vector3), typeof(float) })]
+        [HarmonyPatch(typeof(Minimap), nameof(Minimap.Explore), new Type[] { typeof(Vector3), typeof(float) })]
         public static void call_Explore(object instance, Vector3 p, float radius) => throw new NotImplementedException();
     }
 
     /// <summary>
     /// Update exploration for all players
     /// </summary>
-    [HarmonyPatch(typeof(Minimap), "UpdateExplore")]
+    [HarmonyPatch(typeof(Minimap), nameof(Minimap.UpdateExplore))]
     public static class ChangeMapBehavior
     {
         private static void Prefix(ref float dt, ref Player player, ref Minimap __instance, ref float ___m_exploreTimer, ref float ___m_exploreInterval)
@@ -55,7 +55,7 @@ namespace VMP_Mod.MapSharing
         }
     }
 
-    [HarmonyPatch(typeof(Minimap), "Awake")]
+    [HarmonyPatch(typeof(Minimap), nameof(Minimap.Awake))]
     public static class MinimapAwake
     {
         private static void Postfix()
@@ -101,7 +101,7 @@ namespace VMP_Mod.MapSharing
             }
         }
 
-        [HarmonyPatch(typeof(Minimap), "Awake")]
+        [HarmonyPatch(typeof(Minimap), nameof(Minimap.Awake))]
         public static class MapPinEditor_Patches_Awake
         {
             public static void AddPin(ref Minimap __instance)
@@ -176,7 +176,7 @@ namespace VMP_Mod.MapSharing
                 return AssetBundle.LoadFromStream(stream);
             }
         }
-        [HarmonyPatch(typeof(Minimap), "OnMapDblClick")]
+        [HarmonyPatch(typeof(Minimap), nameof(Minimap.OnMapDblClick))]
         public static class MapPinEditor_Patches_OnMapDblClick
         {
             public static bool imageoff = false;
@@ -254,7 +254,7 @@ namespace VMP_Mod.MapSharing
             }
         }
 
-        [HarmonyPatch(typeof(Minimap), "UpdateNameInput")]
+        [HarmonyPatch(typeof(Minimap), nameof(Minimap.UpdateNameInput))]
         public static class MapPinEditor_Patches_UpdateNameInput
         {
             private static bool Prefix(ref Minimap __instance)

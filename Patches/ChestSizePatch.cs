@@ -26,6 +26,7 @@ namespace VMP_Mod.Patches
                 if (__instance == null || ___m_inventory == null || !__instance.transform.parent) return;
 
                 var containerName = __instance.transform.parent.name;
+                var chestContainerNames = __instance.gameObject.name;
                 var inventoryName = ___m_inventory.m_name;
                 ref var inventoryColumns = ref ___m_inventory.m_width;
                 ref var inventoryRows = ref ___m_inventory.m_height;
@@ -53,19 +54,19 @@ namespace VMP_Mod.Patches
                 else
                 {
                     // Personal chest
-                    if (inventoryName == "$piece_chestprivate")
+                    if (inventoryName == "$piece_chest_private" || chestContainerNames.Contains("$piece_chest_private"))
                     {
                         inventoryRows = PersonalRow.Value;
                         inventoryColumns = PersonalCol.Value;
                     }
                     // Wood chest
-                    else if (inventoryName == "$piece_chestwood")
+                    else if (inventoryName == "$piece_chest_wood" || chestContainerNames.Contains("piece_chest_wood"))
                     {
                         inventoryRows = WoodRow.Value;
                         inventoryColumns = WoodCol.Value;
                     }
                     // Iron chest
-                    else if (inventoryName == "$piece_chest")
+                    else if (inventoryName == "$piece_chest" || chestContainerNames.Contains("piece_chest"))
                     {
                         inventoryRows = IronRow.Value;
                         inventoryColumns = IronCol.Value;
@@ -73,5 +74,6 @@ namespace VMP_Mod.Patches
                 }
             }
         }
+        
     }
 }
