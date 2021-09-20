@@ -25,7 +25,7 @@ namespace VMP_Mod
     [BepInPlugin(GUID, ModName, Version)]
     public partial class VMP_Modplugin : BaseUnityPlugin
     {
-        public const string Version = "0.0.9";
+        public const string Version = "0.1.0";
         public const string ModName = "VMP Mod";
         public const string GUID = "com.vmp.mod";
         private static readonly int windowId = 434343;
