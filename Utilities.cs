@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace VMP_Mod
+namespace OdinQOL
 {
     internal class Utilities
     {
@@ -28,11 +28,11 @@ namespace VMP_Mod
             }
         }
 
-        public static bool CheckKeyHeld(string value, bool req = true)
+        public static bool CheckKeyHeld(KeyCode value, bool req = true)
         {
             try
             {
-                return Input.GetKey(value.ToLower());
+                return Input.GetKey(value);
             }
             catch
             {

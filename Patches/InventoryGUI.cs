@@ -1,11 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
 using HarmonyLib;
 using UnityEngine;
 
-namespace VMP_Mod.Patches
+namespace OdinQOL.Patches
 {
     /*[HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.RepairOneItem))]
     public static class InventoryGui_RepairOneItem_Transpiler
@@ -26,7 +24,7 @@ namespace VMP_Mod.Patches
         {
             var il = instructions.ToList();
 
-            if (VMP_Modplugin.AutoRepair.Value)
+            if (OdinQOLplugin.AutoRepair.Value)
                 // We look for a call to EffectList::Create and replace it with our own noop stub.
                 for (var i = 0; i < il.Count; ++i)
                     if (il[i].Calls(method_EffectList_Create))
@@ -43,21 +41,17 @@ namespace VMP_Mod.Patches
             return null;
         }
     }*/
-    
-    /*Replace IL stuff above with H&H compat code */ 
+
+    /*Replace IL stuff above with H&H compat code */
     [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.RepairOneItem))]
     public static class InventoryGui_RepairOneItem_Transpiler
     {
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var il = instructions.ToList();
-            if (VMP_Modplugin.AutoRepair.Value)
-            {
-                il.RemoveRange(52, 11);
-            }
+            if (OdinQOLplugin.AutoRepair.Value) il.RemoveRange(52, 11);
 
             return il.AsEnumerable();
-            
         }
     }
 
@@ -73,7 +67,7 @@ namespace VMP_Mod.Patches
         [HarmonyPrefix]
         public static void Prefix(InventoryGui __instance)
         {
-            if (!VMP_Modplugin.AutoRepair.Value) return;
+            if (!OdinQOLplugin.AutoRepair.Value) return;
 
             var curr_crafting_station = Player.m_localPlayer.GetCurrentCraftingStation();
 
@@ -102,7 +96,7 @@ namespace VMP_Mod.Patches
       {
           private static void Postfix(ref InventoryGui __instance)
           {
-              if (VMP_Modplugin.Deconstruct.Value)
+              if (OdinQOLplugin.Deconstruct.Value)
               {
                   Deconstruct.Setup(ref __instance);
               }
@@ -117,7 +111,7 @@ namespace VMP_Mod.Patches
       {
           private static void Postfix(ref InventoryGui __instance)
           {
-              if (VMP_Modplugin.Deconstruct.Value)
+              if (OdinQOLplugin.Deconstruct.Value)
               {
                   Player localPlayer = Player.m_localPlayer;
   
@@ -145,7 +139,7 @@ namespace VMP_Mod.Patches
       {
           private static bool Prefix(ref InventoryGui __instance, List<Recipe> recipes)
           {
-              if (VMP_Modplugin.Deconstruct.Value)
+              if (OdinQOLplugin.Deconstruct.Value)
               {
                   Player localPlayer = Player.m_localPlayer;
   
@@ -168,7 +162,7 @@ namespace VMP_Mod.Patches
       {
           private static bool Prefix(ref InventoryGui __instance)
           {
-              if (VMP_Modplugin.Deconstruct.Value)
+              if (OdinQOLplugin.Deconstruct.Value)
               {
                   Player localPlayer = Player.m_localPlayer;
   
@@ -192,7 +186,7 @@ namespace VMP_Mod.Patches
       {
           private static bool Prefix(ref InventoryGui __instance)
           {
-              if (VMP_Modplugin.Deconstruct.Value)
+              if (OdinQOLplugin.Deconstruct.Value)
               {
                   if (Deconstruct.InDeconstructTab())
                   {
@@ -213,7 +207,7 @@ namespace VMP_Mod.Patches
       {
           private static void Prefix(ref InventoryGui __instance)
           {
-              if (VMP_Modplugin.Deconstruct.Value)
+              if (OdinQOLplugin.Deconstruct.Value)
               {
                   Deconstruct.SetDeconstructTab(true);
               }
@@ -228,7 +222,7 @@ namespace VMP_Mod.Patches
       {
           private static void Prefix(ref InventoryGui __instance)
           {
-              if (VMP_Modplugin.Deconstruct.Value)
+              if (OdinQOLplugin.Deconstruct.Value)
               {
                   Deconstruct.SetDeconstructTab(true);
               }

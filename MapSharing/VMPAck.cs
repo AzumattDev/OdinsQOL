@@ -1,15 +1,15 @@
-﻿namespace VMP_Mod.MapSharing
+﻿namespace OdinQOL.MapSharing
 {
-    public class VMPAck
+    public class OdinQOLAck
     {
-        public static void RPC_VMPAck(long sender)
+        public static void RPC_OdinQOLAck(long sender)
         {
             RpcQueue.GotAck();
         }
 
         public static void SendAck(long target)
         {
-            ZRoutedRpc.instance.InvokeRoutedRPC(target, "VMPAck");
+            ZRoutedRpc.instance.InvokeRoutedRPC(target, "OdinQOLAck");
         }
     }
 }

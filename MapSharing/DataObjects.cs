@@ -1,11 +1,11 @@
-﻿namespace VMP_Mod.MapSharing
+﻿namespace OdinQOL.MapSharing
 {
     public static class VmpObjects
     {
         public class MapRange
         {
-            public int StartingX;
             public int EndingX;
+            public int StartingX;
             public int Y;
         }
     }

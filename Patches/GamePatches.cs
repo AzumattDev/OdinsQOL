@@ -4,13 +4,13 @@ using System.Reflection;
 using System.Reflection.Emit;
 using BepInEx.Configuration;
 using HarmonyLib;
+using OdinQOL.MapSharing;
 using Steamworks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using VMP_Mod.MapSharing;
 
-namespace VMP_Mod.Patches
+namespace OdinQOL.Patches
 {
     internal class GamePatches
     {
@@ -24,7 +24,8 @@ namespace VMP_Mod.Patches
         public static ConfigEntry<int> honeyProductionSpeed;
         public static ConfigEntry<int> maximumHoneyPerBeehive;
 
-
+        public static ConfigEntry<bool> buildInsideProtectedLocations;
+        public static ConfigEntry<float> craftingDuration;
         public static ConfigEntry<float> dodgeStaminaUsage;
         public static ConfigEntry<float> encumberedStaminaDrain;
         public static ConfigEntry<float> sneakStaminaDrain;
@@ -39,13 +40,23 @@ namespace VMP_Mod.Patches
         public static ConfigEntry<float> maximumPlacementDistance;
         public static ConfigEntry<int> maxPlayers;
 
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(Location), "IsInsideNoBuildLocation")]
+        private static bool Placement_Patch_NoBuild(ref bool __result)
+        {
+            if (!OdinQOLplugin.modEnabled.Value) return true;
+            if (!buildInsideProtectedLocations.Value) return true;
+            __result = false;
+            return false;
+        }
+
 
         [HarmonyPatch(typeof(Game), nameof(Game.UpdateRespawn))]
         public static class Game_UpdateRespawn_Patch
         {
             private static void Prefix(ref Game __instance, float dt)
             {
-                if (VMP_Modplugin.iHaveArrivedOnSpawn.Value)
+                if (OdinQOLplugin.iHaveArrivedOnSpawn.Value)
                     __instance.m_firstSpawn = false;
             }
         }
@@ -341,7 +352,7 @@ namespace VMP_Mod.Patches
 
             private static float ComputeModifiedDT(float dt)
             {
-                return dt / VMP_Modplugin.ApplyModifierValue(1.0f, 10f);
+                return dt / OdinQOLplugin.ApplyModifierValue(1.0f, 10f);
             }
         }
 
@@ -415,7 +426,7 @@ namespace VMP_Mod.Patches
                         // search for every call to the function
                         if (il[i].operand.ToString().Contains(nameof(Location.IsInsideNoBuildLocation)))
                             il[i] = new CodeInstruction(OpCodes.Call, modifyIsInsideMythicalZone);
-                        // replace every call to the function with the stub
+                // replace every call to the function with the stub
                 return il.AsEnumerable();
             }
 
@@ -467,21 +478,21 @@ namespace VMP_Mod.Patches
         {
             private static void Prefix(ref Player __instance)
             {
-                //Show VPlus tutorial raven if not yet seen by the player's character.
+                /*//Show OdinQOL tutorial raven if not yet seen by the player's character.
                 var introTutorial = new Tutorial.TutorialText
                 {
-                    m_label = "VMP Intro",
+                    m_label = "OdinQOL Intro",
                     m_name = "vmp",
                     m_text = "We hope you have fun and enjoy your play time!",
                     m_topic = "Welcome to Valheim!"
-                };
+                };*/
 
-                if (!Tutorial.instance.m_texts.Contains(introTutorial)) Tutorial.instance.m_texts.Add(introTutorial);
+                //if (!Tutorial.instance.m_texts.Contains(introTutorial)) Tutorial.instance.m_texts.Add(introTutorial);
 
-                Player.m_localPlayer.ShowTutorial("vmp");
+                //Player.m_localPlayer.ShowTutorial("vmp");
 
                 //Only sync on first spawn
-                if (MapSync.ShouldSyncOnSpawn && VMP_Modplugin.shareMapProgression.Value)
+                if (MapSync.ShouldSyncOnSpawn && OdinQOLplugin.shareMapProgression.Value)
                 {
                     //Send map data to the server
                     MapSync.SendMapToServer();
@@ -515,7 +526,7 @@ namespace VMP_Mod.Patches
             {
                 Debug.Log("Version generator started.");
 
-                __result = __result + "@" + VMP_Modplugin.Version;
+                __result = __result + "@" + OdinQOLplugin.Version;
                 Debug.Log($"Version generated with enforced mod : {__result}");
             }
         }
@@ -526,7 +537,7 @@ namespace VMP_Mod.Patches
         {
             private static void Prefix(ref InventoryGui __instance)
             {
-                __instance.m_craftDuration = .25f;
+                __instance.m_craftDuration = craftingDuration.Value;
             }
         }
 
@@ -611,7 +622,7 @@ namespace VMP_Mod.Patches
                     icon.color = Color.white;
                     tooltip.m_text = Localization.instance.Localize(req.m_resItem.m_itemData.m_shared.m_name);
                     nameText.text = Localization.instance.Localize(req.m_resItem.m_itemData.m_shared.m_name);
-                    var num = VMP_Modplugin.GetAvailableItems(req.m_resItem.m_itemData.m_shared.m_name);
+                    var num = OdinQOLplugin.GetAvailableItems(req.m_resItem.m_itemData.m_shared.m_name);
                     var amount = req.GetAmount(quality);
                     if (amount <= 0)
                     {
@@ -639,7 +650,7 @@ namespace VMP_Mod.Patches
             }
         }
 
-       
+
         // internal static Inventory  Humanoid_GetInventory( On.Humanoid.orig_GetInventory orig, Humanoid self)
         // {
         //     var result =  orig(self);
@@ -661,7 +672,7 @@ namespace VMP_Mod.Patches
                     foreach (var requirement in piece.m_resources)
                     {
                         var currentAmount =
-                            VMP_Modplugin.GetAvailableItems(requirement.m_resItem.m_itemData.m_shared.m_name);
+                            OdinQOLplugin.GetAvailableItems(requirement.m_resItem.m_itemData.m_shared.m_name);
                         var canMake = currentAmount / requirement.m_amount;
                         if (canMake < fewestPossible) fewestPossible = canMake;
                     }

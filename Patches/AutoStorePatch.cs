@@ -4,7 +4,7 @@ using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
 
-namespace VMP_Mod.Patches
+namespace OdinQOL.Patches
 {
     internal class AutoStorePatch
     {
@@ -139,7 +139,7 @@ namespace VMP_Mod.Patches
                         if (DisallowItem(__instance, item.m_itemData))
                             continue;
 
-                        VMP_Modplugin.Dbgl($"auto storing {item.m_itemData.m_dropPrefab.name} from ground");
+                        OdinQOLplugin.Dbgl($"auto storing {item.m_itemData.m_dropPrefab.name} from ground");
 
 
                         while (item.m_itemData.m_stack > 1 && __instance.GetInventory().CanAddItem(item.m_itemData, 1))

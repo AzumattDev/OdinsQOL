@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 
-namespace VMP_Mod.Patches
+namespace OdinQOL.Patches
 {
     [HarmonyPatch(typeof(StationExtension), nameof(StationExtension.Awake))]
     public static class StationExtension_Awake_Patch
@@ -9,7 +9,7 @@ namespace VMP_Mod.Patches
         public static void Prefix(ref float ___m_maxStationDistance)
         {
             if (CraftingPatch.AlterWorkBench.Value)
-                ___m_maxStationDistance = VMP_Modplugin.workbenchAttachmentRange.Value;
+                ___m_maxStationDistance = OdinQOLplugin.workbenchAttachmentRange.Value;
         }
     }
 }

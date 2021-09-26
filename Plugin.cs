@@ -4,15 +4,15 @@ using System.IO;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
+using CraftFromContainers;
 using HarmonyLib;
+using OdinQOL.MapSharing;
+using OdinQOL.Patches;
 using ServerSync;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using VMP_Mod.MapSharing;
-using VMP_Mod.Patches;
-using static VMP_Mod.Patches.SignPatches;
+using static OdinQOL.Patches.SignPatches;
 
-namespace VMP_Mod
+namespace OdinQOL
 {
     public static class ImprovedBuildHudConfig
     {
@@ -23,20 +23,20 @@ namespace VMP_Mod
     }
 
     [BepInPlugin(GUID, ModName, Version)]
-    public partial class VMP_Modplugin : BaseUnityPlugin
+    public partial class OdinQOLplugin : BaseUnityPlugin
     {
         public const string Version = "0.1.0";
-        public const string ModName = "VMP Mod";
-        public const string GUID = "com.vmp.mod";
+        public const string ModName = "OdinPlusQOL";
+        public const string GUID = "com.odinplusqol.mod";
         private static readonly int windowId = 434343;
 
-        public static VMP_Modplugin context;
+        public static OdinQOLplugin context;
 
 
-        public static readonly string VMP_DatadirectoryPath = Paths.BepInExRootPath + "/vmp-data/";
+        public static readonly string OdinQOL_DatadirectoryPath = Paths.BepInExRootPath + "/odinplus-data/";
 
         public static System.Timers.Timer mapSyncSaveTimer =
-            new System.Timers.Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
+            new(TimeSpan.FromMinutes(5).TotalMilliseconds);
 
         public static ConfigEntry<bool> mapIsEnabled;
         public static ConfigEntry<bool> shareMapProgression;
@@ -60,7 +60,7 @@ namespace VMP_Mod
         public static ConfigEntry<bool> NoTeleportPrevention;
         public static ConfigEntry<bool> iHaveArrivedOnSpawn;
 
-        public static ConfigSync configSync = new ConfigSync(GUID) {DisplayName = ModName, CurrentVersion = Version};
+        public static ConfigSync configSync = new(GUID) { DisplayName = ModName, CurrentVersion = Version };
         private static List<Container> _cachedContainers;
 
         public static bool CraftFromContainersInstalledAndActive;
@@ -74,17 +74,17 @@ namespace VMP_Mod
             shareMapProgression = config("Maps", "Share Map Progress with others", false,
                 "Share Map Progress with others");
             mapIsEnabled = config("Maps", "Map Control enabled", true, "Map Control enabled");
-            shareablePins = config("Maps", "Share Pins", true, "Share pins with other players");
+            shareablePins = config("Maps", "Share Pins", false, "Share pins with other players");
             shareAllPins = config("Maps", "Share ALL pins with other players", false,
                 "Share ALL pins with other players");
-            preventPlayerFromTurningOffPublicPosition =
-                config("General", "IsDebug", true, "Show debug messages in log");
+            /*preventPlayerFromTurningOffPublicPosition =
+                config("General", "IsDebug", true, "Show debug messages in log");*/
             displayCartsAndBoats = config("Maps", "Display Boats/Carts", true, "Show Boats and carts on the map");
-            exploreRadius = config("Maps", "NexusID", 40, "Explore radius addition");
+            exploreRadius = config("Maps", "exploreRadius", 40, "Explore radius addition");
 
 
-            modEnabled = config("General", "Enabled", true, "Enable this mod");
-            isDebug = config("General", "IsDebug", true, "Show debug messages in log");
+            modEnabled = config("General", "Enabled", true, "Enable the entire mod");
+            isDebug = config("General", "IsDebug", false, "Show debug messages in log");
 
             Container_Configs.KarveRow = config("Containers", "Karve Rows", 2,
                 new ConfigDescription("Rows for Karve", new AcceptableValueRange<int>(2, 30)));
@@ -96,50 +96,51 @@ namespace VMP_Mod
                 new ConfigDescription("Columns for longboat", new AcceptableValueRange<int>(6, 8)));
             Container_Configs.CartRow = config("Containers", "Cart Rows", 3,
                 new ConfigDescription("Rows for Cart", new AcceptableValueRange<int>(3, 30)));
-            Container_Configs.CartCol = config("Containers", "Cart Colums", 6,
+            Container_Configs.CartCol = config("Containers", "Cart Columns", 6,
                 new ConfigDescription("Columns for Cart", new AcceptableValueRange<int>(6, 8)));
             Container_Configs.PersonalRow = config("Containers", "Personal Chest Rows", 2,
                 new ConfigDescription("Personal Chest Rows", new AcceptableValueRange<int>(2, 20)));
-            Container_Configs.PersonalCol = config("Containers", "Personal Chest Colums", 3,
-                new ConfigDescription("Personal Chest Colums", new AcceptableValueRange<int>(3, 8)));
+            Container_Configs.PersonalCol = config("Containers", "Personal Chest Columns", 3,
+                new ConfigDescription("Personal Chest Columns", new AcceptableValueRange<int>(3, 8)));
             Container_Configs.WoodRow = config("Containers", "Wood Chest Rows", 2,
                 new ConfigDescription("Wood Chest Rows", new AcceptableValueRange<int>(2, 10)));
-            Container_Configs.WoodCol = config("Containers", "Wood Chest Colums", 5,
-                new ConfigDescription("Wood Chest Colums", new AcceptableValueRange<int>(5, 8)));
+            Container_Configs.WoodCol = config("Containers", "Wood Chest Columns", 5,
+                new ConfigDescription("Wood Chest Columns", new AcceptableValueRange<int>(5, 8)));
             Container_Configs.IronRow = config("Containers", "Iron Chest Rows", 3,
                 new ConfigDescription("Iron Chest Rows", new AcceptableValueRange<int>(3, 20)));
-            Container_Configs.IronCol = config("Containers", "Iron Chest Colums", 6,
-                new ConfigDescription("Iron Chest Colums", new AcceptableValueRange<int>(6, 8)));
+            Container_Configs.IronCol = config("Containers", "Iron Chest Columns", 6,
+                new ConfigDescription("Iron Chest Columns", new AcceptableValueRange<int>(6, 8)));
 
 
-            CraftingPatch.WorkbenchRange = config("WorkBench", "WorkBenchRange", 40,
+            CraftingPatch.WorkbenchRange = config("WorkBench", "WorkBenchRange", 20,
                 new ConfigDescription("Range you can build from workbench in meters",
                     new AcceptableValueRange<int>(6, 650)));
-            CraftingPatch.workbenchEnemySpawnRange = config("WorkBench", "WorkBenchRange (Playerbase size)", 40,
+            CraftingPatch.workbenchEnemySpawnRange = config("WorkBench", "WorkBenchRange (Playerbase size)", 20,
                 new ConfigDescription("Workbench PlayerBase radius, this is how far away enemies spawn",
                     new AcceptableValueRange<int>(6, 650)));
             CraftingPatch.AlterWorkBench = config("WorkBench", "Change No Roof Behavior", true, "Show building pieces");
-            workbenchAttachmentRange = config("WorkBench", "WorkBench Extension", 40,
+            workbenchAttachmentRange = config("WorkBench", "WorkBench Extension", 5,
                 new ConfigDescription("Range for workbench extensions", new AcceptableValueRange<int>(5, 100)));
 
 
-            WeightReduction = config("Items", "Item Weight Increase", 1.25f,
+            WeightReduction = config("Items", "Item Weight Increase", 1f,
                 new ConfigDescription("Multiplier for your item weight"));
-            itemStackMultiplier = config("Items", "Item Stack Increase", 2f,
+            itemStackMultiplier = config("Items", "Item Stack Increase", 1f,
                 new ConfigDescription("Multiplier for your item stacks"));
             NoTeleportPrevention = config("Items", "Disable Teleport check for items", false,
                 new ConfigDescription("Disable Teleport check for items"));
             filltoptobottom = config("Items", "Fill your things top to bottom when moving from inv to chest", true,
                 new ConfigDescription("Move your things top to bottom when changing from inv to chest"));
 
-            Deconstruct = config("Items", "Allow deconstruction of items in crafting menu", true,
-                new ConfigDescription("Deconstructing crafting items for return of mats"));
+            /*Deconstruct = config("Items", "Allow deconstruction of items in crafting menu", true,
+                new ConfigDescription("Deconstructing crafting items for return of mats"));*/
             AutoRepair = config("Items", "Auto repair your things when interacting with build station", true,
                 new ConfigDescription("Auto repair your things when interacting with build station"));
-            returnedpercent = config("Items", "Percent of item materials you would recieve back from deconstruction",
-                100, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"));
+            /*returnedpercent = config("Items", "Percent of item materials you would recieve back from deconstruction",
+                100, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"));*/
 
-
+            MapDetail.MapDetailOn = config("Map Details", "MapDetail On", true,
+                "Toggle this whole section off/on");
             MapDetail.showRange = config("Map Details", "ShowRange", 50f,
                 "Range in metres around player to show details");
             MapDetail.updateDelta = config("Map Details", "UpdateDelta", 5f,
@@ -164,7 +165,7 @@ namespace VMP_Mod
             LoadConfig();
 
             CraftingPatch.maxEntries =
-                Config.Bind("Show Chest Contents", "MaxEntries", -1, "Max number of entries to show");
+                Config.Bind("Show Chest Contents", "MaxEntries", -1, "Max number of entries to show (-1 means show all)");
             CraftingPatch.sortType = Config.Bind("Show Chest Contents", "SortType", CraftingPatch.SortType.Value,
                 "Type by which to sort entries.");
             CraftingPatch.sortAsc = Config.Bind("Show Chest Contents", "SortAsc", false, "Sort ascending?");
@@ -175,24 +176,29 @@ namespace VMP_Mod
                 "<color=#AAAAAAFF>...</color>", "Overflow text if more items than max entries.");
 
             iHaveArrivedOnSpawn = config("Game", "I have arrived disable", true,
-                new ConfigDescription("Auto repair your things when interacting with build station"));
+                new ConfigDescription("Disable the I have arrived message"));
 
-
-            GamePatches.DisableGuardianAnimation = config("Game", "I have arrived disable", true,
-                new ConfigDescription("Auto repair your things when interacting with build station"));
+            GamePatches.buildInsideProtectedLocations = config("Game", "BuildInProtectedLocations", false,
+                new ConfigDescription("Allow Building Inside Protected Locations"));
+            GamePatches.craftingDuration = config("Game", "Change Crafting Duration", .25f,
+                new ConfigDescription("Change Crafting Duration time."));
+            GamePatches.DisableGuardianAnimation = config("Game", "Disable Guardian Animation", true,
+                new ConfigDescription("Disable Guardian Animation for the players"));
             GamePatches.SkipTuts = config("Game", "Skip Tuts", true,
-                new ConfigDescription("Auto repair your things when interacting with build station"));
+                new ConfigDescription("Skip Tutorials"));
             GamePatches.reequipItemsAfterSwimming = config("Player", "Re Equip after Swimming", true,
-                new ConfigDescription("Auto repair your things when interacting with build station"));
+                new ConfigDescription("Re-equip Items After Swimming"));
             GamePatches.enableAreaRepair = config("Player", "Area Repair", true,
-                new ConfigDescription("Auto repair your things when interacting with build station"));
-            GamePatches.areaRepairRadius = config("Player", "Area Repair Radius", 15, "Max number of entries to show");
+                new ConfigDescription("Automatically repair build pieces within the repair radius"));
+            GamePatches.areaRepairRadius =
+                config("Player", "Area Repair Radius", 15, "Area Repair Radius for build pieces");
             GamePatches.baseMegingjordBuff =
-                config("Player", "Base Meginjord Buff", 150, "Max number of entries to show");
-            GamePatches.honeyProductionSpeed = config("Game", "Honey Speed", -1, "Max number of entries to show");
+                config("Player", "Base Meginjord Buff", 150, "Meginjord buff amount (Base)");
+            GamePatches.honeyProductionSpeed = config("Game", "Honey Speed", 3600, "Honey Production Speed");
             GamePatches.maximumHoneyPerBeehive =
-                config("Game", "Honey Count Per Hive", 4, "Max number of entries to show");
-            GamePatches.maxPlayers = config("Server", "Max Player Count", 50, "Max number of Players to allow");
+                config("Game", "Honey Count Per Hive", 4, "Honey Count Per Hive");
+            GamePatches.maxPlayers =
+                config("Server", "Max Player Count", 50, "Max number of Players to allow in a server");
 
             GamePatches.StaminaIsEnabled =
                 config("Player", "Stamina alterations enabled", false, "Stamina alterations enabled");
@@ -204,7 +210,7 @@ namespace VMP_Mod
             GamePatches.staminaRegenDelay = config("Player", "Delay before stamina regeneration starts", 1f,
                 "Delay before stamina regeneration starts");
             GamePatches.staminaRegen = config("Player", "Stamina regen factor", 1f, "Stamina regen factor");
-            GamePatches.swimStaminaDrain = config("Player", "Stamina drain from swin", 1f, "Stamina drain from swim");
+            GamePatches.swimStaminaDrain = config("Player", "Stamina drain from swim", 1f, "Stamina drain from swim");
             GamePatches.jumpStaminaDrain =
                 config("Player", "Jump stamina drain factor", 1f, "Stamina drain factor for jumping");
             GamePatches.baseAutoPickUpRange =
@@ -213,7 +219,7 @@ namespace VMP_Mod
             GamePatches.baseMaximumWeight = config("Player", "Base maximum weight addition for player", 350f,
                 "Base max weight addition for player");
             GamePatches.maximumPlacementDistance = config<float>("WorkBench", "Build distance alteration", 15,
-                "Build Distance alteration");
+                "Build Distance  (Maximum Placement Distance)");
 
             ImprovedBuildHudConfig.InventoryAmountFormat = Config.Bind("Building HUD", "Inventory Amount Format",
                 "({0})",
@@ -234,39 +240,41 @@ namespace VMP_Mod
 
 
             AutoStorePatch.dropRangeChests = Config.Bind("Auto Storage", "DropRangeChests", 5f,
-                "The maximum range to pull dropped items");
+                "The maximum range to pull dropped items for Chests (Default chest)");
             AutoStorePatch.dropRangePersonalChests = Config.Bind("Auto Storage", "DropRangePersonalChests", 5f,
-                "The maximum range to pull dropped items");
+                "The maximum range to pull dropped items for Personal chests");
             AutoStorePatch.dropRangeReinforcedChests = Config.Bind("Auto Storage", "DropRangeReinforcedChests", 5f,
-                "The maximum range to pull dropped items");
+                "The maximum range to pull dropped items for Re-inforced Chests");
             AutoStorePatch.dropRangeCarts = Config.Bind("Auto Storage", "DropRangeCarts", 5f,
-                "The maximum range to pull dropped items");
+                "The maximum range to pull dropped items for Carts");
             AutoStorePatch.dropRangeShips = Config.Bind("Auto Storage", "DropRangeShips", 5f,
-                "The maximum range to pull dropped items");
+                "The maximum range to pull dropped items for Ships");
             AutoStorePatch.itemDisallowTypes = Config.Bind("Auto Storage", "ItemDisallowTypes", "",
                 "Types of item to disallow pulling for, comma-separated.");
             AutoStorePatch.itemAllowTypes = Config.Bind("Auto Storage", "ItemAllowTypes", "",
                 "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypes");
             AutoStorePatch.itemDisallowTypesChests = Config.Bind("Auto Storage", "ItemDisallowTypesChests", "",
-                "Types of item to disallow pulling for, comma-separated.");
+                "Types of item to disallow pulling for, comma-separated. (For Chests)");
             AutoStorePatch.itemAllowTypesChests = Config.Bind("Auto Storage", "ItemAllowTypesChests", "",
                 "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesChests");
             AutoStorePatch.itemDisallowTypesPersonalChests = Config.Bind("Auto Storage",
-                "ItemDisallowTypesPersonalChests", "", "Types of item to disallow pulling for, comma-separated.");
+                "ItemDisallowTypesPersonalChests", "",
+                "Types of item to disallow pulling for, comma-separated. (For Personal Chests)");
             AutoStorePatch.itemAllowTypesPersonalChests = Config.Bind("Auto Storage", "ItemAllowTypesPersonalChests",
                 "",
                 "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesPersonalChests");
             AutoStorePatch.itemDisallowTypesReinforcedChests = Config.Bind("Auto Storage",
-                "ItemDisallowTypesReinforcedChests", "", "Types of item to disallow pulling for, comma-separated.");
+                "ItemDisallowTypesReinforcedChests", "",
+                "Types of item to disallow pulling for, comma-separated. (For ReinforcedChests)");
             AutoStorePatch.itemAllowTypesReinforcedChests = Config.Bind("Auto Storage",
                 "ItemAllowTypesReinforcedChests", "",
                 "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesReinforcedChests");
             AutoStorePatch.itemDisallowTypesCarts = Config.Bind("Auto Storage", "ItemDisallowTypesCarts", "",
-                "Types of item to disallow pulling for, comma-separated.");
+                "Types of item to disallow pulling for, comma-separated. (For Carts)");
             AutoStorePatch.itemAllowTypesCarts = Config.Bind("Auto Storage", "ItemAllowTypesCarts", "",
                 "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesCarts");
             AutoStorePatch.itemDisallowTypesShips = Config.Bind("Auto Storage", "ItemDisallowTypesShips", "",
-                "Types of item to disallow pulling for, comma-separated.");
+                "Types of item to disallow pulling for, comma-separated. (For Ships)");
             AutoStorePatch.itemAllowTypesShips = Config.Bind("Auto Storage", "ItemAllowTypesShips", "",
                 "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesShips");
             AutoStorePatch.toggleString = Config.Bind("Auto Storage", "ToggleString", "Auto Pull: {0}",
@@ -275,12 +283,14 @@ namespace VMP_Mod
                 "Key to toggle behaviour. Leave blank to disable the toggle key.");
             AutoStorePatch.mustHaveItemToPull = Config.Bind("Auto Storage", "MustHaveItemToPull", false,
                 "If true, a container must already have at least one of the item to pull.");
-            AutoStorePatch.isOn = Config.Bind("Auto Storage", "IsOn", true, "Behaviour is currently on or not");
+            AutoStorePatch.isOn =
+                Config.Bind("Auto Storage", "AutoStorageIsOn", true, "Behaviour is currently on or not");
 
 
             ClientPatches._chatPlayerName =
-                Config.Bind<string>(
-                    "Names", "chatPlayerName", string.Empty, "Override your player name shown in-game and in the chat box.");
+                Config.Bind(
+                    "Names", "chatPlayerName", string.Empty,
+                    "Override your player name shown in-game and in the chat box.");
 
             PlantGrowth.displayGrowth =
                 config("PlantGrowth", "DisplayGrowth", true, "Display growth progress in hover text");
@@ -310,14 +320,14 @@ namespace VMP_Mod
             PlantGrowth.maxScaleMultPlant = config("PlantGrowth", "MaxScaleMultPlant", 1f,
                 "Multiply maximum size by this amount.");
 
-            WearNTear_Patches.NoWeatherDam = config("WearNTear_Patches", "No Weather Damgae to bldgs", true,
-                "No Weather Damgae to bldgs");
+            WearNTear_Patches.NoWeatherDam = config("WearNTear_Patches", "No Weather Damage to buildings", false,
+                "No Weather Damage to buildings");
             WearNTear_Patches.DisableStructintegrity = config("WearNTear_Patches",
-                "Disable Structural Integrety system", true, "Disable Structural Integrety system");
+                "Disable Structural Integrity system", false, "Disable Structural Integrity system");
             WearNTear_Patches.DisableBoatDamage =
-                config("WearNTear_Patches", "Disable Boat Damage", true, "Disable Boat Damage");
-            WearNTear_Patches.NoPlayerStructDam = config("WearNTear_Patches", "No Damgae to player bldgs", true,
-                "No Damgae to player bldgs");
+                config("WearNTear_Patches", "Disable Boat Damage", false, "Disable Boat Damage");
+            WearNTear_Patches.NoPlayerStructDam = config("WearNTear_Patches", "No Damage to player buildings", false,
+                "No Damage to player buildings");
 
             WearNTear_Patches.StructuralIntegritywood = config<float>("WearNTear_Patches", "Wood Structural Integrity",
                 100, "Wood Structural Integrity");
@@ -351,11 +361,63 @@ namespace VMP_Mod
             SkillPatches.swim = config("Skills", "Swim Skill gain factor", 0f, "Swim skill gain factor");
             SkillPatches.deathPenaltyMultiplier = config("Skills", "Death Penalty Factor Multiplier", 0f,
                 "Death Penalty Factor Multiplier");
+            /* Extended Player Inventory Config options */
+            QuickAccessBar.extraRows = config("Toggles", "ExtraRows", 0,
+                "Number of extra ordinary rows. (This can cause overlap with chest GUI, make sure you hold CTRL (the default key) and drag to desired position)");
+            QuickAccessBar.addEquipmentRow = config("Toggles", "AddEquipmentRow", false,
+                "Add special row for equipped items and quick slots. (IF YOU ARE USING RANDY KNAPPS EAQs KEEP THIS VALUE OFF)");
+            QuickAccessBar.displayEquipmentRowSeparate = config("Toggles", "DisplayEquipmentRowSeparate", false,
+                "Display equipment and quickslots in their own area. (IF YOU ARE USING RANDY KNAPPS EAQs KEEP THIS VALUE OFF)");
+
+            QuickAccessBar.helmetText = config("Strings", "HelmetText", "Head",
+                "Text to show for helmet slot.  (Not Synced with server)", false);
+            QuickAccessBar.chestText = config("Strings", "ChestText", "Chest",
+                "Text to show for chest slot.  (Not Synced with server)", false);
+            QuickAccessBar.legsText = config("Strings", "LegsText", "Legs",
+                "Text to show for legs slot.  (Not Synced with server)", false);
+            QuickAccessBar.backText = config("Strings", "BackText", "Back",
+                "Text to show for back slot.  (Not Synced with server)", false);
+            QuickAccessBar.utilityText = config("Strings", "UtilityText", "Utility",
+                "Text to show for utility slot.  (Not Synced with server)", false);
+
+            QuickAccessBar.quickAccessScale = config("Misc", "QuickAccessScale", 1f,
+                "Scale of quick access bar.   (Not Synced with server)", false);
+
+            QuickAccessBar.hotKey1 = config("Hotkeys", "HotKey1", "z",
+                "Hotkey 1 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            QuickAccessBar.hotKey2 = config("Hotkeys", "HotKey2", "x",
+                "Hotkey 2 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            QuickAccessBar.hotKey3 = config("Hotkeys", "HotKey3", "c",
+                "Hotkey 3 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+
+            QuickAccessBar.modKeyOne = config("Hotkeys", "ModKey1", KeyCode.Mouse0,
+                "First modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.  (Not Synced with server)",
+                false);
+            QuickAccessBar.modKeyTwo = config("Hotkeys", "ModKey2", KeyCode.LeftControl,
+                "Second modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.  (Not Synced with server)",
+                false);
+
+            QuickAccessBar.quickAccessX = config("ZCurrentPositions", "quickAccessX", 9999f,
+                "Current X of Quick Slots (Not Synced with server)", false);
+            QuickAccessBar.quickAccessY = config("ZCurrentPositions", "quickAccessY", 9999f,
+                "Current Y of Quick Slots (Not Synced with server)", false);
+
+            /* Moveable Chest Inventory */
+            MoveableChestInventory.chestInventoryX = config("General", "ChestInventoryX", -1f,
+                "Current X of chest (Not Synced with server)", false);
+            MoveableChestInventory.chestInventoryY = config("General", "ChestInventoryY", -1f,
+                "Current Y of chest (Not Synced with server)", false);
+            MoveableChestInventory.modKeyOne = config("General", "ModKeyOne", KeyCode.Mouse0,
+                "First modifier key. Use https://docs.unity3d.com/Manual/class-InputManager.html format.  (Not Synced with server)",
+                false);
+            MoveableChestInventory.modKeyTwo = config("General", "ModKeyTwo", KeyCode.LeftControl,
+                "Second modifier key. Use https://docs.unity3d.com/Manual/class-InputManager.html format.  (Not Synced with server)",
+                false);
 
             if (!modEnabled.Value)
                 return;
 
-            if (!Directory.Exists(VMP_DatadirectoryPath)) Directory.CreateDirectory(VMP_DatadirectoryPath);
+            if (!Directory.Exists(OdinQOL_DatadirectoryPath)) Directory.CreateDirectory(OdinQOL_DatadirectoryPath);
             currentFont = GetFont(fontName.Value, 20);
             lastFontName = currentFont?.name;
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
@@ -364,7 +426,7 @@ namespace VMP_Mod
                 mapSyncSaveTimer.AutoReset = true;
                 mapSyncSaveTimer.Elapsed += (sender, args) => MapSync.SaveMapDataToDisk();
             }
-            
+
             On.Chat.SendText += ClientPatches.ChatSendTextPrefix;
             On.Chat.SendPing += ClientPatches.ChatSendPingPrefix;
 
@@ -377,13 +439,11 @@ namespace VMP_Mod
             var bepInExManager = GameObject.Find("BepInEx_Manager");
             var plugins = bepInExManager.GetComponentsInChildren<BaseUnityPlugin>();
             foreach (var plugin in plugins)
-            {
                 if (plugin.Info.Metadata.GUID == "aedenthorn.CraftFromContainers")
                 {
-                    CraftFromContainersInstalledAndActive = CraftFromContainers.BepInExPlugin.modEnabled.Value;
+                    CraftFromContainersInstalledAndActive = BepInExPlugin.modEnabled.Value;
                     Debug.Log("Found CraftFromContainers");
                 }
-            }
         }
 
         private void Update()
@@ -426,7 +486,7 @@ namespace VMP_Mod
         public static void Dbgl(string str = "", bool pref = true)
         {
             if (isDebug.Value)
-                Debug.Log((pref ? typeof(VMP_Modplugin).Namespace + " " : "") + str);
+                Debug.Log((pref ? typeof(OdinQOLplugin).Namespace + " " : "") + str);
         }
 
         private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
@@ -469,13 +529,9 @@ namespace VMP_Mod
             if (CraftFromContainersInstalledAndActive)
             {
                 if (_cachedContainers == null)
-                {
-                    _cachedContainers = CraftFromContainers.BepInExPlugin.GetNearbyContainers(player.transform.position);
-                }
+                    _cachedContainers = BepInExPlugin.GetNearbyContainers(player.transform.position);
                 foreach (var container in _cachedContainers)
-                {
                     containerCount += container.GetInventory().CountItems(itemName);
-                }
             }
 
             return playerInventoryCount + containerCount;
@@ -500,13 +556,13 @@ namespace VMP_Mod
         {
             if (!EnvMan.instance)
                 return "";
-            var fraction = (float) typeof(EnvMan)
+            var fraction = (float)typeof(EnvMan)
                 .GetField("m_smoothDayFraction", BindingFlags.NonPublic | BindingFlags.Instance)
                 .GetValue(EnvMan.instance);
 
-            var hour = (int) (fraction * 24);
-            var minute = (int) ((fraction * 24 - hour) * 60);
-            var second = (int) (((fraction * 24 - hour) * 60 - minute) * 60);
+            var hour = (int)(fraction * 24);
+            var minute = (int)((fraction * 24 - hour) * 60);
+            var second = (int)(((fraction * 24 - hour) * 60 - minute) * 60);
 
             var now = DateTime.Now;
             var theTime = new DateTime(now.Year, now.Month, now.Day, hour, minute, second);
@@ -520,7 +576,10 @@ namespace VMP_Mod
         {
             private static void Postfix(bool __result)
             {
-                context.StartCoroutine(MapDetail.UpdateMap(true));
+                if (!modEnabled.Value || !__result)
+                    return;
+                if (MapDetail.MapDetailOn.Value)
+                    context.StartCoroutine(MapDetail.UpdateMap(true));
             }
         }
 
@@ -529,7 +588,10 @@ namespace VMP_Mod
         {
             private static void Postfix(bool __result)
             {
-                context.StartCoroutine(MapDetail.UpdateMap(true));
+                if (!modEnabled.Value || !__result)
+                    return;
+                if (MapDetail.MapDetailOn.Value)
+                    context.StartCoroutine(MapDetail.UpdateMap(true));
             }
         }
 
@@ -538,11 +600,11 @@ namespace VMP_Mod
         {
             private static void Prefix()
             {
-                ZRoutedRpc.instance.Register("VMPMapSync",
-                    new Action<long, ZPackage>(MapSync.RPC_VMPMapSync)); //Map Sync
-                ZRoutedRpc.instance.Register("VMPMapPinSync",
-                    new Action<long, ZPackage>(VmpMapPinSync.RPC_VMPMapPinSync)); //Map Pin Sync
-                ZRoutedRpc.instance.Register("VMPAck", VMPAck.RPC_VMPAck); //Ack
+                ZRoutedRpc.instance.Register("OdinQOLMapSync",
+                    new Action<long, ZPackage>(MapSync.RPC_OdinQOLMapSync)); //Map Sync
+                ZRoutedRpc.instance.Register("OdinQOLMapPinSync",
+                    new Action<long, ZPackage>(VmpMapPinSync.RPC_OdinQOLMapPinSync)); //Map Pin Sync
+                ZRoutedRpc.instance.Register("OdinQOLAck", OdinQOLAck.RPC_OdinQOLAck); //Ack
             }
         }
     }

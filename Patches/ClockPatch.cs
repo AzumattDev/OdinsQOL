@@ -3,9 +3,9 @@ using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
 
-namespace VMP_Mod
+namespace OdinQOL
 {
-    public partial class VMP_Modplugin
+    public partial class OdinQOLplugin
     {
         public static ConfigEntry<bool> showingClock;
         public static ConfigEntry<bool> showClockOnChange;
@@ -101,7 +101,7 @@ namespace VMP_Mod
         {
             context = this;
 
-            modEnabled = Config.Bind("Clock", "Enabled", true, "Enable this mod");
+            
             showingClock = Config.Bind("Clock", "ShowClock", true, "Show the clock?");
             showClockOnChange = Config.Bind("Clock", "ShowClockOnChange", false,
                 "Only show the clock when the time changes?");
@@ -212,7 +212,7 @@ namespace VMP_Mod
         {
             var fuzzyStringArray = clockFuzzyStrings.Value.Split(',');
 
-            var idx = Math.Min((int) (fuzzyStringArray.Length * fraction), fuzzyStringArray.Length - 1);
+            var idx = Math.Min((int)(fuzzyStringArray.Length * fraction), fuzzyStringArray.Length - 1);
 
             if (clockFormat.Value == "fuzzy")
                 return string.Format(clockString.Value, fuzzyStringArray[idx]);

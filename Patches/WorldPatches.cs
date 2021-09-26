@@ -1,6 +1,6 @@
 using HarmonyLib;
 
-namespace VMP_Mod.Patches
+namespace OdinQOL.Patches
 {
     internal class WorldPatches
     {

@@ -5,7 +5,7 @@ using System.Reflection;
 using BepInEx.Configuration;
 using HarmonyLib;
 
-namespace VMP_Mod.Patches
+namespace OdinQOL.Patches
 {
     public static class SkillPatches
     {
@@ -55,72 +55,72 @@ namespace VMP_Mod.Patches
         {
             var mult = Math.Pow(10.0, digits);
             var result = Math.Truncate(mult * value) / mult;
-            return (float) result;
+            return (float)result;
         }
 
         [HarmonyPatch(typeof(Skills), "RaiseSkill")]
         public static class AddExpGainedDisplay
         {
-	        /// <summary>
-	        ///     Updates experience modifiers
-	        /// </summary>
-	        private static void Prefix(ref Skills __instance, ref Skills.SkillType skillType, ref float factor)
+            /// <summary>
+            ///     Updates experience modifiers
+            /// </summary>
+            private static void Prefix(ref Skills __instance, ref Skills.SkillType skillType, ref float factor)
             {
                 if (ChangeSkills.Value)
-                    switch ((SkillType) skillType)
+                    switch ((SkillType)skillType)
                     {
                         case SkillType.Swords:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, swordskill.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, swordskill.Value);
                             break;
                         case SkillType.Knives:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, kniveskill.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, kniveskill.Value);
                             break;
                         case SkillType.Clubs:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, clubskill.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, clubskill.Value);
                             break;
                         case SkillType.Polearms:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, polearmskill.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, polearmskill.Value);
                             break;
                         case SkillType.Spears:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, spearskill.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, spearskill.Value);
                             break;
                         case SkillType.Blocking:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, blockskill.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, blockskill.Value);
                             break;
                         case SkillType.Axes:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, axeskill.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, axeskill.Value);
                             break;
                         case SkillType.Bows:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, bowskill.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, bowskill.Value);
                             break;
                         case SkillType.Unarmed:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, unarmed.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, unarmed.Value);
                             break;
                         case SkillType.Pickaxes:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, pickaxe.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, pickaxe.Value);
                             break;
                         case SkillType.WoodCutting:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, woodcutting.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, woodcutting.Value);
                             break;
                         case SkillType.Jump:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, jump.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, jump.Value);
                             break;
                         case SkillType.Sneak:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, sneak.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, sneak.Value);
                             break;
                         case SkillType.Run:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, run.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, run.Value);
                             break;
                         case SkillType.Swim:
-                            factor = VMP_Modplugin.ApplyModifierValue(factor, swim.Value);
+                            factor = OdinQOLplugin.ApplyModifierValue(factor, swim.Value);
                             break;
                     }
             }
 
-	        /// <summary>
-	        ///     Experience gained notifications
-	        /// </summary>
-	        private static void Postfix(Skills __instance, Skills.SkillType skillType, float factor = 1f)
+            /// <summary>
+            ///     Experience gained notifications
+            /// </summary>
+            private static void Postfix(Skills __instance, Skills.SkillType skillType, float factor = 1f)
             {
                 if (experienceGainedNotifications.Value)
                     try
@@ -167,7 +167,7 @@ namespace VMP_Mod.Patches
             public static void LowerAllSkills(Skills instance, float factor)
             {
                 if (deathPenaltyMultiplier.Value > -100.0f)
-                    instance.LowerAllSkills(VMP_Modplugin.ApplyModifierValue(factor, deathPenaltyMultiplier.Value));
+                    instance.LowerAllSkills(OdinQOLplugin.ApplyModifierValue(factor, deathPenaltyMultiplier.Value));
             }
         }
     }

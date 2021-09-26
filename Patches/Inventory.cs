@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using HarmonyLib;
 
-namespace VMP_Mod.Patches
+namespace OdinQOL.Patches
 {
     /// <summary>
     ///     Makes all items fill inventories top to bottom instead of just tools and weapons
@@ -13,7 +13,7 @@ namespace VMP_Mod.Patches
     {
         public static bool Prefix(ref bool __result)
         {
-            if (VMP_Modplugin.filltoptobottom.Value)
+            if (OdinQOLplugin.filltoptobottom.Value)
             {
                 __result = true;
                 return false;
@@ -28,7 +28,7 @@ namespace VMP_Mod.Patches
     {
         private static void Postfix(ref bool __result)
         {
-            if (VMP_Modplugin.NoTeleportPrevention.Value)
+            if (OdinQOLplugin.NoTeleportPrevention.Value)
                 __result = true;
         }
     }
@@ -38,24 +38,24 @@ namespace VMP_Mod.Patches
     {
         private static void Prefix(ref ItemDrop __instance)
         {
-            if (VMP_Modplugin.itemStackMultiplier.Value > 0)
+            if (OdinQOLplugin.itemStackMultiplier.Value > 0)
             {
                 __instance.m_itemData.m_shared.m_weight =
-                    VMP_Modplugin.ApplyModifierValue(__instance.m_itemData.m_shared.m_weight,
-                        VMP_Modplugin.WeightReduction.Value);
+                    OdinQOLplugin.ApplyModifierValue(__instance.m_itemData.m_shared.m_weight,
+                        OdinQOLplugin.WeightReduction.Value);
 
                 if (__instance.m_itemData.m_shared.m_maxStackSize > 1)
-                    if (VMP_Modplugin.itemStackMultiplier.Value >= 1)
-                        __instance.m_itemData.m_shared.m_maxStackSize = (int) VMP_Modplugin.ApplyModifierValue(
-                            __instance.m_itemData.m_shared.m_maxStackSize, VMP_Modplugin.itemStackMultiplier.Value);
+                    if (OdinQOLplugin.itemStackMultiplier.Value >= 1)
+                        __instance.m_itemData.m_shared.m_maxStackSize = (int)OdinQOLplugin.ApplyModifierValue(
+                            __instance.m_itemData.m_shared.m_maxStackSize, OdinQOLplugin.itemStackMultiplier.Value);
             }
         }
     }
 
     public static class Inventory_NearbyChests_Cache
     {
-        public static List<Container> chests = new List<Container>();
-        public static readonly Stopwatch delta = new Stopwatch();
+        public static List<Container> chests = new();
+        public static readonly Stopwatch delta = new();
     }
 
     /// <summary>

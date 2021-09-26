@@ -2,7 +2,7 @@
 using HarmonyLib;
 using UnityEngine;
 
-namespace VMP_Mod.Patches
+namespace OdinQOL.Patches
 {
     internal class SignPatches
     {
@@ -25,17 +25,17 @@ namespace VMP_Mod.Patches
             if (lastFontName != fontName.Value) // call when config changes
             {
                 lastFontName = fontName.Value;
-                VMP_Modplugin.Dbgl($"new font {fontName.Value}");
+                OdinQOLplugin.Dbgl($"new font {fontName.Value}");
                 var font = GetFont(fontName.Value, 20);
                 if (font == null)
-                    VMP_Modplugin.Dbgl("new font not found");
+                    OdinQOLplugin.Dbgl("new font not found");
                 else
                     currentFont = font;
             }
 
             if (currentFont != null && sign.m_textWidget.font?.name != currentFont.name)
             {
-                VMP_Modplugin.Dbgl($"setting font {currentFont.name}");
+                OdinQOLplugin.Dbgl($"setting font {currentFont.name}");
                 sign.m_textWidget.font = currentFont;
             }
         }

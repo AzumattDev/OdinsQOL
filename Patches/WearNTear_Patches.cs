@@ -2,7 +2,7 @@
 using BepInEx.Configuration;
 using HarmonyLib;
 
-namespace VMP_Mod.Patches
+namespace OdinQOL.Patches
 {
     public class WearNTear_Patches
     {
@@ -47,7 +47,6 @@ namespace VMP_Mod.Patches
         private static void Postfix(ref bool __result)
         {
             if (WearNTear_Patches.DisableStructintegrity.Value) __result = true;
-            
         }
     }
 

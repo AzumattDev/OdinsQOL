@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using HarmonyLib;
 
-namespace VMP_Mod.Patches
+namespace OdinQOL.Patches
 {
     internal class ServerPatches
     {
-        public static Dictionary<string, int> timers = new Dictionary<string, int>();
+        public static Dictionary<string, int> timers = new();
 
 
         public static void RPC_ModerationLog(long sender, string msg)
@@ -24,7 +23,7 @@ namespace VMP_Mod.Patches
 
         [HarmonyPatch(typeof(ZDOMan))]
         [HarmonyPatch(MethodType.Constructor)]
-        [HarmonyPatch(new[] {typeof(int)})]
+        [HarmonyPatch(new[] { typeof(int) })]
         public static class AddCustomeRPCHere
         {
             private static void Postfix()

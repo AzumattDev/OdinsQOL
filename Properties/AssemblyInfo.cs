@@ -1,15 +1,15 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
-using VMP_Mod;
+using OdinQOL;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle(VMP_Modplugin.ModName)]
+[assembly: AssemblyTitle(OdinQOLplugin.ModName)]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct(VMP_Modplugin.ModName)]
+[assembly: AssemblyCompany(OdinQOLplugin.ModName)]
+[assembly: AssemblyProduct(OdinQOLplugin.ModName)]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -32,5 +32,5 @@ using VMP_Mod;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion(VMP_Modplugin.Version)]
-[assembly: AssemblyFileVersion(VMP_Modplugin.Version)]
+[assembly: AssemblyVersion(OdinQOLplugin.Version)]
+[assembly: AssemblyFileVersion(OdinQOLplugin.Version)]

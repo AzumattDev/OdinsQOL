@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
-using UnityEngine.UI;
-using Object = UnityEngine.Object;
 
-namespace VMP_Mod.Patches
+namespace OdinQOL.Patches
 {
     internal class CraftingPatch
     {
@@ -138,8 +135,8 @@ namespace VMP_Mod.Patches
         public static int CompareStrings(string a, string b, bool asc)
         {
             if (asc)
-                return String.Compare(a, b, StringComparison.Ordinal);
-            return String.Compare(b, a, StringComparison.Ordinal);
+                return string.Compare(a, b, StringComparison.Ordinal);
+            return string.Compare(b, a, StringComparison.Ordinal);
         }
 
         public static int CompareFloats(float a, float b, bool asc)

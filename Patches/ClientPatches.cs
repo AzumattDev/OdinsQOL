@@ -1,19 +1,56 @@
-using System.CodeDom;
 using System.Collections.Generic;
-using System.Linq;
 using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace VMP_Mod.Patches
+namespace OdinQOL.Patches
 {
     public class ClientPatches
     {
-        
         public static ConfigEntry<string> _chatPlayerName;
 
         private static bool _overridePlayerName;
+
+        internal static void ChatSendTextPrefix(On.Chat.orig_SendText orig, Chat self, Talker.Type type, string text)
+        {
+            _overridePlayerName = true;
+            orig(self, type, text);
+            _overridePlayerName = false;
+        }
+
+        public static void ChatSendPingPrefix(On.Chat.orig_SendPing orig, Chat self, Vector3 position)
+        {
+            _overridePlayerName = true;
+            orig(self, position);
+            _overridePlayerName = false;
+        }
+
+        public static string PlayerGetPlayerNamePrefix(On.Player.orig_GetPlayerName orig, Player self)
+        {
+            if (_overridePlayerName
+                && self == Player.m_localPlayer
+                && !string.IsNullOrEmpty(_chatPlayerName.Value))
+                return _chatPlayerName.Value;
+
+            return orig(self);
+        }
+
+        public static string PlayerProfileGetNamePrefix(On.PlayerProfile.orig_GetName orig, PlayerProfile self)
+        {
+            if (_overridePlayerName && !string.IsNullOrEmpty(_chatPlayerName.Value)) return _chatPlayerName.Value;
+
+            return orig(self);
+        }
+
+        public static Player GameSpawnPlayerPostfix(On.Game.orig_SpawnPlayer orig, Game self, Vector3 spawnPoint)
+        {
+            var player = orig(self, spawnPoint);
+
+            if (!string.IsNullOrEmpty(_chatPlayerName.Value))
+                player.m_nview.GetZDO().Set("playerName", _chatPlayerName.Value);
+
+            return player;
+        }
 
         [HarmonyPatch(typeof(Ship), "Awake")]
         public static class shipfix
@@ -90,50 +127,9 @@ namespace VMP_Mod.Patches
                 if (__result == null)
                 {
                     var componentInChildren = item.transform.GetComponentInChildren<Collider>();
-                    if ((bool) componentInChildren) __result = componentInChildren.transform.gameObject;
+                    if ((bool)componentInChildren) __result = componentInChildren.transform.gameObject;
                 }
             }
         }
-
-        internal static void ChatSendTextPrefix(On.Chat.orig_SendText orig, Chat self, Talker.Type type, string text) {
-            _overridePlayerName = true;
-            orig(self, type, text);
-            _overridePlayerName = false;
-        }
-
-        public static void ChatSendPingPrefix(On.Chat.orig_SendPing orig, Chat self, Vector3 position) {
-            _overridePlayerName = true;
-            orig(self, position);
-            _overridePlayerName = false;
-        }
-
-        public static string PlayerGetPlayerNamePrefix(On.Player.orig_GetPlayerName orig, Player self) {
-            if ( _overridePlayerName
-                && self == Player.m_localPlayer
-                && !string.IsNullOrEmpty(_chatPlayerName.Value)) {
-                return _chatPlayerName.Value;
-            }
-
-            return orig(self);
-        }
-
-        public static string PlayerProfileGetNamePrefix(On.PlayerProfile.orig_GetName orig, PlayerProfile self) {
-            if ( _overridePlayerName && !string.IsNullOrEmpty(_chatPlayerName.Value)) {
-                return _chatPlayerName.Value;
-            }
-
-            return orig(self);
-        }
-
-        public static Player GameSpawnPlayerPostfix(On.Game.orig_SpawnPlayer orig, Game self, Vector3 spawnPoint) {
-            var player = orig(self, spawnPoint);
-
-            if (!string.IsNullOrEmpty(_chatPlayerName.Value)) {
-                player.m_nview.GetZDO().Set("playerName", _chatPlayerName.Value);
-            }
-
-            return player;
-        }
-        
     }
 }

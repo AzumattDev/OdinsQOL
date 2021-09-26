@@ -4,7 +4,7 @@ using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
 
-namespace VMP_Mod.Patches
+namespace OdinQOL.Patches
 {
     internal class PlantGrowth
     {
@@ -62,7 +62,7 @@ namespace VMP_Mod.Patches
                 {
                     return false;
                 }
-                    
+
 
             if (plant.m_needCultivatedGround && !Heightmap.FindHeightmap(plant.transform.position)
                 .IsCultivated(plant.transform.position))
@@ -86,7 +86,7 @@ namespace VMP_Mod.Patches
                                 ?.SetValue(__instance, 5);
                             typeof(Player)
                                 .GetMethod("SetPlacementGhostValid", BindingFlags.NonPublic | BindingFlags.Instance)
-                                ?.Invoke(__instance, new object[] {false});
+                                ?.Invoke(__instance, new object[] { false });
                         }
                     }
             }
@@ -117,7 +117,7 @@ namespace VMP_Mod.Patches
                 var timeSincePlanted = Traverse.Create(__instance).Method("TimeSincePlanted").GetValue<double>();
                 var growTime = Traverse.Create(__instance).Method("GetGrowTime").GetValue<float>();
                 if (timeSincePlanted < growTime)
-                    __result += "\n" + Mathf.RoundToInt((float) timeSincePlanted) + "/" + Mathf.RoundToInt(growTime);
+                    __result += "\n" + Mathf.RoundToInt((float)timeSincePlanted) + "/" + Mathf.RoundToInt(growTime);
             }
         }
 

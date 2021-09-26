@@ -5,17 +5,18 @@ using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
 
-namespace VMP_Mod.Patches
+namespace OdinQOL.Patches
 {
     internal class MapDetail
     {
         private static Vector2 lastPos = Vector2.zero;
-        private static List<int> lastPixels = new List<int>();
+        private static List<int> lastPixels = new();
         private static Texture2D mapTexture;
 
         public static ConfigEntry<float> showRange;
         public static ConfigEntry<float> updateDelta;
         public static ConfigEntry<bool> showBuildings;
+        public static ConfigEntry<bool> MapDetailOn;
 
         public static ConfigEntry<Color> personalBuildingColor;
         public static ConfigEntry<Color> otherBuildingColor;
@@ -24,6 +25,8 @@ namespace VMP_Mod.Patches
 
         public static IEnumerator UpdateMap(bool force)
         {
+            if (MapDetailOn.Value)
+                yield return null;
             if (force)
                 yield return null;
 
@@ -71,7 +74,7 @@ namespace VMP_Mod.Patches
                 foreach (var i in lastPixels)
                     if (!pixels.ContainsKey(i))
                         goto newpixels;
-                VMP_Modplugin.Dbgl("No new pixels");
+                OdinQOLplugin.Dbgl("No new pixels");
                 yield break;
             }
 
@@ -81,7 +84,7 @@ namespace VMP_Mod.Patches
 
             if (pixels.Count == 0)
             {
-                VMP_Modplugin.Dbgl("No pixels to add");
+                OdinQOLplugin.Dbgl("No pixels to add");
                 SetMaps(mapTexture);
                 yield break;
             }
@@ -139,7 +142,7 @@ namespace VMP_Mod.Patches
 
             SetMaps(tempTexture);
 
-            VMP_Modplugin.Dbgl($"Added {pixels.Count} pixels");
+            OdinQOLplugin.Dbgl($"Added {pixels.Count} pixels");
         }
 
         private static void GetUserColor(long id, out Color color)
@@ -159,11 +162,12 @@ namespace VMP_Mod.Patches
             }
         }
 
-        [HarmonyPatch(typeof(Minimap), "GenerateWorldMap")]
+        [HarmonyPatch(typeof(Minimap), nameof(Minimap.GenerateWorldMap))]
         private static class GenerateWorldMap_Patch
         {
             private static void Postfix(Texture2D ___m_mapTexture)
             {
+                if (!OdinQOLplugin.modEnabled.Value) return;
                 var data = ___m_mapTexture.GetPixels32();
 
                 mapTexture = new Texture2D(___m_mapTexture.width, ___m_mapTexture.height, TextureFormat.RGBA32, false);
