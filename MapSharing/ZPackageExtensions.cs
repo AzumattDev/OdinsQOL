@@ -1,15 +1,18 @@
-﻿using static VMP_Mod.MapSharing.VmpObjects;
+﻿using static OdinQOL.MapSharing.VmpObjects;
 
-namespace VMP_Mod.MapSharing
+namespace OdinQOL.MapSharing
 {
     public static class ZPackageExtensions
     {
-        public static MapRange ReadVPlusMapRange(this ZPackage pkg) => new MapRange()
+        public static MapRange ReadVPlusMapRange(this ZPackage pkg)
         {
-            StartingX = pkg.m_reader.ReadInt32(),
-            EndingX = pkg.m_reader.ReadInt32(),
-            Y = pkg.m_reader.ReadInt32()
-        };
+            return new()
+            {
+                StartingX = pkg.m_reader.ReadInt32(),
+                EndingX = pkg.m_reader.ReadInt32(),
+                Y = pkg.m_reader.ReadInt32()
+            };
+        }
 
         public static void WriteVPlusMapRange(this ZPackage pkg, MapRange mapRange)
         {
