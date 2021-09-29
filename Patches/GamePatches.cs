@@ -67,9 +67,7 @@ namespace OdinQOL.Patches
         {
             private static bool Prefix(string user, string text)
             {
-                if (OdinQOLplugin.iHaveArrivedOnSpawn.Value && text.ToLower().Contains("i have arrived"))
-                    return false;
-                return true;
+                return !OdinQOLplugin.iHaveArrivedOnSpawn.Value || !text.ToLower().Contains("i have arrived");
             }
         }
 
