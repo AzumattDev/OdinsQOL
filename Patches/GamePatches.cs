@@ -9,6 +9,7 @@ using Steamworks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using SteamUGC = On.Steamworks.SteamUGC;
 
 namespace OdinQOL.Patches
 {
@@ -51,13 +52,24 @@ namespace OdinQOL.Patches
         }
 
 
-        [HarmonyPatch(typeof(Game), nameof(Game.UpdateRespawn))]
+        /*[HarmonyPatch(typeof(Game), nameof(Game.UpdateRespawn))]
         public static class Game_UpdateRespawn_Patch
         {
             private static void Prefix(ref Game __instance, float dt)
             {
                 if (OdinQOLplugin.iHaveArrivedOnSpawn.Value)
                     __instance.m_firstSpawn = false;
+            }
+        }*/
+        
+        [HarmonyPatch(typeof(Chat), nameof(Chat.OnNewChatMessage))]
+        public static class ChatOnNewChatMessage_Patch
+        {
+            private static bool Prefix(string user, string text)
+            {
+                if (OdinQOLplugin.iHaveArrivedOnSpawn.Value && text.ToLower().Contains("i have arrived"))
+                    return false;
+                return true;
             }
         }
 
