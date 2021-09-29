@@ -6,7 +6,7 @@ namespace OdinQOL.MapSharing
     {
         public static MapRange ReadVPlusMapRange(this ZPackage pkg)
         {
-            return new()
+            return new MapRange
             {
                 StartingX = pkg.m_reader.ReadInt32(),
                 EndingX = pkg.m_reader.ReadInt32(),

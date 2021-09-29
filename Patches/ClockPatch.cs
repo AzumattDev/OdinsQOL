@@ -101,7 +101,7 @@ namespace OdinQOL
         {
             context = this;
 
-            
+
             showingClock = Config.Bind("Clock", "ShowClock", true, "Show the clock?");
             showClockOnChange = Config.Bind("Clock", "ShowClockOnChange", false,
                 "Only show the clock when the time changes?");

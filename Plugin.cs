@@ -25,7 +25,7 @@ namespace OdinQOL
     [BepInPlugin(GUID, ModName, Version)]
     public partial class OdinQOLplugin : BaseUnityPlugin
     {
-        public const string Version = "0.1.0";
+        public const string Version = "0.2.0";
         public const string ModName = "OdinPlusQOL";
         public const string GUID = "com.odinplusqol.mod";
         private static readonly int windowId = 434343;
@@ -165,7 +165,8 @@ namespace OdinQOL
             LoadConfig();
 
             CraftingPatch.maxEntries =
-                Config.Bind("Show Chest Contents", "MaxEntries", -1, "Max number of entries to show (-1 means show all)");
+                Config.Bind("Show Chest Contents", "MaxEntries", -1,
+                    "Max number of entries to show (-1 means show all)");
             CraftingPatch.sortType = Config.Bind("Show Chest Contents", "SortType", CraftingPatch.SortType.Value,
                 "Type by which to sort entries.");
             CraftingPatch.sortAsc = Config.Bind("Show Chest Contents", "SortAsc", false, "Sort ascending?");
@@ -284,7 +285,7 @@ namespace OdinQOL
             AutoStorePatch.mustHaveItemToPull = Config.Bind("Auto Storage", "MustHaveItemToPull", false,
                 "If true, a container must already have at least one of the item to pull.");
             AutoStorePatch.isOn =
-                Config.Bind("Auto Storage", "AutoStorageIsOn", true, "Behaviour is currently on or not");
+                Config.Bind("Auto Storage", "AutoStorageIsOn", false, "Behaviour is currently on or not");
 
 
             ClientPatches._chatPlayerName =
@@ -329,14 +330,14 @@ namespace OdinQOL
             WearNTear_Patches.NoPlayerStructDam = config("WearNTear_Patches", "No Damage to player buildings", false,
                 "No Damage to player buildings");
 
-            WearNTear_Patches.StructuralIntegritywood = config<float>("WearNTear_Patches", "Wood Structural Integrity",
-                100, "Wood Structural Integrity");
-            WearNTear_Patches.StructuralIntegritystone = config<float>("WearNTear_Patches",
-                "Stone Structural Integrity", 100, "Stone Structural Integrity");
-            WearNTear_Patches.StructuralIntegrityiron = config<float>("WearNTear_Patches", "Iron Structural Integrity",
-                100, "Iron Structural Integrity");
-            WearNTear_Patches.StructuralIntegrityhardWood = config<float>("WearNTear_Patches",
-                "Hardwood Structural Integrity", 100, "Hardwood Structural Integrity");
+            WearNTear_Patches.StructuralIntegritywood = config("WearNTear_Patches", "Wood Structural Integrity",
+                1f, "Wood Structural Integrity");
+            WearNTear_Patches.StructuralIntegritystone = config("WearNTear_Patches",
+                "Stone Structural Integrity", 1f, "Stone Structural Integrity");
+            WearNTear_Patches.StructuralIntegrityiron = config("WearNTear_Patches", "Iron Structural Integrity",
+                1f, "Iron Structural Integrity");
+            WearNTear_Patches.StructuralIntegrityhardWood = config("WearNTear_Patches",
+                "Hardwood Structural Integrity", 1f, "Hardwood Structural Integrity");
 
             SkillPatches.ChangeSkills =
                 config("Skills", "Change the skill gain factor", false, "Change skill gain factor");
@@ -351,7 +352,7 @@ namespace OdinQOL
             SkillPatches.axeskill = config("Skills", "Axe Skill gain factor", 0f, "Axe skill gain factor");
             ;
             SkillPatches.bowskill = config("Skills", "Bow Skill gain factor", 0f, "Bow skill gain factor");
-            SkillPatches.unarmed = config("Skills", "Unarmed Skill gain factor", 0f, "SwoUnarmedrd skill gain factor");
+            SkillPatches.unarmed = config("Skills", "Unarmed Skill gain factor", 0f, "Unarmed skill gain factor");
             SkillPatches.pickaxe = config("Skills", "Pickaxe Skill gain factor", 0f, "Pickaxe skill gain factor");
             SkillPatches.woodcutting =
                 config("Skills", "WoodCutting Skill gain factor", 0f, "WoodCutting skill gain factor");
@@ -362,44 +363,45 @@ namespace OdinQOL
             SkillPatches.deathPenaltyMultiplier = config("Skills", "Death Penalty Factor Multiplier", 0f,
                 "Death Penalty Factor Multiplier");
             /* Extended Player Inventory Config options */
-            QuickAccessBar.extraRows = config("Toggles", "ExtraRows", 0,
+            QuickAccessBar.extraRows = config("Extended Inventory", "ExtraRows", 0,
                 "Number of extra ordinary rows. (This can cause overlap with chest GUI, make sure you hold CTRL (the default key) and drag to desired position)");
-            QuickAccessBar.addEquipmentRow = config("Toggles", "AddEquipmentRow", false,
+            QuickAccessBar.addEquipmentRow = config("Extended Inventory", "AddEquipmentRow", false,
                 "Add special row for equipped items and quick slots. (IF YOU ARE USING RANDY KNAPPS EAQs KEEP THIS VALUE OFF)");
-            QuickAccessBar.displayEquipmentRowSeparate = config("Toggles", "DisplayEquipmentRowSeparate", false,
+            QuickAccessBar.displayEquipmentRowSeparate = config("Extended Inventory", "DisplayEquipmentRowSeparate",
+                false,
                 "Display equipment and quickslots in their own area. (IF YOU ARE USING RANDY KNAPPS EAQs KEEP THIS VALUE OFF)");
 
-            QuickAccessBar.helmetText = config("Strings", "HelmetText", "Head",
+            QuickAccessBar.helmetText = config("Extended Inventory", "HelmetText", "Head",
                 "Text to show for helmet slot.  (Not Synced with server)", false);
-            QuickAccessBar.chestText = config("Strings", "ChestText", "Chest",
+            QuickAccessBar.chestText = config("Extended Inventory", "ChestText", "Chest",
                 "Text to show for chest slot.  (Not Synced with server)", false);
-            QuickAccessBar.legsText = config("Strings", "LegsText", "Legs",
+            QuickAccessBar.legsText = config("Extended Inventory", "LegsText", "Legs",
                 "Text to show for legs slot.  (Not Synced with server)", false);
-            QuickAccessBar.backText = config("Strings", "BackText", "Back",
+            QuickAccessBar.backText = config("Extended Inventory", "BackText", "Back",
                 "Text to show for back slot.  (Not Synced with server)", false);
-            QuickAccessBar.utilityText = config("Strings", "UtilityText", "Utility",
+            QuickAccessBar.utilityText = config("Extended Inventory", "UtilityText", "Utility",
                 "Text to show for utility slot.  (Not Synced with server)", false);
 
-            QuickAccessBar.quickAccessScale = config("Misc", "QuickAccessScale", 1f,
+            QuickAccessBar.quickAccessScale = config("Extended Inventory", "QuickAccessScale", 1f,
                 "Scale of quick access bar.   (Not Synced with server)", false);
 
-            QuickAccessBar.hotKey1 = config("Hotkeys", "HotKey1", "z",
+            QuickAccessBar.hotKey1 = config("Extended Inventory", "HotKey1", "z",
                 "Hotkey 1 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            QuickAccessBar.hotKey2 = config("Hotkeys", "HotKey2", "x",
+            QuickAccessBar.hotKey2 = config("Extended Inventory", "HotKey2", "x",
                 "Hotkey 2 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            QuickAccessBar.hotKey3 = config("Hotkeys", "HotKey3", "c",
+            QuickAccessBar.hotKey3 = config("Extended Inventory", "HotKey3", "c",
                 "Hotkey 3 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
 
-            QuickAccessBar.modKeyOne = config("Hotkeys", "ModKey1", KeyCode.Mouse0,
+            QuickAccessBar.modKeyOne = config("Extended Inventory", "ModKey1", KeyCode.Mouse0,
                 "First modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.  (Not Synced with server)",
                 false);
-            QuickAccessBar.modKeyTwo = config("Hotkeys", "ModKey2", KeyCode.LeftControl,
+            QuickAccessBar.modKeyTwo = config("Extended Inventory", "ModKey2", KeyCode.LeftControl,
                 "Second modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.  (Not Synced with server)",
                 false);
 
-            QuickAccessBar.quickAccessX = config("ZCurrentPositions", "quickAccessX", 9999f,
+            QuickAccessBar.quickAccessX = config("Extended Inventory", "quickAccessX", 9999f,
                 "Current X of Quick Slots (Not Synced with server)", false);
-            QuickAccessBar.quickAccessY = config("ZCurrentPositions", "quickAccessY", 9999f,
+            QuickAccessBar.quickAccessY = config("Extended Inventory", "quickAccessY", 9999f,
                 "Current Y of Quick Slots (Not Synced with server)", false);
 
             /* Moveable Chest Inventory */
@@ -444,6 +446,13 @@ namespace OdinQOL
                     CraftFromContainersInstalledAndActive = BepInExPlugin.modEnabled.Value;
                     Debug.Log("Found CraftFromContainers");
                 }
+
+            QuickAccessBar.hotkeys = new[]
+            {
+                QuickAccessBar.hotKey1,
+                QuickAccessBar.hotKey2,
+                QuickAccessBar.hotKey3
+            };
         }
 
         private void Update()

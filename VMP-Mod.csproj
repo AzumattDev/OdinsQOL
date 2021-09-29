@@ -455,6 +455,6 @@
         <Error Condition="!Exists('packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets'))"/>
     </Target>
     <PropertyGroup>
-        <PostBuildEvent>copy "$(TargetDir)OdinPlusQOL.dll" "C:\Program Files (x86)\Steam\steamapps\common\Valheim-jotunn\BepInEx\plugins\OdinPlusQOL.dll</PostBuildEvent>
+        <PostBuildEvent>copy "$(TargetDir)OdinQOL.dll" "C:\Program Files (x86)\Steam\steamapps\common\Valheim-jotunn\BepInEx\plugins\OdinQOL.dll</PostBuildEvent>
     </PropertyGroup>
 </Project>

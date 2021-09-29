@@ -30,24 +30,30 @@ namespace OdinQOL.Patches
 
         public static void SetSlotText(string value, Transform transform, bool center = true)
         {
-            Transform t = transform.Find("binding");
-            if (!t) t = Object.Instantiate(elementPrefab.transform.Find("binding"), transform);
-            t.GetComponent<Text>().enabled = true;
-            t.GetComponent<Text>().text = value;
-            if (center)
-            {
-                t.GetComponent<RectTransform>().sizeDelta = new Vector2(80, 17);
-                t.GetComponent<RectTransform>().anchoredPosition = new Vector2(30, -10);
-            }
+            Transform transform1 = transform.Find("binding");
+            if (!transform1)
+                transform1 = Object.Instantiate(elementPrefab.transform.Find("binding"), transform);
+            transform1.GetComponent<Text>().enabled = true;
+            transform1.GetComponent<Text>().text = value;
+            if (!center)
+                return;
+            transform1.GetComponent<RectTransform>().sizeDelta = new Vector2(80f, 17f);
+            transform1.GetComponent<RectTransform>().anchoredPosition = new Vector2(30f, -10f);
         }
 
-        private static bool IsEquipmentSlotFree(Inventory inventory, ItemDrop.ItemData item, out int which)
+        private static bool IsEquipmentSlotFree(
+            Inventory inventory,
+            ItemDrop.ItemData item,
+            out int which)
         {
             which = Array.IndexOf(typeEnums, item.m_shared.m_itemType);
             return which >= 0 && inventory.GetItemAt(which, inventory.GetHeight() - 1) == null;
         }
 
-        private static bool IsAtEquipmentSlot(Inventory inventory, ItemDrop.ItemData item, out int which)
+        private static bool IsAtEquipmentSlot(
+            Inventory inventory,
+            ItemDrop.ItemData item,
+            out int which)
         {
             if (!addEquipmentRow.Value || item.m_gridPos.x > 4 || item.m_gridPos.y < inventory.GetHeight() - 1)
             {
@@ -61,22 +67,19 @@ namespace OdinQOL.Patches
 
         private static void SetElementPositions()
         {
-            Transform hudRoot = Hud.instance.transform.Find("hudroot");
-
-            if (hudRoot.Find("QuickAccessBar")?.GetComponent<RectTransform>() != null)
-            {
-                if (quickAccessX.Value == 9999)
-                    quickAccessX.Value = hudRoot.Find("healthpanel").GetComponent<RectTransform>().anchoredPosition.x -
-                                         32;
-                if (quickAccessY.Value == 9999)
-                    quickAccessY.Value = hudRoot.Find("healthpanel").GetComponent<RectTransform>().anchoredPosition.y -
-                                         870;
-
-                hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().anchoredPosition =
-                    new Vector2(quickAccessX.Value, quickAccessY.Value);
-                hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().localScale =
-                    new Vector3(quickAccessScale.Value, quickAccessScale.Value, 1);
-            }
+            Transform transform = Hud.instance.transform.Find("hudroot");
+            if (!(transform.Find("QuickAccessBar")?.GetComponent<RectTransform>() != null))
+                return;
+            if (quickAccessX.Value == 9999.0)
+                quickAccessX.Value = transform.Find("healthpanel").GetComponent<RectTransform>().anchoredPosition.x -
+                                     32f;
+            if (quickAccessY.Value == 9999.0)
+                quickAccessY.Value = transform.Find("healthpanel").GetComponent<RectTransform>().anchoredPosition.y -
+                                     870f;
+            transform.Find("QuickAccessBar").GetComponent<RectTransform>().anchoredPosition =
+                new Vector2(quickAccessX.Value, quickAccessY.Value);
+            transform.Find("QuickAccessBar").GetComponent<RectTransform>().localScale =
+                new Vector3(quickAccessScale.Value, quickAccessScale.Value, 1f);
         }
 
         [HarmonyPatch(typeof(Player), nameof(Player.Awake))]
@@ -120,20 +123,19 @@ namespace OdinQOL.Patches
                 if (!modEnabled.Value)
                     return;
                 Dbgl("TombStone_Interact");
-
-                var height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
-
-                __instance.GetComponent<Container>().m_height = height;
-
-                Traverse t = Traverse.Create(___m_container);
-                string dataString = t.Field("m_nview").GetValue<ZNetView>().GetZDO().GetString("items");
-                if (string.IsNullOrEmpty(dataString)) return;
-                ZPackage pkg = new(dataString);
-                t.Field("m_loading").SetValue(true);
-                t.Field("m_inventory").GetValue<Inventory>().Load(pkg);
-                t.Field("m_loading").SetValue(false);
-                t.Field("m_lastRevision").SetValue(t.Field("m_nview").GetValue<ZNetView>().GetZDO().m_dataRevision);
-                t.Field("m_lastDataString").SetValue(dataString);
+                var num = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
+                __instance.GetComponent<Container>().m_height = num;
+                Traverse traverse = Traverse.Create(___m_container);
+                string base64String = traverse.Field("m_nview").GetValue<ZNetView>().GetZDO().GetString("items");
+                if (string.IsNullOrEmpty(base64String))
+                    return;
+                ZPackage pkg = new(base64String);
+                traverse.Field("m_loading").SetValue(true);
+                traverse.Field("m_inventory").GetValue<Inventory>().Load(pkg);
+                traverse.Field("m_loading").SetValue(false);
+                traverse.Field("m_lastRevision")
+                    .SetValue(traverse.Field("m_nview").GetValue<ZNetView>().GetZDO().m_dataRevision);
+                traverse.Field("m_lastDataString").SetValue(base64String);
             }
         }
 
@@ -157,46 +159,48 @@ namespace OdinQOL.Patches
             {
                 if (!modEnabled.Value)
                     return;
-
                 var height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
-
                 AccessTools.FieldRefAccess<Inventory, int>(___m_inventory, "m_height") = height;
                 __instance.m_tombstone.GetComponent<Container>().m_height = height;
-
-
                 if (Utilities.IgnoreKeyPresses(true) || !addEquipmentRow.Value)
                     return;
-
-                //if (Utilities.CheckKeyDown("9"))
-                //CreateTombStone();
-
-                int which;
+                int num2;
                 if (Utilities.CheckKeyDown(hotKey1.Value))
-                    which = 1;
+                {
+                    num2 = 1;
+                }
                 else if (Utilities.CheckKeyDown(hotKey2.Value))
-                    which = 2;
-                else if (Utilities.CheckKeyDown(hotKey3.Value))
-                    which = 3;
-                else return;
+                {
+                    num2 = 2;
+                }
+                else
+                {
+                    if (!Utilities.CheckKeyDown(hotKey3.Value))
+                        return;
+                    num2 = 3;
+                }
 
-                ItemDrop.ItemData itemAt = ___m_inventory.GetItemAt(which + 4, ___m_inventory.GetHeight() - 1);
-                if (itemAt != null) __instance.UseItem(null, itemAt, false);
+                ItemDrop.ItemData itemAt = ___m_inventory.GetItemAt(num2 + 4, ___m_inventory.GetHeight() - 1);
+                if (itemAt == null)
+                    return;
+                __instance.UseItem(null, itemAt, false);
             }
 
             private static void CreateTombStone()
             {
-                Dbgl($"height {Player.m_localPlayer.m_tombstone.GetComponent<Container>().m_height}");
+                Dbgl(string.Format("height {0}", Player.m_localPlayer.m_tombstone.GetComponent<Container>().m_height));
                 GameObject gameObject = Object.Instantiate(Player.m_localPlayer.m_tombstone,
                     Player.m_localPlayer.GetCenterPoint(), Player.m_localPlayer.transform.rotation);
                 TombStone component = gameObject.GetComponent<TombStone>();
-
-                Dbgl($"height {gameObject.GetComponent<Container>().m_height}");
-                Dbgl($"inv height {gameObject.GetComponent<Container>().GetInventory().GetHeight()}");
-                Dbgl($"inv slots {gameObject.GetComponent<Container>().GetInventory().GetEmptySlots()}");
-
-                for (var i = 0; i < gameObject.GetComponent<Container>().GetInventory().GetEmptySlots(); i++)
-                    gameObject.GetComponent<Container>().GetInventory().AddItem("SwordBronze", 1, 1, 0, 0, "");
-                Dbgl($"no items: {gameObject.GetComponent<Container>().GetInventory().NrOfItems()}");
+                Dbgl(string.Format("height {0}", gameObject.GetComponent<Container>().m_height));
+                Dbgl(string.Format("inv height {0}", gameObject.GetComponent<Container>().GetInventory().GetHeight()));
+                Dbgl(string.Format("inv slots {0}",
+                    gameObject.GetComponent<Container>().GetInventory().GetEmptySlots()));
+                for (var index = 0;
+                    index < gameObject.GetComponent<Container>().GetInventory().GetEmptySlots();
+                    ++index)
+                    gameObject.GetComponent<Container>().GetInventory().AddItem("SwordBronze", 1, 1, 0, 0L, "");
+                Dbgl(string.Format("no items: {0}", gameObject.GetComponent<Container>().GetInventory().NrOfItems()));
                 PlayerProfile playerProfile = Game.instance.GetPlayerProfile();
                 component.Setup(playerProfile.GetName(), playerProfile.GetPlayerID());
             }
@@ -205,105 +209,106 @@ namespace OdinQOL.Patches
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Update))]
         private static class InventoryGui_Update_Patch
         {
-            private static void Postfix(InventoryGui __instance, InventoryGrid ___m_playerGrid, Animator ___m_animator)
+            private static void Postfix(
+                InventoryGui __instance,
+                InventoryGrid ___m_playerGrid,
+                Animator ___m_animator)
             {
-                if (!modEnabled.Value || !addEquipmentRow.Value || !Player.m_localPlayer)
+                if (!modEnabled.Value || !Player.m_localPlayer)
                     return;
-
-                Traverse t = Traverse.Create(Player.m_localPlayer);
-
-                Inventory inv = Player.m_localPlayer.GetInventory();
-
-                var items = inv.GetAllItems();
-
-                var helmet = t.Field("m_helmetItem").GetValue<ItemDrop.ItemData>();
-                var chest = t.Field("m_chestItem").GetValue<ItemDrop.ItemData>();
-                var legs = t.Field("m_legItem").GetValue<ItemDrop.ItemData>();
-                var back = t.Field("m_shoulderItem").GetValue<ItemDrop.ItemData>();
-                var utility = t.Field("m_utilityItem").GetValue<ItemDrop.ItemData>();
-
-
-                var width = inv.GetWidth();
-                var offset = width * (inv.GetHeight() - 1);
-
-                if (helmet != null)
-                    t.Field("m_helmetItem").GetValue<ItemDrop.ItemData>().m_gridPos =
-                        new Vector2i(offset % width, offset / width);
-                offset++;
-
-                if (chest != null)
-                    t.Field("m_chestItem").GetValue<ItemDrop.ItemData>().m_gridPos =
-                        new Vector2i(offset % width, offset / width);
-                offset++;
-
-                if (legs != null)
-                    t.Field("m_legItem").GetValue<ItemDrop.ItemData>().m_gridPos =
-                        new Vector2i(offset % width, offset / width);
-                offset++;
-
-                if (back != null)
-                    t.Field("m_shoulderItem").GetValue<ItemDrop.ItemData>().m_gridPos =
-                        new Vector2i(offset % width, offset / width);
-                offset++;
-
-                if (utility != null)
-                    t.Field("m_utilityItem").GetValue<ItemDrop.ItemData>().m_gridPos =
-                        new Vector2i(offset % width, offset / width);
-
-
-                for (var i = 0; i < items.Count; i++)
-                    //Dbgl($"{items[i].m_gridPos} {inv.GetHeight() - 1},0 {items[i] != helmet}");
-                    if (IsAtEquipmentSlot(inv, items[i], out var which))
+                if (addEquipmentRow.Value)
+                {
+                    Traverse traverse = Traverse.Create(Player.m_localPlayer);
+                    Inventory inventory = Player.m_localPlayer.GetInventory();
+                    List<ItemDrop.ItemData> allItems = inventory.GetAllItems();
+                    ItemDrop.ItemData itemData1 = traverse.Field("m_helmetItem").GetValue<ItemDrop.ItemData>();
+                    ItemDrop.ItemData itemData2 = traverse.Field("m_chestItem").GetValue<ItemDrop.ItemData>();
+                    ItemDrop.ItemData itemData3 = traverse.Field("m_legItem").GetValue<ItemDrop.ItemData>();
+                    ItemDrop.ItemData itemData4 = traverse.Field("m_shoulderItem").GetValue<ItemDrop.ItemData>();
+                    ItemDrop.ItemData itemData5 = traverse.Field("m_utilityItem").GetValue<ItemDrop.ItemData>();
+                    var width = inventory.GetWidth();
+                    var num1 = width * (inventory.GetHeight() - 1);
+                    if (itemData1 != null)
+                        traverse.Field("m_helmetItem").GetValue<ItemDrop.ItemData>().m_gridPos =
+                            new Vector2i(num1 % width, num1 / width);
+                    var num2 = num1 + 1;
+                    if (itemData2 != null)
+                        traverse.Field("m_chestItem").GetValue<ItemDrop.ItemData>().m_gridPos =
+                            new Vector2i(num2 % width, num2 / width);
+                    var num3 = num2 + 1;
+                    if (itemData3 != null)
+                        traverse.Field("m_legItem").GetValue<ItemDrop.ItemData>().m_gridPos =
+                            new Vector2i(num3 % width, num3 / width);
+                    var num4 = num3 + 1;
+                    if (itemData4 != null)
+                        traverse.Field("m_shoulderItem").GetValue<ItemDrop.ItemData>().m_gridPos =
+                            new Vector2i(num4 % width, num4 / width);
+                    var num5 = num4 + 1;
+                    if (itemData5 != null)
+                        traverse.Field("m_utilityItem").GetValue<ItemDrop.ItemData>().m_gridPos =
+                            new Vector2i(num5 % width, num5 / width);
+                    for (var index = 0; index < allItems.Count; ++index)
                     {
-                        if ( // in right slot and equipped
-                            which == 0 && items[i] == helmet ||
-                            which == 1 && items[i] == chest ||
-                            which == 2 && items[i] == legs ||
-                            which == 3 && items[i] == back ||
-                            which == 4 && items[i] == utility
-                        )
-                            continue;
-
-                        if (which > -1 && items[i].m_shared.m_itemType == typeEnums[which] &&
-                            equipItems[which] != items[i] &&
-                            Player.m_localPlayer.EquipItem(items[i], false)) // in right slot and new
-                            continue;
-
-                        // in wrong slot or unequipped in slot or can't equip
-                        var newPos = (Vector2i)typeof(Inventory)
-                            .GetMethod("FindEmptySlot", BindingFlags.NonPublic | BindingFlags.Instance)
-                            .Invoke(inv, new object[] { true });
-                        if (newPos.x < 0 || newPos.y < 0 || newPos.y == inv.GetHeight() - 1)
+                        int which;
+                        if (IsAtEquipmentSlot(inventory, allItems[index], out which) &&
+                            (which != 0 || allItems[index] != itemData1) &&
+                            (which != 1 || allItems[index] != itemData2) &&
+                            (which != 2 || allItems[index] != itemData3) &&
+                            (which != 3 || allItems[index] != itemData4) &&
+                            (which != 4 || allItems[index] != itemData5) && (which <= -1 ||
+                                                                             allItems[index].m_shared.m_itemType !=
+                                                                             typeEnums[which] ||
+                                                                             equipItems[which] == allItems[index] ||
+                                                                             !Player.m_localPlayer.EquipItem(
+                                                                                 allItems[index], false)))
                         {
-                            Player.m_localPlayer.DropItem(inv, items[i], items[i].m_stack);
-                        }
-                        else
-                        {
-                            items[i].m_gridPos = newPos;
-                            ___m_playerGrid.UpdateInventory(inv, Player.m_localPlayer, null);
+                            var vector2i = (Vector2i)typeof(Inventory)
+                                .GetMethod("FindEmptySlot", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(
+                                    inventory, new object[1]
+                                    {
+                                        true
+                                    });
+                            if (vector2i.x < 0 || vector2i.y < 0 || vector2i.y == inventory.GetHeight() - 1)
+                            {
+                                Player.m_localPlayer.DropItem(inventory, allItems[index], allItems[index].m_stack);
+                            }
+                            else
+                            {
+                                allItems[index].m_gridPos = vector2i;
+                                ___m_playerGrid.UpdateInventory(inventory, Player.m_localPlayer, null);
+                            }
                         }
                     }
 
-                equipItems = new[] { helmet, chest, legs, back, utility };
+                    equipItems = new ItemDrop.ItemData[5]
+                    {
+                        itemData1,
+                        itemData2,
+                        itemData3,
+                        itemData4,
+                        itemData5
+                    };
+                }
 
                 if (!___m_animator.GetBool("visible"))
                     return;
-
-
-                __instance.m_player.Find("Bkg").GetComponent<RectTransform>().anchorMin = new Vector2(0,
-                    (extraRows.Value + (addEquipmentRow.Value && !displayEquipmentRowSeparate.Value ? 1 : 0)) * -0.25f);
-
-                if (displayEquipmentRowSeparate.Value && __instance.m_player.Find("EquipmentBkg") == null)
+                __instance.m_player.Find("Bkg").GetComponent<RectTransform>().anchorMin = new Vector2(0.0f,
+                    (extraRows.Value + (!addEquipmentRow.Value || displayEquipmentRowSeparate.Value ? 0 : 1)) * -0.25f);
+                if (addEquipmentRow.Value)
                 {
-                    Transform bkg = Object.Instantiate(__instance.m_player.Find("Bkg"), __instance.m_player);
-                    bkg.SetAsFirstSibling();
-                    bkg.name = "EquipmentBkg";
-                    bkg.GetComponent<RectTransform>().anchorMin = new Vector2(1, 0);
-                    bkg.GetComponent<RectTransform>().anchorMax = new Vector2(1.5f, 1);
-                }
-                else if (!displayEquipmentRowSeparate.Value && __instance.m_player.Find("EquipmentBkg"))
-                {
-                    Object.Destroy(__instance.m_player.Find("EquipmentBkg").gameObject);
+                    if (displayEquipmentRowSeparate.Value && __instance.m_player.Find("EquipmentBkg") == null)
+                    {
+                        Transform transform = Object.Instantiate(__instance.m_player.Find("Bkg"), __instance.m_player);
+                        transform.SetAsFirstSibling();
+                        transform.name = "EquipmentBkg";
+                        transform.GetComponent<RectTransform>().anchorMin = new Vector2(1f, 0.0f);
+                        transform.GetComponent<RectTransform>().anchorMax = new Vector2(1.5f, 1f);
+                    }
+                    else if (!displayEquipmentRowSeparate.Value &&
+                             __instance.m_player.Find("EquipmentBkg"))
+                    {
+                        Object.Destroy(__instance.m_player.Find("EquipmentBkg").gameObject);
+                    }
                 }
             }
         }
@@ -316,41 +321,106 @@ namespace OdinQOL.Patches
             {
                 if (!modEnabled.Value || !addEquipmentRow.Value)
                     return;
-
-                Traverse t = Traverse.Create(Player.m_localPlayer);
-
-                Inventory inv = Player.m_localPlayer.GetInventory();
-
-                var offset = inv.GetWidth() * (inv.GetHeight() - 1);
-
-                SetSlotText(helmetText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(chestText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(legsText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(backText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(utilityText.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++));
-                SetSlotText(hotKey1.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
-                SetSlotText(hotKey2.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
-                SetSlotText(hotKey3.Value, ___m_playerGrid.m_gridRoot.transform.GetChild(offset++), false);
-
-                if (displayEquipmentRowSeparate.Value)
+                try
                 {
-                    offset = inv.GetWidth() * (inv.GetHeight() - 1);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(678, 0);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(748, -35);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(678, -70);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(748, -105);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(678, -140);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(643, -210);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(713, -210);
-                    ___m_playerGrid.m_gridRoot.transform.GetChild(offset++).GetComponent<RectTransform>()
-                        .anchoredPosition = new Vector2(783, -210);
+                    Traverse.Create(Player.m_localPlayer);
+                    Inventory inventory = Player.m_localPlayer.GetInventory();
+                    var num1 = inventory.GetWidth() * (inventory.GetHeight() - 1);
+                    string str1 = helmetText.Value;
+                    Transform transform1 = ___m_playerGrid.m_gridRoot.transform;
+                    var index1 = num1;
+                    var num2 = index1 + 1;
+                    Transform child1 = transform1.GetChild(index1);
+                    SetSlotText(str1, child1);
+                    string str2 = chestText.Value;
+                    Transform transform2 = ___m_playerGrid.m_gridRoot.transform;
+                    var index2 = num2;
+                    var num3 = index2 + 1;
+                    Transform child2 = transform2.GetChild(index2);
+                    SetSlotText(str2, child2);
+                    string str3 = legsText.Value;
+                    Transform transform3 = ___m_playerGrid.m_gridRoot.transform;
+                    var index3 = num3;
+                    var num4 = index3 + 1;
+                    Transform child3 = transform3.GetChild(index3);
+                    SetSlotText(str3, child3);
+                    string str4 = backText.Value;
+                    Transform transform4 = ___m_playerGrid.m_gridRoot.transform;
+                    var index4 = num4;
+                    var num5 = index4 + 1;
+                    Transform child4 = transform4.GetChild(index4);
+                    SetSlotText(str4, child4);
+                    string str5 = utilityText.Value;
+                    Transform transform5 = ___m_playerGrid.m_gridRoot.transform;
+                    var index5 = num5;
+                    var num6 = index5 + 1;
+                    Transform child5 = transform5.GetChild(index5);
+                    SetSlotText(str5, child5);
+                    string str6 = hotKey1.Value;
+                    Transform transform6 = ___m_playerGrid.m_gridRoot.transform;
+                    var index6 = num6;
+                    var num7 = index6 + 1;
+                    Transform child6 = transform6.GetChild(index6);
+                    SetSlotText(str6, child6, false);
+                    string str7 = hotKey2.Value;
+                    Transform transform7 = ___m_playerGrid.m_gridRoot.transform;
+                    var index7 = num7;
+                    var num8 = index7 + 1;
+                    Transform child7 = transform7.GetChild(index7);
+                    SetSlotText(str7, child7, false);
+                    string str8 = hotKey3.Value;
+                    Transform transform8 = ___m_playerGrid.m_gridRoot.transform;
+                    var index8 = num8;
+                    var num9 = index8 + 1;
+                    Transform child8 = transform8.GetChild(index8);
+                    SetSlotText(str8, child8, false);
+                    if (!displayEquipmentRowSeparate.Value)
+                        return;
+                    var num10 = inventory.GetWidth() * (inventory.GetHeight() - 1);
+                    Transform transform9 = ___m_playerGrid.m_gridRoot.transform;
+                    var index9 = num10;
+                    var num11 = index9 + 1;
+                    transform9.GetChild(index9).GetComponent<RectTransform>().anchoredPosition =
+                        new Vector2(678f, 0.0f);
+                    Transform transform10 = ___m_playerGrid.m_gridRoot.transform;
+                    var index10 = num11;
+                    var num12 = index10 + 1;
+                    transform10.GetChild(index10).GetComponent<RectTransform>().anchoredPosition =
+                        new Vector2(748f, -35f);
+                    Transform transform11 = ___m_playerGrid.m_gridRoot.transform;
+                    var index11 = num12;
+                    var num13 = index11 + 1;
+                    transform11.GetChild(index11).GetComponent<RectTransform>().anchoredPosition =
+                        new Vector2(678f, -70f);
+                    Transform transform12 = ___m_playerGrid.m_gridRoot.transform;
+                    var index12 = num13;
+                    var num14 = index12 + 1;
+                    transform12.GetChild(index12).GetComponent<RectTransform>().anchoredPosition =
+                        new Vector2(748f, -105f);
+                    Transform transform13 = ___m_playerGrid.m_gridRoot.transform;
+                    var index13 = num14;
+                    var num15 = index13 + 1;
+                    transform13.GetChild(index13).GetComponent<RectTransform>().anchoredPosition =
+                        new Vector2(678f, -140f);
+                    Transform transform14 = ___m_playerGrid.m_gridRoot.transform;
+                    var index14 = num15;
+                    var num16 = index14 + 1;
+                    transform14.GetChild(index14).GetComponent<RectTransform>().anchoredPosition =
+                        new Vector2(643f, -210f);
+                    Transform transform15 = ___m_playerGrid.m_gridRoot.transform;
+                    var index15 = num16;
+                    var num17 = index15 + 1;
+                    transform15.GetChild(index15).GetComponent<RectTransform>().anchoredPosition =
+                        new Vector2(713f, -210f);
+                    Transform transform16 = ___m_playerGrid.m_gridRoot.transform;
+                    var index16 = num17;
+                    num9 = index16 + 1;
+                    transform16.GetChild(index16).GetComponent<RectTransform>().anchoredPosition =
+                        new Vector2(783f, -210f);
+                }
+                catch (Exception ex)
+                {
+                    Dbgl($"Exception in EPI Update Inventory: {ex}");
                 }
             }
         }
@@ -364,8 +434,7 @@ namespace OdinQOL.Patches
                     __instance != Player.m_localPlayer.GetInventory())
                     return;
                 Dbgl("FindEmptySlot");
-
-                ___m_height--;
+                --___m_height;
             }
 
             private static void Postfix(Inventory __instance, ref int ___m_height)
@@ -373,21 +442,25 @@ namespace OdinQOL.Patches
                 if (!modEnabled.Value || !addEquipmentRow.Value || !Player.m_localPlayer ||
                     __instance != Player.m_localPlayer.GetInventory())
                     return;
-
-                ___m_height++;
+                ++___m_height;
             }
         }
 
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.GetEmptySlots))]
         private static class GetEmptySlots_Patch
         {
-            private static bool Prefix(Inventory __instance, ref int __result, List<ItemDrop.ItemData> ___m_inventory,
-                int ___m_width, int ___m_height)
+            private static bool Prefix(
+                Inventory __instance,
+                ref int __result,
+                List<ItemDrop.ItemData> ___m_inventory,
+                int ___m_width,
+                int ___m_height)
             {
                 if (!modEnabled.Value || !addEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
                     return true;
                 Dbgl("GetEmptySlots");
-                var count = ___m_inventory.FindAll(i => i.m_gridPos.y < ___m_height - 1).Count;
+                var count = ___m_inventory.FindAll((Predicate<ItemDrop.ItemData>)(i => i.m_gridPos.y < ___m_height - 1))
+                    .Count;
                 __result = (___m_height - 1) * ___m_width - count;
                 return false;
             }
@@ -396,14 +469,17 @@ namespace OdinQOL.Patches
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.HaveEmptySlot))]
         private static class HaveEmptySlot_Patch
         {
-            private static bool Prefix(Inventory __instance, ref bool __result, List<ItemDrop.ItemData> ___m_inventory,
-                int ___m_width, int ___m_height)
+            private static bool Prefix(
+                Inventory __instance,
+                ref bool __result,
+                List<ItemDrop.ItemData> ___m_inventory,
+                int ___m_width,
+                int ___m_height)
             {
                 if (!modEnabled.Value || !addEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
                     return true;
-
-                var count = ___m_inventory.FindAll(i => i.m_gridPos.y < ___m_height - 1).Count;
-
+                var count = ___m_inventory.FindAll((Predicate<ItemDrop.ItemData>)(i => i.m_gridPos.y < ___m_height - 1))
+                    .Count;
                 __result = count < ___m_width * (___m_height - 1);
                 return false;
             }
@@ -412,23 +488,24 @@ namespace OdinQOL.Patches
         [HarmonyPatch(typeof(Inventory), nameof(Inventory.AddItem), typeof(ItemDrop.ItemData))]
         private static class Inventory_AddItem_Patch1
         {
-            private static bool Prefix(Inventory __instance, ref bool __result, List<ItemDrop.ItemData> ___m_inventory,
+            private static bool Prefix(
+                Inventory __instance,
+                ref bool __result,
+                List<ItemDrop.ItemData> ___m_inventory,
                 ItemDrop.ItemData item)
             {
                 if (!modEnabled.Value || !addEquipmentRow.Value || !Player.m_localPlayer ||
                     __instance != Player.m_localPlayer.GetInventory())
                     return true;
-
                 Dbgl("AddItem");
-
-                if (IsEquipmentSlotFree(__instance, item, out var which))
-                    item.m_gridPos = new Vector2i(which, __instance.GetHeight() - 1);
-                else
+                int which;
+                if (!IsEquipmentSlotFree(__instance, item, out which))
                     return true;
+                item.m_gridPos = new Vector2i(which, __instance.GetHeight() - 1);
                 ___m_inventory.Add(item);
                 Player.m_localPlayer.EquipItem(item, false);
-                typeof(Inventory).GetMethod("Changed", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .Invoke(__instance, new object[] { });
+                typeof(Inventory).GetMethod("Changed", BindingFlags.Instance | BindingFlags.NonPublic)
+                    .Invoke(__instance, new object[0]);
                 __result = true;
                 return false;
             }
@@ -439,13 +516,20 @@ namespace OdinQOL.Patches
             typeof(int))]
         private static class Inventory_AddItem_Patch2
         {
-            private static void Prefix(Inventory __instance, ref int ___m_width, ref int ___m_height, int x, int y)
+            private static void Prefix(
+                Inventory __instance,
+                ref int ___m_width,
+                ref int ___m_height,
+                int x,
+                int y)
             {
                 if (!modEnabled.Value)
                     return;
-
-                if (x >= ___m_width) ___m_width = x + 1;
-                if (y >= ___m_height) ___m_height = y + 1;
+                if (x >= ___m_width)
+                    ___m_width = x + 1;
+                if (y < ___m_height)
+                    return;
+                ___m_height = y + 1;
             }
         }
 
@@ -456,16 +540,14 @@ namespace OdinQOL.Patches
             {
                 if (!modEnabled.Value || !addEquipmentRow.Value)
                     return;
-
-                Transform newBar = Object.Instantiate(__instance.m_rootObject.transform.Find("HotKeyBar"));
-                newBar.name = "QuickAccessBar";
-                newBar.SetParent(__instance.m_rootObject.transform);
-                newBar.GetComponent<RectTransform>().localPosition = Vector3.zero;
-                GameObject go = newBar.GetComponent<HotkeyBar>().m_elementPrefab;
-                QuickAccessBar qab = newBar.gameObject.AddComponent<QuickAccessBar>();
-                qab.m_elementPrefab = go;
-                elementPrefab = go;
-                Object.Destroy(newBar.GetComponent<HotkeyBar>());
+                Transform transform = Object.Instantiate(__instance.m_rootObject.transform.Find("HotKeyBar"),
+                    __instance.m_rootObject.transform, true);
+                transform.name = "QuickAccessBar";
+                transform.GetComponent<RectTransform>().localPosition = Vector3.zero;
+                GameObject elementPrefab = transform.GetComponent<HotkeyBar>().m_elementPrefab;
+                transform.gameObject.AddComponent<QuickAccessBar>().m_elementPrefab = elementPrefab;
+                elementPrefab = elementPrefab;
+                Object.Destroy(transform.GetComponent<HotkeyBar>());
             }
         }
 
@@ -476,60 +558,52 @@ namespace OdinQOL.Patches
             {
                 if (!modEnabled.Value || !addEquipmentRow.Value || Player.m_localPlayer == null)
                     return;
-
-                var gameScale = GameObject.Find("GUI").GetComponent<CanvasScaler>().scaleFactor;
-
-                var mousePos = Input.mousePosition;
-
+                var scaleFactor = GameObject.Find("GUI").GetComponent<CanvasScaler>().scaleFactor;
+                var mousePosition = Input.mousePosition;
                 if (!modEnabled.Value)
                 {
-                    lastMousePos = mousePos;
-                    return;
+                    lastMousePos = mousePosition;
                 }
-
-                SetElementPositions();
-
-                if (lastMousePos == Vector3.zero)
-                    lastMousePos = mousePos;
-
-
-                Transform hudRoot = Hud.instance.transform.Find("hudroot");
-
-
-                if (Utilities.CheckKeyHeld(modKeyOne.Value) && Utilities.CheckKeyHeld(modKeyTwo.Value))
+                else
                 {
-                    var quickSlotsRect = Rect.zero;
-                    if (hudRoot.Find("QuickAccessBar")?.GetComponent<RectTransform>() != null)
-                        quickSlotsRect = new Rect(
-                            hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().anchoredPosition.x * gameScale,
-                            hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().anchoredPosition.y *
-                            gameScale + Screen.height -
-                            hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.y * gameScale *
-                            quickAccessScale.Value,
-                            hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.x * gameScale *
-                            quickAccessScale.Value * (3 / 8f),
-                            hudRoot.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.y * gameScale *
-                            quickAccessScale.Value
-                        );
-
-                    if (quickSlotsRect.Contains(lastMousePos) &&
-                        (currentlyDragging == "" || currentlyDragging == "QuickAccessBar"))
+                    SetElementPositions();
+                    if (lastMousePos == Vector3.zero)
+                        lastMousePos = mousePosition;
+                    Transform transform = Hud.instance.transform.Find("hudroot");
+                    if (Utilities.CheckKeyHeld(modKeyOne.Value) && Utilities.CheckKeyHeld(modKeyTwo.Value))
                     {
-                        quickAccessX.Value += (mousePos.x - lastMousePos.x) / gameScale;
-                        quickAccessY.Value += (mousePos.y - lastMousePos.y) / gameScale;
-                        currentlyDragging = "QuickAccessBar";
+                        var rect = Rect.zero;
+                        if (transform.Find("QuickAccessBar")?.GetComponent<RectTransform>() != null)
+                            rect = new Rect(
+                                transform.Find("QuickAccessBar").GetComponent<RectTransform>().anchoredPosition.x *
+                                scaleFactor,
+                                (float)(transform.Find("QuickAccessBar").GetComponent<RectTransform>().anchoredPosition
+                                            .y * (double)scaleFactor + Screen.height -
+                                        transform.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.y *
+                                        (double)scaleFactor * quickAccessScale.Value),
+                                (float)(transform.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.x *
+                                        (double)scaleFactor * quickAccessScale.Value * 0.375),
+                                transform.Find("QuickAccessBar").GetComponent<RectTransform>().sizeDelta.y *
+                                scaleFactor * quickAccessScale.Value);
+                        if (rect.Contains(lastMousePos) &&
+                            (currentlyDragging == "" || currentlyDragging == "QuickAccessBar"))
+                        {
+                            quickAccessX.Value += (mousePosition.x - lastMousePos.x) / scaleFactor;
+                            quickAccessY.Value += (mousePosition.y - lastMousePos.y) / scaleFactor;
+                            currentlyDragging = "QuickAccessBar";
+                        }
+                        else
+                        {
+                            currentlyDragging = "";
+                        }
                     }
                     else
                     {
                         currentlyDragging = "";
                     }
-                }
-                else
-                {
-                    currentlyDragging = "";
-                }
 
-                lastMousePos = mousePos;
+                    lastMousePos = mousePosition;
+                }
             }
         }
 
@@ -542,17 +616,13 @@ namespace OdinQOL.Patches
                 if (!modEnabled.Value)
                     return true;
                 string text = __instance.m_input.text;
-                if (text.ToLower().Equals($"{typeof(OdinQOLplugin).Namespace.ToLower()} reset"))
-                {
-                    context.Config.Reload();
-                    context.Config.Save();
-
-                    __instance.AddString(text);
-                    __instance.AddString($"{context.Info.Metadata.Name} config reloaded");
-                    return false;
-                }
-
-                return true;
+                if (!text.ToLower().Equals(typeof(OdinQOLplugin).Namespace.ToLower() + " reset"))
+                    return true;
+                context.Config.Reload();
+                context.Config.Save();
+                __instance.AddString(text);
+                __instance.AddString(context.Info.Metadata.Name + " config reloaded");
+                return false;
             }
         }
     }
