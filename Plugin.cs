@@ -372,18 +372,18 @@ namespace OdinQOL
                 "Display equipment and quickslots in their own area. (IF YOU ARE USING RANDY KNAPPS EAQs KEEP THIS VALUE OFF)");
 
             QuickAccessBar.helmetText = config("Extended Inventory", "HelmetText", "Head",
-                "Text to show for helmet slot.  (Not Synced with server)", false);
+                "Text to show for helmet slot.", false);
             QuickAccessBar.chestText = config("Extended Inventory", "ChestText", "Chest",
-                "Text to show for chest slot.  (Not Synced with server)", false);
+                "Text to show for chest slot.", false);
             QuickAccessBar.legsText = config("Extended Inventory", "LegsText", "Legs",
-                "Text to show for legs slot.  (Not Synced with server)", false);
+                "Text to show for legs slot.", false);
             QuickAccessBar.backText = config("Extended Inventory", "BackText", "Back",
-                "Text to show for back slot.  (Not Synced with server)", false);
+                "Text to show for back slot.", false);
             QuickAccessBar.utilityText = config("Extended Inventory", "UtilityText", "Utility",
-                "Text to show for utility slot.  (Not Synced with server)", false);
+                "Text to show for utility slot.", false);
 
             QuickAccessBar.quickAccessScale = config("Extended Inventory", "QuickAccessScale", 1f,
-                "Scale of quick access bar.   (Not Synced with server)", false);
+                "Scale of quick access bar. ", false);
 
             QuickAccessBar.hotKey1 = config("Extended Inventory", "HotKey1", "z",
                 "Hotkey 1 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
@@ -393,10 +393,10 @@ namespace OdinQOL
                 "Hotkey 3 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
 
             QuickAccessBar.modKeyOne = config("Extended Inventory", "ModKey1", KeyCode.Mouse0,
-                "First modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.  (Not Synced with server)",
+                "First modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.",
                 false);
             QuickAccessBar.modKeyTwo = config("Extended Inventory", "ModKey2", KeyCode.LeftControl,
-                "Second modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.  (Not Synced with server)",
+                "Second modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.",
                 false);
 
             QuickAccessBar.quickAccessX = config("Extended Inventory", "quickAccessX", 9999f,
@@ -410,10 +410,10 @@ namespace OdinQOL
             MoveableChestInventory.chestInventoryY = config("General", "ChestInventoryY", -1f,
                 "Current Y of chest (Not Synced with server)", false);
             MoveableChestInventory.modKeyOne = config("General", "ModKeyOne", KeyCode.Mouse0,
-                "First modifier key. Use https://docs.unity3d.com/Manual/class-InputManager.html format.  (Not Synced with server)",
+                "First modifier key. Use https://docs.unity3d.com/Manual/class-InputManager.html format.",
                 false);
             MoveableChestInventory.modKeyTwo = config("General", "ModKeyTwo", KeyCode.LeftControl,
-                "Second modifier key. Use https://docs.unity3d.com/Manual/class-InputManager.html format.  (Not Synced with server)",
+                "Second modifier key. Use https://docs.unity3d.com/Manual/class-InputManager.html format.",
                 false);
 
             if (!modEnabled.Value)
@@ -498,12 +498,12 @@ namespace OdinQOL
                 Debug.Log((pref ? typeof(OdinQOLplugin).Namespace + " " : "") + str);
         }
 
-        private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
-            bool synchronizedSetting = true)
+        private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description, bool synchronizedSetting = true)
         {
-            var configEntry = Config.Bind(group, name, value, description);
+            ConfigDescription extendedDescription = new(description.Description + (synchronizedSetting ? " [Synced with Server]" : " [Not Synced with Server]"), description.AcceptableValues, description.Tags);
+            ConfigEntry<T> configEntry = Config.Bind(group, name, value, extendedDescription);
 
-            var syncedConfigEntry = configSync.AddConfigEntry(configEntry);
+            SyncedConfigEntry<T> syncedConfigEntry = configSync.AddConfigEntry(configEntry);
             syncedConfigEntry.SynchronizedConfig = synchronizedSetting;
 
             return configEntry;
