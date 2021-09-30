@@ -19,13 +19,13 @@ namespace OdinQOL.Patches
         public static ConfigEntry<string> utilityText;
         public static ConfigEntry<float> quickAccessScale;
 
-        public static ConfigEntry<string> hotKey1;
-        public static ConfigEntry<string> hotKey2;
-        public static ConfigEntry<string> hotKey3;
+        public static ConfigEntry<KeyCode> hotKey1;
+        public static ConfigEntry<KeyCode> hotKey2;
+        public static ConfigEntry<KeyCode> hotKey3;
         public static ConfigEntry<KeyCode> modKeyOne;
         public static ConfigEntry<KeyCode> modKeyTwo;
 
-        public static ConfigEntry<string>[] hotkeys;
+        public static ConfigEntry<KeyCode>[] hotkeys;
 
         public static ConfigEntry<float> quickAccessX;
         public static ConfigEntry<float> quickAccessY;
@@ -95,7 +95,7 @@ namespace OdinQOL.Patches
                                 m_go = Instantiate(m_elementPrefab, transform)
                             };
                             elementData.m_go.transform.localPosition = new Vector3(index * m_elementSpace, 0.0f, 0.0f);
-                            elementData.m_go.transform.Find("binding").GetComponent<Text>().text = hotkeys[index].Value;
+                            elementData.m_go.transform.Find("binding").GetComponent<Text>().text = hotkeys[index].ToString();
                             elementData.m_icon =
                                 elementData.m_go.transform.transform.Find("icon").GetComponent<Image>();
                             elementData.m_durability =

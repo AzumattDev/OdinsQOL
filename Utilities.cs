@@ -16,11 +16,11 @@ namespace OdinQOL
                    Menu.IsVisible() || TextViewer.instance?.IsVisible() == true;
         }
 
-        public static bool CheckKeyDown(string value)
+        public static bool CheckKeyDown(KeyCode value)
         {
             try
             {
-                return Input.GetKeyDown(value.ToLower());
+                return Input.GetKeyDown(value);
             }
             catch
             {

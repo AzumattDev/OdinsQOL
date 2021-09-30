@@ -130,12 +130,12 @@ namespace OdinQOL
             NoTeleportPrevention = config("Items", "Disable Teleport check for items", false,
                 new ConfigDescription("Disable Teleport check for items"));
             filltoptobottom = config("Items", "Fill your things top to bottom when moving from inv to chest", true,
-                new ConfigDescription("Move your things top to bottom when changing from inv to chest"));
+                new ConfigDescription("Move your things top to bottom when changing from inv to chest"), false);
 
             /*Deconstruct = config("Items", "Allow deconstruction of items in crafting menu", true,
                 new ConfigDescription("Deconstructing crafting items for return of mats"));*/
             AutoRepair = config("Items", "Auto repair your things when interacting with build station", true,
-                new ConfigDescription("Auto repair your things when interacting with build station"));
+                new ConfigDescription("Auto repair your things when interacting with build station"), false);
             /*returnedpercent = config("Items", "Percent of item materials you would recieve back from deconstruction",
                 100, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"));*/
 
@@ -152,29 +152,29 @@ namespace OdinQOL
                 "Color of other players' build pieces");
             MapDetail.unownedBuildingColor = Config.Bind("Map Details", "UnownedBuildingColor", Color.yellow,
                 "Color of npc build pieces");
-            MapDetail.customPlayerColors = Config.Bind("Map Details", "CustomPlayerColors", "",
+            MapDetail.customPlayerColors = config("Map Details", "CustomPlayerColors", "",
                 "Custom color list, comma-separated. Use either <name>:<colorCode> pair entries or just <colorCode> entries. E.g. Erinthe:FF0000 or just FF0000. The latter will assign a color randomly to each connected peer.");
 
-            toggleClockKeyMod = Config.Bind("Clock", "ShowClockKeyMod", "",
-                "Extra modifier key used to toggle the clock display. Leave blank to not require one. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            toggleClockKey = Config.Bind("Clock", "ShowClockKey", "home",
-                "Key used to toggle the clock display. use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            clockLocationString = Config.Bind("Clock", "ClockLocationString", "50%,3%",
-                "Location on the screen to show the clock (x,y) or (x%,y%)");
+            toggleClockKeyMod = config("Clock", "ShowClockKeyMod", "",
+                "Extra modifier key used to toggle the clock display. Leave blank to not require one. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html", false);
+            toggleClockKey = config("Clock", "ShowClockKey", "home",
+                "Key used to toggle the clock display. use https://docs.unity3d.com/Manual/ConventionalGameInput.html", false);
+            clockLocationString = config("Clock", "ClockLocationString", "50%,3%",
+                "Location on the screen to show the clock (x,y) or (x%,y%)", false);
 
             LoadConfig();
 
             CraftingPatch.maxEntries =
-                Config.Bind("Show Chest Contents", "MaxEntries", -1,
-                    "Max number of entries to show (-1 means show all)");
-            CraftingPatch.sortType = Config.Bind("Show Chest Contents", "SortType", CraftingPatch.SortType.Value,
-                "Type by which to sort entries.");
-            CraftingPatch.sortAsc = Config.Bind("Show Chest Contents", "SortAsc", false, "Sort ascending?");
-            CraftingPatch.entryString = Config.Bind("Show Chest Contents", "EntryText",
+                config("Show Chest Contents", "MaxEntries", -1,
+                    "Max number of entries to show (-1 means show all)", false);
+            CraftingPatch.sortType = config("Show Chest Contents", "SortType", CraftingPatch.SortType.Value,
+                "Type by which to sort entries.", false);
+            CraftingPatch.sortAsc = config("Show Chest Contents", "SortAsc", false, "Sort ascending?", false);
+            CraftingPatch.entryString = config("Show Chest Contents", "EntryText",
                 "<color=#AAAAAAFF>{0} {1}</color>",
-                "Entry text. {0} is replaced by the total amount, {1} is replaced by the item name.");
-            CraftingPatch.overFlowText = Config.Bind("Show Chest Contents", "OverFlowText",
-                "<color=#AAAAAAFF>...</color>", "Overflow text if more items than max entries.");
+                "Entry text. {0} is replaced by the total amount, {1} is replaced by the item name.", false);
+            CraftingPatch.overFlowText = config("Show Chest Contents", "OverFlowText",
+                "<color=#AAAAAAFF>...</color>", "Overflow text if more items than max entries.", false);
 
             iHaveArrivedOnSpawn = config("Game", "I have arrived disable", true,
                 new ConfigDescription("Disable the I have arrived message"));
@@ -182,13 +182,13 @@ namespace OdinQOL
             GamePatches.buildInsideProtectedLocations = config("Game", "BuildInProtectedLocations", false,
                 new ConfigDescription("Allow Building Inside Protected Locations"));
             GamePatches.craftingDuration = config("Game", "Change Crafting Duration", .25f,
-                new ConfigDescription("Change Crafting Duration time."));
+                new ConfigDescription("Change Crafting Duration time."), false);
             GamePatches.DisableGuardianAnimation = config("Game", "Disable Guardian Animation", true,
                 new ConfigDescription("Disable Guardian Animation for the players"));
             GamePatches.SkipTuts = config("Game", "Skip Tuts", true,
-                new ConfigDescription("Skip Tutorials"));
+                new ConfigDescription("Skip Tutorials"), false);
             GamePatches.reequipItemsAfterSwimming = config("Player", "Re Equip after Swimming", true,
-                new ConfigDescription("Re-equip Items After Swimming"));
+                new ConfigDescription("Re-equip Items After Swimming"), false);
             GamePatches.enableAreaRepair = config("Player", "Area Repair", true,
                 new ConfigDescription("Automatically repair build pieces within the repair radius"));
             GamePatches.areaRepairRadius =
@@ -216,85 +216,85 @@ namespace OdinQOL
                 config("Player", "Jump stamina drain factor", 1f, "Stamina drain factor for jumping");
             GamePatches.baseAutoPickUpRange =
                 config("Player", "Auto pickup range adjustment", 2f, "Auto pickup range adjustment");
-            GamePatches.disableCameraShake = config<float>("Player", "Cam shake factor", 0, "Cam Shake factor");
+            GamePatches.disableCameraShake = config<float>("Player", "Cam shake factor", 0, "Cam Shake factor", false);
             GamePatches.baseMaximumWeight = config("Player", "Base maximum weight addition for player", 350f,
                 "Base max weight addition for player");
             GamePatches.maximumPlacementDistance = config<float>("WorkBench", "Build distance alteration", 15,
                 "Build Distance  (Maximum Placement Distance)");
 
-            ImprovedBuildHudConfig.InventoryAmountFormat = Config.Bind("Building HUD", "Inventory Amount Format",
+            ImprovedBuildHudConfig.InventoryAmountFormat = config("Building HUD", "Inventory Amount Format",
                 "({0})",
                 "Format for the amount of items in the player inventory to show after the required amount. Uses standard C# format rules. Leave empty to hide altogether.");
-            ImprovedBuildHudConfig.InventoryAmountColor = Config.Bind("Building HUD", "Inventory Amount Color",
+            ImprovedBuildHudConfig.InventoryAmountColor = config("Building HUD", "Inventory Amount Color",
                 "lightblue",
-                "Color to set the inventory amount after the requirement amount. Leave empty to set no color. You can use the #XXXXXX hex color format.");
-            ImprovedBuildHudConfig.CanBuildAmountFormat = Config.Bind("Building HUD", "Can Build Amount Color", "({0})",
-                "Format for the amount of times you can build the currently selected item with your current inventory. Uses standard C# format rules. Leave empty to hide altogether.");
-            ImprovedBuildHudConfig.CanBuildAmountColor = Config.Bind("Building HUD", "Can Build Amount Color", "white",
-                "Color to set the can-build amount. Leave empty to set no color. You can use the #XXXXXX hex color format.");
+                "Color to set the inventory amount after the requirement amount. Leave empty to set no color. You can use the #XXXXXX hex color format.", false);
+            ImprovedBuildHudConfig.CanBuildAmountFormat = config("Building HUD", "Can Build Amount Color", "({0})",
+                "Format for the amount of times you can build the currently selected item with your current inventory. Uses standard C# format rules. Leave empty to hide altogether.", false);
+            ImprovedBuildHudConfig.CanBuildAmountColor = config("Building HUD", "Can Build Amount Color", "white",
+                "Color to set the can-build amount. Leave empty to set no color. You can use the #XXXXXX hex color format.", false);
 
-            signScale = Config.Bind("Signs", "SignScale", new Vector3(1, 1, 1), "Sign scale (w,h,d)");
+            signScale = config("Signs", "SignScale", new Vector3(1, 1, 1), "Sign scale (w,h,d)");
             textPositionOffset =
-                Config.Bind("Signs", "TextPositionOffset", new Vector2(0, 0), "Default font size");
-            useRichText = Config.Bind("Signs", "UseRichText", true, "Enable rich text");
-            fontName = Config.Bind("Signs", "FontName", "AveriaSerifLibre-Bold", "Font name");
+                config("Signs", "TextPositionOffset", new Vector2(0, 0), "Default font size");
+            useRichText = config("Signs", "UseRichText", true, "Enable rich text");
+            fontName = config("Signs", "FontName", "AveriaSerifLibre-Bold", "Font name", false);
 
 
-            AutoStorePatch.dropRangeChests = Config.Bind("Auto Storage", "DropRangeChests", 5f,
+            AutoStorePatch.dropRangeChests = config("Auto Storage", "DropRangeChests", 5f,
                 "The maximum range to pull dropped items for Chests (Default chest)");
-            AutoStorePatch.dropRangePersonalChests = Config.Bind("Auto Storage", "DropRangePersonalChests", 5f,
+            AutoStorePatch.dropRangePersonalChests = config("Auto Storage", "DropRangePersonalChests", 5f,
                 "The maximum range to pull dropped items for Personal chests");
-            AutoStorePatch.dropRangeReinforcedChests = Config.Bind("Auto Storage", "DropRangeReinforcedChests", 5f,
+            AutoStorePatch.dropRangeReinforcedChests = config("Auto Storage", "DropRangeReinforcedChests", 5f,
                 "The maximum range to pull dropped items for Re-inforced Chests");
-            AutoStorePatch.dropRangeCarts = Config.Bind("Auto Storage", "DropRangeCarts", 5f,
+            AutoStorePatch.dropRangeCarts = config("Auto Storage", "DropRangeCarts", 5f,
                 "The maximum range to pull dropped items for Carts");
-            AutoStorePatch.dropRangeShips = Config.Bind("Auto Storage", "DropRangeShips", 5f,
+            AutoStorePatch.dropRangeShips = config("Auto Storage", "DropRangeShips", 5f,
                 "The maximum range to pull dropped items for Ships");
-            AutoStorePatch.itemDisallowTypes = Config.Bind("Auto Storage", "ItemDisallowTypes", "",
+            AutoStorePatch.itemDisallowTypes = config("Auto Storage", "ItemDisallowTypes", "",
                 "Types of item to disallow pulling for, comma-separated.");
-            AutoStorePatch.itemAllowTypes = Config.Bind("Auto Storage", "ItemAllowTypes", "",
+            AutoStorePatch.itemAllowTypes = config("Auto Storage", "ItemAllowTypes", "",
                 "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypes");
-            AutoStorePatch.itemDisallowTypesChests = Config.Bind("Auto Storage", "ItemDisallowTypesChests", "",
+            AutoStorePatch.itemDisallowTypesChests = config("Auto Storage", "ItemDisallowTypesChests", "",
                 "Types of item to disallow pulling for, comma-separated. (For Chests)");
-            AutoStorePatch.itemAllowTypesChests = Config.Bind("Auto Storage", "ItemAllowTypesChests", "",
+            AutoStorePatch.itemAllowTypesChests = config("Auto Storage", "ItemAllowTypesChests", "",
                 "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesChests");
-            AutoStorePatch.itemDisallowTypesPersonalChests = Config.Bind("Auto Storage",
+            AutoStorePatch.itemDisallowTypesPersonalChests = config("Auto Storage",
                 "ItemDisallowTypesPersonalChests", "",
                 "Types of item to disallow pulling for, comma-separated. (For Personal Chests)");
-            AutoStorePatch.itemAllowTypesPersonalChests = Config.Bind("Auto Storage", "ItemAllowTypesPersonalChests",
+            AutoStorePatch.itemAllowTypesPersonalChests = config("Auto Storage", "ItemAllowTypesPersonalChests",
                 "",
                 "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesPersonalChests");
-            AutoStorePatch.itemDisallowTypesReinforcedChests = Config.Bind("Auto Storage",
+            AutoStorePatch.itemDisallowTypesReinforcedChests = config("Auto Storage",
                 "ItemDisallowTypesReinforcedChests", "",
                 "Types of item to disallow pulling for, comma-separated. (For ReinforcedChests)");
-            AutoStorePatch.itemAllowTypesReinforcedChests = Config.Bind("Auto Storage",
+            AutoStorePatch.itemAllowTypesReinforcedChests = config("Auto Storage",
                 "ItemAllowTypesReinforcedChests", "",
                 "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesReinforcedChests");
-            AutoStorePatch.itemDisallowTypesCarts = Config.Bind("Auto Storage", "ItemDisallowTypesCarts", "",
+            AutoStorePatch.itemDisallowTypesCarts = config("Auto Storage", "ItemDisallowTypesCarts", "",
                 "Types of item to disallow pulling for, comma-separated. (For Carts)");
-            AutoStorePatch.itemAllowTypesCarts = Config.Bind("Auto Storage", "ItemAllowTypesCarts", "",
+            AutoStorePatch.itemAllowTypesCarts = config("Auto Storage", "ItemAllowTypesCarts", "",
                 "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesCarts");
-            AutoStorePatch.itemDisallowTypesShips = Config.Bind("Auto Storage", "ItemDisallowTypesShips", "",
+            AutoStorePatch.itemDisallowTypesShips = config("Auto Storage", "ItemDisallowTypesShips", "",
                 "Types of item to disallow pulling for, comma-separated. (For Ships)");
-            AutoStorePatch.itemAllowTypesShips = Config.Bind("Auto Storage", "ItemAllowTypesShips", "",
+            AutoStorePatch.itemAllowTypesShips = config("Auto Storage", "ItemAllowTypesShips", "",
                 "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesShips");
-            AutoStorePatch.toggleString = Config.Bind("Auto Storage", "ToggleString", "Auto Pull: {0}",
+            AutoStorePatch.toggleString = config("Auto Storage", "ToggleString", "Auto Pull: {0}",
                 "Text to show on toggle. {0} is replaced with true/false");
-            AutoStorePatch.toggleKey = Config.Bind("Auto Storage", "ToggleKey", "",
-                "Key to toggle behaviour. Leave blank to disable the toggle key.");
-            AutoStorePatch.mustHaveItemToPull = Config.Bind("Auto Storage", "MustHaveItemToPull", false,
+            AutoStorePatch.toggleKey = config("Auto Storage", "ToggleKey", "",
+                "Key to toggle behaviour. Leave blank to disable the toggle key.", false);
+            AutoStorePatch.mustHaveItemToPull = config("Auto Storage", "MustHaveItemToPull", false,
                 "If true, a container must already have at least one of the item to pull.");
             AutoStorePatch.isOn =
-                Config.Bind("Auto Storage", "AutoStorageIsOn", false, "Behaviour is currently on or not");
+                config("Auto Storage", "AutoStorageIsOn", false, "Behaviour is currently on or not");
 
 
             ClientPatches._chatPlayerName =
-                Config.Bind(
+                config(
                     "Names", "chatPlayerName", string.Empty,
-                    "Override your player name shown in-game and in the chat box.");
+                    "Override your player name shown in-game and in the chat box.", false);
 
             PlantGrowth.displayGrowth =
-                config("PlantGrowth", "DisplayGrowth", true, "Display growth progress in hover text");
+                config("PlantGrowth", "DisplayGrowth", true, "Display growth progress in hover text", false);
             PlantGrowth.plantAnywhere = config("PlantGrowth", "PlantAnywhere", false,
                 "Don't require cultivated ground to plant anything");
             PlantGrowth.ignoreBiome =
@@ -341,7 +341,7 @@ namespace OdinQOL
 
             SkillPatches.ChangeSkills =
                 config("Skills", "Change the skill gain factor", false, "Change skill gain factor");
-            SkillPatches.experienceGainedNotifications = Config.Bind("Skills",
+            SkillPatches.experienceGainedNotifications = config("Skills",
                 "Display notifications for skills gained", false, "Display notifications for skills gained");
             SkillPatches.swordskill = config("Skills", "Sword Skill gain factor", 0f, "Sword skill gain factor");
             SkillPatches.kniveskill = config("Skills", "Knives Skill gain factor", 0f, "Knives skill gain factor");
@@ -385,12 +385,12 @@ namespace OdinQOL
             QuickAccessBar.quickAccessScale = config("Extended Inventory", "QuickAccessScale", 1f,
                 "Scale of quick access bar. ", false);
 
-            QuickAccessBar.hotKey1 = config("Extended Inventory", "HotKey1", "z",
-                "Hotkey 1 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            QuickAccessBar.hotKey2 = config("Extended Inventory", "HotKey2", "x",
-                "Hotkey 2 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
-            QuickAccessBar.hotKey3 = config("Extended Inventory", "HotKey3", "c",
-                "Hotkey 3 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html");
+            QuickAccessBar.hotKey1 = config("Extended Inventory", "HotKey1", KeyCode.Z,
+                "Hotkey 1 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html", false);
+            QuickAccessBar.hotKey2 = config("Extended Inventory", "HotKey2", KeyCode.X,
+                "Hotkey 2 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html", false);
+            QuickAccessBar.hotKey3 = config("Extended Inventory", "HotKey3", KeyCode.C,
+                "Hotkey 3 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html", false);
 
             QuickAccessBar.modKeyOne = config("Extended Inventory", "ModKey1", KeyCode.Mouse0,
                 "First modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.",
