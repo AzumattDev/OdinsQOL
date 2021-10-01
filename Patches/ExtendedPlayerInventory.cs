@@ -165,17 +165,17 @@ namespace OdinQOL.Patches
                 if (Utilities.IgnoreKeyPresses(true) || !addEquipmentRow.Value)
                     return;
                 int num2;
-                if (Utilities.CheckKeyDown(hotKey1.Value))
+                if (Utilities.CheckKeyDownKeycode(hotKey1.Value))
                 {
                     num2 = 1;
                 }
-                else if (Utilities.CheckKeyDown(hotKey2.Value))
+                else if (Utilities.CheckKeyDownKeycode(hotKey2.Value))
                 {
                     num2 = 2;
                 }
                 else
                 {
-                    if (!Utilities.CheckKeyDown(hotKey3.Value))
+                    if (!Utilities.CheckKeyDownKeycode(hotKey3.Value))
                         return;
                     num2 = 3;
                 }
@@ -323,100 +323,92 @@ namespace OdinQOL.Patches
                     return;
                 try
                 {
-                    Traverse.Create(Player.m_localPlayer);
-                    Inventory inventory = Player.m_localPlayer.GetInventory();
-                    var num1 = inventory.GetWidth() * (inventory.GetHeight() - 1);
-                    string str1 = helmetText.Value;
-                    Transform transform1 = ___m_playerGrid.m_gridRoot.transform;
-                    var index1 = num1;
-                    var num2 = index1 + 1;
-                    Transform child1 = transform1.GetChild(index1);
-                    SetSlotText(str1, child1);
-                    string str2 = chestText.Value;
-                    Transform transform2 = ___m_playerGrid.m_gridRoot.transform;
-                    var index2 = num2;
-                    var num3 = index2 + 1;
-                    Transform child2 = transform2.GetChild(index2);
-                    SetSlotText(str2, child2);
-                    string str3 = legsText.Value;
-                    Transform transform3 = ___m_playerGrid.m_gridRoot.transform;
-                    var index3 = num3;
-                    var num4 = index3 + 1;
-                    Transform child3 = transform3.GetChild(index3);
-                    SetSlotText(str3, child3);
-                    string str4 = backText.Value;
-                    Transform transform4 = ___m_playerGrid.m_gridRoot.transform;
-                    var index4 = num4;
-                    var num5 = index4 + 1;
-                    Transform child4 = transform4.GetChild(index4);
-                    SetSlotText(str4, child4);
-                    string str5 = utilityText.Value;
-                    Transform transform5 = ___m_playerGrid.m_gridRoot.transform;
-                    var index5 = num5;
-                    var num6 = index5 + 1;
-                    Transform child5 = transform5.GetChild(index5);
-                    SetSlotText(str5, child5);
-                    var str6 = hotKey1.Value.ToString();
-                    Transform transform6 = ___m_playerGrid.m_gridRoot.transform;
-                    var index6 = num6;
-                    var num7 = index6 + 1;
-                    Transform child6 = transform6.GetChild(index6);
-                    SetSlotText(str6, child6, false);
-                    var str7 = hotKey2.Value.ToString();
-                    Transform transform7 = ___m_playerGrid.m_gridRoot.transform;
-                    var index7 = num7;
-                    var num8 = index7 + 1;
-                    Transform child7 = transform7.GetChild(index7);
-                    SetSlotText(str7, child7, false);
-                    var str8 = hotKey3.Value.ToString();
-                    Transform transform8 = ___m_playerGrid.m_gridRoot.transform;
-                    var index8 = num8;
-                    var num9 = index8 + 1;
-                    Transform child8 = transform8.GetChild(index8);
-                    SetSlotText(str8, child8, false);
-                    if (!displayEquipmentRowSeparate.Value)
-                        return;
-                    var num10 = inventory.GetWidth() * (inventory.GetHeight() - 1);
-                    Transform transform9 = ___m_playerGrid.m_gridRoot.transform;
-                    var index9 = num10;
-                    var num11 = index9 + 1;
-                    transform9.GetChild(index9).GetComponent<RectTransform>().anchoredPosition =
-                        new Vector2(678f, 0.0f);
-                    Transform transform10 = ___m_playerGrid.m_gridRoot.transform;
-                    var index10 = num11;
-                    var num12 = index10 + 1;
-                    transform10.GetChild(index10).GetComponent<RectTransform>().anchoredPosition =
-                        new Vector2(748f, -35f);
-                    Transform transform11 = ___m_playerGrid.m_gridRoot.transform;
-                    var index11 = num12;
-                    var num13 = index11 + 1;
-                    transform11.GetChild(index11).GetComponent<RectTransform>().anchoredPosition =
-                        new Vector2(678f, -70f);
-                    Transform transform12 = ___m_playerGrid.m_gridRoot.transform;
-                    var index12 = num13;
-                    var num14 = index12 + 1;
-                    transform12.GetChild(index12).GetComponent<RectTransform>().anchoredPosition =
-                        new Vector2(748f, -105f);
-                    Transform transform13 = ___m_playerGrid.m_gridRoot.transform;
-                    var index13 = num14;
-                    var num15 = index13 + 1;
-                    transform13.GetChild(index13).GetComponent<RectTransform>().anchoredPosition =
-                        new Vector2(678f, -140f);
-                    Transform transform14 = ___m_playerGrid.m_gridRoot.transform;
-                    var index14 = num15;
-                    var num16 = index14 + 1;
-                    transform14.GetChild(index14).GetComponent<RectTransform>().anchoredPosition =
-                        new Vector2(643f, -210f);
-                    Transform transform15 = ___m_playerGrid.m_gridRoot.transform;
-                    var index15 = num16;
-                    var num17 = index15 + 1;
-                    transform15.GetChild(index15).GetComponent<RectTransform>().anchoredPosition =
-                        new Vector2(713f, -210f);
-                    Transform transform16 = ___m_playerGrid.m_gridRoot.transform;
-                    var index16 = num17;
-                    num9 = index16 + 1;
-                    transform16.GetChild(index16).GetComponent<RectTransform>().anchoredPosition =
-                        new Vector2(783f, -210f);
+                    Traverse.Create((object) Player.m_localPlayer);
+        Inventory inventory = Player.m_localPlayer.GetInventory();
+        int num1 = inventory.GetWidth() * (inventory.GetHeight() - 1);
+        string str1 = helmetText.Value;
+        Transform transform1 = ___m_playerGrid.m_gridRoot.transform;
+        int index1 = num1;
+        int num2 = index1 + 1;
+        Transform child1 = transform1.GetChild(index1);
+        SetSlotText(str1, child1);
+        string str2 = chestText.Value;
+        Transform transform2 = ___m_playerGrid.m_gridRoot.transform;
+        int index2 = num2;
+        int num3 = index2 + 1;
+        Transform child2 = transform2.GetChild(index2);
+        SetSlotText(str2, child2);
+        string str3 = legsText.Value;
+        Transform transform3 = ___m_playerGrid.m_gridRoot.transform;
+        int index3 = num3;
+        int num4 = index3 + 1;
+        Transform child3 = transform3.GetChild(index3);
+        SetSlotText(str3, child3);
+        string str4 = backText.Value;
+        Transform transform4 = ___m_playerGrid.m_gridRoot.transform;
+        int index4 = num4;
+        int num5 = index4 + 1;
+        Transform child4 = transform4.GetChild(index4);
+        SetSlotText(str4, child4);
+        string str5 = utilityText.Value;
+        Transform transform5 = ___m_playerGrid.m_gridRoot.transform;
+        int index5 = num5;
+        int num6 = index5 + 1;
+        Transform child5 = transform5.GetChild(index5);
+        SetSlotText(str5, child5);
+        var str6 = hotKey1.Value.ToString();
+        Transform transform6 = ___m_playerGrid.m_gridRoot.transform;
+        int index6 = num6;
+        int num7 = index6 + 1;
+        Transform child6 = transform6.GetChild(index6);
+        SetSlotText(str6, child6, false);
+        var str7 = hotKey2.Value.ToString();
+        Transform transform7 = ___m_playerGrid.m_gridRoot.transform;
+        int index7 = num7;
+        int num8 = index7 + 1;
+        Transform child7 = transform7.GetChild(index7);
+        SetSlotText(str7, child7, false);
+        var str8 = hotKey3.Value.ToString();
+        Transform transform8 = ___m_playerGrid.m_gridRoot.transform;
+        int index8 = num8;
+        int num9 = index8 + 1;
+        Transform child8 = transform8.GetChild(index8);
+        SetSlotText(str8, child8, false);
+        if (!displayEquipmentRowSeparate.Value)
+          return;
+        int num10 = inventory.GetWidth() * (inventory.GetHeight() - 1);
+        Transform transform9 = ___m_playerGrid.m_gridRoot.transform;
+        int index9 = num10;
+        int num11 = index9 + 1;
+        transform9.GetChild(index9).GetComponent<RectTransform>().anchoredPosition = new Vector2(678f, 0.0f);
+        Transform transform10 = ___m_playerGrid.m_gridRoot.transform;
+        int index10 = num11;
+        int num12 = index10 + 1;
+        transform10.GetChild(index10).GetComponent<RectTransform>().anchoredPosition = new Vector2(748f, -35f);
+        Transform transform11 = ___m_playerGrid.m_gridRoot.transform;
+        int index11 = num12;
+        int num13 = index11 + 1;
+        transform11.GetChild(index11).GetComponent<RectTransform>().anchoredPosition = new Vector2(678f, -70f);
+        Transform transform12 = ___m_playerGrid.m_gridRoot.transform;
+        int index12 = num13;
+        int num14 = index12 + 1;
+        transform12.GetChild(index12).GetComponent<RectTransform>().anchoredPosition = new Vector2(748f, -105f);
+        Transform transform13 = ___m_playerGrid.m_gridRoot.transform;
+        int index13 = num14;
+        int num15 = index13 + 1;
+        transform13.GetChild(index13).GetComponent<RectTransform>().anchoredPosition = new Vector2(678f, -140f);
+        Transform transform14 = ___m_playerGrid.m_gridRoot.transform;
+        int index14 = num15;
+        int num16 = index14 + 1;
+        transform14.GetChild(index14).GetComponent<RectTransform>().anchoredPosition = new Vector2(643f, -210f);
+        Transform transform15 = ___m_playerGrid.m_gridRoot.transform;
+        int index15 = num16;
+        int num17 = index15 + 1;
+        transform15.GetChild(index15).GetComponent<RectTransform>().anchoredPosition = new Vector2(713f, -210f);
+        Transform transform16 = ___m_playerGrid.m_gridRoot.transform;
+        int index16 = num17;
+        num9 = index16 + 1;
+        transform16.GetChild(index16).GetComponent<RectTransform>().anchoredPosition = new Vector2(783f, -210f);
                 }
                 catch (Exception ex)
                 {
@@ -570,7 +562,7 @@ namespace OdinQOL.Patches
                     if (lastMousePos == Vector3.zero)
                         lastMousePos = mousePosition;
                     Transform transform = Hud.instance.transform.Find("hudroot");
-                    if (Utilities.CheckKeyHeld(modKeyOne.Value) && Utilities.CheckKeyHeld(modKeyTwo.Value))
+                    if (Utilities.CheckKeyHeldKeycode(modKeyOne.Value) && Utilities.CheckKeyHeldKeycode(modKeyTwo.Value))
                     {
                         var rect = Rect.zero;
                         if (transform.Find("QuickAccessBar")?.GetComponent<RectTransform>() != null)

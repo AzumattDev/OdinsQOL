@@ -25,7 +25,7 @@ namespace OdinQOL
     [BepInPlugin(GUID, ModName, Version)]
     public partial class OdinQOLplugin : BaseUnityPlugin
     {
-        public const string Version = "0.3.1";
+        public const string Version = "0.3.2";
         public const string ModName = "OdinPlusQOL";
         public const string GUID = "com.odinplusqol.mod";
         private static readonly int windowId = 434343;
@@ -409,11 +409,11 @@ namespace OdinQOL
                 "Current X of chest (Not Synced with server)", false);
             MoveableChestInventory.chestInventoryY = config("General", "ChestInventoryY", -1f,
                 "Current Y of chest (Not Synced with server)", false);
-            MoveableChestInventory.modKeyOne = config("General", "ModKeyOne", KeyCode.Mouse0,
-                "First modifier key. Use https://docs.unity3d.com/Manual/class-InputManager.html format.",
+            MoveableChestInventory.modKeyOneChestMove = config("General", "ModKeyOne", KeyCode.Mouse0,
+                "First modifier key (to move the container). Use https://docs.unity3d.com/Manual/class-InputManager.html format.",
                 false);
-            MoveableChestInventory.modKeyTwo = config("General", "ModKeyTwo", KeyCode.LeftControl,
-                "Second modifier key. Use https://docs.unity3d.com/Manual/class-InputManager.html format.",
+            MoveableChestInventory.modKeyTwoChestMove = config("General", "ModKeyTwo", KeyCode.LeftControl,
+                "Second modifier key (to move the container). Use https://docs.unity3d.com/Manual/class-InputManager.html format.",
                 false);
 
             if (!modEnabled.Value)

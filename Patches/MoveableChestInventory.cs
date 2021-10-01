@@ -10,8 +10,8 @@ namespace OdinQOL.Patches
     {
         public static ConfigEntry<float> chestInventoryX;
         public static ConfigEntry<float> chestInventoryY;
-        public static ConfigEntry<KeyCode> modKeyOne;
-        public static ConfigEntry<KeyCode> modKeyTwo;
+        public static ConfigEntry<KeyCode> modKeyOneChestMove;
+        public static ConfigEntry<KeyCode> modKeyTwoChestMove;
         private static Vector3 lastMousePos;
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.Update))]
@@ -45,7 +45,7 @@ namespace OdinQOL.Patches
                     position = lastMousePos
                 };
 
-                if (Utilities.CheckKeyHeld(modKeyOne.Value) && Utilities.CheckKeyHeld(modKeyTwo.Value))
+                if (Utilities.CheckKeyHeldKeycode(modKeyOneChestMove.Value) && Utilities.CheckKeyHeldKeycode(modKeyTwoChestMove.Value))
                 {
                     //Dbgl($"position {__instance.m_container.transform.parent.position}");
 

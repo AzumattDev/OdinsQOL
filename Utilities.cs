@@ -16,7 +16,31 @@ namespace OdinQOL
                    Menu.IsVisible() || TextViewer.instance?.IsVisible() == true;
         }
 
-        public static bool CheckKeyDown(KeyCode value)
+        public static bool CheckKeyDown(string value)
+        {
+            try
+            {
+                return Input.GetKeyDown(value.ToLower());
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool CheckKeyHeld(string value, bool req = true)
+        {
+            try
+            {
+                return Input.GetKey(value);
+            }
+            catch
+            {
+                return !req;
+            }
+        }
+        
+        public static bool CheckKeyDownKeycode(KeyCode value)
         {
             try
             {
@@ -28,7 +52,7 @@ namespace OdinQOL
             }
         }
 
-        public static bool CheckKeyHeld(KeyCode value, bool req = true)
+        public static bool CheckKeyHeldKeycode(KeyCode value, bool req = true)
         {
             try
             {
