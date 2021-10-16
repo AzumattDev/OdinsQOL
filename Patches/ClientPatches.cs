@@ -61,44 +61,6 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(ZSteamMatchmaking))]
-        [HarmonyPatch("GetServers")]
-        private class PatchUpdateServerListGui
-        {
-            private static void Postfix(ref List<ServerData> allServers)
-            {
-                var serverData = new ServerData
-                {
-                    m_host = "3.17.85.9",
-                    m_name = "<color=#6600cc>HelHeim</color>",
-                    m_password = false,
-                    m_players = 999,
-                    m_port = 2456,
-                    m_steamHostID = 0uL,
-                    m_steamHostAddr = default
-                };
-                serverData.m_steamHostAddr.ParseString(serverData.m_host + ":" + serverData.m_port);
-                serverData.m_upnp = true;
-                serverData.m_version = "";
-                allServers.Insert(0, serverData);
-
-                var serverNo2 = new ServerData
-                {
-                    m_host = "23.23.255.113",
-                    m_name = "<color=#ff0000>HoulGate</color>",
-                    m_password = false,
-                    m_players = 999,
-                    m_port = 2456,
-                    m_steamHostID = 0uL,
-                    m_steamHostAddr = default
-                };
-                serverNo2.m_steamHostAddr.ParseString(serverNo2.m_host + ":" + serverNo2.m_port);
-                serverNo2.m_upnp = true;
-                serverNo2.m_version = "";
-                allServers.Insert(0, serverNo2);
-            }
-        }
-
         [HarmonyPatch(typeof(ItemStand), "Interact")]
         private class standFix
         {

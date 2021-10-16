@@ -137,7 +137,7 @@ namespace OdinQOL.Patches
                     }
 
                     instance.Message(MessageHud.MessageType.TopLeft,
-                        string.Format("{0} pieces repaired", m_repair_count));
+                        $"{m_repair_count} pieces repaired");
                 }
             }
 
@@ -528,16 +528,17 @@ namespace OdinQOL.Patches
                 }
             }
         }
-
-        [HarmonyPatch(typeof(Version), "GetVersionString")]
-        public static class Version_GetVersionString_Patch
+        
+        [HarmonyPatch(typeof(Version), nameof(Version.GetVersionString))]
+        private static class PatchVersionGetVersionString
         {
+            [HarmonyPriority(Priority.Last)]
             private static void Postfix(ref string __result)
             {
-                Debug.Log("Version generator started.");
-
-                __result = __result + "@" + OdinQOLplugin.Version;
-                Debug.Log($"Version generated with enforced mod : {__result}");
+                if (ZNet.instance?.IsServer() == true)
+                {
+                    __result += $"-{OdinQOLplugin.ModName}{OdinQOLplugin.Version}";
+                }
             }
         }
 

@@ -25,7 +25,7 @@ namespace OdinQOL
     [BepInPlugin(GUID, ModName, Version)]
     public partial class OdinQOLplugin : BaseUnityPlugin
     {
-        public const string Version = "0.3.2";
+        public const string Version = "0.3.3";
         public const string ModName = "OdinPlusQOL";
         public const string GUID = "com.odinplusqol.mod";
         private static readonly int windowId = 434343;
@@ -156,9 +156,11 @@ namespace OdinQOL
                 "Custom color list, comma-separated. Use either <name>:<colorCode> pair entries or just <colorCode> entries. E.g. Erinthe:FF0000 or just FF0000. The latter will assign a color randomly to each connected peer.");
 
             toggleClockKeyMod = config("Clock", "ShowClockKeyMod", "",
-                "Extra modifier key used to toggle the clock display. Leave blank to not require one. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html", false);
+                "Extra modifier key used to toggle the clock display. Leave blank to not require one. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html",
+                false);
             toggleClockKey = config("Clock", "ShowClockKey", "home",
-                "Key used to toggle the clock display. use https://docs.unity3d.com/Manual/ConventionalGameInput.html", false);
+                "Key used to toggle the clock display. use https://docs.unity3d.com/Manual/ConventionalGameInput.html",
+                false);
             clockLocationString = config("Clock", "ClockLocationString", "50%,3%",
                 "Location on the screen to show the clock (x,y) or (x%,y%)", false);
 
@@ -227,11 +229,14 @@ namespace OdinQOL
                 "Format for the amount of items in the player inventory to show after the required amount. Uses standard C# format rules. Leave empty to hide altogether.");
             ImprovedBuildHudConfig.InventoryAmountColor = config("Building HUD", "Inventory Amount Color",
                 "lightblue",
-                "Color to set the inventory amount after the requirement amount. Leave empty to set no color. You can use the #XXXXXX hex color format.", false);
+                "Color to set the inventory amount after the requirement amount. Leave empty to set no color. You can use the #XXXXXX hex color format.",
+                false);
             ImprovedBuildHudConfig.CanBuildAmountFormat = config("Building HUD", "Can Build Amount Color", "({0})",
-                "Format for the amount of times you can build the currently selected item with your current inventory. Uses standard C# format rules. Leave empty to hide altogether.", false);
+                "Format for the amount of times you can build the currently selected item with your current inventory. Uses standard C# format rules. Leave empty to hide altogether.",
+                false);
             ImprovedBuildHudConfig.CanBuildAmountColor = config("Building HUD", "Can Build Amount Color", "white",
-                "Color to set the can-build amount. Leave empty to set no color. You can use the #XXXXXX hex color format.", false);
+                "Color to set the can-build amount. Leave empty to set no color. You can use the #XXXXXX hex color format.",
+                false);
 
             signScale = config("Signs", "SignScale", new Vector3(1, 1, 1), "Sign scale (w,h,d)");
             textPositionOffset =
@@ -416,6 +421,19 @@ namespace OdinQOL
                 "Second modifier key (to move the container). Use https://docs.unity3d.com/Manual/class-InputManager.html format.",
                 false);
 
+            /* Connect Panel */
+            ConnectionPanel.ServerAdditionToggle = config("Connection Panel", "Enable Connection Panel", false,
+                "This option, if enabled, will add the servers listed below to the Join Game panel on the main menu.",
+                false);
+            ConnectionPanel.ServerIPs = config("Connection Panel", "This is the IP for your server",
+                "111.111.111.11,222.222.222.22", "This is the IP for your server. Separate each option by a comma.",
+                false);
+            ConnectionPanel.ServerNames = config("Connection Panel", "Name of the server",
+                "<color=#6600cc>TEST EXAMPLE</color>, Test Example 2",
+                "This is how your server shows in the list, can use colors. Separate each option by a comma.", false);
+            ConnectionPanel.ServerPorts = config("Connection Panel",
+                "The Port For your Server. Separate each option by a comma.", "28200,28300", "Port For server", false);
+
             if (!modEnabled.Value)
                 return;
 
@@ -498,9 +516,19 @@ namespace OdinQOL
                 Debug.Log((pref ? typeof(OdinQOLplugin).Namespace + " " : "") + str);
         }
 
-        private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description, bool synchronizedSetting = true)
+        public static void DbglError(string str = "", bool pref = true)
         {
-            ConfigDescription extendedDescription = new(description.Description + (synchronizedSetting ? " [Synced with Server]" : " [Not Synced with Server]"), description.AcceptableValues, description.Tags);
+            Debug.LogError((pref ? typeof(OdinQOLplugin).Namespace + " " : "") + str);
+        }
+
+        private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
+            bool synchronizedSetting = true)
+        {
+            ConfigDescription extendedDescription =
+                new(
+                    description.Description +
+                    (synchronizedSetting ? " [Synced with Server]" : " [Not Synced with Server]"),
+                    description.AcceptableValues, description.Tags);
             ConfigEntry<T> configEntry = Config.Bind(group, name, value, extendedDescription);
 
             SyncedConfigEntry<T> syncedConfigEntry = configSync.AddConfigEntry(configEntry);
