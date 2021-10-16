@@ -535,10 +535,10 @@ namespace OdinQOL.Patches
             [HarmonyPriority(Priority.Last)]
             private static void Postfix(ref string __result)
             {
-                if (ZNet.instance?.IsServer() == true)
-                {
+                /*if (ZNet.instance?.IsServer() == true)
+                {*/
                     __result += $"-{OdinQOLplugin.ModName}{OdinQOLplugin.Version}";
-                }
+                /*}*/
             }
         }
 
