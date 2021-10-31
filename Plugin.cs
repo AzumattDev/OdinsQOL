@@ -440,6 +440,7 @@ namespace OdinQOL
             /* Discard Items in Inventory */
             InventoryDiscard.discardInvEnabled =
                 config("Inventory Discard", "Enabled", false, "Enable Inventory Discard Section");
+            
             InventoryDiscard.hotKey = config("Inventory Discard", "DiscardHotkey", KeyCode.Delete,
                 "The hotkey to discard an item", false);
             InventoryDiscard.returnUnknownResources = config("Inventory Discard", "ReturnUnknownResources", false,
