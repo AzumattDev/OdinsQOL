@@ -95,7 +95,8 @@ namespace OdinQOL.Patches
                                 m_go = Instantiate(m_elementPrefab, transform)
                             };
                             elementData.m_go.transform.localPosition = new Vector3(index * m_elementSpace, 0.0f, 0.0f);
-                            elementData.m_go.transform.Find("binding").GetComponent<Text>().text = hotkeys[index].Value.ToString();
+                            elementData.m_go.transform.Find("binding").GetComponent<Text>().text =
+                                hotkeys[index].Value.ToString();
                             elementData.m_icon =
                                 elementData.m_go.transform.transform.Find("icon").GetComponent<Image>();
                             elementData.m_durability =

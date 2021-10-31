@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using CraftFromContainers;
 using HarmonyLib;
@@ -29,7 +30,7 @@ namespace OdinQOL
         public const string ModName = "OdinPlusQOL";
         public const string GUID = "com.odinplusqol.mod";
         private static readonly int windowId = 434343;
-
+        internal static Assembly epicLootAssembly;
         public static OdinQOLplugin context;
 
 
@@ -59,6 +60,7 @@ namespace OdinQOL
         public static ConfigEntry<float> itemStackMultiplier;
         public static ConfigEntry<bool> NoTeleportPrevention;
         public static ConfigEntry<bool> iHaveArrivedOnSpawn;
+        public static readonly IEnumerable<KeyCode> AllKeyCodes;
 
         public static ConfigSync configSync = new(GUID) { DisplayName = ModName, CurrentVersion = Version };
         private static List<Container> _cachedContainers;
@@ -434,6 +436,19 @@ namespace OdinQOL
             ConnectionPanel.ServerPorts = config("Connection Panel",
                 "The Port For your Server. Separate each option by a comma.", "28200,28300", "Port For server", false);
 
+
+            /* Discard Items in Inventory */
+            InventoryDiscard.discardInvEnabled =
+                config("Inventory Discard", "Enabled", false, "Enable Inventory Discard Section");
+            InventoryDiscard.hotKey = config("Inventory Discard", "DiscardHotkey", KeyCode.Delete,
+                "The hotkey to discard an item", false);
+            InventoryDiscard.returnUnknownResources = config("Inventory Discard", "ReturnUnknownResources", false,
+                "Return resources if recipe is unknown");
+            InventoryDiscard.returnEnchantedResources = config("Inventory Discard", "ReturnEnchantedResources", false,
+                "Return resources for Epic Loot enchantments");
+            InventoryDiscard.returnResources = config("Inventory Discard", "ReturnResources", 1f,
+                "Fraction of resources to return (0.0 - 1.0)");
+
             if (!modEnabled.Value)
                 return;
 
@@ -471,6 +486,15 @@ namespace OdinQOL
                 QuickAccessBar.hotKey2,
                 QuickAccessBar.hotKey3
             };
+        }
+
+        private void Start()
+        {
+            if (Chainloader.PluginInfos.ContainsKey("randyknapp.mods.epicloot"))
+            {
+                epicLootAssembly = Chainloader.PluginInfos["randyknapp.mods.epicloot"].Instance.GetType().Assembly;
+                OdinQOLplugin.Dbgl("Epic Loot found, providing compatibility");
+            }
         }
 
         private void Update()

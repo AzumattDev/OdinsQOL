@@ -45,7 +45,8 @@ namespace OdinQOL.Patches
                     position = lastMousePos
                 };
 
-                if (Utilities.CheckKeyHeldKeycode(modKeyOneChestMove.Value) && Utilities.CheckKeyHeldKeycode(modKeyTwoChestMove.Value))
+                if (Utilities.CheckKeyHeldKeycode(modKeyOneChestMove.Value) &&
+                    Utilities.CheckKeyHeldKeycode(modKeyTwoChestMove.Value))
                 {
                     //Dbgl($"position {__instance.m_container.transform.parent.position}");
 

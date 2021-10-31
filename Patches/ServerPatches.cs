@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using HarmonyLib;
 
 namespace OdinQOL.Patches
@@ -52,7 +51,7 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(ZNet), "IsAllowed")]
+        /*[HarmonyPatch(typeof(ZNet), "IsAllowed")]
         public static class CharWhitelist
         {
             private static bool Prefix(ref bool __result, string hostName, string playerName, ZNet __instance)
@@ -102,6 +101,6 @@ namespace OdinQOL.Patches
 
                 return false;
             }
-        }
+        }*/
     }
 }

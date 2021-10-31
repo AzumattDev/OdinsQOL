@@ -9,7 +9,6 @@ using Steamworks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using SteamUGC = On.Steamworks.SteamUGC;
 
 namespace OdinQOL.Patches
 {
@@ -61,7 +60,7 @@ namespace OdinQOL.Patches
                     __instance.m_firstSpawn = false;
             }
         }*/
-        
+
         [HarmonyPatch(typeof(Chat), nameof(Chat.OnNewChatMessage))]
         public static class ChatOnNewChatMessage_Patch
         {
@@ -528,7 +527,7 @@ namespace OdinQOL.Patches
                 }
             }
         }
-        
+
         [HarmonyPatch(typeof(Version), nameof(Version.GetVersionString))]
         private static class PatchVersionGetVersionString
         {
@@ -537,7 +536,7 @@ namespace OdinQOL.Patches
             {
                 /*if (ZNet.instance?.IsServer() == true)
                 {*/
-                    __result += $"-{OdinQOLplugin.ModName}{OdinQOLplugin.Version}";
+                __result += $"-{OdinQOLplugin.ModName}{OdinQOLplugin.Version}";
                 /*}*/
             }
         }

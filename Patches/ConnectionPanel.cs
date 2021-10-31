@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Configuration;
 using HarmonyLib;
-using UnityEngine;
 
 namespace OdinQOL.Patches
 {
@@ -28,7 +27,6 @@ namespace OdinQOL.Patches
                 var i = 0;
                 if (serversArray.Length == serversNamesArray.Length &&
                     serversArray.Length == serversPortsArray.Length)
-                {
                     try
                     {
                         foreach (var serv in serversArray)
@@ -53,12 +51,9 @@ namespace OdinQOL.Patches
                         OdinQOLplugin.DbglError(
                             $"There was an issue adding your server listing to the menu. Please check your [Connection Panel] section in the config file for correct length and format {exception}");
                     }
-                }
                 else
-                {
                     OdinQOLplugin.DbglError(
                         "Server IPs, Ports, or Names are not the same length or in an incorrect format. Please Check your [Connection Panel] section in the config and fix the issue.");
-                }
             }
         }
     }

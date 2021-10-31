@@ -39,7 +39,7 @@ namespace OdinQOL
                 return !req;
             }
         }
-        
+
         public static bool CheckKeyDownKeycode(KeyCode value)
         {
             try
