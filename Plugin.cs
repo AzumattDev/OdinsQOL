@@ -449,6 +449,7 @@ namespace OdinQOL
             InventoryDiscard.returnResources = config("Inventory Discard", "ReturnResources", 1f,
                 "Fraction of resources to return (0.0 - 1.0)");
 
+            
             if (!modEnabled.Value)
                 return;
 
