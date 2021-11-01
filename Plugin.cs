@@ -23,6 +23,14 @@ namespace OdinQOL
         public static ConfigEntry<string> CanBuildAmountColor;
     }
 
+    class AcceptableShortcuts : AcceptableValueBase
+    {
+        public AcceptableShortcuts() : base(typeof(KeyboardShortcut)) { }
+        public override object Clamp(object value) => value;
+        public override bool IsValid(object value) => true;
+        public override string ToDescriptionString() => "# Acceptable values: " + string.Join(", ", KeyboardShortcut.AllKeyCodes);
+    }
+
     [BepInPlugin(GUID, ModName, Version)]
     public partial class OdinQOLplugin : BaseUnityPlugin
     {
@@ -440,9 +448,10 @@ namespace OdinQOL
             /* Discard Items in Inventory */
             InventoryDiscard.discardInvEnabled =
                 config("Inventory Discard", "Enabled", false, "Enable Inventory Discard Section");
-            
-            InventoryDiscard.hotKey = config("Inventory Discard", "DiscardHotkey", KeyCode.Delete,
-                "The hotkey to discard an item", false);
+            InventoryDiscard.hotKey = config("Inventory Discard", "DiscardHotkey", new KeyboardShortcut(KeyCode.Delete),
+                new ConfigDescription("The hotkey to discard an item", new AcceptableShortcuts()), false);
+            /*InventoryDiscard.hotKey = config("Inventory Discard", "DiscardHotkey", KeyCode.Delete,
+                "The hotkey to discard an item", false);*/
             InventoryDiscard.returnUnknownResources = config("Inventory Discard", "ReturnUnknownResources", false,
                 "Return resources if recipe is unknown");
             InventoryDiscard.returnEnchantedResources = config("Inventory Discard", "ReturnEnchantedResources", false,

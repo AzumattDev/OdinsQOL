@@ -9,7 +9,7 @@ namespace OdinQOL.Patches
 {
     public class InventoryDiscard
     {
-        public static ConfigEntry<KeyCode> hotKey;
+        public static ConfigEntry<KeyboardShortcut> hotKey;
         public static ConfigEntry<bool> discardInvEnabled;
         public static ConfigEntry<bool> returnUnknownResources;
         public static ConfigEntry<bool> returnEnchantedResources;
@@ -21,7 +21,10 @@ namespace OdinQOL.Patches
             private static void Postfix(InventoryGui __instance, ItemDrop.ItemData ___m_dragItem,
                 Inventory ___m_dragInventory, int ___m_dragAmount, ref GameObject ___m_dragGo)
             {
-                if (!discardInvEnabled.Value || !Input.GetKeyDown(hotKey.Value) || ___m_dragItem == null ||
+                /*if (!discardInvEnabled.Value || !Input.GetKeyDown(hotKey.Value) || ___m_dragItem == null ||
+                    !___m_dragInventory.ContainsItem(___m_dragItem))
+                    return;*/
+                if (!discardInvEnabled.Value || !hotKey.Value.IsDown() || ___m_dragItem == null ||
                     !___m_dragInventory.ContainsItem(___m_dragItem))
                     return;
 
