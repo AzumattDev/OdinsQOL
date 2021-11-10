@@ -214,7 +214,7 @@ namespace OdinQOL
                 config("Server", "Max Player Count", 50, "Max number of Players to allow in a server");
 
             GamePatches.StaminaIsEnabled =
-                config("Player", "Stamina alterations enabled", false, "Stamina alterations enabled");
+                config("Player", "Stamina alterations enabled", false, "Stamina alterations enabled" + Environment.NewLine + "Note: These are not percent drains. They are direct drain values.");
             GamePatches.dodgeStaminaUsage = config("Player", "Dodge Stamina Usage", 10f, "Dodge Stamina Usage");
             GamePatches.encumberedStaminaDrain =
                 config("Player", "Encumbered Stamina drain", 10f, "Encumbered Stamina drain");
