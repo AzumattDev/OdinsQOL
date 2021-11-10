@@ -215,17 +215,17 @@ namespace OdinQOL
 
             GamePatches.StaminaIsEnabled =
                 config("Player", "Stamina alterations enabled", false, "Stamina alterations enabled");
-            GamePatches.dodgeStaminaUsage = config("Player", "Dodge Stamina Usage", 1f, "Dodge Stamina Usage");
+            GamePatches.dodgeStaminaUsage = config("Player", "Dodge Stamina Usage", 10f, "Dodge Stamina Usage");
             GamePatches.encumberedStaminaDrain =
-                config("Player", "Encumbered Stamina drain", 1f, "Encumbered Stamina drain");
-            GamePatches.sneakStaminaDrain = config("Player", "Sneak Stamina Drain", 1f, "Sneak stamina drain");
-            GamePatches.runStaminaDrain = config("Player", "Run Stamina Drain", 1f, "Run Stamina Drain");
+                config("Player", "Encumbered Stamina drain", 10f, "Encumbered Stamina drain");
+            GamePatches.sneakStaminaDrain = config("Player", "Sneak Stamina Drain", 5f, "Sneak stamina drain");
+            GamePatches.runStaminaDrain = config("Player", "Run Stamina Drain", 10f, "Run Stamina Drain");
             GamePatches.staminaRegenDelay = config("Player", "Delay before stamina regeneration starts", 1f,
                 "Delay before stamina regeneration starts");
-            GamePatches.staminaRegen = config("Player", "Stamina regen factor", 1f, "Stamina regen factor");
-            GamePatches.swimStaminaDrain = config("Player", "Stamina drain from swim", 1f, "Stamina drain from swim");
+            GamePatches.staminaRegen = config("Player", "Stamina regen factor", 5f, "Stamina regen factor");
+            GamePatches.swimStaminaDrain = config("Player", "Stamina drain from swim", 5f, "Stamina drain from swim");
             GamePatches.jumpStaminaDrain =
-                config("Player", "Jump stamina drain factor", 1f, "Stamina drain factor for jumping");
+                config("Player", "Jump stamina drain factor", 10f, "Stamina drain factor for jumping");
             GamePatches.baseAutoPickUpRange =
                 config("Player", "Auto pickup range adjustment", 2f, "Auto pickup range adjustment");
             GamePatches.disableCameraShake = config<float>("Player", "Cam shake factor", 0, "Cam Shake factor", false);
