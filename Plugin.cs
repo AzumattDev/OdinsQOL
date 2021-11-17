@@ -68,6 +68,12 @@ namespace OdinQOL
         public static ConfigEntry<float> itemStackMultiplier;
         public static ConfigEntry<bool> NoTeleportPrevention;
         public static ConfigEntry<bool> iHaveArrivedOnSpawn;
+
+        public static ConfigEntry<int> DungeonMaxRoomCount;
+        public static ConfigEntry<int> DungoneMinRoomCount;
+        public static ConfigEntry<int> CampRadiusMin;
+        public static ConfigEntry<int> CampRadiusMax;
+        
         public static readonly IEnumerable<KeyCode> AllKeyCodes;
 
         public static ConfigSync configSync = new(GUID) { DisplayName = ModName, CurrentVersion = Version };
@@ -92,6 +98,16 @@ namespace OdinQOL
             displayCartsAndBoats = config("Maps", "Display Boats/Carts", true, "Show Boats and carts on the map");
             exploreRadius = config("Maps", "exploreRadius", 40, "Explore radius addition");
 
+
+            DungeonMaxRoomCount = config("Dungeon", "Max Room Count", 20,
+                "This is the max number of rooms placed by dungeon gen higher numbers will cause lag");
+            
+            DungoneMinRoomCount = config("Dungeon", "Min Room Count", 5,
+                "This is the Min number of rooms placed by dungeon gen higher numbers will cause lag");
+
+            CampRadiusMin = config("Dungeon", "Camp Radius Min", 5, "This is the minimum radius for goblin camps");
+            
+            CampRadiusMax = config("Dungeon", "Camp Radius Max", 15, "This is the maximum radius for goblin camps");
 
             modEnabled = config("General", "Enabled", true, "Enable the entire mod");
             isDebug = config("General", "IsDebug", false, "Show debug messages in log");
