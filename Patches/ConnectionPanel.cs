@@ -24,7 +24,7 @@ namespace OdinQOL.Patches
                 string[] serversArray = ServerIPs.Value.Trim().Split(',').ToArray();
                 string[] serversNamesArray = ServerNames.Value.Trim().Split(',').ToArray();
                 string[] serversPortsArray = ServerPorts.Value.Trim().Split(',').ToArray();
-                var i = 0;
+                int i = 0;
                 if (serversArray.Length == serversNamesArray.Length &&
                     serversArray.Length == serversPortsArray.Length)
                     try

@@ -25,20 +25,20 @@ namespace OdinQOL.Patches
 
         private static bool HaveGrowSpace(Plant plant)
         {
-            var spaceMask = LayerMask.GetMask("Default", "static_solid", "Default_small", "piece", "piece_nonsolid");
-            var plantMaxDist = plant.m_growRadius;
+            int spaceMask = LayerMask.GetMask("Default", "static_solid", "Default_small", "piece", "piece_nonsolid");
+            float plantMaxDist = plant.m_growRadius;
             if (!plant.m_grownPrefabs[0]
                 .GetComponent<TreeBase>()) //Check if not tree as their m_grownPrefabs don't have colliders
                 plantMaxDist = plantMaxDist + Math.Abs(plant.GetComponent<CapsuleCollider>().radius -
                                                        plant.m_grownPrefabs[0].GetComponent<CapsuleCollider>().radius);
             var array = Physics.OverlapSphere(plant.transform.position, 2.5f, spaceMask);
-            for (var i = 0; i < array.Length; i++)
+            for (int i = 0; i < array.Length; i++)
                 if (array[i].GetComponent<Plant>())
                 {
                     var collidingPlant = array[i].GetComponent<Plant>();
                     if (collidingPlant != plant)
                     {
-                        var collidingPlantMaxDist = collidingPlant.m_growRadius;
+                        float collidingPlantMaxDist = collidingPlant.m_growRadius;
                         if (!collidingPlant.m_grownPrefabs[0]
                             .GetComponent<TreeBase>()) //Check if not tree as their m_grownPrefabs don't have colliders
                             collidingPlantMaxDist = collidingPlantMaxDist +
@@ -114,8 +114,8 @@ namespace OdinQOL.Patches
             {
                 if (!displayGrowth.Value)
                     return;
-                var timeSincePlanted = Traverse.Create(__instance).Method("TimeSincePlanted").GetValue<double>();
-                var growTime = Traverse.Create(__instance).Method("GetGrowTime").GetValue<float>();
+                double timeSincePlanted = Traverse.Create(__instance).Method("TimeSincePlanted").GetValue<double>();
+                float growTime = Traverse.Create(__instance).Method("GetGrowTime").GetValue<float>();
                 if (timeSincePlanted < growTime)
                     __result += "\n" + Mathf.RoundToInt((float)timeSincePlanted) + "/" + Mathf.RoundToInt(growTime);
             }
@@ -204,11 +204,11 @@ namespace OdinQOL.Patches
             {
                 if (!__result)
                 {
-                    var spaceMask = LayerMask.GetMask("Default", "static_solid", "Default_small", "piece",
+                    int spaceMask = LayerMask.GetMask("Default", "static_solid", "Default_small", "piece",
                         "piece_nonsolid");
                     var array = Physics.OverlapSphere(__instance.transform.position, __instance.m_growRadius,
                         spaceMask);
-                    for (var i = 0; i < array.Length; i++)
+                    for (int i = 0; i < array.Length; i++)
                     {
                         var component = array[i].GetComponent<Plant>();
                         if (component && component != __instance)

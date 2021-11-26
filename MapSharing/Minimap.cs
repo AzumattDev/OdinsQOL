@@ -38,11 +38,11 @@ namespace OdinQOL.MapSharing
 
             if (OdinQOLplugin.shareMapProgression.Value)
             {
-                var explorerTime = ___m_exploreTimer;
+                float explorerTime = ___m_exploreTimer;
                 explorerTime += Time.deltaTime;
                 if (explorerTime > ___m_exploreInterval)
                     if (ZNet.instance.m_players.Any())
-                        foreach (var m_Player in ZNet.instance.m_players)
+                        foreach (ZNet.PlayerInfo m_Player in ZNet.instance.m_players)
                             HookExplore.call_Explore(__instance, m_Player.m_position,
                                 OdinQOLplugin.exploreRadius.Value);
             }
@@ -115,7 +115,7 @@ namespace OdinQOL.MapSharing
         {
             public static void AddPin(ref Minimap __instance)
             {
-                var pintype = iconSelected.value == 4 ? Minimap.PinType.Icon4 : (Minimap.PinType)iconSelected.value;
+                Minimap.PinType pintype = iconSelected.value == 4 ? Minimap.PinType.Icon4 : (Minimap.PinType)iconSelected.value;
                 Minimap.PinData addedPin = __instance.AddPin(pinPos, pintype, pinName.text, true, false);
                 if (OdinQOLplugin.shareablePins.Value && sharePin.isOn && !OdinQOLplugin.shareAllPins.Value)
                     VmpMapPinSync.SendMapPinToServer(addedPin);
@@ -134,7 +134,7 @@ namespace OdinQOL.MapSharing
                     };
                     GameObject iconPanelOld = GameObjectAssistant
                         .GetChildComponentByName<Transform>("IconPanel", __instance.m_largeRoot).gameObject;
-                    for (var i = 0; i < 5; i++)
+                    for (int i = 0; i < 5; i++)
                         GameObjectAssistant.GetChildComponentByName<Transform>("Icon" + i, iconPanelOld).gameObject
                             .SetActive(false);
                     GameObjectAssistant.GetChildComponentByName<Transform>("Bkg", iconPanelOld).gameObject
@@ -163,7 +163,7 @@ namespace OdinQOL.MapSharing
                         });
                     iconSelected = pinEditorPanel.GetComponentInChildren<Dropdown>();
                     iconSelected.options.Clear();
-                    var ind = 0;
+                    int ind = 0;
                     List<string> list = new() { "Fire", "Home", "Hammer", "Circle", "Rune" };
                     foreach (string option in list)
                     {
@@ -200,7 +200,7 @@ namespace OdinQOL.MapSharing
                         };
                         GameObject iconPanelOld = GameObjectAssistant
                             .GetChildComponentByName<Transform>("IconPanel", __instance.m_largeRoot).gameObject;
-                        for (var i = 0; i < 5; i++)
+                        for (int i = 0; i < 5; i++)
                             GameObjectAssistant.GetChildComponentByName<Transform>("Icon" + i, iconPanelOld).gameObject
                                 .SetActive(false);
                         GameObjectAssistant.GetChildComponentByName<Transform>("Bkg", iconPanelOld).gameObject
@@ -230,7 +230,7 @@ namespace OdinQOL.MapSharing
                             });
                         iconSelected = pinEditorPanel.GetComponentInChildren<Dropdown>();
                         iconSelected.options.Clear();
-                        var ind = 0;
+                        int ind = 0;
                         List<string> list = new() { "Fire", "Home", "Hammer", "Circle", "Rune" };
                         foreach (string option in list)
                         {
@@ -373,7 +373,7 @@ namespace OdinQOL.MapSharing
                     return false;
 
                 Minimap.PinData customPin;
-                var pinWasFound = customPins.TryGetValue(zdo, out customPin);
+                bool pinWasFound = customPins.TryGetValue(zdo, out customPin);
 
                 // turn off associated pin if player controlled ship is in that position
                 Ship controlledShip = player.GetControlledShip();
@@ -436,7 +436,7 @@ namespace OdinQOL.MapSharing
                         }
 
                 // clear pins for destroyed objects
-                foreach (var pin in customPins)
+                foreach (KeyValuePair<ZDO, Minimap.PinData> pin in customPins)
                     if (!pin.Key.IsValid())
                     {
                         __instance.RemovePin(pin.Value);

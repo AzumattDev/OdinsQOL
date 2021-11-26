@@ -24,6 +24,7 @@ namespace OdinQOL.Patches
         public static ConfigEntry<bool> sortAsc;
         public static ConfigEntry<string> entryString;
         public static ConfigEntry<string> overFlowText;
+        public static ConfigEntry<string> capacityText;
         public static ConfigEntry<bool> useScrollWheel;
         public static ConfigEntry<bool> showMenu;
         public static ConfigEntry<string> scrollModKey;
@@ -35,7 +36,7 @@ namespace OdinQOL.Patches
         {
             if (parent != null)
             {
-                var effectArea = parent.GetComponentInChildren<EffectArea>();
+                EffectArea? effectArea = parent.GetComponentInChildren<EffectArea>();
                 if (effectArea != null)
                     if ((effectArea.m_type & includedTypes) != 0)
                     {
@@ -50,11 +51,11 @@ namespace OdinQOL.Patches
             // combine
             SortByName(items, true);
 
-            for (var i = 0; i < items.Count; i++)
+            for (int i = 0; i < items.Count; i++)
                 while (i < items.Count - 1 && items[i].m_stack < items[i].m_shared.m_maxStackSize &&
                        items[i + 1].m_shared.m_name == items[i].m_shared.m_name)
                 {
-                    var amount = Mathf.Min(items[i].m_shared.m_maxStackSize - items[i].m_stack, items[i + 1].m_stack);
+                    int amount = Mathf.Min(items[i].m_shared.m_maxStackSize - items[i].m_stack, items[i + 1].m_stack);
                     items[i].m_stack += amount;
                     if (amount == items[i + 1].m_stack)
                         items.RemoveAt(i + 1);
@@ -168,7 +169,7 @@ namespace OdinQOL.Patches
                     {
                         ___m_rangeBuild = WorkbenchRange.Value;
                         ___m_areaMarker.GetComponent<CircleProjector>().m_radius = ___m_rangeBuild;
-                        var scaleIncrease = (WorkbenchRange.Value - 20f) / 20f * 100f;
+                        float scaleIncrease = (WorkbenchRange.Value - 20f) / 20f * 100f;
                         ___m_areaMarker.gameObject.transform.localScale =
                             new Vector3(scaleIncrease / 100, 1f, scaleIncrease / 100);
 
@@ -209,13 +210,19 @@ namespace OdinQOL.Patches
                     __instance.GetInventory().NrOfItems() == 0)
                     return;
 
-                var items = new List<ItemData>();
+                List<ItemData>? items = new();
                 foreach (var idd in __instance.GetInventory().GetAllItems()) items.Add(new ItemData(idd));
                 SortByType(SortType.Value, items, sortAsc.Value);
-                var entries = 0;
-                var amount = 0;
-                var name = "";
-                for (var i = 0; i < items.Count; i++)
+                int entries = 0;
+                int amount = 0;
+                string? name = "";
+                
+                if (capacityText.Value.Trim().Length > 0)
+                {
+                    __result = __result.Replace("\n", string.Format(capacityText.Value, __instance.GetInventory().GetAllItems().Count, __instance.GetInventory().GetWidth() * __instance.GetInventory().GetHeight()) + "\n");
+                }
+                
+                for (int i = 0; i < items.Count; i++)
                 {
                     if (maxEntries.Value >= 0 && entries >= maxEntries.Value)
                     {
@@ -224,7 +231,7 @@ namespace OdinQOL.Patches
                         break;
                     }
 
-                    var item = items[i];
+                    ItemData? item = items[i];
 
                     if (item.m_shared.m_name == name || name == "")
                     {

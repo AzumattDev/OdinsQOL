@@ -25,13 +25,17 @@ namespace OdinQOL.Patches
 
         public static IEnumerator UpdateMap(bool force)
         {
-            if (MapDetailOn.Value)
-                yield return null;
+            if (!MapDetailOn.Value)
+                yield break;
+            if (Player.m_localPlayer == null)
+                yield break;
+
             if (force)
                 yield return null;
 
-            var position = Player.m_localPlayer.transform.position;
-            var coords = new Vector2(position.x,
+
+            Vector3 position = Player.m_localPlayer.transform.position;
+            Vector2 coords = new(position.x,
                 position.z);
 
             if (!force && Vector2.Distance(lastPos, coords) < updateDelta.Value)
@@ -39,26 +43,26 @@ namespace OdinQOL.Patches
 
             lastPos = coords;
 
-            var pixels = new Dictionary<int, long>();
-            var newPix = false;
+            Dictionary<int, long>? pixels = new();
+            bool newPix = false;
 
             foreach (var collider in Physics.OverlapSphere(Player.m_localPlayer.transform.position,
                 Mathf.Max(showRange.Value, 0), LayerMask.GetMask("piece")))
             {
-                var piece = collider.GetComponentInParent<Piece>();
+                Piece? piece = collider.GetComponentInParent<Piece>();
                 if (piece != null && piece.GetComponent<ZNetView>().IsValid())
                 {
-                    var pos = piece.transform.position;
+                    Vector3 pos = piece.transform.position;
                     float mx;
                     float my;
-                    var num = Minimap.instance.m_textureSize / 2;
+                    int num = Minimap.instance.m_textureSize / 2;
                     mx = pos.x / Minimap.instance.m_pixelSize + num;
                     my = pos.z / Minimap.instance.m_pixelSize + num;
 
-                    var x = Mathf.RoundToInt(mx / Minimap.instance.m_textureSize * mapTexture.width);
-                    var y = Mathf.RoundToInt(my / Minimap.instance.m_textureSize * mapTexture.height);
+                    int x = Mathf.RoundToInt(mx / Minimap.instance.m_textureSize * mapTexture.width);
+                    int y = Mathf.RoundToInt(my / Minimap.instance.m_textureSize * mapTexture.height);
 
-                    var idx = x + y * mapTexture.width;
+                    int idx = x + y * mapTexture.width;
                     if (!pixels.ContainsKey(idx))
                     {
                         if (!lastPixels.Contains(idx))
@@ -71,7 +75,7 @@ namespace OdinQOL.Patches
 
             if (!newPix)
             {
-                foreach (var i in lastPixels)
+                foreach (int i in lastPixels)
                     if (!pixels.ContainsKey(i))
                         goto newpixels;
                 OdinQOLplugin.Dbgl("No new pixels");
@@ -89,15 +93,15 @@ namespace OdinQOL.Patches
                 yield break;
             }
 
-            var customColors = new List<string>();
+            List<string>? customColors = new List<string>();
             if (customPlayerColors.Value.Length > 0) customColors = customPlayerColors.Value.Split(',').ToList();
-            var assignedColors = new Dictionary<long, Color>();
-            var named = customPlayerColors.Value.Contains(":");
+            Dictionary<long, Color>? assignedColors = new Dictionary<long, Color>();
+            bool named = customPlayerColors.Value.Contains(":");
 
-            var data = mapTexture.GetPixels32();
-            foreach (var kvp in pixels)
+            Color32[]? data = mapTexture.GetPixels32();
+            foreach (KeyValuePair<int, long> kvp in pixels)
             {
-                var color = Color.clear;
+                Color color = Color.clear;
                 if (assignedColors.ContainsKey(kvp.Value))
                 {
                     color = assignedColors[kvp.Value];
@@ -115,7 +119,7 @@ namespace OdinQOL.Patches
                     }
                     else
                     {
-                        var pair = customColors.Find(s =>
+                        string? pair = customColors.Find(s =>
                             s.StartsWith(Player.GetPlayer(kvp.Value)?.GetPlayerName() + ":"));
                         if (pair != null && pair.Length > 0)
                             ColorUtility.TryParseHtmlString(pair.Split(':')[1], out color);
@@ -135,8 +139,10 @@ namespace OdinQOL.Patches
                 //Dbgl($"pixel coords {kvp.Key % mapTexture.width},{kvp.Key / mapTexture.width}");
             }
 
-            var tempTexture = new Texture2D(mapTexture.width, mapTexture.height, TextureFormat.RGBA32, false);
-            tempTexture.wrapMode = TextureWrapMode.Clamp;
+            Texture2D? tempTexture = new(mapTexture.width, mapTexture.height, TextureFormat.RGBA32, false)
+            {
+                wrapMode = TextureWrapMode.Clamp
+            };
             tempTexture.SetPixels32(data);
             tempTexture.Apply();
 
@@ -168,7 +174,8 @@ namespace OdinQOL.Patches
             private static void Postfix(Texture2D ___m_mapTexture)
             {
                 if (!OdinQOLplugin.modEnabled.Value) return;
-                var data = ___m_mapTexture.GetPixels32();
+                if (!MapDetailOn.Value) return;
+                Color32[]? data = ___m_mapTexture.GetPixels32();
 
                 mapTexture = new Texture2D(___m_mapTexture.width, ___m_mapTexture.height, TextureFormat.RGBA32, false);
                 mapTexture.wrapMode = TextureWrapMode.Clamp;

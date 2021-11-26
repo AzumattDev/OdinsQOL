@@ -79,7 +79,7 @@ namespace OdinQOL.Patches
                     if (inventory.GetItemAt(7, inventory.GetHeight() - 1) != null)
                         m_items.Add(inventory.GetItemAt(7, inventory.GetHeight() - 1));
                     m_items.Sort((Comparison<ItemDrop.ItemData>)((x, y) => x.m_gridPos.x.CompareTo(y.m_gridPos.x)));
-                    var num = 0;
+                    int num = 0;
                     foreach (ItemDrop.ItemData itemData in m_items)
                         if (itemData.m_gridPos.x - 4 > num)
                             num = itemData.m_gridPos.x - 4;
@@ -88,7 +88,7 @@ namespace OdinQOL.Patches
                         foreach (ElementData element in m_elements)
                             Destroy(element.m_go);
                         m_elements.Clear();
-                        for (var index = 0; index < num; ++index)
+                        for (int index = 0; index < num; ++index)
                         {
                             ElementData elementData = new()
                             {
@@ -111,8 +111,8 @@ namespace OdinQOL.Patches
 
                     foreach (ElementData element in m_elements)
                         element.m_used = false;
-                    var flag = ZInput.IsGamepadActive();
-                    for (var index = 0; index < m_items.Count; ++index)
+                    bool flag = ZInput.IsGamepadActive();
+                    for (int index = 0; index < m_items.Count; ++index)
                     {
                         ItemDrop.ItemData itemData = m_items[index];
                         ElementData element = m_elements[itemData.m_gridPos.x - 5];
@@ -149,7 +149,7 @@ namespace OdinQOL.Patches
                         }
                     }
 
-                    for (var index = 0; index < m_elements.Count; ++index)
+                    for (int index = 0; index < m_elements.Count; ++index)
                     {
                         ElementData element = m_elements[index];
                         element.m_selection.SetActive(flag && index == m_selected);

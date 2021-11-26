@@ -53,8 +53,8 @@ namespace OdinQOL.Patches
 
         public static float tFloat(this float value, int digits)
         {
-            var mult = Math.Pow(10.0, digits);
-            var result = Math.Truncate(mult * value) / mult;
+            double mult = Math.Pow(10.0, digits);
+            double result = Math.Truncate(mult * value) / mult;
             return (float)result;
         }
 
@@ -127,7 +127,7 @@ namespace OdinQOL.Patches
                     {
                         Skills.Skill skill;
                         skill = __instance.GetSkill(skillType);
-                        var percent = skill.m_accumulator / (skill.GetNextLevelRequirement() / 100);
+                        float percent = skill.m_accumulator / (skill.GetNextLevelRequirement() / 100);
                         __instance.m_player.Message(MessageHud.MessageType.TopLeft, "Level " + skill.m_level.tFloat(0) +
                             " " + skill.m_info.m_skill
                             + " [" + skill.m_accumulator.tFloat(2) + "/" + skill.GetNextLevelRequirement().tFloat(2) +
@@ -157,7 +157,7 @@ namespace OdinQOL.Patches
             {
                 var il = instructions.ToList();
 
-                for (var i = 0; i < il.Count; ++i)
+                for (int i = 0; i < il.Count; ++i)
                     if (il[i].Calls(method_Skills_LowerAllSkills))
                         il[i].operand = method_LowerAllSkills;
 

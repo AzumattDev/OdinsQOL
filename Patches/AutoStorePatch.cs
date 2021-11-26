@@ -124,7 +124,7 @@ namespace OdinQOL.Patches
                 if (!isOn.Value || ___m_nview == null || ___m_nview.GetZDO() == null)
                     return;
 
-                var position = __instance.transform.position + Vector3.up;
+                Vector3 position = __instance.transform.position + Vector3.up;
                 foreach (var collider in Physics.OverlapSphere(position, ContainerRange(__instance),
                     LayerMask.GetMask("item")))
                     if (collider?.attachedRigidbody)

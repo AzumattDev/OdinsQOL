@@ -99,7 +99,7 @@ namespace OdinQOL.Patches
                     if (enableAreaRepair.Value)
                         // Replace call to Player::Repair with our own stub.
                         // Our stub calls the original repair multiple times, one for each nearby piece.
-                        for (var i = 0; i < il.Count; ++i)
+                        for (int i = 0; i < il.Count; ++i)
                             if (il[i].Calls(method_Player_Repair))
                                 il[i].operand = method_RepairNearby;
 
@@ -109,7 +109,7 @@ namespace OdinQOL.Patches
                 public static void RepairNearby(Player instance, ItemDrop.ItemData toolItem, Piece _1)
                 {
                     var selected_piece = instance.GetHoveringPiece();
-                    var position = selected_piece != null
+                    Vector3 position = selected_piece != null
                         ? selected_piece.transform.position
                         : instance.transform.position;
 
@@ -122,9 +122,9 @@ namespace OdinQOL.Patches
 
                     foreach (var piece in pieces)
                     {
-                        var has_stamina = instance.HaveStamina(toolItem.m_shared.m_attack.m_attackStamina);
-                        var uses_durability = toolItem.m_shared.m_useDurability;
-                        var has_durability = toolItem.m_durability > 0.0f;
+                        bool has_stamina = instance.HaveStamina(toolItem.m_shared.m_attack.m_attackStamina);
+                        bool uses_durability = toolItem.m_shared.m_useDurability;
+                        bool has_durability = toolItem.m_durability > 0.0f;
 
                         if (!has_stamina || uses_durability && !has_durability) break;
 
@@ -163,8 +163,8 @@ namespace OdinQOL.Patches
                         // Replace calls to Character::Message with our own noop stub
                         // We don't want to spam messages for each piece so we patch the messages out here and dispatch our own messages in the other transpiler.
                         // First call pushes 1, then subsequent calls 0 - the first call is the branch where the repair succeeded.
-                        var count = 0;
-                        for (var i = 0; i < il.Count; ++i)
+                        int count = 0;
+                        for (int i = 0; i < il.Count; ++i)
                             if (il[i].Calls(method_Character_Message))
                             {
                                 il[i].operand = method_MessageNoop;
@@ -349,7 +349,7 @@ namespace OdinQOL.Patches
             {
                 var il = instructions.ToList();
 
-                for (var i = 0; i < il.Count - 2; ++i)
+                for (int i = 0; i < il.Count - 2; ++i)
                     if (il[i].LoadsField(field_Player_m_foodUpdateTimer) &&
                         il[i + 1].opcode == OpCodes.Ldarg_1 /* dt */ &&
                         il[i + 2].opcode == OpCodes.Add)
@@ -396,10 +396,10 @@ namespace OdinQOL.Patches
             {
                 var il = instructions.ToList();
 
-                for (var i = 0; i < il.Count; ++i)
+                for (int i = 0; i < il.Count; ++i)
                 {
-                    var loads_health = il[i].LoadsField(field_Food_m_health);
-                    var loads_stamina = il[i].LoadsField(field_Food_m_stamina);
+                    bool loads_health = il[i].LoadsField(field_Food_m_health);
+                    bool loads_stamina = il[i].LoadsField(field_Food_m_stamina);
 
                     if (loads_health || loads_stamina)
                     {
@@ -430,7 +430,7 @@ namespace OdinQOL.Patches
             public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 var il = instructions.ToList();
-                for (var i = 0; i < il.Count; ++i)
+                for (int i = 0; i < il.Count; ++i)
                     if (il[i].operand != null)
                         // search for every call to the function
                         if (il[i].operand.ToString().Contains(nameof(Location.IsInsideNoBuildLocation)))
@@ -566,7 +566,7 @@ namespace OdinQOL.Patches
         {
             private static void Prefix(ref int cPlayersMax)
             {
-                var maxPlayers = GamePatches.maxPlayers.Value;
+                int maxPlayers = GamePatches.maxPlayers.Value;
                 if (maxPlayers >= 1) cPlayersMax = maxPlayers;
             }
         }
@@ -576,7 +576,7 @@ namespace OdinQOL.Patches
         {
             private static void Postfix(ref ZNet __instance)
             {
-                var maxPlayers = GamePatches.maxPlayers.Value;
+                int maxPlayers = GamePatches.maxPlayers.Value;
                 if (maxPlayers >= 1)
                     // Set Server Instance Max Players
                     __instance.m_serverPlayerLimit = maxPlayers;
@@ -632,8 +632,8 @@ namespace OdinQOL.Patches
                     icon.color = Color.white;
                     tooltip.m_text = Localization.instance.Localize(req.m_resItem.m_itemData.m_shared.m_name);
                     nameText.text = Localization.instance.Localize(req.m_resItem.m_itemData.m_shared.m_name);
-                    var num = OdinQOLplugin.GetAvailableItems(req.m_resItem.m_itemData.m_shared.m_name);
-                    var amount = req.GetAmount(quality);
+                    int num = OdinQOLplugin.GetAvailableItems(req.m_resItem.m_itemData.m_shared.m_name);
+                    int amount = req.GetAmount(quality);
                     if (amount <= 0)
                     {
                         InventoryGui.HideRequirement(elementRoot);
@@ -678,12 +678,12 @@ namespace OdinQOL.Patches
                     var displayName = Localization.instance.Localize(piece.m_name);
                     if (piece.m_resources.Length == 0) return;
 
-                    var fewestPossible = int.MaxValue;
+                    int fewestPossible = int.MaxValue;
                     foreach (var requirement in piece.m_resources)
                     {
-                        var currentAmount =
+                        int currentAmount =
                             OdinQOLplugin.GetAvailableItems(requirement.m_resItem.m_itemData.m_shared.m_name);
-                        var canMake = currentAmount / requirement.m_amount;
+                        int canMake = currentAmount / requirement.m_amount;
                         if (canMake < fewestPossible) fewestPossible = canMake;
                     }
 
