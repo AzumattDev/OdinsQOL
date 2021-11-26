@@ -32,8 +32,8 @@ namespace OdinQOL.Patches
                     if (___m_inventory == null) return;
 
                     string inventoryName = ___m_inventory.m_name;
-                    ref var inventoryColumns = ref ___m_inventory.m_width;
-                    ref var inventoryRows = ref ___m_inventory.m_height;
+                    ref int inventoryColumns = ref ___m_inventory.m_width;
+                    ref int inventoryRows = ref ___m_inventory.m_height;
 
                     // Personal chest
                     if (inventoryName == "$piece_chestprivate")
@@ -60,8 +60,8 @@ namespace OdinQOL.Patches
 
                     string containerName = __instance.transform.parent.name;
                     string inventoryName = ___m_inventory.m_name;
-                    ref var inventoryColumns = ref ___m_inventory.m_width;
-                    ref var inventoryRows = ref ___m_inventory.m_height;
+                    ref int inventoryColumns = ref ___m_inventory.m_width;
+                    ref int inventoryRows = ref ___m_inventory.m_height;
 
                     // Karve (small boat)
                     // Use Contains because the actual name is "Karve (Clone)"

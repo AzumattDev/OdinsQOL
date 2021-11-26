@@ -1,4 +1,6 @@
-﻿namespace OdinQOL.MapSharing
+﻿using UnityEngine;
+
+namespace OdinQOL.MapSharing
 {
     public class VmpMapPinSync
     {
@@ -30,15 +32,15 @@
                     return;
                 }
 
-                var pinSender = mapPinPkg.ReadLong();
+                long pinSender = mapPinPkg.ReadLong();
                 string senderName = mapPinPkg.ReadString();
                 if (senderName != Player.m_localPlayer.GetPlayerName() && pinSender != ZRoutedRpc.instance.m_id)
                 {
                     ZLog.Log("Checking sent pin");
-                    var pinPos = mapPinPkg.ReadVector3();
-                    var pinType = mapPinPkg.ReadInt();
+                    Vector3 pinPos = mapPinPkg.ReadVector3();
+                    int pinType = mapPinPkg.ReadInt();
                     string pinName = mapPinPkg.ReadString();
-                    var keepQuiet = mapPinPkg.ReadBool();
+                    bool keepQuiet = mapPinPkg.ReadBool();
                     if (!Minimap.instance.HaveSimilarPin(pinPos, (Minimap.PinType)pinType, pinName, true))
                     {
                         Minimap.PinData addedPin =

@@ -19,7 +19,7 @@ namespace OdinQOL.Patches
         {
             private static void Postfix(InventoryGui __instance, Container ___m_currentContainer)
             {
-                var mousePos = Input.mousePosition;
+                Vector3 mousePos = Input.mousePosition;
                 if (!OdinQOLplugin.modEnabled.Value || !___m_currentContainer || !___m_currentContainer.IsOwner())
                 {
                     lastMousePos = mousePos;
@@ -53,7 +53,7 @@ namespace OdinQOL.Patches
                     List<RaycastResult> raycastResults = new();
                     EventSystem.current.RaycastAll(eventData, raycastResults);
 
-                    foreach (var rcr in raycastResults)
+                    foreach (RaycastResult rcr in raycastResults)
                         if (rcr.gameObject.layer == LayerMask.NameToLayer("UI") && rcr.gameObject.name == "Bkg" &&
                             rcr.gameObject.transform.parent.name == "Container")
                         {

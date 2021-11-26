@@ -21,16 +21,16 @@ namespace OdinQOL.MapSharing
                 if (mapPkg == null) return;
 
                 //Get number of explored areas
-                var exploredAreaCount = mapPkg.ReadInt();
+                int exploredAreaCount = mapPkg.ReadInt();
 
                 if (exploredAreaCount > 0)
                 {
                     //Iterate and add them to server's combined map data.
-                    for (var i = 0; i < exploredAreaCount; i++)
+                    for (int i = 0; i < exploredAreaCount; i++)
                     {
                         MapRange exploredArea = mapPkg.ReadVPlusMapRange();
 
-                        for (var x = exploredArea.StartingX; x < exploredArea.EndingX; x++)
+                        for (int x = exploredArea.StartingX; x < exploredArea.EndingX; x++)
                             ServerMapData[exploredArea.Y * Minimap.instance.m_textureSize + x] = true;
                     }
 
@@ -41,7 +41,7 @@ namespace OdinQOL.MapSharing
                 }
 
                 //Check if this is the last chunk from the client.
-                var lastMapPackage = mapPkg.ReadBool();
+                bool lastMapPackage = mapPkg.ReadBool();
 
                 if (!lastMapPackage)
                     return; //This package is one of many chunks, so don't update clients until we get all of them.
@@ -77,16 +77,16 @@ namespace OdinQOL.MapSharing
                 }
 
                 //Get number of explored areas
-                var exploredAreaCount = mapPkg.ReadInt();
+                int exploredAreaCount = mapPkg.ReadInt();
 
                 if (exploredAreaCount > 0)
                 {
                     //Iterate and add them to explored map
-                    for (var i = 0; i < exploredAreaCount; i++)
+                    for (int i = 0; i < exploredAreaCount; i++)
                     {
                         MapRange exploredArea = mapPkg.ReadVPlusMapRange();
 
-                        for (var x = exploredArea.StartingX; x < exploredArea.EndingX; x++)
+                        for (int x = exploredArea.StartingX; x < exploredArea.EndingX; x++)
                             Minimap.instance.Explore(x, exploredArea.Y);
                     }
 
@@ -156,7 +156,7 @@ namespace OdinQOL.MapSharing
                     string[] dataPoints = mapData.Split(',');
 
                     foreach (string dataPoint in dataPoints)
-                        if (int.TryParse(dataPoint, out var result))
+                        if (int.TryParse(dataPoint, out int result))
                             ServerMapData[result] = true;
 
                     ZLog.Log($"Loaded {dataPoints.Length} map points from disk.");
@@ -176,8 +176,8 @@ namespace OdinQOL.MapSharing
 
             List<int> mapDataToDisk = new();
 
-            for (var y = 0; y < Minimap.instance.m_textureSize; ++y)
-            for (var x = 0; x < Minimap.instance.m_textureSize; ++x)
+            for (int y = 0; y < Minimap.instance.m_textureSize; ++y)
+            for (int x = 0; x < Minimap.instance.m_textureSize; ++x)
                 if (ServerMapData[y * Minimap.instance.m_textureSize + x])
                     mapDataToDisk.Add(y * Minimap.instance.m_textureSize + x);
 
@@ -199,11 +199,11 @@ namespace OdinQOL.MapSharing
             //Iterate the explored map and convert to ranges
             List<MapRange> exploredAreas = new();
 
-            for (var y = 0; y < Minimap.instance.m_textureSize; ++y)
+            for (int y = 0; y < Minimap.instance.m_textureSize; ++y)
             {
                 int startX = -1, endX = -1;
 
-                for (var x = 0; x < Minimap.instance.m_textureSize; ++x)
+                for (int x = 0; x < Minimap.instance.m_textureSize; ++x)
                 {
                     //Find the first X value that is true
                     if (explorationData[y * Minimap.instance.m_textureSize + x] && startX == -1 && endX == -1)

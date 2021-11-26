@@ -44,7 +44,7 @@ namespace OdinQOL
         {
             if (modEnabled.Value && configApplied && Player.m_localPlayer && Hud.instance)
             {
-                var alpha = 1f;
+                float alpha = 1f;
                 newTimeString = GetCurrentTimeString();
                 if (showClockOnChange.Value)
                 {
@@ -216,7 +216,7 @@ namespace OdinQOL
         {
             var fuzzyStringArray = clockFuzzyStrings.Value.Split(',');
 
-            var idx = Math.Min((int)(fuzzyStringArray.Length * fraction), fuzzyStringArray.Length - 1);
+            int idx = Math.Min((int)(fuzzyStringArray.Length * fraction), fuzzyStringArray.Length - 1);
 
             if (clockFormat.Value == "fuzzy")
                 return string.Format(clockString.Value, fuzzyStringArray[idx]);

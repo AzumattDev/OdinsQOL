@@ -91,7 +91,7 @@ namespace OdinQOL.Patches
                     return;
                 Dbgl("Player_Awake");
 
-                var height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
+                int height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
 
                 AccessTools.FieldRefAccess<Inventory, int>(___m_inventory, "m_height") = height;
                 __instance.m_tombstone.GetComponent<Container>().m_height = height;
@@ -107,7 +107,7 @@ namespace OdinQOL.Patches
                     return;
                 Dbgl("TombStone_Awake");
 
-                var height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
+                int height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
 
                 __instance.GetComponent<Container>().m_height = height;
                 //AccessTools.FieldRefAccess<Inventory, int>(AccessTools.FieldRefAccess<Container, Inventory>(__instance.GetComponent<Container>(), "m_inventory"), "m_height") = height;
@@ -123,7 +123,7 @@ namespace OdinQOL.Patches
                 if (!modEnabled.Value)
                     return;
                 Dbgl("TombStone_Interact");
-                var num = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
+                int num = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
                 __instance.GetComponent<Container>().m_height = num;
                 Traverse traverse = Traverse.Create(___m_container);
                 string base64String = traverse.Field("m_nview").GetValue<ZNetView>().GetZDO().GetString("items");
@@ -159,7 +159,7 @@ namespace OdinQOL.Patches
             {
                 if (!modEnabled.Value)
                     return;
-                var height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
+                int height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
                 AccessTools.FieldRefAccess<Inventory, int>(___m_inventory, "m_height") = height;
                 __instance.m_tombstone.GetComponent<Container>().m_height = height;
                 if (Utilities.IgnoreKeyPresses(true) || !addEquipmentRow.Value)
@@ -196,7 +196,7 @@ namespace OdinQOL.Patches
                 Dbgl(string.Format("inv height {0}", gameObject.GetComponent<Container>().GetInventory().GetHeight()));
                 Dbgl(string.Format("inv slots {0}",
                     gameObject.GetComponent<Container>().GetInventory().GetEmptySlots()));
-                for (var index = 0;
+                for (int index = 0;
                     index < gameObject.GetComponent<Container>().GetInventory().GetEmptySlots();
                     ++index)
                     gameObject.GetComponent<Container>().GetInventory().AddItem("SwordBronze", 1, 1, 0, 0L, "");
@@ -226,28 +226,28 @@ namespace OdinQOL.Patches
                     ItemDrop.ItemData itemData3 = traverse.Field("m_legItem").GetValue<ItemDrop.ItemData>();
                     ItemDrop.ItemData itemData4 = traverse.Field("m_shoulderItem").GetValue<ItemDrop.ItemData>();
                     ItemDrop.ItemData itemData5 = traverse.Field("m_utilityItem").GetValue<ItemDrop.ItemData>();
-                    var width = inventory.GetWidth();
-                    var num1 = width * (inventory.GetHeight() - 1);
+                    int width = inventory.GetWidth();
+                    int num1 = width * (inventory.GetHeight() - 1);
                     if (itemData1 != null)
                         traverse.Field("m_helmetItem").GetValue<ItemDrop.ItemData>().m_gridPos =
                             new Vector2i(num1 % width, num1 / width);
-                    var num2 = num1 + 1;
+                    int num2 = num1 + 1;
                     if (itemData2 != null)
                         traverse.Field("m_chestItem").GetValue<ItemDrop.ItemData>().m_gridPos =
                             new Vector2i(num2 % width, num2 / width);
-                    var num3 = num2 + 1;
+                    int num3 = num2 + 1;
                     if (itemData3 != null)
                         traverse.Field("m_legItem").GetValue<ItemDrop.ItemData>().m_gridPos =
                             new Vector2i(num3 % width, num3 / width);
-                    var num4 = num3 + 1;
+                    int num4 = num3 + 1;
                     if (itemData4 != null)
                         traverse.Field("m_shoulderItem").GetValue<ItemDrop.ItemData>().m_gridPos =
                             new Vector2i(num4 % width, num4 / width);
-                    var num5 = num4 + 1;
+                    int num5 = num4 + 1;
                     if (itemData5 != null)
                         traverse.Field("m_utilityItem").GetValue<ItemDrop.ItemData>().m_gridPos =
                             new Vector2i(num5 % width, num5 / width);
-                    for (var index = 0; index < allItems.Count; ++index)
+                    for (int index = 0; index < allItems.Count; ++index)
                     {
                         int which;
                         if (IsAtEquipmentSlot(inventory, allItems[index], out which) &&
@@ -262,7 +262,7 @@ namespace OdinQOL.Patches
                                                                              !Player.m_localPlayer.EquipItem(
                                                                                  allItems[index], false)))
                         {
-                            var vector2i = (Vector2i)typeof(Inventory)
+                            Vector2i vector2i = (Vector2i)typeof(Inventory)
                                 .GetMethod("FindEmptySlot", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(
                                     inventory, new object[1]
                                     {
@@ -459,7 +459,7 @@ namespace OdinQOL.Patches
                 if (!modEnabled.Value || !addEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
                     return true;
                 Dbgl("GetEmptySlots");
-                var count = ___m_inventory.FindAll((Predicate<ItemDrop.ItemData>)(i => i.m_gridPos.y < ___m_height - 1))
+                int count = ___m_inventory.FindAll((Predicate<ItemDrop.ItemData>)(i => i.m_gridPos.y < ___m_height - 1))
                     .Count;
                 __result = (___m_height - 1) * ___m_width - count;
                 return false;
@@ -478,7 +478,7 @@ namespace OdinQOL.Patches
             {
                 if (!modEnabled.Value || !addEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
                     return true;
-                var count = ___m_inventory.FindAll((Predicate<ItemDrop.ItemData>)(i => i.m_gridPos.y < ___m_height - 1))
+                int count = ___m_inventory.FindAll((Predicate<ItemDrop.ItemData>)(i => i.m_gridPos.y < ___m_height - 1))
                     .Count;
                 __result = count < ___m_width * (___m_height - 1);
                 return false;
@@ -558,8 +558,8 @@ namespace OdinQOL.Patches
             {
                 if (!modEnabled.Value || !addEquipmentRow.Value || Player.m_localPlayer == null)
                     return;
-                var scaleFactor = GameObject.Find("GUI").GetComponent<CanvasScaler>().scaleFactor;
-                var mousePosition = Input.mousePosition;
+                float scaleFactor = GameObject.Find("GUI").GetComponent<CanvasScaler>().scaleFactor;
+                Vector3 mousePosition = Input.mousePosition;
                 if (!modEnabled.Value)
                 {
                     lastMousePos = mousePosition;
@@ -573,7 +573,7 @@ namespace OdinQOL.Patches
                     if (Utilities.CheckKeyHeldKeycode(modKeyOne.Value) &&
                         Utilities.CheckKeyHeldKeycode(modKeyTwo.Value))
                     {
-                        var rect = Rect.zero;
+                        Rect rect = Rect.zero;
                         if (transform.Find("QuickAccessBar")?.GetComponent<RectTransform>() != null)
                             rect = new Rect(
                                 transform.Find("QuickAccessBar").GetComponent<RectTransform>().anchoredPosition.x *

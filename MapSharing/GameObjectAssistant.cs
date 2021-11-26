@@ -10,7 +10,7 @@ namespace OdinQOL.MapSharing
 
         public static Stopwatch GetStopwatch(GameObject o)
         {
-            var hash = GetGameObjectPosHash(o);
+            float hash = GetGameObjectPosHash(o);
             Stopwatch stopwatch = null;
 
             if (!stopwatches.TryGetValue(hash, out stopwatch))

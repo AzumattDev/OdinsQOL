@@ -60,7 +60,7 @@ namespace OdinQOL.Patches
                                     ?.GetType("EpicLoot.Crafting.EnchantTabController")
                                     .GetMethod("GetEnchantCosts", BindingFlags.Public | BindingFlags.Static)
                                     ?.Invoke(null, new object[] { ___m_dragItem, rarity });
-                            foreach (var kvp in magicReqs)
+                            foreach (KeyValuePair<ItemDrop, int> kvp in magicReqs)
                             {
                                 if (!returnUnknownResources.Value &&
                                     (ObjectDB.instance.GetRecipe(kvp.Key.m_itemData) &&

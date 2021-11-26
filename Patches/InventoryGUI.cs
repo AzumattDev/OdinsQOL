@@ -73,7 +73,7 @@ namespace OdinQOL.Patches
 
             if (curr_crafting_station != null)
             {
-                var repair_count = 0;
+                int repair_count = 0;
 
                 while (__instance.HaveRepairableItems())
                 {

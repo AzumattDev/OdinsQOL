@@ -73,7 +73,7 @@ namespace OdinQOL.Patches
                         if (myItem.m_shared.m_name == otherItem.m_shared.m_name &&
                             myItem.m_quality == otherItem.m_quality)
                         {
-                            var itemsToMove = Math.Min(myItem.m_shared.m_maxStackSize - myItem.m_stack,
+                            int itemsToMove = Math.Min(myItem.m_shared.m_maxStackSize - myItem.m_stack,
                                 otherItem.m_stack);
                             myItem.m_stack += itemsToMove;
                             if (otherItem.m_stack == itemsToMove)
