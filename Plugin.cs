@@ -25,16 +25,21 @@ namespace OdinQOL
 
     class AcceptableShortcuts : AcceptableValueBase
     {
-        public AcceptableShortcuts() : base(typeof(KeyboardShortcut)) { }
+        public AcceptableShortcuts() : base(typeof(KeyboardShortcut))
+        {
+        }
+
         public override object Clamp(object value) => value;
         public override bool IsValid(object value) => true;
-        public override string ToDescriptionString() => "# Acceptable values: " + string.Join(", ", KeyboardShortcut.AllKeyCodes);
+
+        public override string ToDescriptionString() =>
+            "# Acceptable values: " + string.Join(", ", KeyboardShortcut.AllKeyCodes);
     }
 
     [BepInPlugin(GUID, ModName, Version)]
     public partial class OdinQOLplugin : BaseUnityPlugin
     {
-        public const string Version = "0.3.7";
+        public const string Version = "0.3.9";
         public const string ModName = "OdinPlusQOL";
         public const string GUID = "com.odinplusqol.mod";
         private static readonly int windowId = 434343;
@@ -73,7 +78,7 @@ namespace OdinQOL
         public static ConfigEntry<int> DungoneMinRoomCount;
         public static ConfigEntry<int> CampRadiusMin;
         public static ConfigEntry<int> CampRadiusMax;
-        
+
         public static readonly IEnumerable<KeyCode> AllKeyCodes;
 
         public static ConfigSync configSync = new(GUID) { DisplayName = ModName, CurrentVersion = Version };
@@ -101,12 +106,12 @@ namespace OdinQOL
 
             DungeonMaxRoomCount = config("Dungeon", "Max Room Count", 20,
                 "This is the max number of rooms placed by dungeon gen higher numbers will cause lag");
-            
+
             DungoneMinRoomCount = config("Dungeon", "Min Room Count", 5,
                 "This is the Min number of rooms placed by dungeon gen higher numbers will cause lag");
 
             CampRadiusMin = config("Dungeon", "Camp Radius Min", 5, "This is the minimum radius for goblin camps");
-            
+
             CampRadiusMax = config("Dungeon", "Camp Radius Max", 15, "This is the maximum radius for goblin camps");
 
             modEnabled = config("General", "Enabled", true, "Enable the entire mod");
@@ -199,10 +204,13 @@ namespace OdinQOL
                 "Type by which to sort entries.", false);
             CraftingPatch.sortAsc = config("Show Chest Contents", "SortAsc", false, "Sort ascending?", false);
             CraftingPatch.entryString = config("Show Chest Contents", "EntryText",
-                "<color=#AAAAAAFF>{0} {1}</color>",
+                "<color=#FFFFAAFF>{0}</color> <color=#AAFFAAFF>{1}</color>",
                 "Entry text. {0} is replaced by the total amount, {1} is replaced by the item name.", false);
             CraftingPatch.overFlowText = config("Show Chest Contents", "OverFlowText",
                 "<color=#AAAAAAFF>...</color>", "Overflow text if more items than max entries.", false);
+            CraftingPatch.capacityText = config("General", "CapacityText", "<color=#FFFFAAFF> {0}/{1}</color>",
+                "Text to show capacity. {0} is replaced by number of full slots, {1} is replaced by total slots.",
+                false);
 
             iHaveArrivedOnSpawn = config("Game", "I have arrived disable", true,
                 new ConfigDescription("Disable the I have arrived message"));
@@ -230,7 +238,9 @@ namespace OdinQOL
                 config("Server", "Max Player Count", 50, "Max number of Players to allow in a server");
 
             GamePatches.StaminaIsEnabled =
-                config("Player", "Stamina alterations enabled", false, "Stamina alterations enabled" + Environment.NewLine + "Note: These are not percent drains. They are direct drain values.");
+                config("Player", "Stamina alterations enabled", false,
+                    "Stamina alterations enabled" + Environment.NewLine +
+                    "Note: These are not percent drains. They are direct drain values.");
             GamePatches.dodgeStaminaUsage = config("Player", "Dodge Stamina Usage", 10f, "Dodge Stamina Usage");
             GamePatches.encumberedStaminaDrain =
                 config("Player", "Encumbered Stamina drain", 10f, "Encumbered Stamina drain");
@@ -475,7 +485,7 @@ namespace OdinQOL
             InventoryDiscard.returnResources = config("Inventory Discard", "ReturnResources", 1f,
                 "Fraction of resources to return (0.0 - 1.0)");
 
-            
+
             if (!modEnabled.Value)
                 return;
 
