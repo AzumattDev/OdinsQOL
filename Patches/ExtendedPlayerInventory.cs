@@ -92,8 +92,7 @@ namespace OdinQOL.Patches
                 Dbgl("Player_Awake");
 
                 int height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
-
-                AccessTools.FieldRefAccess<Inventory, int>(___m_inventory, "m_height") = height;
+                __instance.m_inventory.m_height = height;
                 __instance.m_tombstone.GetComponent<Container>().m_height = height;
             }
         }
@@ -558,7 +557,7 @@ namespace OdinQOL.Patches
             {
                 if (!modEnabled.Value || !addEquipmentRow.Value || Player.m_localPlayer == null)
                     return;
-                float scaleFactor = GameObject.Find("GUI").GetComponent<CanvasScaler>().scaleFactor;
+                float scaleFactor = GameObject.Find("LoadingGUI").GetComponent<CanvasScaler>().scaleFactor;
                 Vector3 mousePosition = Input.mousePosition;
                 if (!modEnabled.Value)
                 {
