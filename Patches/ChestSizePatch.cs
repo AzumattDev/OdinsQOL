@@ -17,6 +17,8 @@ namespace OdinQOL.Patches
         public static ConfigEntry<int> WoodCol;
         public static ConfigEntry<int> IronRow;
         public static ConfigEntry<int> IronCol;
+        public static ConfigEntry<int> BMRow;
+        public static ConfigEntry<int> BMCol;
 
         [HarmonyPatch(typeof(Container), "Awake")]
         public static class Container_Awake_Patch
@@ -52,6 +54,12 @@ namespace OdinQOL.Patches
                     {
                         inventoryRows = IronRow.Value;
                         inventoryColumns = IronCol.Value;
+                    }
+                    // Blackmetal chest
+                    else if (inventoryName == "$piece_chestblackmetal")
+                    {
+                        inventoryRows = BMRow.Value;
+                        inventoryColumns = BMCol.Value;
                     }
                 }
                 else
