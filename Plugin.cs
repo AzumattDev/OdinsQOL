@@ -141,9 +141,9 @@ namespace OdinQOL
                 new ConfigDescription("Iron Chest Rows", new AcceptableValueRange<int>(3, 20)));
             Container_Configs.IronCol = config("Containers", "Iron Chest Columns", 6,
                 new ConfigDescription("Iron Chest Columns", new AcceptableValueRange<int>(6, 8)));
-            Container_Configs.IronRow = config("Containers", "Blackmetal Chest Rows", 4,
+            Container_Configs.BMRow = config("Containers", "Blackmetal Chest Rows", 4,
                 new ConfigDescription("Blackmetal Chest Rows", new AcceptableValueRange<int>(3, 20)));
-            Container_Configs.IronCol = config("Containers", "Blackmetal Chest Columns", 8,
+            Container_Configs.BMCol = config("Containers", "Blackmetal Chest Columns", 8,
                 new ConfigDescription("Blackmetal Chest Columns", new AcceptableValueRange<int>(6, 8)));
 
 
