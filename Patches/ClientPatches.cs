@@ -10,45 +10,64 @@ namespace OdinQOL.Patches
 
         private static bool _overridePlayerName;
 
-        internal static void ChatSendTextPrefix(On.Chat.orig_SendText orig, Chat self, Talker.Type type, string text)
+        [HarmonyPatch(typeof(Chat), nameof(Chat.SendText))]
+        static class Chat_SendText_Patch
         {
-            _overridePlayerName = true;
-            orig(self, type, text);
-            _overridePlayerName = false;
+            static void Prefix(Chat __instance, Talker.Type type, string text)
+            {
+                _overridePlayerName = true;
+            }
+
+            static void Postfix(Chat __instance, Talker.Type type, string text)
+            {
+                _overridePlayerName = false;
+            }
         }
 
-        public static void ChatSendPingPrefix(On.Chat.orig_SendPing orig, Chat self, Vector3 position)
+        [HarmonyPatch(typeof(Chat), nameof(Chat.SendPing))]
+        static class Chat_SendPing_Patch
         {
-            _overridePlayerName = true;
-            orig(self, position);
-            _overridePlayerName = false;
+            static void Prefix(Chat __instance, Vector3 position)
+            {
+                _overridePlayerName = true;
+            }
+
+            static void Postfix(Chat __instance, Vector3 position)
+            {
+                _overridePlayerName = false;
+            }
         }
 
-        public static string PlayerGetPlayerNamePrefix(On.Player.orig_GetPlayerName orig, Player self)
+        [HarmonyPatch(typeof(Player), nameof(Player.GetPlayerName))]
+        static class Player_GetPlayerName_Patch
         {
-            if (_overridePlayerName
-                && self == Player.m_localPlayer
-                && !string.IsNullOrEmpty(_chatPlayerName.Value))
-                return _chatPlayerName.Value;
-
-            return orig(self);
+            static void Postfix(Player __instance, ref string __result)
+            {
+                if (_overridePlayerName
+                    && __instance == Player.m_localPlayer
+                    && !string.IsNullOrEmpty(_chatPlayerName.Value))
+                    __result =  _chatPlayerName.Value;
+            }
         }
 
-        public static string PlayerProfileGetNamePrefix(On.PlayerProfile.orig_GetName orig, PlayerProfile self)
+        [HarmonyPatch(typeof(PlayerProfile), nameof(PlayerProfile.GetName))]
+        static class PlayerProfile_GetName_Patch
         {
-            if (_overridePlayerName && !string.IsNullOrEmpty(_chatPlayerName.Value)) return _chatPlayerName.Value;
-
-            return orig(self);
+            static void Postfix(PlayerProfile __instance, ref string __result)
+            {
+                if (_overridePlayerName && !string.IsNullOrEmpty(_chatPlayerName.Value)) __result = _chatPlayerName.Value;
+                
+            }
         }
 
-        public static Player GameSpawnPlayerPostfix(On.Game.orig_SpawnPlayer orig, Game self, Vector3 spawnPoint)
+        [HarmonyPatch(typeof(Game), nameof(Game.SpawnPlayer))]
+        static class Game_SpawnPlayer_Patch
         {
-            var player = orig(self, spawnPoint);
-
-            if (!string.IsNullOrEmpty(_chatPlayerName.Value))
-                player.m_nview.GetZDO().Set("playerName", _chatPlayerName.Value);
-
-            return player;
+            static void Postfix(Game __instance, Vector3 spawnPoint, Player __result)
+            {
+                if (!string.IsNullOrEmpty(_chatPlayerName.Value))
+                    __result.m_nview.GetZDO().Set("playerName", _chatPlayerName.Value);
+            }
         }
 
         [HarmonyPatch(typeof(Ship), "Awake")]

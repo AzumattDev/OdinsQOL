@@ -141,6 +141,10 @@ namespace OdinQOL
                 new ConfigDescription("Iron Chest Rows", new AcceptableValueRange<int>(3, 20)));
             Container_Configs.IronCol = config("Containers", "Iron Chest Columns", 6,
                 new ConfigDescription("Iron Chest Columns", new AcceptableValueRange<int>(6, 8)));
+            Container_Configs.BMRow = config("Containers", "Blackmetal Chest Rows", 4,
+                new ConfigDescription("Blackmetal Chest Rows", new AcceptableValueRange<int>(3, 20)));
+            Container_Configs.BMCol = config("Containers", "Blackmetal Chest Columns", 8,
+                new ConfigDescription("Blackmetal Chest Columns", new AcceptableValueRange<int>(6, 8)));
 
 
             CraftingPatch.WorkbenchRange = config("WorkBench", "WorkBenchRange", 20,
@@ -498,14 +502,7 @@ namespace OdinQOL
                 mapSyncSaveTimer.AutoReset = true;
                 mapSyncSaveTimer.Elapsed += (sender, args) => MapSync.SaveMapDataToDisk();
             }
-
-            On.Chat.SendText += ClientPatches.ChatSendTextPrefix;
-            On.Chat.SendPing += ClientPatches.ChatSendPingPrefix;
-
-            On.Player.GetPlayerName += ClientPatches.PlayerGetPlayerNamePrefix;
-            On.PlayerProfile.GetName += ClientPatches.PlayerProfileGetNamePrefix;
-
-            On.Game.SpawnPlayer += ClientPatches.GameSpawnPlayerPostfix;
+            
             // On.Humanoid.GetInventory += GamePatches.Humanoid_GetInventory;
             CraftFromContainersInstalledAndActive = false;
             var bepInExManager = GameObject.Find("BepInEx_Manager");
