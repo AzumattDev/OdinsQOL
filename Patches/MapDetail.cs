@@ -46,7 +46,7 @@ namespace OdinQOL.Patches
             Dictionary<int, long>? pixels = new();
             bool newPix = false;
 
-            foreach (var collider in Physics.OverlapSphere(Player.m_localPlayer.transform.position,
+            foreach (Collider? collider in Physics.OverlapSphere(Player.m_localPlayer.transform.position,
                 Mathf.Max(showRange.Value, 0), LayerMask.GetMask("piece")))
             {
                 Piece? piece = collider.GetComponentInParent<Piece>();

@@ -40,7 +40,7 @@ namespace OdinQOL.Patches
                 if (effectArea != null)
                     if ((effectArea.m_type & includedTypes) != 0)
                     {
-                        var collision = effectArea.GetComponent<SphereCollider>();
+                        SphereCollider? collision = effectArea.GetComponent<SphereCollider>();
                         if (collision != null) collision.radius = newRadius;
                     }
             }
@@ -211,7 +211,7 @@ namespace OdinQOL.Patches
                     return;
 
                 List<ItemData>? items = new();
-                foreach (var idd in __instance.GetInventory().GetAllItems()) items.Add(new ItemData(idd));
+                foreach (ItemDrop.ItemData? idd in __instance.GetInventory().GetAllItems()) items.Add(new ItemData(idd));
                 SortByType(SortType.Value, items, sortAsc.Value);
                 int entries = 0;
                 int amount = 0;

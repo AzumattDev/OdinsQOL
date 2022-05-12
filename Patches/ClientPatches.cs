@@ -106,7 +106,7 @@ namespace OdinQOL.Patches
             {
                 if (__result == null)
                 {
-                    var componentInChildren = item.transform.GetComponentInChildren<Collider>();
+                    Collider? componentInChildren = item.transform.GetComponentInChildren<Collider>();
                     if ((bool)componentInChildren) __result = componentInChildren.transform.gameObject;
                 }
             }

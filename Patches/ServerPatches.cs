@@ -14,8 +14,8 @@ namespace OdinQOL.Patches
         {
             if (ZNet.instance != null && ZNet.instance.IsServer())
             {
-                var path = Utils.GetSaveDataPath() + "/PlayerAuditLog.txt";
-                using var streamWriter = new StreamWriter(path, true);
+                string? path = Utils.GetSaveDataPath() + "/PlayerAuditLog.txt";
+                using StreamWriter? streamWriter = new StreamWriter(path, true);
                 streamWriter.WriteLine(DateTime.Now.ToUniversalTime() + " " + msg);
             }
         }

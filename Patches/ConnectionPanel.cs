@@ -29,9 +29,9 @@ namespace OdinQOL.Patches
                     serversArray.Length == serversPortsArray.Length)
                     try
                     {
-                        foreach (var serv in serversArray)
+                        foreach (string? serv in serversArray)
                         {
-                            var serverData = new ServerData();
+                            ServerData? serverData = new ServerData();
                             serverData.m_host = serv;
                             serverData.m_name = serversNamesArray[i];
                             serverData.m_password = false;

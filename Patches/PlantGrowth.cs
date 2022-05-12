@@ -31,11 +31,11 @@ namespace OdinQOL.Patches
                 .GetComponent<TreeBase>()) //Check if not tree as their m_grownPrefabs don't have colliders
                 plantMaxDist = plantMaxDist + Math.Abs(plant.GetComponent<CapsuleCollider>().radius -
                                                        plant.m_grownPrefabs[0].GetComponent<CapsuleCollider>().radius);
-            var array = Physics.OverlapSphere(plant.transform.position, 2.5f, spaceMask);
+            Collider[]? array = Physics.OverlapSphere(plant.transform.position, 2.5f, spaceMask);
             for (int i = 0; i < array.Length; i++)
                 if (array[i].GetComponent<Plant>())
                 {
-                    var collidingPlant = array[i].GetComponent<Plant>();
+                    Plant? collidingPlant = array[i].GetComponent<Plant>();
                     if (collidingPlant != plant)
                     {
                         float collidingPlantMaxDist = collidingPlant.m_growRadius;
@@ -79,7 +79,7 @@ namespace OdinQOL.Patches
                 if (___m_placementMarkerInstance != null && ___m_placementGhost?.GetComponent<Plant>() != null)
                     if (preventPlantTooClose.Value)
                     {
-                        var plant = ___m_placementGhost.GetComponent<Plant>();
+                        Plant? plant = ___m_placementGhost.GetComponent<Plant>();
                         if (!HaveGrowSpace(plant))
                         {
                             typeof(Player).GetField("m_placementStatus", BindingFlags.NonPublic | BindingFlags.Instance)
@@ -206,11 +206,11 @@ namespace OdinQOL.Patches
                 {
                     int spaceMask = LayerMask.GetMask("Default", "static_solid", "Default_small", "piece",
                         "piece_nonsolid");
-                    var array = Physics.OverlapSphere(__instance.transform.position, __instance.m_growRadius,
+                    Collider[]? array = Physics.OverlapSphere(__instance.transform.position, __instance.m_growRadius,
                         spaceMask);
                     for (int i = 0; i < array.Length; i++)
                     {
-                        var component = array[i].GetComponent<Plant>();
+                        Plant? component = array[i].GetComponent<Plant>();
                         if (component && component != __instance)
                         {
                             //Dbgl($"{Vector3.Distance(__instance.transform.position, component.transform.position)} {component.m_growRadius} {__instance.m_growRadius}");

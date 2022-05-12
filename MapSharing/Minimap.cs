@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
@@ -82,11 +83,11 @@ namespace OdinQOL.MapSharing
 
         private static AssetBundle GetAssetBundleFromResources(string filename)
         {
-            var execAssembly = Assembly.GetExecutingAssembly();
-            var resourceName = execAssembly.GetManifestResourceNames()
+            Assembly? execAssembly = Assembly.GetExecutingAssembly();
+            string? resourceName = execAssembly.GetManifestResourceNames()
                 .Single(str => str.EndsWith(filename));
 
-            using (var stream = execAssembly.GetManifestResourceStream(resourceName))
+            using (Stream? stream = execAssembly.GetManifestResourceStream(resourceName))
             {
                 return AssetBundle.LoadFromStream(stream);
             }
@@ -145,7 +146,7 @@ namespace OdinQOL.MapSharing
                     GameObject pinEditorPanelParent = mapPinBundle.LoadAsset<GameObject>("MapPinEditor");
                     pinEditorPanel = Object.Instantiate(pinEditorPanelParent.transform.GetChild(0).gameObject);
                     pinEditorPanel.transform.SetParent(__instance.m_largeRoot.transform, false);
-                    var image = pinEditorPanel.GetComponentInChildren<Image>();
+                    Image? image = pinEditorPanel.GetComponentInChildren<Image>();
                     image.gameObject.SetActive(false);
                     pinEditorPanel.SetActive(false);
 
@@ -254,8 +255,8 @@ namespace OdinQOL.MapSharing
 
                         if (imageoff == false)
                         {
-                            var title = pinEditorPanel.transform.Find("Title");
-                            var picture = title.GetComponentInChildren<Image>();
+                            Transform? title = pinEditorPanel.transform.Find("Title");
+                            Image? picture = title.GetComponentInChildren<Image>();
                             picture.gameObject.SetActive(false);
                             imageoff = true;
                         }

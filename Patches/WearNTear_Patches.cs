@@ -59,8 +59,8 @@ namespace OdinQOL.Patches
         private static bool Prefix(ref WearNTear __instance, ref float damage)
         {
             // Gets the name of the method calling the ApplyDamage method
-            var stackTrace = new StackTrace();
-            var callingMethod = stackTrace.GetFrame(2).GetMethod().Name;
+            StackTrace? stackTrace = new StackTrace();
+            string? callingMethod = stackTrace.GetFrame(2).GetMethod().Name;
 
             if (!(WearNTear_Patches.NoPlayerStructDam.Value && __instance.m_piece &&
                   __instance.m_piece.IsPlacedByPlayer() && callingMethod != "UpdateWear"))
