@@ -155,7 +155,7 @@ namespace OdinQOL.Patches
             [HarmonyTranspiler]
             public static IEnumerable<CodeInstruction> Transpile(IEnumerable<CodeInstruction> instructions)
             {
-                var il = instructions.ToList();
+                List<CodeInstruction>? il = instructions.ToList();
 
                 for (int i = 0; i < il.Count; ++i)
                     if (il[i].Calls(method_Skills_LowerAllSkills))

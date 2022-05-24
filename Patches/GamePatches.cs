@@ -94,7 +94,7 @@ namespace OdinQOL.Patches
                 [HarmonyTranspiler]
                 public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
                 {
-                    var il = instructions.ToList();
+                    List<CodeInstruction>? il = instructions.ToList();
 
                     if (enableAreaRepair.Value)
                         // Replace call to Player::Repair with our own stub.
@@ -108,19 +108,19 @@ namespace OdinQOL.Patches
 
                 public static void RepairNearby(Player instance, ItemDrop.ItemData toolItem, Piece _1)
                 {
-                    var selected_piece = instance.GetHoveringPiece();
+                    Piece? selected_piece = instance.GetHoveringPiece();
                     Vector3 position = selected_piece != null
                         ? selected_piece.transform.position
                         : instance.transform.position;
 
-                    var pieces = new List<Piece>();
+                    List<Piece>? pieces = new List<Piece>();
                     Piece.GetAllPiecesInRadius(position, areaRepairRadius.Value, pieces);
 
                     m_repair_count = 0;
 
-                    var original_piece = instance.m_hoveringPiece;
+                    Piece? original_piece = instance.m_hoveringPiece;
 
-                    foreach (var piece in pieces)
+                    foreach (Piece? piece in pieces)
                     {
                         bool has_stamina = instance.HaveStamina(toolItem.m_shared.m_attack.m_attackStamina);
                         bool uses_durability = toolItem.m_shared.m_useDurability;
@@ -156,7 +156,7 @@ namespace OdinQOL.Patches
                 [HarmonyTranspiler]
                 public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
                 {
-                    var il = instructions.ToList();
+                    List<CodeInstruction>? il = instructions.ToList();
 
                     if (enableAreaRepair.Value)
                     {
@@ -320,7 +320,7 @@ namespace OdinQOL.Patches
         {
             private static void Postfix(TeleportWorld __instance, string __result)
             {
-                var portalName = __instance.GetText();
+                string? portalName = __instance.GetText();
 
 
                 __result = Localization.instance.Localize(string.Concat("$piece_portal $piece_portal_tag:", " ", "[",
@@ -347,7 +347,7 @@ namespace OdinQOL.Patches
             [HarmonyTranspiler]
             public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
-                var il = instructions.ToList();
+                List<CodeInstruction>? il = instructions.ToList();
 
                 for (int i = 0; i < il.Count - 2; ++i)
                     if (il[i].LoadsField(field_Player_m_foodUpdateTimer) &&
@@ -394,7 +394,7 @@ namespace OdinQOL.Patches
             [HarmonyTranspiler]
             public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
-                var il = instructions.ToList();
+                List<CodeInstruction>? il = instructions.ToList();
 
                 for (int i = 0; i < il.Count; ++i)
                 {
@@ -429,7 +429,7 @@ namespace OdinQOL.Patches
             [HarmonyTranspiler]
             public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
-                var il = instructions.ToList();
+                List<CodeInstruction>? il = instructions.ToList();
                 for (int i = 0; i < il.Count; ++i)
                     if (il[i].operand != null)
                         // search for every call to the function
@@ -619,10 +619,10 @@ namespace OdinQOL.Patches
             private static bool Prefix(ref bool __result, Transform elementRoot, Piece.Requirement req, Player player,
                 bool craft, int quality)
             {
-                var icon = elementRoot.transform.Find("res_icon").GetComponent<Image>();
-                var nameText = elementRoot.transform.Find("res_name").GetComponent<Text>();
-                var amountText = elementRoot.transform.Find("res_amount").GetComponent<Text>();
-                var tooltip = elementRoot.GetComponent<UITooltip>();
+                Image? icon = elementRoot.transform.Find("res_icon").GetComponent<Image>();
+                Text? nameText = elementRoot.transform.Find("res_name").GetComponent<Text>();
+                Text? amountText = elementRoot.transform.Find("res_amount").GetComponent<Text>();
+                UITooltip? tooltip = elementRoot.GetComponent<UITooltip>();
                 if (req.m_resItem != null)
                 {
                     icon.gameObject.SetActive(true);
@@ -643,7 +643,7 @@ namespace OdinQOL.Patches
 
                     amountText.supportRichText = true;
                     amountText.horizontalOverflow = HorizontalWrapMode.Overflow;
-                    var inventoryAmount = string.Format(ImprovedBuildHudConfig.InventoryAmountFormat.Value, num);
+                    string? inventoryAmount = string.Format(ImprovedBuildHudConfig.InventoryAmountFormat.Value, num);
                     if (!string.IsNullOrEmpty(ImprovedBuildHudConfig.InventoryAmountColor.Value))
                         inventoryAmount =
                             $"<color={ImprovedBuildHudConfig.InventoryAmountColor.Value}>{inventoryAmount}</color>";
@@ -675,11 +675,11 @@ namespace OdinQOL.Patches
             {
                 if (piece != null && !string.IsNullOrEmpty(ImprovedBuildHudConfig.CanBuildAmountFormat.Value))
                 {
-                    var displayName = Localization.instance.Localize(piece.m_name);
+                    string? displayName = Localization.instance.Localize(piece.m_name);
                     if (piece.m_resources.Length == 0) return;
 
                     int fewestPossible = int.MaxValue;
-                    foreach (var requirement in piece.m_resources)
+                    foreach (Piece.Requirement? requirement in piece.m_resources)
                     {
                         int currentAmount =
                             OdinQOLplugin.GetAvailableItems(requirement.m_resItem.m_itemData.m_shared.m_name);
@@ -687,7 +687,7 @@ namespace OdinQOL.Patches
                         if (canMake < fewestPossible) fewestPossible = canMake;
                     }
 
-                    var canBuildDisplay =
+                    string? canBuildDisplay =
                         string.Format(ImprovedBuildHudConfig.CanBuildAmountFormat.Value, fewestPossible);
                     if (!string.IsNullOrEmpty(ImprovedBuildHudConfig.CanBuildAmountColor.Value))
                         canBuildDisplay =

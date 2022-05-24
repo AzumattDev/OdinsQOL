@@ -48,7 +48,7 @@ namespace OdinQOL.Patches
     {
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            var il = instructions.ToList();
+            List<CodeInstruction>? il = instructions.ToList();
             if (OdinQOLplugin.AutoRepair.Value) il.RemoveRange(52, 11);
 
             return il.AsEnumerable();
@@ -69,7 +69,7 @@ namespace OdinQOL.Patches
         {
             if (!OdinQOLplugin.AutoRepair.Value) return;
 
-            var curr_crafting_station = Player.m_localPlayer.GetCurrentCraftingStation();
+            CraftingStation? curr_crafting_station = Player.m_localPlayer.GetCurrentCraftingStation();
 
             if (curr_crafting_station != null)
             {

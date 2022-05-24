@@ -39,7 +39,7 @@ namespace OdinQOL
     [BepInPlugin(GUID, ModName, Version)]
     public partial class OdinQOLplugin : BaseUnityPlugin
     {
-        public const string Version = "0.4.0";
+        public const string Version = "0.5.0";
         public const string ModName = "OdinPlusQOL";
         public const string GUID = "com.odinplusqol.mod";
         private static readonly int windowId = 434343;
@@ -282,7 +282,10 @@ namespace OdinQOL
             textPositionOffset =
                 config("Signs", "TextPositionOffset", new Vector2(0, 0), "Default font size");
             useRichText = config("Signs", "UseRichText", true, "Enable rich text");
-            fontName = config("Signs", "FontName", "AveriaSerifLibre-Bold", "Font name", false);
+            fontName = config("Signs", "FontName", "Norsebold", "Font name", false);
+            signDefaultColor = config("Signs", "SignDefaultColor", "black",
+                "This uses string values to set the default color every sign should have. The code runs when the sign loads in for the first time. If the sign doesn't have a color tag already, it will wrap the text in one. Use values like \"red\" here to specify a default color.",
+                true);
 
 
             AutoStorePatch.dropRangeChests = config("Auto Storage", "DropRangeChests", 5f,
@@ -502,12 +505,12 @@ namespace OdinQOL
                 mapSyncSaveTimer.AutoReset = true;
                 mapSyncSaveTimer.Elapsed += (sender, args) => MapSync.SaveMapDataToDisk();
             }
-            
+
             // On.Humanoid.GetInventory += GamePatches.Humanoid_GetInventory;
             CraftFromContainersInstalledAndActive = false;
-            var bepInExManager = GameObject.Find("BepInEx_Manager");
-            var plugins = bepInExManager.GetComponentsInChildren<BaseUnityPlugin>();
-            foreach (var plugin in plugins)
+            GameObject? bepInExManager = GameObject.Find("BepInEx_Manager");
+            BaseUnityPlugin[]? plugins = bepInExManager.GetComponentsInChildren<BaseUnityPlugin>();
+            foreach (BaseUnityPlugin? plugin in plugins)
                 if (plugin.Info.Metadata.GUID == "aedenthorn.CraftFromContainers")
                 {
                     CraftFromContainersInstalledAndActive = BepInExPlugin.modEnabled.Value;
@@ -548,7 +551,7 @@ namespace OdinQOL
 
             if (Utilities.IgnoreKeyPresses() || toggleClockKeyOnPress.Value || !PressedToggleKey())
                 return;
-            var show = showingClock.Value;
+            bool show = showingClock.Value;
             showingClock.Value = !show;
             Config.Save();
         }
@@ -615,17 +618,17 @@ namespace OdinQOL
 
         public static int GetAvailableItems(string itemName)
         {
-            var player = Player.m_localPlayer;
+            Player? player = Player.m_localPlayer;
             if (player == null) return 0;
 
-            var playerInventoryCount = player.GetInventory().CountItems(itemName);
-            var containerCount = 0;
+            int playerInventoryCount = player.GetInventory().CountItems(itemName);
+            int containerCount = 0;
 
             if (CraftFromContainersInstalledAndActive)
             {
                 if (_cachedContainers == null)
                     _cachedContainers = BepInExPlugin.GetNearbyContainers(player.transform.position);
-                foreach (var container in _cachedContainers)
+                foreach (Container? container in _cachedContainers)
                     containerCount += container.GetInventory().CountItems(itemName);
             }
 
@@ -651,17 +654,17 @@ namespace OdinQOL
         {
             if (!EnvMan.instance)
                 return "";
-            var fraction = (float)typeof(EnvMan)
+            float fraction = (float)typeof(EnvMan)
                 .GetField("m_smoothDayFraction", BindingFlags.NonPublic | BindingFlags.Instance)
                 .GetValue(EnvMan.instance);
 
-            var hour = (int)(fraction * 24);
-            var minute = (int)((fraction * 24 - hour) * 60);
-            var second = (int)(((fraction * 24 - hour) * 60 - minute) * 60);
+            int hour = (int)(fraction * 24);
+            int minute = (int)((fraction * 24 - hour) * 60);
+            int second = (int)(((fraction * 24 - hour) * 60 - minute) * 60);
 
-            var now = DateTime.Now;
-            var theTime = new DateTime(now.Year, now.Month, now.Day, hour, minute, second);
-            var days = Traverse.Create(EnvMan.instance).Method("GetCurrentDay").GetValue<int>();
+            DateTime now = DateTime.Now;
+            DateTime theTime = new DateTime(now.Year, now.Month, now.Day, hour, minute, second);
+            int days = Traverse.Create(EnvMan.instance).Method("GetCurrentDay").GetValue<int>();
             return GetCurrentTimeString(theTime, fraction, days);
         }
 

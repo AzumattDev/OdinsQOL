@@ -166,7 +166,7 @@ namespace OdinQOL
 
         private static void ApplyConfig()
         {
-            var split = clockLocationString.Value.Split(',');
+            string[]? split = clockLocationString.Value.Split(',');
             clockPosition = new Vector2(
                 split[0].Trim().EndsWith("%")
                     ? float.Parse(split[0].Trim().Substring(0, split[0].Trim().Length - 1)) / 100f * Screen.width
@@ -184,8 +184,8 @@ namespace OdinQOL
             else
             {
                 Debug.Log("getting fonts");
-                var fonts = Resources.FindObjectsOfTypeAll<Font>();
-                foreach (var font in fonts)
+                Font[]? fonts = Resources.FindObjectsOfTypeAll<Font>();
+                foreach (Font? font in fonts)
                     if (font.name == clockFontName.Value)
                     {
                         clockFont = font;
@@ -214,7 +214,7 @@ namespace OdinQOL
 
         private string GetCurrentTimeString(DateTime theTime, float fraction, int days)
         {
-            var fuzzyStringArray = clockFuzzyStrings.Value.Split(',');
+            string[]? fuzzyStringArray = clockFuzzyStrings.Value.Split(',');
 
             int idx = Math.Min((int)(fuzzyStringArray.Length * fraction), fuzzyStringArray.Length - 1);
 

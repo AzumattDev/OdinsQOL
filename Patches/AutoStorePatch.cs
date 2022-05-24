@@ -34,7 +34,7 @@ namespace OdinQOL.Patches
 
         private static bool DisallowItem(Container container, ItemDrop.ItemData item)
         {
-            var name = item.m_dropPrefab.name;
+            string? name = item.m_dropPrefab.name;
             if (itemAllowTypes.Value != null && itemAllowTypes.Value.Length > 0 &&
                 !itemAllowTypes.Value.Split(',').Contains(name))
                 return true;
@@ -44,7 +44,7 @@ namespace OdinQOL.Patches
             if (mustHaveItemToPull.Value && !container.GetInventory().HaveItem(item.m_shared.m_name))
                 return true;
 
-            var ship = container.gameObject.transform.parent?.GetComponent<Ship>();
+            Ship? ship = container.gameObject.transform.parent?.GetComponent<Ship>();
             if (ship != null)
             {
                 if (itemAllowTypesShips.Value != null && itemAllowTypesShips.Value.Length > 0 &&
@@ -103,7 +103,7 @@ namespace OdinQOL.Patches
             if (container.GetInventory() == null)
                 return -1f;
 
-            var ship = container.gameObject.transform.parent?.GetComponent<Ship>();
+            Ship? ship = container.gameObject.transform.parent?.GetComponent<Ship>();
             if (ship != null)
                 return dropRangeShips.Value;
             if (container.m_wagon)
@@ -125,11 +125,11 @@ namespace OdinQOL.Patches
                     return;
 
                 Vector3 position = __instance.transform.position + Vector3.up;
-                foreach (var collider in Physics.OverlapSphere(position, ContainerRange(__instance),
+                foreach (Collider? collider in Physics.OverlapSphere(position, ContainerRange(__instance),
                     LayerMask.GetMask("item")))
                     if (collider?.attachedRigidbody)
                     {
-                        var item = collider.attachedRigidbody.GetComponent<ItemDrop>();
+                        ItemDrop? item = collider.attachedRigidbody.GetComponent<ItemDrop>();
                         //Dbgl($"nearby item name: {item.m_itemData.m_dropPrefab.name}");
 
                         if (item?.GetComponent<ZNetView>()?.IsValid() != true ||
@@ -145,7 +145,7 @@ namespace OdinQOL.Patches
                         while (item.m_itemData.m_stack > 1 && __instance.GetInventory().CanAddItem(item.m_itemData, 1))
                         {
                             item.m_itemData.m_stack--;
-                            var newItem = item.m_itemData.Clone();
+                            ItemDrop.ItemData? newItem = item.m_itemData.Clone();
                             newItem.m_stack = 1;
                             __instance.GetInventory().AddItem(newItem);
                             Traverse.Create(item).Method("Save").GetValue();
@@ -157,7 +157,7 @@ namespace OdinQOL.Patches
 
                         if (item.m_itemData.m_stack == 1 && __instance.GetInventory().CanAddItem(item.m_itemData, 1))
                         {
-                            var newItem = item.m_itemData.Clone();
+                            ItemDrop.ItemData? newItem = item.m_itemData.Clone();
                             item.m_itemData.m_stack = 0;
                             Traverse.Create(item).Method("Save").GetValue();
                             if (___m_nview.GetZDO() == null)

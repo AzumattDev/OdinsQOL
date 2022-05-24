@@ -42,7 +42,7 @@ namespace OdinQOL.Patches
                             $"Recipe stack: {recipe.m_amount} num of stacks: {___m_dragAmount / recipe.m_amount}");
 
 
-                        var reqs = recipe.m_resources.ToList();
+                        List<Piece.Requirement>? reqs = recipe.m_resources.ToList();
 
                         bool isMagic = false;
                         bool cancel = false;

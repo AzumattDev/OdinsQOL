@@ -10,6 +10,7 @@ namespace OdinQOL.Patches
         public static ConfigEntry<string> fontName;
         public static ConfigEntry<Vector2> textPositionOffset;
         public static ConfigEntry<Vector3> signScale;
+        public static ConfigEntry<string> signDefaultColor;
         public static Font currentFont;
         public static string lastFontName;
 
@@ -26,7 +27,7 @@ namespace OdinQOL.Patches
             {
                 lastFontName = fontName.Value;
                 OdinQOLplugin.Dbgl($"new font {fontName.Value}");
-                var font = GetFont(fontName.Value, 20);
+                Font? font = GetFont(fontName.Value, 20);
                 if (font == null)
                     OdinQOLplugin.Dbgl("new font not found");
                 else
@@ -42,14 +43,14 @@ namespace OdinQOL.Patches
 
         public static Font GetFont(string fontName, int fontSize)
         {
-            var fonts = Resources.FindObjectsOfTypeAll<Font>();
-            foreach (var font in fonts)
+            Font[]? fonts = Resources.FindObjectsOfTypeAll<Font>();
+            foreach (Font? font in fonts)
                 if (font.name == fontName)
                     return font;
             return Font.CreateDynamicFontFromOSFont(fontName, fontSize);
         }
 
-        [HarmonyPatch(typeof(Sign), "Awake")]
+        [HarmonyPatch(typeof(Sign), nameof(Sign.Awake))]
         private static class Sign_Awake_Patch
         {
             private static void Postfix(Sign __instance)
@@ -58,12 +59,21 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(Sign), "UpdateText")]
+        [HarmonyPatch(typeof(Sign), nameof(Sign.UpdateText))]
         private static class Sign_UpdateText_Patch
         {
             private static void Postfix(Sign __instance)
             {
                 FixSign(ref __instance);
+                if (!__instance.m_nview.IsValid() || __instance.m_nview == null) return;
+                if (signDefaultColor.Value is not { Length: > 0 }) return;
+                if (__instance.m_defaultText.Contains("<color=")) return;
+                string newText = $"<color={signDefaultColor.Value}>" +
+                                 __instance.m_nview.GetZDO().GetString("text", __instance.m_defaultText) +
+                                 "</color>";
+                __instance.m_nview.ClaimOwnership();
+                __instance.m_textWidget.text = newText;
+                __instance.m_nview.GetZDO().Set(nameof(newText), newText);
             }
         }
     }
