@@ -534,13 +534,38 @@ namespace OdinQOL.Patches
             [HarmonyPriority(Priority.Last)]
             private static void Postfix(ref string __result)
             {
-                /*if (ZNet.instance?.IsServer() == true)
-                {*/
-                __result += $"-{OdinQOLplugin.ModName}{OdinQOLplugin.Version}";
-                /*}*/
+                if (ZNet.instance?.IsServer() == true)
+                {
+                    __result += $"-{OdinQOLplugin.ModName}{OdinQOLplugin.Version}";
+                }
             }
         }
+        
+        [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
+        private static class PatchZNetRPC_PeerInfo
+        {
+            [HarmonyPriority(Priority.Last)]
+            private static void Prefix(ref ZPackage pkg)
+            {
+                long uid = pkg.ReadLong();
+                string versionString = pkg.ReadString();
 
+                if (ZNet.instance.IsServer())
+                {
+                    versionString += $"-{OdinQOLplugin.ModName}{OdinQOLplugin.Version}";
+                }
+                else
+                {
+                    versionString = versionString.Replace($"-{OdinQOLplugin.ModName}{OdinQOLplugin.Version}", "");
+                }
+                ZPackage newPkg = new();
+                newPkg.Write(uid);
+                newPkg.Write(versionString);
+                newPkg.m_writer.Write(pkg.m_reader.ReadBytes((int)(pkg.m_stream.Length - pkg.m_stream.Position)));
+                pkg = newPkg;
+                pkg.SetPos(0);
+            }
+        }
 
         [HarmonyPatch(typeof(InventoryGui), "UpdateRecipe")]
         private class fasterCrafting
