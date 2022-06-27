@@ -4,6 +4,13 @@ This mod contains a collection of patches from various sources (all MIT/GNU GPL 
 
 
 # Changelog (latest patch listed first)
+##### 0.7.0
+* Remove Map Syncing code and all configs related
+    * Benefits to this...you can now use the vanilla pin UI again for quick pins of certain types. This code blocked the addition of the pin UI Valheim devs added.
+    * Downside, it removes the Ship and Cart display on the map since it was buried in that code and I'm a little lazy. If enough requests ask to add this feature back, I will.
+    * Downside, this could cause issues with your configuration files having orphaned config sections since I have removed them. You might have to regenerate your config file on the server and client.
+* Update to latest CraftFromContainers internally. Soon, I will absorb this code and the DLL will not be needed.
+* I (Azumatt) will be the primary maintainer of OdinQOL. The code and all history of git have been moved to my github as a result. [OdinsQOL on My GitHub](https://github.com/AzumattDev/OdinsQOL)
 ##### 0.6.0
 * Compile against latest game version
 	* Fix issues with the save data paths after patch.
