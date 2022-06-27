@@ -7,7 +7,6 @@ using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using CraftFromContainers;
 using HarmonyLib;
-using OdinQOL.MapSharing;
 using OdinQOL.Patches;
 using ServerSync;
 using UnityEngine;
@@ -39,7 +38,7 @@ namespace OdinQOL
     [BepInPlugin(GUID, ModName, Version)]
     public partial class OdinQOLplugin : BaseUnityPlugin
     {
-        public const string Version = "0.5.1";
+        public const string Version = "0.6.0";
         public const string ModName = "OdinPlusQOL";
         public const string GUID = "com.odinplusqol.mod";
         private static readonly int windowId = 434343;
@@ -47,18 +46,6 @@ namespace OdinQOL
         public static OdinQOLplugin context;
 
 
-        public static readonly string OdinQOL_DatadirectoryPath = Paths.BepInExRootPath + "/odinplus-data/";
-
-        public static System.Timers.Timer mapSyncSaveTimer =
-            new(TimeSpan.FromMinutes(5).TotalMilliseconds);
-
-        public static ConfigEntry<bool> mapIsEnabled;
-        public static ConfigEntry<bool> shareMapProgression;
-        public static ConfigEntry<bool> shareablePins;
-        public static ConfigEntry<bool> shareAllPins;
-        public static ConfigEntry<bool> preventPlayerFromTurningOffPublicPosition;
-        public static ConfigEntry<bool> displayCartsAndBoats;
-        public static ConfigEntry<int> exploreRadius;
 
         public static ConfigEntry<bool> modEnabled;
         public static ConfigEntry<bool> isDebug;
@@ -92,16 +79,8 @@ namespace OdinQOL
         {
             serverConfigLocked = config("General", "Lock Configuration", true, "Lock Configuration");
             configSync.AddLockingConfigEntry(serverConfigLocked);
-            shareMapProgression = config("Maps", "Share Map Progress with others", false,
-                "Share Map Progress with others");
-            mapIsEnabled = config("Maps", "Map Control enabled", true, "Map Control enabled");
-            shareablePins = config("Maps", "Share Pins", false, "Share pins with other players");
-            shareAllPins = config("Maps", "Share ALL pins with other players", false,
-                "Share ALL pins with other players");
             /*preventPlayerFromTurningOffPublicPosition =
                 config("General", "IsDebug", true, "Show debug messages in log");*/
-            displayCartsAndBoats = config("Maps", "Display Boats/Carts", true, "Show Boats and carts on the map");
-            exploreRadius = config("Maps", "exploreRadius", 40, "Explore radius addition");
 
 
             DungeonMaxRoomCount = config("Dungeon", "Max Room Count", 20,
@@ -281,7 +260,7 @@ namespace OdinQOL
             signScale = config("Signs", "SignScale", new Vector3(1, 1, 1), "Sign scale (w,h,d)");
             textPositionOffset =
                 config("Signs", "TextPositionOffset", new Vector2(0, 0), "Default font size");
-            useRichText = config("Signs", "UseRichText", true, "Enable rich text");
+            useRichText = config("Signs", "UseRichText", true, "Enable rich text. If this is disabled, the sign reverts back to vanilla functionality.");
             fontName = config("Signs", "FontName", "Norsebold", "Font name", false);
             signDefaultColor = config("Signs", "SignDefaultColor", "black",
                 "This uses string values to set the default color every sign should have. The code runs when the sign loads in for the first time. If the sign doesn't have a color tag already, it will wrap the text in one. Use values like \"red\" here to specify a default color.",
@@ -496,15 +475,10 @@ namespace OdinQOL
             if (!modEnabled.Value)
                 return;
 
-            if (!Directory.Exists(OdinQOL_DatadirectoryPath)) Directory.CreateDirectory(OdinQOL_DatadirectoryPath);
+            
             currentFont = GetFont(fontName.Value, 20);
             lastFontName = currentFont?.name;
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
-            if (ZNet.m_isServer && shareMapProgression.Value)
-            {
-                mapSyncSaveTimer.AutoReset = true;
-                mapSyncSaveTimer.Elapsed += (sender, args) => MapSync.SaveMapDataToDisk();
-            }
 
             // On.Humanoid.GetInventory += GamePatches.Humanoid_GetInventory;
             CraftFromContainersInstalledAndActive = false;
@@ -532,6 +506,8 @@ namespace OdinQOL
                 epicLootAssembly = Chainloader.PluginInfos["randyknapp.mods.epicloot"].Instance.GetType().Assembly;
                 OdinQOLplugin.Dbgl("Epic Loot found, providing compatibility");
             }
+
+            Game.isModded = true;
         }
 
         private void Update()
@@ -690,19 +666,6 @@ namespace OdinQOL
                     return;
                 if (MapDetail.MapDetailOn.Value)
                     context.StartCoroutine(MapDetail.UpdateMap(true));
-            }
-        }
-
-        [HarmonyPatch(typeof(Game), nameof(Game.Start))]
-        public static class Game_Start_Patch
-        {
-            private static void Prefix()
-            {
-                ZRoutedRpc.instance.Register("OdinQOLMapSync",
-                    new Action<long, ZPackage>(MapSync.RPC_OdinQOLMapSync)); //Map Sync
-                ZRoutedRpc.instance.Register("OdinQOLMapPinSync",
-                    new Action<long, ZPackage>(VmpMapPinSync.RPC_OdinQOLMapPinSync)); //Map Pin Sync
-                ZRoutedRpc.instance.Register("OdinQOLAck", OdinQOLAck.RPC_OdinQOLAck); //Ack
             }
         }
     }

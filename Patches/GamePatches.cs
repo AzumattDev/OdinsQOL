@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using BepInEx.Configuration;
 using HarmonyLib;
-using OdinQOL.MapSharing;
 using Steamworks;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -501,12 +500,12 @@ namespace OdinQOL.Patches
                 //Player.m_localPlayer.ShowTutorial("vmp");
 
                 //Only sync on first spawn
-                if (MapSync.ShouldSyncOnSpawn && OdinQOLplugin.shareMapProgression.Value)
+                /*if (MapSync.ShouldSyncOnSpawn && OdinQOLplugin.shareMapProgression.Value)
                 {
                     //Send map data to the server
                     MapSync.SendMapToServer();
                     MapSync.ShouldSyncOnSpawn = false;
-                }
+                }*/
 
                 if (SkipTuts.Value)
                     __instance.m_firstSpawn = false;

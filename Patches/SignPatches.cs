@@ -12,6 +12,7 @@ namespace OdinQOL.Patches
         public static ConfigEntry<Vector3> signScale;
         public static ConfigEntry<string> signDefaultColor;
         public static Font currentFont;
+        public static Material saveOrigMat;
         public static string lastFontName;
 
         public static void FixSign(ref Sign sign)
@@ -20,7 +21,8 @@ namespace OdinQOL.Patches
 
             sign.m_textWidget.supportRichText = useRichText.Value;
             sign.m_characterLimit = 0;
-            sign.m_textWidget.material = null;
+            sign.m_textWidget.material = useRichText.Value ? null : saveOrigMat;
+
             //sign.m_textWidget.fontSize = fontSize.Value;
             sign.m_textWidget.gameObject.GetComponent<RectTransform>().anchoredPosition = textPositionOffset.Value;
             if (lastFontName != fontName.Value) // call when config changes
@@ -53,6 +55,12 @@ namespace OdinQOL.Patches
         [HarmonyPatch(typeof(Sign), nameof(Sign.Awake))]
         private static class Sign_Awake_Patch
         {
+            private static void Prefix(Sign __instance)
+            {
+                // Save the original material of the sign so we can dynamic swap later.
+                saveOrigMat = __instance.m_textWidget.material;
+            }
+
             private static void Postfix(Sign __instance)
             {
                 FixSign(ref __instance);
@@ -65,7 +73,9 @@ namespace OdinQOL.Patches
             private static void Postfix(Sign __instance)
             {
                 FixSign(ref __instance);
+                if (!useRichText.Value) return;
                 if (!__instance.m_nview.IsValid() || __instance.m_nview == null) return;
+
                 if (signDefaultColor.Value is not { Length: > 0 }) return;
                 if (__instance.m_defaultText.Contains("<color=")) return;
                 string newText = $"<color={signDefaultColor.Value}>" +
