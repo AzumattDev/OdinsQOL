@@ -38,7 +38,7 @@ namespace OdinQOL
     [BepInPlugin(GUID, ModName, Version)]
     public partial class OdinQOLplugin : BaseUnityPlugin
     {
-        public const string Version = "0.7.0";
+        public const string Version = "0.7.1";
         public const string ModName = "OdinPlusQOL";
         public const string GUID = "com.odinplusqol.mod";
         private static readonly int windowId = 434343;
@@ -46,6 +46,7 @@ namespace OdinQOL
         public static OdinQOLplugin context;
 
 
+        public static ConfigEntry<bool> displayCartsAndBoats;
 
         public static ConfigEntry<bool> modEnabled;
         public static ConfigEntry<bool> isDebug;
@@ -82,7 +83,6 @@ namespace OdinQOL
             /*preventPlayerFromTurningOffPublicPosition =
                 config("General", "IsDebug", true, "Show debug messages in log");*/
 
-
             DungeonMaxRoomCount = config("Dungeon", "Max Room Count", 20,
                 "This is the max number of rooms placed by dungeon gen higher numbers will cause lag");
 
@@ -96,6 +96,12 @@ namespace OdinQOL
             modEnabled = config("General", "Enabled", true, "Enable the entire mod");
             isDebug = config("General", "IsDebug", false, "Show debug messages in log");
 
+            Container_Configs.ContainerSectionOn = config("Containers", "Container Section On", true,
+                "Toggle this value to turn the entire Containers section off/on");
+            Container_Configs.ChestContainerControl = config("Containers", "Chest Container Control", true,
+                "Toggle this value to turn off this mod's control over chest container size");
+            Container_Configs.ShipContainerControl = config("Containers", "Ship Container Control", true,
+                "Toggle this value to turn off this mod's control over ship chest container size");
             Container_Configs.KarveRow = config("Containers", "Karve Rows", 2,
                 new ConfigDescription("Rows for Karve", new AcceptableValueRange<int>(2, 30)));
             Container_Configs.KarveCol = config("Containers", "Karve Columns", 2,
@@ -153,8 +159,11 @@ namespace OdinQOL
             /*returnedpercent = config("Items", "Percent of item materials you would recieve back from deconstruction",
                 100, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"));*/
 
+
             MapDetail.MapDetailOn = config("Map Details", "MapDetail On", true,
                 "Toggle this whole section off/on");
+            displayCartsAndBoats =
+                config("Map Details", "Display Boats/Carts", true, "Show Boats and carts on the map");
             MapDetail.showRange = config("Map Details", "ShowRange", 50f,
                 "Range in metres around player to show details");
             MapDetail.updateDelta = config("Map Details", "UpdateDelta", 5f,
@@ -260,7 +269,8 @@ namespace OdinQOL
             signScale = config("Signs", "SignScale", new Vector3(1, 1, 1), "Sign scale (w,h,d)");
             textPositionOffset =
                 config("Signs", "TextPositionOffset", new Vector2(0, 0), "Default font size");
-            useRichText = config("Signs", "UseRichText", true, "Enable rich text. If this is disabled, the sign reverts back to vanilla functionality.");
+            useRichText = config("Signs", "UseRichText", true,
+                "Enable rich text. If this is disabled, the sign reverts back to vanilla functionality.");
             fontName = config("Signs", "FontName", "Norsebold", "Font name", false);
             signDefaultColor = config("Signs", "SignDefaultColor", "black",
                 "This uses string values to set the default color every sign should have. The code runs when the sign loads in for the first time. If the sign doesn't have a color tag already, it will wrap the text in one. Use values like \"red\" here to specify a default color.",
@@ -475,7 +485,7 @@ namespace OdinQOL
             if (!modEnabled.Value)
                 return;
 
-            
+
             currentFont = GetFont(fontName.Value, 20);
             lastFontName = currentFont?.name;
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());

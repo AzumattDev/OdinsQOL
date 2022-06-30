@@ -5,6 +5,9 @@ namespace OdinQOL.Patches
 {
     internal class Container_Configs
     {
+        public static ConfigEntry<bool> ContainerSectionOn;
+        public static ConfigEntry<bool> ChestContainerControl;
+        public static ConfigEntry<bool> ShipContainerControl;
         public static ConfigEntry<int> KarveRow;
         public static ConfigEntry<int> KarveCol;
         public static ConfigEntry<int> LongRow;
@@ -25,12 +28,12 @@ namespace OdinQOL.Patches
         {
             private static void Postfix(Container __instance, ref Inventory ___m_inventory)
             {
-                //if (!Configuration.Current.Inventory.IsEnabled) return;
+                if (!ContainerSectionOn.Value) return;
 
                 if (__instance == null || ___m_inventory == null || !__instance.transform.parent)
                 {
                     // is chest
-
+                    if (!ChestContainerControl.Value) return;
                     if (___m_inventory == null) return;
 
                     string inventoryName = ___m_inventory.m_name;
@@ -65,7 +68,7 @@ namespace OdinQOL.Patches
                 else
                 {
                     // is not chest
-
+                    if (!ShipContainerControl.Value) return;
                     string containerName = __instance.transform.parent.name;
                     string inventoryName = ___m_inventory.m_name;
                     ref int inventoryColumns = ref ___m_inventory.m_width;

@@ -120,6 +120,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Patches\ConnectionPanel.cs" />
+        <Compile Include="Patches\DisplayPinsOnMap.cs" />
         <Compile Include="Patches\ExtendedPlayerInventory.cs" />
         <Compile Include="Patches\InventoryDiscard.cs" />
         <Compile Include="Patches\MoveableChestInventory.cs" />

@@ -4,6 +4,10 @@ This mod contains a collection of patches from various sources (all MIT/GNU GPL 
 
 
 # Changelog (latest patch listed first)
+##### 0.7.1
+* Compatibility with Shipyard by adding 3 configuration options to the "Containers" section.
+  * Turning off the entire section, turning off the ships and chest container size individually.
+* Adding back displaying ships and carts on the map (by request). The toggle for this has been moved to "Map Details" section in the configs.
 ##### 0.7.0
 * Remove Map Syncing code and all configs related
     * Benefits to this...you can now use the vanilla pin UI again for quick pins of certain types. This code blocked the addition of the pin UI Valheim devs added.
