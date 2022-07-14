@@ -21,14 +21,11 @@ namespace OdinQOL.Patches
             private static void Postfix(InventoryGui __instance, ItemDrop.ItemData ___m_dragItem,
                 Inventory ___m_dragInventory, int ___m_dragAmount, ref GameObject ___m_dragGo)
             {
-                /*if (!discardInvEnabled.Value || !Input.GetKeyDown(hotKey.Value) || ___m_dragItem == null ||
-                    !___m_dragInventory.ContainsItem(___m_dragItem))
-                    return;*/
                 if (!discardInvEnabled.Value || !hotKey.Value.IsDown() || ___m_dragItem == null ||
                     !___m_dragInventory.ContainsItem(___m_dragItem))
                     return;
 
-                OdinQOLplugin.Dbgl(
+                OdinQOLplugin.QOLLogger.LogDebug(
                     $"Discarding {___m_dragAmount}/{___m_dragItem.m_stack} {___m_dragItem.m_dropPrefab.name}");
 
                 if (returnResources.Value > 0)
@@ -38,7 +35,7 @@ namespace OdinQOL.Patches
                     if (recipe != null && (returnUnknownResources.Value ||
                                            Player.m_localPlayer.IsRecipeKnown(___m_dragItem.m_shared.m_name)))
                     {
-                        OdinQOLplugin.Dbgl(
+                        OdinQOLplugin.QOLLogger.LogDebug(
                             $"Recipe stack: {recipe.m_amount} num of stacks: {___m_dragAmount / recipe.m_amount}");
 
 
@@ -93,7 +90,7 @@ namespace OdinQOL.Patches
                                             req.m_resItem.m_itemData.m_shared.m_name)!;
                                         ItemDrop.ItemData newItem = prefab.GetComponent<ItemDrop>().m_itemData.Clone();
                                         int numToAdd = Mathf.RoundToInt(req.GetAmount(j) * returnResources.Value);
-                                        OdinQOLplugin.Dbgl($"Returning {numToAdd}/{req.GetAmount(j)} {prefab.name}");
+                                        OdinQOLplugin.QOLLogger.LogDebug($"Returning {numToAdd}/{req.GetAmount(j)} {prefab.name}");
                                         while (numToAdd > 0)
                                         {
                                             int stack = Mathf.Min(req.m_resItem.m_itemData.m_shared.m_maxStackSize,
@@ -104,11 +101,12 @@ namespace OdinQOL.Patches
                                                 req.m_resItem.m_itemData.m_quality, req.m_resItem.m_itemData.m_variant,
                                                 0, "") == null)
                                             {
+                                                Transform transform;
                                                 ItemDrop component = Object.Instantiate(prefab,
-                                                    Player.m_localPlayer.transform.position +
-                                                    Player.m_localPlayer.transform.forward +
-                                                    Player.m_localPlayer.transform.up,
-                                                    Player.m_localPlayer.transform.rotation).GetComponent<ItemDrop>();
+                                                    (transform = Player.m_localPlayer.transform).position +
+                                                    transform.forward +
+                                                    transform.up,
+                                                    transform.rotation).GetComponent<ItemDrop>();
                                                 component.m_itemData = newItem;
                                                 component.m_itemData.m_dropPrefab = prefab;
                                                 component.m_itemData.m_stack = stack;
@@ -133,8 +131,7 @@ namespace OdinQOL.Patches
 
                 Object.Destroy(___m_dragGo);
                 ___m_dragGo = null;
-                __instance.GetType().GetMethod("UpdateCraftingPanel", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .Invoke(__instance, new object[] { false });
+                __instance.UpdateCraftingPanel(false);
             }
         }
     }

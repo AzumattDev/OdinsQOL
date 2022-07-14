@@ -130,7 +130,7 @@ namespace OdinQOL.Patches
                     if (collider?.attachedRigidbody)
                     {
                         ItemDrop? item = collider.attachedRigidbody.GetComponent<ItemDrop>();
-                        //Dbgl($"nearby item name: {item.m_itemData.m_dropPrefab.name}");
+                        //OdinQOLplugin.QOLLogger.LogDebug($"nearby item name: {item.m_itemData.m_dropPrefab.name}");
 
                         if (item?.GetComponent<ZNetView>()?.IsValid() != true ||
                             !item.GetComponent<ZNetView>().IsOwner())
@@ -139,7 +139,7 @@ namespace OdinQOL.Patches
                         if (DisallowItem(__instance, item.m_itemData))
                             continue;
 
-                        OdinQOLplugin.Dbgl($"auto storing {item.m_itemData.m_dropPrefab.name} from ground");
+                        OdinQOLplugin.QOLLogger.LogDebug($"auto storing {item.m_itemData.m_dropPrefab.name} from ground");
 
 
                         while (item.m_itemData.m_stack > 1 && __instance.GetInventory().CanAddItem(item.m_itemData, 1))

@@ -47,7 +47,7 @@ namespace OdinQOL.Patches
             bool newPix = false;
 
             foreach (Collider? collider in Physics.OverlapSphere(Player.m_localPlayer.transform.position,
-                Mathf.Max(showRange.Value, 0), LayerMask.GetMask("piece")))
+                         Mathf.Max(showRange.Value, 0), LayerMask.GetMask("piece")))
             {
                 Piece? piece = collider.GetComponentInParent<Piece>();
                 if (piece != null && piece.GetComponent<ZNetView>().IsValid())
@@ -69,7 +69,7 @@ namespace OdinQOL.Patches
                             newPix = true;
                         pixels[idx] = piece.GetCreator();
                     }
-                    //Dbgl($"pos {pos}; map pos: {mx},{my} pixel pos {x},{y}; index {idx}");
+                    //OdinQOLplugin.QOLLogger.LogDebug($"pos {pos}; map pos: {mx},{my} pixel pos {x},{y}; index {idx}");
                 }
             }
 
@@ -78,7 +78,7 @@ namespace OdinQOL.Patches
                 foreach (int i in lastPixels)
                     if (!pixels.ContainsKey(i))
                         goto newpixels;
-                OdinQOLplugin.Dbgl("No new pixels");
+                OdinQOLplugin.QOLLogger.LogDebug("No new pixels");
                 yield break;
             }
 
@@ -88,7 +88,7 @@ namespace OdinQOL.Patches
 
             if (pixels.Count == 0)
             {
-                OdinQOLplugin.Dbgl("No pixels to add");
+                OdinQOLplugin.QOLLogger.LogDebug("No pixels to add");
                 SetMaps(mapTexture);
                 yield break;
             }
@@ -136,7 +136,7 @@ namespace OdinQOL.Patches
                         data[i] = kvp.Value;
                 }
                 */
-                //Dbgl($"pixel coords {kvp.Key % mapTexture.width},{kvp.Key / mapTexture.width}");
+                //OdinQOLplugin.QOLLogger.LogDebug($"pixel coords {kvp.Key % mapTexture.width},{kvp.Key / mapTexture.width}");
             }
 
             Texture2D? tempTexture = new(mapTexture.width, mapTexture.height, TextureFormat.RGBA32, false)
@@ -148,7 +148,7 @@ namespace OdinQOL.Patches
 
             SetMaps(tempTexture);
 
-            OdinQOLplugin.Dbgl($"Added {pixels.Count} pixels");
+            OdinQOLplugin.QOLLogger.LogDebug($"Added {pixels.Count} pixels");
         }
 
         private static void GetUserColor(long id, out Color color)
@@ -181,6 +181,30 @@ namespace OdinQOL.Patches
                 mapTexture.wrapMode = TextureWrapMode.Clamp;
                 mapTexture.SetPixels32(data);
                 mapTexture.Apply();
+            }
+        }
+
+        [HarmonyPatch(typeof(Player), "PlacePiece")]
+        private static class Player_PlacePiece_Patch
+        {
+            private static void Postfix(bool __result)
+            {
+                if (!OdinQOLplugin.modEnabled.Value || !__result)
+                    return;
+                if (MapDetailOn.Value)
+                    OdinQOLplugin.context.StartCoroutine(UpdateMap(true));
+            }
+        }
+
+        [HarmonyPatch(typeof(Player), "RemovePiece")]
+        private static class Player_RemovePiece_Patch
+        {
+            private static void Postfix(bool __result)
+            {
+                if (!OdinQOLplugin.modEnabled.Value || !__result)
+                    return;
+                if (MapDetailOn.Value)
+                    OdinQOLplugin.context.StartCoroutine(UpdateMap(true));
             }
         }
     }

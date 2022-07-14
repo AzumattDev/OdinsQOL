@@ -48,11 +48,11 @@ namespace OdinQOL.Patches
                     }
                     catch (Exception exception)
                     {
-                        OdinQOLplugin.DbglError(
+                        OdinQOLplugin.QOLLogger.LogError(
                             $"There was an issue adding your server listing to the menu. Please check your [Connection Panel] section in the config file for correct length and format {exception}");
                     }
                 else
-                    OdinQOLplugin.DbglError(
+                    OdinQOLplugin.QOLLogger.LogError(
                         "Server IPs, Ports, or Names are not the same length or in an incorrect format. Please Check your [Connection Panel] section in the config and fix the issue.");
             }
         }

@@ -84,7 +84,7 @@ namespace OdinQOL
                     GUI.backgroundColor = Color.clear;
                     windowRect = GUILayout.Window(windowId, new Rect(windowRect.position, timeRect.size), WindowBuilder,
                         "");
-                    //Dbgl(""+windowRect.size);
+                    //OdinQOLplugin.QOLLogger.LogDebug(""+windowRect.size);
                 }
             }
 

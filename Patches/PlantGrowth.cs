@@ -188,7 +188,7 @@ namespace OdinQOL.Patches
         {
             private static bool Prefix(Plant __instance, ref bool __result)
             {
-                //Dbgl($"checking too close?");
+                //OdinQOLplugin.QOLLogger.LogDebug($"checking too close?");
 
                 if (__instance.m_grownPrefabs[0].GetComponent<TreeBase>() && growRadiusMultTree.Value == 0 ||
                     !__instance.name.ToLower().Contains("tree") && growRadiusMultPlant.Value == 0)
@@ -213,11 +213,11 @@ namespace OdinQOL.Patches
                         Plant? component = array[i].GetComponent<Plant>();
                         if (component && component != __instance)
                         {
-                            //Dbgl($"{Vector3.Distance(__instance.transform.position, component.transform.position)} {component.m_growRadius} {__instance.m_growRadius}");
+                            //OdinQOLplugin.QOLLogger.LogDebug($"{Vector3.Distance(__instance.transform.position, component.transform.position)} {component.m_growRadius} {__instance.m_growRadius}");
                         }
                     }
                 }
-                //Dbgl($"checking too close?");
+                //OdinQOLplugin.QOLLogger.LogDebug($"checking too close?");
             }
         }
     }

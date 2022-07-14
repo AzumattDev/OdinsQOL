@@ -165,7 +165,7 @@ namespace OdinQOL.Patches
                 }
                 catch (Exception ex)
                 {
-                    OdinQOLplugin.Dbgl($"There was an error in your shit: {ex}");
+                    OdinQOLplugin.QOLLogger.LogDebug($"There was an error in your shit: {ex}");
                 }
             }
         }

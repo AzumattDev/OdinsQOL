@@ -73,9 +73,6 @@
         <Reference Include="BepInEx, Version=5.4.19.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>$(GamePath)\BepInEx\core\BepInEx.dll</HintPath>
         </Reference>
-        <Reference Include="CraftFromContainers, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>Libs\CraftFromContainers.dll</HintPath>
-        </Reference>
         <Reference Include="ServerSync, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>Libs\ServerSync.dll</HintPath>
         </Reference>
@@ -119,6 +116,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Patches\CFC.cs" />
         <Compile Include="Patches\ConnectionPanel.cs" />
         <Compile Include="Patches\DisplayPinsOnMap.cs" />
         <Compile Include="Patches\ExtendedPlayerInventory.cs" />
@@ -131,7 +129,6 @@
         <Compile Include="Patches\ClientPatches.cs" />
         <Compile Include="Patches\ServerPatches.cs" />
         <Compile Include="Patches\WorldPatches.cs" />
-        <Compile Include="Utilities.cs" />
         <Compile Include="Patches\ChestSizePatch.cs" />
         <Compile Include="Patches\AutoStorePatch.cs" />
         <Compile Include="Patches\SignPatches.cs" />
@@ -144,6 +141,11 @@
         <Compile Include="Patches\StationExtension.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="Utilities\Compatibility\WardIsLove\WardIsLovePlugin.cs" />
+        <Compile Include="Utilities\Compatibility\WardIsLove\WardMonoscript.cs" />
+        <Compile Include="Utilities\Compatibility\WILCompat.cs" />
+        <Compile Include="Utilities\Configs\CFCConfigs.cs" />
+        <Compile Include="Utilities\Utilities.cs" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Assets\Bundles\map-pin-ui" />

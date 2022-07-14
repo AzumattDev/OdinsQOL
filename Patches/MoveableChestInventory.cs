@@ -48,7 +48,7 @@ namespace OdinQOL.Patches
                 if (Utilities.CheckKeyHeldKeycode(modKeyOneChestMove.Value) &&
                     Utilities.CheckKeyHeldKeycode(modKeyTwoChestMove.Value))
                 {
-                    //Dbgl($"position {__instance.m_container.transform.parent.position}");
+                    //OdinQOLplugin.QOLLogger.LogDebug($"position {__instance.m_container.transform.parent.position}");
 
                     List<RaycastResult> raycastResults = new();
                     EventSystem.current.RaycastAll(eventData, raycastResults);

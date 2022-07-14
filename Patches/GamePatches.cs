@@ -360,7 +360,7 @@ namespace OdinQOL.Patches
 
             private static float ComputeModifiedDT(float dt)
             {
-                return dt / OdinQOLplugin.ApplyModifierValue(1.0f, 10f);
+                return dt / Utilities.ApplyModifierValue(1.0f, 10f);
             }
         }
 
@@ -539,7 +539,7 @@ namespace OdinQOL.Patches
                 }
             }
         }
-        
+
         [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
         private static class PatchZNetRPC_PeerInfo
         {
@@ -557,6 +557,7 @@ namespace OdinQOL.Patches
                 {
                     versionString = versionString.Replace($"-{OdinQOLplugin.ModName}{OdinQOLplugin.Version}", "");
                 }
+
                 ZPackage newPkg = new();
                 newPkg.Write(uid);
                 newPkg.Write(versionString);
@@ -624,7 +625,7 @@ namespace OdinQOL.Patches
         /// <summary>
         ///     Override password error
         /// </summary>
-        [HarmonyPatch(typeof(FejdStartup), "GetPublicPasswordError")]
+        [HarmonyPatch(typeof(FejdStartup), nameof(FejdStartup.GetPublicPasswordError))]
         public static class RemovePublicPasswordError
         {
             private static bool Prefix(ref string __result)
@@ -634,100 +635,29 @@ namespace OdinQOL.Patches
             }
         }
 
-        //////////
-        ///
-        [HarmonyPatch(typeof(InventoryGui), "SetupRequirement", typeof(Transform), typeof(Piece.Requirement),
-            typeof(Player), typeof(bool), typeof(int))]
-        public static class InventoryGui_SetupRequirement_Patch
-        {
-            private static bool Prefix(ref bool __result, Transform elementRoot, Piece.Requirement req, Player player,
-                bool craft, int quality)
-            {
-                Image? icon = elementRoot.transform.Find("res_icon").GetComponent<Image>();
-                Text? nameText = elementRoot.transform.Find("res_name").GetComponent<Text>();
-                Text? amountText = elementRoot.transform.Find("res_amount").GetComponent<Text>();
-                UITooltip? tooltip = elementRoot.GetComponent<UITooltip>();
-                if (req.m_resItem != null)
-                {
-                    icon.gameObject.SetActive(true);
-                    nameText.gameObject.SetActive(true);
-                    amountText.gameObject.SetActive(true);
-                    icon.sprite = req.m_resItem.m_itemData.GetIcon();
-                    icon.color = Color.white;
-                    tooltip.m_text = Localization.instance.Localize(req.m_resItem.m_itemData.m_shared.m_name);
-                    nameText.text = Localization.instance.Localize(req.m_resItem.m_itemData.m_shared.m_name);
-                    int num = OdinQOLplugin.GetAvailableItems(req.m_resItem.m_itemData.m_shared.m_name);
-                    int amount = req.GetAmount(quality);
-                    if (amount <= 0)
-                    {
-                        InventoryGui.HideRequirement(elementRoot);
-                        __result = false;
-                        return false;
-                    }
-
-                    amountText.supportRichText = true;
-                    amountText.horizontalOverflow = HorizontalWrapMode.Overflow;
-                    string? inventoryAmount = string.Format(ImprovedBuildHudConfig.InventoryAmountFormat.Value, num);
-                    if (!string.IsNullOrEmpty(ImprovedBuildHudConfig.InventoryAmountColor.Value))
-                        inventoryAmount =
-                            $"<color={ImprovedBuildHudConfig.InventoryAmountColor.Value}>{inventoryAmount}</color>";
-                    amountText.text = $"{amount} {inventoryAmount}";
-
-                    if (num < amount)
-                        amountText.color = Mathf.Sin(Time.time * 10f) > 0.0 ? Color.red : Color.white;
-                    else
-                        amountText.color = Color.white;
-                }
-
-                __result = true;
-                return false;
-            }
-        }
-
-
-        // internal static Inventory  Humanoid_GetInventory( On.Humanoid.orig_GetInventory orig, Humanoid self)
-        // {
-        //     var result =  orig(self);
-        //     self.m_inventory.m_height = 8;
-        //     return result;
-        // }
-
-        [HarmonyPatch(typeof(Hud), "SetupPieceInfo", typeof(Piece))]
+        [HarmonyPatch(typeof(Hud), nameof(Hud.SetupPieceInfo), typeof(Piece))]
         public static class Hud_Patch
         {
             private static void Postfix(Piece piece, Text ___m_buildSelection)
             {
-                if (piece != null && !string.IsNullOrEmpty(ImprovedBuildHudConfig.CanBuildAmountFormat.Value))
-                {
-                    string? displayName = Localization.instance.Localize(piece.m_name);
-                    if (piece.m_resources.Length == 0) return;
+                if (!OdinQOLplugin.modEnabled.Value || piece == null ||
+                    string.IsNullOrEmpty(ImprovedBuildHudConfig.CanBuildAmountFormat.Value)) return;
+                string? displayName = Localization.instance.Localize(piece.m_name);
+                if (piece.m_resources.Length == 0) return;
 
-                    int fewestPossible = int.MaxValue;
-                    foreach (Piece.Requirement? requirement in piece.m_resources)
-                    {
-                        int currentAmount =
-                            OdinQOLplugin.GetAvailableItems(requirement.m_resItem.m_itemData.m_shared.m_name);
-                        int canMake = currentAmount / requirement.m_amount;
-                        if (canMake < fewestPossible) fewestPossible = canMake;
-                    }
+                int fewestPossible =
+                    (from requirement in piece.m_resources
+                        let currentAmount =
+                            OdinQOLplugin.GetAvailableItems(requirement.m_resItem.m_itemData.m_shared.m_name)
+                        select currentAmount / requirement.m_amount).Prepend(int.MaxValue).Min();
 
-                    string? canBuildDisplay =
-                        string.Format(ImprovedBuildHudConfig.CanBuildAmountFormat.Value, fewestPossible);
-                    if (!string.IsNullOrEmpty(ImprovedBuildHudConfig.CanBuildAmountColor.Value))
-                        canBuildDisplay =
-                            $"<color={ImprovedBuildHudConfig.CanBuildAmountColor.Value}>{canBuildDisplay}</color>";
-                    ___m_buildSelection.text = $"{displayName} {canBuildDisplay}";
-                }
+                string? canBuildDisplay =
+                    string.Format(ImprovedBuildHudConfig.CanBuildAmountFormat.Value, fewestPossible);
+                if (!string.IsNullOrEmpty(ImprovedBuildHudConfig.CanBuildAmountColor.Value))
+                    canBuildDisplay =
+                        $"<color={ImprovedBuildHudConfig.CanBuildAmountColor.Value}>{canBuildDisplay}</color>";
+                ___m_buildSelection.text = $"{displayName} {canBuildDisplay}";
             }
         }
-
-        // [HarmonyPatch(typeof(Humanoid), "GetInventory")]
-        // public static class HeightPatch
-        // {
-        //     private static void Postfix()
-        //     {
-        //         Player.m_localPlayer.m_inventory.m_height = 8;
-        //     }
-        // }
     }
 }

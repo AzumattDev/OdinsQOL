@@ -28,17 +28,17 @@ namespace OdinQOL.Patches
             if (lastFontName != fontName.Value) // call when config changes
             {
                 lastFontName = fontName.Value;
-                OdinQOLplugin.Dbgl($"new font {fontName.Value}");
+                OdinQOLplugin.QOLLogger.LogDebug($"new font {fontName.Value}");
                 Font? font = GetFont(fontName.Value, 20);
                 if (font == null)
-                    OdinQOLplugin.Dbgl("new font not found");
+                    OdinQOLplugin.QOLLogger.LogDebug("new font not found");
                 else
                     currentFont = font;
             }
 
             if (currentFont != null && sign.m_textWidget.font?.name != currentFont.name)
             {
-                OdinQOLplugin.Dbgl($"setting font {currentFont.name}");
+                OdinQOLplugin.QOLLogger.LogDebug($"setting font {currentFont.name}");
                 sign.m_textWidget.font = currentFont;
             }
         }

@@ -70,49 +70,49 @@ namespace OdinQOL.Patches
                     switch ((SkillType)skillType)
                     {
                         case SkillType.Swords:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, swordskill.Value);
+                            factor = Utilities.ApplyModifierValue(factor, swordskill.Value);
                             break;
                         case SkillType.Knives:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, kniveskill.Value);
+                            factor = Utilities.ApplyModifierValue(factor, kniveskill.Value);
                             break;
                         case SkillType.Clubs:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, clubskill.Value);
+                            factor = Utilities.ApplyModifierValue(factor, clubskill.Value);
                             break;
                         case SkillType.Polearms:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, polearmskill.Value);
+                            factor = Utilities.ApplyModifierValue(factor, polearmskill.Value);
                             break;
                         case SkillType.Spears:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, spearskill.Value);
+                            factor = Utilities.ApplyModifierValue(factor, spearskill.Value);
                             break;
                         case SkillType.Blocking:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, blockskill.Value);
+                            factor = Utilities.ApplyModifierValue(factor, blockskill.Value);
                             break;
                         case SkillType.Axes:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, axeskill.Value);
+                            factor = Utilities.ApplyModifierValue(factor, axeskill.Value);
                             break;
                         case SkillType.Bows:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, bowskill.Value);
+                            factor = Utilities.ApplyModifierValue(factor, bowskill.Value);
                             break;
                         case SkillType.Unarmed:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, unarmed.Value);
+                            factor = Utilities.ApplyModifierValue(factor, unarmed.Value);
                             break;
                         case SkillType.Pickaxes:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, pickaxe.Value);
+                            factor = Utilities.ApplyModifierValue(factor, pickaxe.Value);
                             break;
                         case SkillType.WoodCutting:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, woodcutting.Value);
+                            factor = Utilities.ApplyModifierValue(factor, woodcutting.Value);
                             break;
                         case SkillType.Jump:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, jump.Value);
+                            factor = Utilities.ApplyModifierValue(factor, jump.Value);
                             break;
                         case SkillType.Sneak:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, sneak.Value);
+                            factor = Utilities.ApplyModifierValue(factor, sneak.Value);
                             break;
                         case SkillType.Run:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, run.Value);
+                            factor = Utilities.ApplyModifierValue(factor, run.Value);
                             break;
                         case SkillType.Swim:
-                            factor = OdinQOLplugin.ApplyModifierValue(factor, swim.Value);
+                            factor = Utilities.ApplyModifierValue(factor, swim.Value);
                             break;
                     }
             }
@@ -167,7 +167,7 @@ namespace OdinQOL.Patches
             public static void LowerAllSkills(Skills instance, float factor)
             {
                 if (deathPenaltyMultiplier.Value > -100.0f)
-                    instance.LowerAllSkills(OdinQOLplugin.ApplyModifierValue(factor, deathPenaltyMultiplier.Value));
+                    instance.LowerAllSkills(Utilities.ApplyModifierValue(factor, deathPenaltyMultiplier.Value));
             }
         }
     }

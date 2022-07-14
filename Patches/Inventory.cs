@@ -41,12 +41,12 @@ namespace OdinQOL.Patches
             if (OdinQOLplugin.itemStackMultiplier.Value > 0)
             {
                 __instance.m_itemData.m_shared.m_weight =
-                    OdinQOLplugin.ApplyModifierValue(__instance.m_itemData.m_shared.m_weight,
+                    Utilities.ApplyModifierValue(__instance.m_itemData.m_shared.m_weight,
                         OdinQOLplugin.WeightReduction.Value);
 
                 if (__instance.m_itemData.m_shared.m_maxStackSize > 1)
                     if (OdinQOLplugin.itemStackMultiplier.Value >= 1)
-                        __instance.m_itemData.m_shared.m_maxStackSize = (int)OdinQOLplugin.ApplyModifierValue(
+                        __instance.m_itemData.m_shared.m_maxStackSize = (int)Utilities.ApplyModifierValue(
                             __instance.m_itemData.m_shared.m_maxStackSize, OdinQOLplugin.itemStackMultiplier.Value);
             }
         }

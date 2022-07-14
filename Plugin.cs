@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
-using CraftFromContainers;
+using BepInEx.Logging;
 using HarmonyLib;
+using OdinQOL.Configs;
 using OdinQOL.Patches;
 using ServerSync;
 using UnityEngine;
@@ -36,6 +38,7 @@ namespace OdinQOL
     }
 
     [BepInPlugin(GUID, ModName, Version)]
+    [BepInIncompatibility("aedenthorn.CraftFromContainers")]
     public partial class OdinQOLplugin : BaseUnityPlugin
     {
         public const string Version = "0.7.1";
@@ -44,6 +47,10 @@ namespace OdinQOL
         private static readonly int windowId = 434343;
         internal static Assembly epicLootAssembly;
         public static OdinQOLplugin context;
+        private const string ConfigFileName = GUID + ".cfg";
+
+        private static readonly string ConfigFileFullPath =
+            Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
 
 
         public static ConfigEntry<bool> displayCartsAndBoats;
@@ -67,21 +74,23 @@ namespace OdinQOL
         public static ConfigEntry<int> CampRadiusMin;
         public static ConfigEntry<int> CampRadiusMax;
 
-        public static readonly IEnumerable<KeyCode> AllKeyCodes;
+        //public static readonly IEnumerable<KeyCode> AllKeyCodes;
 
         public static ConfigSync configSync = new(GUID) { DisplayName = ModName, CurrentVersion = Version };
-        private static List<Container> _cachedContainers;
+        internal static readonly List<Container> ContainerList = new();
+        internal static readonly List<ConnectionParams> ContainerConnections = new();
+        internal static GameObject ConnectionVfxPrefab = null!;
+        private ConfigEntry<bool> _serverConfigLocked = null!;
 
-        public static bool CraftFromContainersInstalledAndActive;
-        private ConfigEntry<bool> serverConfigLocked;
+        // ReSharper disable once InconsistentNaming
+        public static readonly ManualLogSource QOLLogger =
+            BepInEx.Logging.Logger.CreateLogSource(ModName);
 
 
         public void Awake()
         {
-            serverConfigLocked = config("General", "Lock Configuration", true, "Lock Configuration");
-            configSync.AddLockingConfigEntry(serverConfigLocked);
-            /*preventPlayerFromTurningOffPublicPosition =
-                config("General", "IsDebug", true, "Show debug messages in log");*/
+            _serverConfigLocked = config("General", "Lock Configuration", true, "Lock Configuration");
+            configSync.AddLockingConfigEntry(_serverConfigLocked);
 
             DungeonMaxRoomCount = config("Dungeon", "Max Room Count", 20,
                 "This is the max number of rooms placed by dungeon gen higher numbers will cause lag");
@@ -259,7 +268,7 @@ namespace OdinQOL
                 "lightblue",
                 "Color to set the inventory amount after the requirement amount. Leave empty to set no color. You can use the #XXXXXX hex color format.",
                 false);
-            ImprovedBuildHudConfig.CanBuildAmountFormat = config("Building HUD", "Can Build Amount Color", "({0})",
+            ImprovedBuildHudConfig.CanBuildAmountFormat = config("Building HUD", "Can Build Amount Format", "({0})",
                 "Format for the amount of times you can build the currently selected item with your current inventory. Uses standard C# format rules. Leave empty to hide altogether.",
                 false);
             ImprovedBuildHudConfig.CanBuildAmountColor = config("Building HUD", "Can Build Amount Color", "white",
@@ -481,26 +490,18 @@ namespace OdinQOL
             InventoryDiscard.returnResources = config("Inventory Discard", "ReturnResources", 1f,
                 "Fraction of resources to return (0.0 - 1.0)");
 
+            /* CFC */
+            CFCConfigs.Generate();
+
 
             if (!modEnabled.Value)
                 return;
-
+            CFC.CfcWasAllowed = !CFC.switchPrevent.Value;
 
             currentFont = GetFont(fontName.Value, 20);
             lastFontName = currentFont?.name;
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
-
-            // On.Humanoid.GetInventory += GamePatches.Humanoid_GetInventory;
-            CraftFromContainersInstalledAndActive = false;
-            GameObject? bepInExManager = GameObject.Find("BepInEx_Manager");
-            BaseUnityPlugin[]? plugins = bepInExManager.GetComponentsInChildren<BaseUnityPlugin>();
-            foreach (BaseUnityPlugin? plugin in plugins)
-                if (plugin.Info.Metadata.GUID == "aedenthorn.CraftFromContainers")
-                {
-                    CraftFromContainersInstalledAndActive = BepInExPlugin.modEnabled.Value;
-                    Debug.Log("Found CraftFromContainers");
-                }
-
+            SetupWatcher();
             QuickAccessBar.hotkeys = new[]
             {
                 QuickAccessBar.hotKey1,
@@ -514,7 +515,7 @@ namespace OdinQOL
             if (Chainloader.PluginInfos.ContainsKey("randyknapp.mods.epicloot"))
             {
                 epicLootAssembly = Chainloader.PluginInfos["randyknapp.mods.epicloot"].Instance.GetType().Assembly;
-                OdinQOLplugin.Dbgl("Epic Loot found, providing compatibility");
+                QOLLogger.LogDebug("Epic Loot found, providing compatibility");
             }
 
             Game.isModded = true;
@@ -524,7 +525,7 @@ namespace OdinQOL
         {
             if (Utilities.IgnoreKeyPresses())
                 return;
-            if (CheckKeyDown(AutoStorePatch.toggleKey.Value))
+            if (Utilities.CheckKeyDown(AutoStorePatch.toggleKey.Value))
             {
                 AutoStorePatch.isOn.Value = !AutoStorePatch.isOn.Value;
                 Config.Save();
@@ -544,31 +545,41 @@ namespace OdinQOL
 
         private void LateUpdate()
         {
-            if (CraftFromContainersInstalledAndActive)
-                if (_cachedContainers != null)
-                {
-                    _cachedContainers.Clear();
-                    _cachedContainers = null;
-                }
+            CFC.CfcWasAllowed = Utilities.AllowByKey();
         }
 
         private void OnDestroy()
         {
-            CraftFromContainersInstalledAndActive = false;
+            Config.Save();
         }
 
-        public static void Dbgl(string str = "", bool pref = true)
+        private void SetupWatcher()
         {
-            if (isDebug.Value)
-                Debug.Log((pref ? typeof(OdinQOLplugin).Namespace + " " : "") + str);
+            FileSystemWatcher watcher = new(Paths.ConfigPath, ConfigFileName);
+            watcher.Changed += ReadConfigValues;
+            watcher.Created += ReadConfigValues;
+            watcher.Renamed += ReadConfigValues;
+            watcher.IncludeSubdirectories = true;
+            watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
+            watcher.EnableRaisingEvents = true;
         }
 
-        public static void DbglError(string str = "", bool pref = true)
+        private void ReadConfigValues(object sender, FileSystemEventArgs e)
         {
-            Debug.LogError((pref ? typeof(OdinQOLplugin).Namespace + " " : "") + str);
+            if (!File.Exists(ConfigFileFullPath)) return;
+            try
+            {
+                QOLLogger.LogDebug("ReadConfigValues called");
+                Config.Reload();
+            }
+            catch
+            {
+                QOLLogger.LogError($"There was an issue loading your {ConfigFileName}");
+                QOLLogger.LogError("Please check your config entries for spelling and format!");
+            }
         }
 
-        private ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
+        internal ConfigEntry<T> config<T>(string group, string name, T value, ConfigDescription description,
             bool synchronizedSetting = true)
         {
             ConfigDescription extendedDescription =
@@ -584,22 +595,10 @@ namespace OdinQOL
             return configEntry;
         }
 
-        private ConfigEntry<T> config<T>(string group, string name, T value, string description,
+        internal ConfigEntry<T> config<T>(string group, string name, T value, string description,
             bool synchronizedSetting = true)
         {
             return config(group, name, value, new ConfigDescription(description), synchronizedSetting);
-        }
-
-        private static bool CheckKeyDown(string value)
-        {
-            try
-            {
-                return Input.GetKeyDown(value.ToLower());
-            }
-            catch
-            {
-                return false;
-            }
         }
 
         public static int GetAvailableItems(string itemName)
@@ -608,75 +607,27 @@ namespace OdinQOL
             if (player == null) return 0;
 
             int playerInventoryCount = player.GetInventory().CountItems(itemName);
-            int containerCount = 0;
+            QOLLogger.LogError($"playerInventoryCount = {playerInventoryCount}");
+            int containerCount = ContainerList.Sum(container => container.GetInventory().CountItems(itemName));
 
-            if (CraftFromContainersInstalledAndActive)
-            {
-                if (_cachedContainers == null)
-                    _cachedContainers = BepInExPlugin.GetNearbyContainers(player.transform.position);
-                foreach (Container? container in _cachedContainers)
-                    containerCount += container.GetInventory().CountItems(itemName);
-            }
-
+            QOLLogger.LogError($"containerCount = {containerCount}");
             return playerInventoryCount + containerCount;
-        }
-
-        public static float ApplyModifierValue(float targetValue, float value)
-        {
-            if (value <= -100)
-                value = -100;
-
-            float newValue;
-
-            if (value >= 0)
-                newValue = targetValue + targetValue / 100 * value;
-            else
-                newValue = targetValue - targetValue / 100 * (value * -1);
-
-            return newValue;
         }
 
         private string GetCurrentTimeString()
         {
             if (!EnvMan.instance)
                 return "";
-            float fraction = (float)typeof(EnvMan)
-                .GetField("m_smoothDayFraction", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(EnvMan.instance);
+            float fraction = EnvMan.instance.m_smoothDayFraction;
 
             int hour = (int)(fraction * 24);
             int minute = (int)((fraction * 24 - hour) * 60);
             int second = (int)(((fraction * 24 - hour) * 60 - minute) * 60);
 
             DateTime now = DateTime.Now;
-            DateTime theTime = new DateTime(now.Year, now.Month, now.Day, hour, minute, second);
-            int days = Traverse.Create(EnvMan.instance).Method("GetCurrentDay").GetValue<int>();
+            DateTime theTime = new(now.Year, now.Month, now.Day, hour, minute, second);
+            int days = EnvMan.instance.GetCurrentDay();
             return GetCurrentTimeString(theTime, fraction, days);
-        }
-
-
-        [HarmonyPatch(typeof(Player), "PlacePiece")]
-        private static class Player_PlacePiece_Patch
-        {
-            private static void Postfix(bool __result)
-            {
-                if (!modEnabled.Value || !__result)
-                    return;
-                if (MapDetail.MapDetailOn.Value)
-                    context.StartCoroutine(MapDetail.UpdateMap(true));
-            }
-        }
-
-        [HarmonyPatch(typeof(Player), "RemovePiece")]
-        private static class Player_RemovePiece_Patch
-        {
-            private static void Postfix(bool __result)
-            {
-                if (!modEnabled.Value || !__result)
-                    return;
-                if (MapDetail.MapDetailOn.Value)
-                    context.StartCoroutine(MapDetail.UpdateMap(true));
-            }
         }
     }
 }

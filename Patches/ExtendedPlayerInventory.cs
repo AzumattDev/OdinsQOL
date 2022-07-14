@@ -89,7 +89,7 @@ namespace OdinQOL.Patches
             {
                 if (!modEnabled.Value)
                     return;
-                Dbgl("Player_Awake");
+                QOLLogger.LogDebug("Player_Awake");
 
                 int height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
                 __instance.m_inventory.m_height = height;
@@ -104,13 +104,13 @@ namespace OdinQOL.Patches
             {
                 if (!modEnabled.Value)
                     return;
-                Dbgl("TombStone_Awake");
+                QOLLogger.LogDebug("TombStone_Awake");
 
                 int height = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
 
                 __instance.GetComponent<Container>().m_height = height;
                 //AccessTools.FieldRefAccess<Inventory, int>(AccessTools.FieldRefAccess<Container, Inventory>(__instance.GetComponent<Container>(), "m_inventory"), "m_height") = height;
-                //Dbgl($"tombstone Awake {__instance.GetComponent<Container>().GetInventory()?.GetHeight()}");
+                //OdinQOLplugin.QOLLogger.LogDebug($"tombstone Awake {__instance.GetComponent<Container>().GetInventory()?.GetHeight()}");
             }
         }
 
@@ -121,7 +121,7 @@ namespace OdinQOL.Patches
             {
                 if (!modEnabled.Value)
                     return;
-                Dbgl("TombStone_Interact");
+                QOLLogger.LogDebug("TombStone_Interact");
                 int num = extraRows.Value + (addEquipmentRow.Value ? 5 : 4);
                 __instance.GetComponent<Container>().m_height = num;
                 Traverse traverse = Traverse.Create(___m_container);
@@ -145,9 +145,9 @@ namespace OdinQOL.Patches
             {
                 if (!modEnabled.Value)
                     return;
-                Dbgl("MoveInventoryToGrave");
+                QOLLogger.LogDebug("MoveInventoryToGrave");
 
-                Dbgl($"inv: {__instance.GetHeight()} orig: {original.GetHeight()}");
+                QOLLogger.LogDebug($"inv: {__instance.GetHeight()} orig: {original.GetHeight()}");
             }
         }
 
@@ -187,19 +187,23 @@ namespace OdinQOL.Patches
 
             private static void CreateTombStone()
             {
-                Dbgl(string.Format("height {0}", Player.m_localPlayer.m_tombstone.GetComponent<Container>().m_height));
+                QOLLogger.LogDebug(string.Format("height {0}",
+                    Player.m_localPlayer.m_tombstone.GetComponent<Container>().m_height));
                 GameObject gameObject = Object.Instantiate(Player.m_localPlayer.m_tombstone,
                     Player.m_localPlayer.GetCenterPoint(), Player.m_localPlayer.transform.rotation);
                 TombStone component = gameObject.GetComponent<TombStone>();
-                Dbgl(string.Format("height {0}", gameObject.GetComponent<Container>().m_height));
-                Dbgl(string.Format("inv height {0}", gameObject.GetComponent<Container>().GetInventory().GetHeight()));
-                Dbgl(string.Format("inv slots {0}",
+                QOLLogger.LogDebug(string.Format("height {0}",
+                    gameObject.GetComponent<Container>().m_height));
+                QOLLogger.LogDebug(string.Format("inv height {0}",
+                    gameObject.GetComponent<Container>().GetInventory().GetHeight()));
+                QOLLogger.LogDebug(string.Format("inv slots {0}",
                     gameObject.GetComponent<Container>().GetInventory().GetEmptySlots()));
                 for (int index = 0;
-                    index < gameObject.GetComponent<Container>().GetInventory().GetEmptySlots();
-                    ++index)
+                     index < gameObject.GetComponent<Container>().GetInventory().GetEmptySlots();
+                     ++index)
                     gameObject.GetComponent<Container>().GetInventory().AddItem("SwordBronze", 1, 1, 0, 0L, "");
-                Dbgl(string.Format("no items: {0}", gameObject.GetComponent<Container>().GetInventory().NrOfItems()));
+                QOLLogger.LogDebug(string.Format("no items: {0}",
+                    gameObject.GetComponent<Container>().GetInventory().NrOfItems()));
                 PlayerProfile playerProfile = Game.instance.GetPlayerProfile();
                 component.Setup(playerProfile.GetName(), playerProfile.GetPlayerID());
             }
@@ -419,7 +423,7 @@ namespace OdinQOL.Patches
                 }
                 catch (Exception ex)
                 {
-                    Dbgl($"Exception in EPI Update Inventory: {ex}");
+                    QOLLogger.LogDebug($"Exception in EPI Update Inventory: {ex}");
                 }
             }
         }
@@ -432,7 +436,7 @@ namespace OdinQOL.Patches
                 if (!modEnabled.Value || !addEquipmentRow.Value || !Player.m_localPlayer ||
                     __instance != Player.m_localPlayer.GetInventory())
                     return;
-                Dbgl("FindEmptySlot");
+                QOLLogger.LogDebug("FindEmptySlot");
                 --___m_height;
             }
 
@@ -457,7 +461,7 @@ namespace OdinQOL.Patches
             {
                 if (!modEnabled.Value || !addEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
                     return true;
-                Dbgl("GetEmptySlots");
+                QOLLogger.LogDebug("GetEmptySlots");
                 int count = ___m_inventory.FindAll((Predicate<ItemDrop.ItemData>)(i => i.m_gridPos.y < ___m_height - 1))
                     .Count;
                 __result = (___m_height - 1) * ___m_width - count;
@@ -496,7 +500,7 @@ namespace OdinQOL.Patches
                 if (!modEnabled.Value || !addEquipmentRow.Value || !Player.m_localPlayer ||
                     __instance != Player.m_localPlayer.GetInventory())
                     return true;
-                Dbgl("AddItem");
+                QOLLogger.LogDebug("AddItem");
                 int which;
                 if (!IsEquipmentSlotFree(__instance, item, out which))
                     return true;
