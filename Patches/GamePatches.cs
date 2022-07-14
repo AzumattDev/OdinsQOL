@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -444,69 +445,38 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(Player), "UpdatePlacementGhost")]
-        public static class Player_UpdatePlacementGhost_Patch
+
+        [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacementGhost))]
+        static class Player_UpdatePlacementGhost_Patch
         {
-            private static bool Prefix(ref Player __instance, bool flashGuardStone)
+            static void Postfix(Player __instance, bool flashGuardStone)
             {
-                return true;
-            }
-
-            private static void Postfix(ref Player __instance)
-            {
+                if (!buildInsideProtectedLocations.Value) return;
+                if (Player.m_localPlayer == null) return;
                 try
                 {
-                    if (__instance.m_placementStatus == Player.PlacementStatus.Invalid)
+                    switch (__instance.m_placementStatus)
                     {
-                        __instance.m_placementStatus = Player.PlacementStatus.Valid;
-                        __instance.m_placementGhost.GetComponent<Piece>().SetInvalidPlacementHeightlight(false);
+                        case Player.PlacementStatus.NoBuildZone:
+                        case Player.PlacementStatus.Invalid:
+                            __instance.m_placementStatus = Player.PlacementStatus.Valid;
+                            __instance.m_placementGhost.GetComponent<Piece>().SetInvalidPlacementHeightlight(false);
+                            break;
                     }
                 }
                 catch
                 {
-                }
-
-                try
-                {
-                    if (__instance.m_placementStatus == Player.PlacementStatus.NoBuildZone)
-                    {
-                        __instance.m_placementStatus = Player.PlacementStatus.Valid;
-                        __instance.m_placementGhost.GetComponent<Piece>().SetInvalidPlacementHeightlight(false);
-                    }
-                }
-                catch
-                {
+                    // ignored
                 }
             }
         }
 
 
-        [HarmonyPatch(typeof(Player), "OnSpawned")]
+        [HarmonyPatch(typeof(Player), nameof(Player.OnSpawned))]
         public static class Player_OnSpawned_Patch
         {
             private static void Prefix(ref Player __instance)
             {
-                /*//Show OdinQOL tutorial raven if not yet seen by the player's character.
-                var introTutorial = new Tutorial.TutorialText
-                {
-                    m_label = "OdinQOL Intro",
-                    m_name = "vmp",
-                    m_text = "We hope you have fun and enjoy your play time!",
-                    m_topic = "Welcome to Valheim!"
-                };*/
-
-                //if (!Tutorial.instance.m_texts.Contains(introTutorial)) Tutorial.instance.m_texts.Add(introTutorial);
-
-                //Player.m_localPlayer.ShowTutorial("vmp");
-
-                //Only sync on first spawn
-                /*if (MapSync.ShouldSyncOnSpawn && OdinQOLplugin.shareMapProgression.Value)
-                {
-                    //Send map data to the server
-                    MapSync.SendMapToServer();
-                    MapSync.ShouldSyncOnSpawn = false;
-                }*/
-
                 if (SkipTuts.Value)
                     __instance.m_firstSpawn = false;
             }
