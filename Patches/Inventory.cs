@@ -66,7 +66,7 @@ namespace OdinQOL.Patches
     {
         private static void Prefix(ref Inventory __instance, ref Inventory fromInventory)
         {
-            List<ItemDrop.ItemData>? list = new List<ItemDrop.ItemData>(fromInventory.GetAllItems());
+            List<ItemDrop.ItemData>? list = new(fromInventory.GetAllItems());
             foreach (ItemDrop.ItemData? otherItem in list)
                 if (otherItem.m_shared.m_maxStackSize > 1)
                     foreach (ItemDrop.ItemData? myItem in __instance.m_inventory)

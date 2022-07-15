@@ -407,7 +407,7 @@ namespace OdinQOL
             SkillPatches.sneak = config("Skills", "Sneak Skill gain factor", 0f, "Sneak skill gain factor");
             SkillPatches.swim = config("Skills", "Swim Skill gain factor", 0f, "Swim skill gain factor");
             SkillPatches.deathPenaltyMultiplier = config("Skills", "Death Penalty Factor Multiplier", 0f,
-                "Death Penalty Factor Multiplier");
+                "Change the death penalty in percentage, where higher will increase the death penalty and lower will reduce it. This is a modifier value. 50 will increase it by 50%, -50 will reduce it by 50%.");
             /* Extended Player Inventory Config options */
             QuickAccessBar.extraRows = config("Extended Inventory", "ExtraRows", 0,
                 "Number of extra ordinary rows. (This can cause overlap with chest GUI, make sure you hold CTRL (the default key) and drag to desired position)");
@@ -607,10 +607,7 @@ namespace OdinQOL
             if (player == null) return 0;
 
             int playerInventoryCount = player.GetInventory().CountItems(itemName);
-            QOLLogger.LogError($"playerInventoryCount = {playerInventoryCount}");
             int containerCount = ContainerList.Sum(container => container.GetInventory().CountItems(itemName));
-
-            QOLLogger.LogError($"containerCount = {containerCount}");
             return playerInventoryCount + containerCount;
         }
 

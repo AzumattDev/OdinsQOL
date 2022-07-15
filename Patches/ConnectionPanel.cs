@@ -31,7 +31,7 @@ namespace OdinQOL.Patches
                     {
                         foreach (string? serv in serversArray)
                         {
-                            ServerData? serverData = new ServerData();
+                            ServerData? serverData = new();
                             serverData.m_host = serv;
                             serverData.m_name = serversNamesArray[i];
                             serverData.m_password = false;

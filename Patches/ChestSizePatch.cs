@@ -23,7 +23,7 @@ namespace OdinQOL.Patches
         public static ConfigEntry<int> BMRow;
         public static ConfigEntry<int> BMCol;
 
-        [HarmonyPatch(typeof(Container), "Awake")]
+        [HarmonyPatch(typeof(Container), nameof(Container.Awake))]
         public static class Container_Awake_Patch
         {
             private static void Postfix(Container __instance, ref Inventory ___m_inventory)

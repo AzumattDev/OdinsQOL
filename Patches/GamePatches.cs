@@ -113,7 +113,7 @@ namespace OdinQOL.Patches
                         ? selected_piece.transform.position
                         : instance.transform.position;
 
-                    List<Piece>? pieces = new List<Piece>();
+                    List<Piece>? pieces = new();
                     Piece.GetAllPiecesInRadius(position, areaRepairRadius.Value, pieces);
 
                     m_repair_count = 0;

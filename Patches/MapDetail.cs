@@ -93,9 +93,9 @@ namespace OdinQOL.Patches
                 yield break;
             }
 
-            List<string>? customColors = new List<string>();
+            List<string>? customColors = new();
             if (customPlayerColors.Value.Length > 0) customColors = customPlayerColors.Value.Split(',').ToList();
-            Dictionary<long, Color>? assignedColors = new Dictionary<long, Color>();
+            Dictionary<long, Color>? assignedColors = new();
             bool named = customPlayerColors.Value.Contains(":");
 
             Color32[]? data = mapTexture.GetPixels32();
@@ -184,7 +184,7 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(Player), "PlacePiece")]
+        [HarmonyPatch(typeof(Player), nameof(Player.PlacePiece))]
         private static class Player_PlacePiece_Patch
         {
             private static void Postfix(bool __result)
@@ -196,7 +196,7 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(Player), "RemovePiece")]
+        [HarmonyPatch(typeof(Player), nameof(Player.RemovePiece))]
         private static class Player_RemovePiece_Patch
         {
             private static void Postfix(bool __result)

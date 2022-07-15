@@ -62,8 +62,8 @@ namespace OdinQOL.Patches
                                 if (!returnUnknownResources.Value &&
                                     (ObjectDB.instance.GetRecipe(kvp.Key.m_itemData) &&
                                      !Player.m_localPlayer.IsRecipeKnown(kvp.Key.m_itemData.m_shared.m_name) ||
-                                     !Traverse.Create(Player.m_localPlayer).Field("m_knownMaterial")
-                                         .GetValue<HashSet<string>>().Contains(kvp.Key.m_itemData.m_shared.m_name)))
+                                     !Player.m_localPlayer.m_knownMaterial.Contains(kvp.Key.m_itemData.m_shared
+                                         .m_name)))
                                 {
                                     Player.m_localPlayer.Message(MessageHud.MessageType.Center,
                                         "You don't know all the recipes for this item's materials.");
@@ -90,7 +90,8 @@ namespace OdinQOL.Patches
                                             req.m_resItem.m_itemData.m_shared.m_name)!;
                                         ItemDrop.ItemData newItem = prefab.GetComponent<ItemDrop>().m_itemData.Clone();
                                         int numToAdd = Mathf.RoundToInt(req.GetAmount(j) * returnResources.Value);
-                                        OdinQOLplugin.QOLLogger.LogDebug($"Returning {numToAdd}/{req.GetAmount(j)} {prefab.name}");
+                                        OdinQOLplugin.QOLLogger.LogDebug(
+                                            $"Returning {numToAdd}/{req.GetAmount(j)} {prefab.name}");
                                         while (numToAdd > 0)
                                         {
                                             int stack = Mathf.Min(req.m_resItem.m_itemData.m_shared.m_maxStackSize,
@@ -98,8 +99,9 @@ namespace OdinQOL.Patches
                                             numToAdd -= stack;
 
                                             if (Player.m_localPlayer.GetInventory().AddItem(prefab.name, stack,
-                                                req.m_resItem.m_itemData.m_quality, req.m_resItem.m_itemData.m_variant,
-                                                0, "") == null)
+                                                    req.m_resItem.m_itemData.m_quality,
+                                                    req.m_resItem.m_itemData.m_variant,
+                                                    0, "") == null)
                                             {
                                                 Transform transform;
                                                 ItemDrop component = Object.Instantiate(prefab,
@@ -110,7 +112,7 @@ namespace OdinQOL.Patches
                                                 component.m_itemData = newItem;
                                                 component.m_itemData.m_dropPrefab = prefab;
                                                 component.m_itemData.m_stack = stack;
-                                                Traverse.Create(component).Method("Save").GetValue();
+                                                component.Save();
                                             }
                                         }
                                     }
