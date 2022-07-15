@@ -133,7 +133,7 @@ namespace OdinQOL.Patches
 
                 Object.Destroy(___m_dragGo);
                 ___m_dragGo = null;
-                __instance.UpdateCraftingPanel(false);
+                __instance.UpdateCraftingPanel();
             }
         }
     }

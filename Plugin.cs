@@ -153,9 +153,9 @@ namespace OdinQOL
 
 
             WeightReduction = config("Items", "Item Weight Increase", 1f,
-                new ConfigDescription("Multiplier for your item weight"));
+                new ConfigDescription("Multiplier for your item weight. This is a modifier value. 50 will increase it by 50%, -50 will reduce it by 50%."));
             itemStackMultiplier = config("Items", "Item Stack Increase", 1f,
-                new ConfigDescription("Multiplier for your item stacks"));
+                new ConfigDescription("Multiplier for your item stacks. Directly multiplies stack of the item by this value. (Stack of 50 with value of 10 here would turn into a stack of 500)"));
             NoTeleportPrevention = config("Items", "Disable Teleport check for items", false,
                 new ConfigDescription("Disable Teleport check for items"));
             filltoptobottom = config("Items", "Fill your things top to bottom when moving from inv to chest", true,
@@ -282,8 +282,7 @@ namespace OdinQOL
                 "Enable rich text. If this is disabled, the sign reverts back to vanilla functionality.");
             fontName = config("Signs", "FontName", "Norsebold", "Font name", false);
             signDefaultColor = config("Signs", "SignDefaultColor", "black",
-                "This uses string values to set the default color every sign should have. The code runs when the sign loads in for the first time. If the sign doesn't have a color tag already, it will wrap the text in one. Use values like \"red\" here to specify a default color.",
-                true);
+                "This uses string values to set the default color every sign should have. The code runs when the sign loads in for the first time. If the sign doesn't have a color tag already, it will wrap the text in one. Use values like \"red\" here to specify a default color.");
 
 
             AutoStorePatch.dropRangeChests = config("Auto Storage", "DropRangeChests", 5f,

@@ -45,9 +45,27 @@ namespace OdinQOL.Patches
                         OdinQOLplugin.WeightReduction.Value);
 
                 if (__instance.m_itemData.m_shared.m_maxStackSize > 1)
+                {
                     if (OdinQOLplugin.itemStackMultiplier.Value >= 1)
-                        __instance.m_itemData.m_shared.m_maxStackSize = (int)Utilities.ApplyModifierValue(
-                            __instance.m_itemData.m_shared.m_maxStackSize, OdinQOLplugin.itemStackMultiplier.Value);
+                    {
+                        __instance.m_itemData.m_shared.m_maxStackSize *= (int)OdinQOLplugin.itemStackMultiplier.Value;
+                    }
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.SetStack))]
+    static class ItemDrop_SetStack_Patch
+    {
+        static void Prefix(ItemDrop __instance)
+        {
+            if (__instance.m_itemData.m_shared.m_maxStackSize > 1)
+            {
+                if (OdinQOLplugin.itemStackMultiplier.Value >= 1)
+                {
+                    __instance.m_itemData.m_shared.m_maxStackSize *= (int)OdinQOLplugin.itemStackMultiplier.Value;
+                }
             }
         }
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using BepInEx.Configuration;
+using BepInEx.Logging;
 using HarmonyLib;
 using Steamworks;
 using UnityEngine;
@@ -415,7 +416,6 @@ namespace OdinQOL.Patches
                 return il.AsEnumerable();
             }
         }
-
 
         [HarmonyPatch(typeof(Player), nameof(Player.RemovePiece))]
         public static class Player_RemovePiece_Transpiler

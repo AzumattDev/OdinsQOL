@@ -17,7 +17,6 @@ namespace OdinQOL
         public static ConfigEntry<Color> clockFontColor;
         public static ConfigEntry<Color> clockShadowColor;
         public static ConfigEntry<int> clockShadowOffset;
-        public static ConfigEntry<Vector2> clockLocation;
         public static ConfigEntry<string> clockLocationString;
         public static ConfigEntry<int> clockFontSize;
         public static ConfigEntry<string> toggleClockKeyMod;
@@ -27,7 +26,6 @@ namespace OdinQOL
         public static ConfigEntry<string> clockString;
         public static ConfigEntry<TextAnchor> clockTextAlignment;
         public static ConfigEntry<string> clockFuzzyStrings;
-        public static ConfigEntry<int> nexusID;
 
         private static Font clockFont;
         private static GUIStyle style;
@@ -183,13 +181,13 @@ namespace OdinQOL
             }
             else
             {
-                Debug.Log("getting fonts");
+                QOLLogger.LogDebug("getting fonts");
                 Font[]? fonts = Resources.FindObjectsOfTypeAll<Font>();
                 foreach (Font? font in fonts)
                     if (font.name == clockFontName.Value)
                     {
                         clockFont = font;
-                        Debug.Log($"got font {font.name}");
+                        QOLLogger.LogDebug($"got font {font.name}");
                         break;
                     }
             }

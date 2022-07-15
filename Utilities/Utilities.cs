@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BepInEx.Logging;
 using CraftyBoxes.Compatibility.WardIsLove;
 using HarmonyLib;
 using OdinQOL.Patches;
@@ -103,7 +104,7 @@ namespace OdinQOL
             try
             {
                 OdinQOLplugin.QOLLogger.LogDebug(
-                    $"Checking {container.name} {nview != null} {nview?.GetZDO() != null} {nview?.GetZDO()?.GetLong("creator".GetStableHashCode(), 0L)}");
+                    $"Checking {container.name} {nview != null} {nview?.GetZDO() != null} {nview?.GetZDO()?.GetLong("creator".GetStableHashCode())}");
                 if (container.GetInventory() == null || nview?.GetZDO() == null ||
                     (!container.name.StartsWith("piece_", StringComparison.Ordinal) &&
                      !container.name.StartsWith("Container", StringComparison.Ordinal) &&
