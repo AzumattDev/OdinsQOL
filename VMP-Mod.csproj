@@ -114,12 +114,17 @@
         <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>$(GamePath)\unstripped_corlib\UnityEngine.UI.dll</HintPath>
         </Reference>
+        <Reference Include="YamlDotNet, Version=11.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
+          <HintPath>packages\YamlDotNet.11.2.1\lib\net45\YamlDotNet.dll</HintPath>
+        </Reference>
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Patches\CFC.cs" />
-        <Compile Include="Patches\ConnectionPanel.cs" />
         <Compile Include="Patches\DisplayPinsOnMap.cs" />
         <Compile Include="Patches\ExtendedPlayerInventory.cs" />
+        <Compile Include="Patches\BiFrost\BiFrost.cs" />
+        <Compile Include="Patches\BiFrost\BiFrostFunctions.cs" />
+        <Compile Include="Patches\BiFrost\BFPatches.cs" />
         <Compile Include="Patches\InventoryDiscard.cs" />
         <Compile Include="Patches\MoveableChestInventory.cs" />
         <Compile Include="Patches\QuickAccessBar.cs" />
@@ -149,6 +154,7 @@
         <Compile Include="Utilities\Configs\ClockPatchConfigs.cs" />
         <Compile Include="Utilities\Configs\CraftingConfigs.cs" />
         <Compile Include="Utilities\Configs\EPIConfigs.cs" />
+        <Compile Include="Utilities\Configs\BiFrostConfigs.cs" />
         <Compile Include="Utilities\Configs\GamePatchConfigs.cs" />
         <Compile Include="Utilities\Configs\InvDiscardConfigs.cs" />
         <Compile Include="Utilities\Configs\MapDetailConfigs.cs" />
@@ -158,6 +164,7 @@
         <Compile Include="Utilities\Configs\SkillPatchConfigs.cs" />
         <Compile Include="Utilities\Configs\WNTPatchConfigs.cs" />
         <Compile Include="Utilities\Configs\WorldPatchConfigs.cs" />
+        <Compile Include="Utilities\DragControl.cs" />
         <Compile Include="Utilities\Utilities.cs" />
     </ItemGroup>
     <ItemGroup>
@@ -168,6 +175,7 @@
     </ItemGroup>
     <ItemGroup>
       <Content Include=".gitignore" />
+      <Content Include="ILRepack.targets" />
       <Content Include="Libs\ServerSync.dll">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>

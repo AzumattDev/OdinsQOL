@@ -10,6 +10,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using OdinQOL.Configs;
 using OdinQOL.Patches;
+using OdinQOL.Patches.BiFrost;
 using ServerSync;
 using UnityEngine;
 
@@ -37,7 +38,10 @@ namespace OdinQOL
     }
 
     [BepInPlugin(GUID, ModName, Version)]
-    [BepInIncompatibility("aedenthorn.CraftFromContainers")]
+    [BepInIncompatibility(
+        "aedenthorn.CraftFromContainers")] // Since I have pulled this in and optimized a few things...make sure we don't overlap.
+    [BepInIncompatibility(
+        "com.jotunn.modsettings")] // It was exploited in the past to bypass ServerSync settings while it was in Jotunn. No telling that won't happen again even if only a short time.
     public partial class OdinQOLplugin : BaseUnityPlugin
     {
         public const string Version = "0.7.1";
@@ -119,23 +123,9 @@ namespace OdinQOL
             SkillPatchConfigs.Generate();
             EPIConfigs.Generate();
             MoveableChestConfigs.Generate();
-
-            /* TODO Remove Connect Panel and integrate fastlink code from my repo */
-            /* Connect Panel */
-            ConnectionPanel.ServerAdditionToggle = config("Connection Panel", "Enable Connection Panel", false,
-                "This option, if enabled, will add the servers listed below to the Join Game panel on the main menu.",
-                false);
-            ConnectionPanel.ServerIPs = config("Connection Panel", "This is the IP for your server",
-                "111.111.111.11,222.222.222.22", "This is the IP for your server. Separate each option by a comma.",
-                false);
-            ConnectionPanel.ServerNames = config("Connection Panel", "Name of the server",
-                "<color=#6600cc>TEST EXAMPLE</color>, Test Example 2",
-                "This is how your server shows in the list, can use colors. Separate each option by a comma.", false);
-            ConnectionPanel.ServerPorts = config("Connection Panel",
-                "The Port For your Server. Separate each option by a comma.", "28200,28300", "Port For server", false);
-
             InvDiscardConfigs.Generate();
             CFCConfigs.Generate();
+            BiFrostConfigs.Generate();
 
 
             if (!modEnabled.Value)
@@ -207,6 +197,14 @@ namespace OdinQOL
             watcher.IncludeSubdirectories = true;
             watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
             watcher.EnableRaisingEvents = true;
+            
+            FileSystemWatcher serverWatcher = new(Paths.ConfigPath, BiFrostServers.ConfigFileName);
+            serverWatcher.Changed += Utilities.ReadNewServers;
+            serverWatcher.Created += Utilities.ReadNewServers;
+            serverWatcher.Renamed += Utilities.ReadNewServers;
+            serverWatcher.IncludeSubdirectories = true;
+            serverWatcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
+            serverWatcher.EnableRaisingEvents = true;
         }
 
         private void ReadConfigValues(object sender, FileSystemEventArgs e)

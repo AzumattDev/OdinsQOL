@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using BepInEx.Bootstrap;
 using BepInEx.Logging;
 using CraftyBoxes.Compatibility.WardIsLove;
 using HarmonyLib;
 using OdinQOL.Patches;
+using OdinQOL.Patches.BiFrost;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace OdinQOL
 {
@@ -269,6 +273,39 @@ namespace OdinQOL
 
                 if (CFC.pulledMessage.Value?.Length > 0)
                     player.Message(MessageHud.MessageType.Center, CFC.pulledMessage.Value);
+            }
+        }
+
+
+        /* FastLink Utils */
+        internal static void SaveAndReset(object sender, EventArgs e)
+        {
+            OdinQOLplugin.context.Config.Save();
+            BiFrostSetupGui.BFRootGo.GetComponent<RectTransform>().anchoredPosition =
+                new Vector2(BiFrost.UIAnchor.Value.x, BiFrost.UIAnchor.Value.y);
+        }
+
+        internal static void ReadNewServers(object sender, FileSystemEventArgs e)
+        {
+            if (!File.Exists(BiFrostServers.ConfigPath)) return;
+            try
+            {
+                OdinQOLplugin.QOLLogger.LogDebug("FastLink: Reloading Server List");
+                BiFrostSetupGui.Connecting = null;
+                foreach (GameObject serverListElement in BiFrostSetupGui.MServerListElements)
+                    Object.Destroy(serverListElement);
+                BiFrostSetupGui.MServerListElements.Clear();
+
+                BiFrostServers.Init();
+                BiFrostFunctions.AbortConnect();
+                BiFrostFunctions.PopulateServerList(BiFrostSetupGui.BF);
+                BiFrostFunctions.UpdateServerList();
+                BiFrostSetupGui.MJoinServer = null;
+            }
+            catch
+            {
+                OdinQOLplugin.QOLLogger.LogError($"There was an issue loading your {BiFrostServers.ConfigFileName}");
+                OdinQOLplugin.QOLLogger.LogError("Please check your config entries for spelling and format!");
             }
         }
     }
