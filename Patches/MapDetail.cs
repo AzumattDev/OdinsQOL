@@ -17,6 +17,7 @@ namespace OdinQOL.Patches
         public static ConfigEntry<float> updateDelta;
         public static ConfigEntry<bool> showBuildings;
         public static ConfigEntry<bool> MapDetailOn;
+        public static ConfigEntry<bool> displayCartsAndBoats;
 
         public static ConfigEntry<Color> personalBuildingColor;
         public static ConfigEntry<Color> otherBuildingColor;

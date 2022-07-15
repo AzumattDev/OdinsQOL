@@ -94,7 +94,7 @@ public class DisplayPinsOnMap
             timeCounter += dt;
 
             if (timeCounter < updateInterval || !MapDetail.MapDetailOn.Value ||
-                !OdinQOLplugin.displayCartsAndBoats.Value)
+                !MapDetail.displayCartsAndBoats.Value)
                 return;
 
             timeCounter -= updateInterval;

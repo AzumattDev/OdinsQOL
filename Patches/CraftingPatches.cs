@@ -30,6 +30,7 @@ namespace OdinQOL.Patches
         public static ConfigEntry<string> scrollModKey;
         public static ConfigEntry<string> prevHotKey;
         public static ConfigEntry<string> nextHotKey;
+        public static ConfigEntry<int> workbenchAttachmentRange;
 
 
         public static void ResizeChildEffectArea(MonoBehaviour parent, EffectArea.Type includedTypes, float newRadius)
@@ -211,17 +212,20 @@ namespace OdinQOL.Patches
                     return;
 
                 List<ItemData>? items = new();
-                foreach (ItemDrop.ItemData? idd in __instance.GetInventory().GetAllItems()) items.Add(new ItemData(idd));
+                foreach (ItemDrop.ItemData? idd in __instance.GetInventory().GetAllItems())
+                    items.Add(new ItemData(idd));
                 SortByType(SortType.Value, items, sortAsc.Value);
                 int entries = 0;
                 int amount = 0;
                 string? name = "";
-                
+
                 if (capacityText.Value.Trim().Length > 0)
                 {
-                    __result = __result.Replace("\n", string.Format(capacityText.Value, __instance.GetInventory().GetAllItems().Count, __instance.GetInventory().GetWidth() * __instance.GetInventory().GetHeight()) + "\n");
+                    __result = __result.Replace("\n",
+                        string.Format(capacityText.Value, __instance.GetInventory().GetAllItems().Count,
+                            __instance.GetInventory().GetWidth() * __instance.GetInventory().GetHeight()) + "\n");
                 }
-                
+
                 for (int i = 0; i < items.Count; i++)
                 {
                     if (maxEntries.Value >= 0 && entries >= maxEntries.Value)
@@ -251,6 +255,16 @@ namespace OdinQOL.Patches
                         __result += "\n" + string.Format(entryString.Value, amount,
                             Localization.instance.Localize(name));
                 }
+            }
+        }
+
+        [HarmonyPatch(typeof(StationExtension), nameof(StationExtension.Awake))]
+        static class StationExtension_Awake_Patch
+        {
+            static void Prefix(StationExtension __instance, ref float ___m_maxStationDistance)
+            {
+                if (CraftingPatch.AlterWorkBench.Value)
+                    ___m_maxStationDistance = CraftingPatch.workbenchAttachmentRange.Value;
             }
         }
 

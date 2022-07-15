@@ -52,12 +52,8 @@ namespace OdinQOL
         private static readonly string ConfigFileFullPath =
             Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
 
-
-        public static ConfigEntry<bool> displayCartsAndBoats;
-
         public static ConfigEntry<bool> modEnabled;
         public static ConfigEntry<bool> isDebug;
-        public static ConfigEntry<int> workbenchAttachmentRange;
 
         public static ConfigEntry<bool> filltoptobottom;
         public static ConfigEntry<bool> Deconstruct;
@@ -104,52 +100,9 @@ namespace OdinQOL
 
             modEnabled = config("General", "Enabled", true, "Enable the entire mod");
             isDebug = config("General", "IsDebug", false, "Show debug messages in log");
-
-            Container_Configs.ContainerSectionOn = config("Containers", "Container Section On", true,
-                "Toggle this value to turn the entire Containers section off/on");
-            Container_Configs.ChestContainerControl = config("Containers", "Chest Container Control", true,
-                "Toggle this value to turn off this mod's control over chest container size");
-            Container_Configs.ShipContainerControl = config("Containers", "Ship Container Control", true,
-                "Toggle this value to turn off this mod's control over ship chest container size");
-            Container_Configs.KarveRow = config("Containers", "Karve Rows", 2,
-                new ConfigDescription("Rows for Karve", new AcceptableValueRange<int>(2, 30)));
-            Container_Configs.KarveCol = config("Containers", "Karve Columns", 2,
-                new ConfigDescription("Columns for Karve", new AcceptableValueRange<int>(2, 8)));
-            Container_Configs.LongRow = config("Containers", "Longboat Rows", 3,
-                new ConfigDescription("Rows for longboat", new AcceptableValueRange<int>(3, 30)));
-            Container_Configs.LongCol = config("Containers", "Longboat Columns", 6,
-                new ConfigDescription("Columns for longboat", new AcceptableValueRange<int>(6, 8)));
-            Container_Configs.CartRow = config("Containers", "Cart Rows", 3,
-                new ConfigDescription("Rows for Cart", new AcceptableValueRange<int>(3, 30)));
-            Container_Configs.CartCol = config("Containers", "Cart Columns", 6,
-                new ConfigDescription("Columns for Cart", new AcceptableValueRange<int>(6, 8)));
-            Container_Configs.PersonalRow = config("Containers", "Personal Chest Rows", 2,
-                new ConfigDescription("Personal Chest Rows", new AcceptableValueRange<int>(2, 20)));
-            Container_Configs.PersonalCol = config("Containers", "Personal Chest Columns", 3,
-                new ConfigDescription("Personal Chest Columns", new AcceptableValueRange<int>(3, 8)));
-            Container_Configs.WoodRow = config("Containers", "Wood Chest Rows", 2,
-                new ConfigDescription("Wood Chest Rows", new AcceptableValueRange<int>(2, 10)));
-            Container_Configs.WoodCol = config("Containers", "Wood Chest Columns", 5,
-                new ConfigDescription("Wood Chest Columns", new AcceptableValueRange<int>(5, 8)));
-            Container_Configs.IronRow = config("Containers", "Iron Chest Rows", 3,
-                new ConfigDescription("Iron Chest Rows", new AcceptableValueRange<int>(3, 20)));
-            Container_Configs.IronCol = config("Containers", "Iron Chest Columns", 6,
-                new ConfigDescription("Iron Chest Columns", new AcceptableValueRange<int>(6, 8)));
-            Container_Configs.BMRow = config("Containers", "Blackmetal Chest Rows", 4,
-                new ConfigDescription("Blackmetal Chest Rows", new AcceptableValueRange<int>(3, 20)));
-            Container_Configs.BMCol = config("Containers", "Blackmetal Chest Columns", 8,
-                new ConfigDescription("Blackmetal Chest Columns", new AcceptableValueRange<int>(6, 8)));
-
-
-            CraftingPatch.WorkbenchRange = config("WorkBench", "WorkBenchRange", 20,
-                new ConfigDescription("Range you can build from workbench in meters",
-                    new AcceptableValueRange<int>(6, 650)));
-            CraftingPatch.workbenchEnemySpawnRange = config("WorkBench", "WorkBenchRange (Playerbase size)", 20,
-                new ConfigDescription("Workbench PlayerBase radius, this is how far away enemies spawn",
-                    new AcceptableValueRange<int>(6, 650)));
-            CraftingPatch.AlterWorkBench = config("WorkBench", "Change No Roof Behavior", true, "Show building pieces");
-            workbenchAttachmentRange = config("WorkBench", "WorkBench Extension", 5,
-                new ConfigDescription("Range for workbench extensions", new AcceptableValueRange<int>(5, 100)));
+            
+            ChestSizeConfigs.Generate();
+            CraftingConfigs.Generate();
 
 
             WeightReduction = config("Items", "Item Weight Increase", 1f,
@@ -160,33 +113,11 @@ namespace OdinQOL
                 new ConfigDescription("Disable Teleport check for items"));
             filltoptobottom = config("Items", "Fill your things top to bottom when moving from inv to chest", true,
                 new ConfigDescription("Move your things top to bottom when changing from inv to chest"), false);
-
-            /*Deconstruct = config("Items", "Allow deconstruction of items in crafting menu", true,
-                new ConfigDescription("Deconstructing crafting items for return of mats"));*/
             AutoRepair = config("Items", "Auto repair your things when interacting with build station", true,
                 new ConfigDescription("Auto repair your things when interacting with build station"), false);
-            /*returnedpercent = config("Items", "Percent of item materials you would recieve back from deconstruction",
-                100, new ConfigDescription("Perecent of item mats you get back from deconstructin tab"));*/
 
-
-            MapDetail.MapDetailOn = config("Map Details", "MapDetail On", true,
-                "Toggle this whole section off/on");
-            displayCartsAndBoats =
-                config("Map Details", "Display Boats/Carts", true, "Show Boats and carts on the map");
-            MapDetail.showRange = config("Map Details", "ShowRange", 50f,
-                "Range in metres around player to show details");
-            MapDetail.updateDelta = config("Map Details", "UpdateDelta", 5f,
-                "Distance in metres to move before automatically updating the map details");
-            MapDetail.showBuildings = config("Map Details", "ShowBuildings", true, "Show building pieces");
-            MapDetail.personalBuildingColor = Config.Bind("Map Details", "PersonalBuildingColor", Color.green,
-                "Color of one's own build pieces");
-            MapDetail.otherBuildingColor = Config.Bind("Map Details", "OtherBuildingColor", Color.red,
-                "Color of other players' build pieces");
-            MapDetail.unownedBuildingColor = Config.Bind("Map Details", "UnownedBuildingColor", Color.yellow,
-                "Color of npc build pieces");
-            MapDetail.customPlayerColors = config("Map Details", "CustomPlayerColors", "",
-                "Custom color list, comma-separated. Use either <name>:<colorCode> pair entries or just <colorCode> entries. E.g. Erinthe:FF0000 or just FF0000. The latter will assign a color randomly to each connected peer.");
-
+            MapDetailConfigs.Generate();
+            
             toggleClockKeyMod = config("Clock", "ShowClockKeyMod", "",
                 "Extra modifier key used to toggle the clock display. Leave blank to not require one. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html",
                 false);
@@ -197,21 +128,6 @@ namespace OdinQOL
                 "Location on the screen to show the clock (x,y) or (x%,y%)", false);
 
             LoadConfig();
-
-            CraftingPatch.maxEntries =
-                config("Show Chest Contents", "MaxEntries", -1,
-                    "Max number of entries to show (-1 means show all)", false);
-            CraftingPatch.sortType = config("Show Chest Contents", "SortType", CraftingPatch.SortType.Value,
-                "Type by which to sort entries.", false);
-            CraftingPatch.sortAsc = config("Show Chest Contents", "SortAsc", false, "Sort ascending?", false);
-            CraftingPatch.entryString = config("Show Chest Contents", "EntryText",
-                "<color=#FFFFAAFF>{0}</color> <color=#AAFFAAFF>{1}</color>",
-                "Entry text. {0} is replaced by the total amount, {1} is replaced by the item name.", false);
-            CraftingPatch.overFlowText = config("Show Chest Contents", "OverFlowText",
-                "<color=#AAAAAAFF>...</color>", "Overflow text if more items than max entries.", false);
-            CraftingPatch.capacityText = config("General", "CapacityText", "<color=#FFFFAAFF> {0}/{1}</color>",
-                "Text to show capacity. {0} is replaced by number of full slots, {1} is replaced by total slots.",
-                false);
 
             iHaveArrivedOnSpawn = config("Game", "I have arrived disable", true,
                 new ConfigDescription("Disable the I have arrived message"));
