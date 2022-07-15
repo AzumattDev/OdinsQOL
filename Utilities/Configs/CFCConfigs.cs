@@ -8,7 +8,8 @@ public class CFCConfigs
 {
     internal static void Generate()
     {
-        CFC.CFCEnabled = OdinQOLplugin.context.config("CraftFromContainers", "CFC Enabled", true, "Enable CraftFromContainers code");
+        CFC.CFCEnabled = OdinQOLplugin.context.config("CraftFromContainers", "CFC Enabled", true,
+            "Enable CraftFromContainers code");
 
         CFC.mRange = OdinQOLplugin.context.config("CraftFromContainers", "ContainerRange", 10f,
             "The maximum range from which to pull items from");

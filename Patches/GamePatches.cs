@@ -40,6 +40,7 @@ namespace OdinQOL.Patches
         public static ConfigEntry<float> baseMaximumWeight;
         public static ConfigEntry<float> maximumPlacementDistance;
         public static ConfigEntry<int> maxPlayers;
+        public static ConfigEntry<bool> iHaveArrivedOnSpawn;
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Location), "IsInsideNoBuildLocation")]
@@ -67,7 +68,7 @@ namespace OdinQOL.Patches
         {
             private static bool Prefix(string user, string text)
             {
-                return !OdinQOLplugin.iHaveArrivedOnSpawn.Value || !text.ToLower().Contains("i have arrived");
+                return !iHaveArrivedOnSpawn.Value || !text.ToLower().Contains("i have arrived");
             }
         }
 

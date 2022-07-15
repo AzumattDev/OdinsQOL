@@ -143,10 +143,21 @@
         <Compile Include="Utilities\Compatibility\WardIsLove\WardIsLovePlugin.cs" />
         <Compile Include="Utilities\Compatibility\WardIsLove\WardMonoscript.cs" />
         <Compile Include="Utilities\Compatibility\WILCompat.cs" />
+        <Compile Include="Utilities\Configs\AutoStoreConfigs.cs" />
         <Compile Include="Utilities\Configs\CFCConfigs.cs" />
         <Compile Include="Utilities\Configs\ChestSizeConfigs.cs" />
+        <Compile Include="Utilities\Configs\ClockPatchConfigs.cs" />
         <Compile Include="Utilities\Configs\CraftingConfigs.cs" />
+        <Compile Include="Utilities\Configs\EPIConfigs.cs" />
+        <Compile Include="Utilities\Configs\GamePatchConfigs.cs" />
+        <Compile Include="Utilities\Configs\InvDiscardConfigs.cs" />
         <Compile Include="Utilities\Configs\MapDetailConfigs.cs" />
+        <Compile Include="Utilities\Configs\MoveableChestConfigs.cs" />
+        <Compile Include="Utilities\Configs\PlantGrowthConfigs.cs" />
+        <Compile Include="Utilities\Configs\SignPatchConfigs.cs" />
+        <Compile Include="Utilities\Configs\SkillPatchConfigs.cs" />
+        <Compile Include="Utilities\Configs\WNTPatchConfigs.cs" />
+        <Compile Include="Utilities\Configs\WorldPatchConfigs.cs" />
         <Compile Include="Utilities\Utilities.cs" />
     </ItemGroup>
     <ItemGroup>

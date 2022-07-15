@@ -3,9 +3,9 @@ using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
 
-namespace OdinQOL
+namespace OdinQOL.Patches
 {
-    public partial class OdinQOLplugin
+    public class ClockPatches
     {
         public static ConfigEntry<bool> showingClock;
         public static ConfigEntry<bool> showClockOnChange;
@@ -28,22 +28,22 @@ namespace OdinQOL
         public static ConfigEntry<string> clockFuzzyStrings;
 
         private static Font clockFont;
-        private static GUIStyle style;
-        private static GUIStyle style2;
+        internal static GUIStyle style;
+        internal static GUIStyle style2;
         private static bool configApplied;
         private static Vector2 clockPosition;
         private static float shownTime;
         private static string lastTimeString = "";
         private static Rect windowRect;
         private static Rect timeRect;
-        private string newTimeString;
+        internal static string newTimeString;
 
         private void OnGUI()
         {
-            if (modEnabled.Value && configApplied && Player.m_localPlayer && Hud.instance)
+            if (OdinQOLplugin.modEnabled.Value && configApplied && Player.m_localPlayer && Hud.instance)
             {
                 float alpha = 1f;
-                newTimeString = GetCurrentTimeString();
+                newTimeString = OdinQOLplugin.GetCurrentTimeString();
                 if (showClockOnChange.Value)
                 {
                     if (newTimeString == lastTimeString)
@@ -80,7 +80,8 @@ namespace OdinQOL
                     Traverse.Create(Hud.instance).Method("IsVisible").GetValue<bool>())
                 {
                     GUI.backgroundColor = Color.clear;
-                    windowRect = GUILayout.Window(windowId, new Rect(windowRect.position, timeRect.size), WindowBuilder,
+                    windowRect = GUILayout.Window(OdinQOLplugin.windowId, new Rect(windowRect.position, timeRect.size),
+                        WindowBuilder,
                         "");
                     //OdinQOLplugin.QOLLogger.LogDebug(""+windowRect.size);
                 }
@@ -90,62 +91,8 @@ namespace OdinQOL
             {
                 clockPosition = new Vector2(windowRect.x, windowRect.y);
                 clockLocationString.Value = $"{windowRect.x},{windowRect.y}";
-                Config.Save();
+                OdinQOLplugin.context.Config.Save();
             }
-        }
-
-
-        public void LoadConfig()
-        {
-            context = this;
-
-
-            showingClock = config("Clock", "ShowClock", true, "Show the clock?");
-            showClockOnChange = config("Clock", "ShowClockOnChange", false,
-                "Only show the clock when the time changes?", false);
-            showClockOnChangeFadeTime = config("Clock", "ShowClockOnChangeFadeTime", 5f,
-                "If only showing on change, length in seconds to show the clock before begining to fade", false);
-            showClockOnChangeFadeLength = config("Clock", "ShowClockOnChangeFadeLength", 1f,
-                "How long fade should take in seconds", false);
-            clockUseOSFont = config("Clock", "ClockUseOSFont", false,
-                "Set to true to specify the name of a font from your OS; otherwise limited to fonts in the game resources",
-                false);
-            clockUseShadow = config("Clock", "ClockUseShadow", false, "Add a shadow behind the text", false);
-            clockShadowOffset = config("Clock", "ClockShadowOffset", 2, "Shadow offset in pixels", false);
-            clockFontName = config("Clock", "ClockFontName", "AveriaSerifLibre-Bold", "Name of the font to use", false);
-            clockFontSize = config("Clock", "ClockFontSize", 24,
-                "Location on the screen in pixels to show the clock", false);
-            clockFontColor = Config.Bind("Clock", "ClockFontColor", Color.white, "Font color for the clock");
-            clockShadowColor = Config.Bind("Clock", "ClockShadowColor", Color.black, "Color for the shadow");
-            toggleClockKeyMod = config("Clock", "ShowClockKeyMod", "",
-                "Extra modifier key used to toggle the clock display. Leave blank to not require one. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html",
-                false);
-            toggleClockKeyOnPress = config("Clock", "ShowClockKeyOnPress", false,
-                "If true, limit clock display to when the hotkey is down", false);
-            clockFormat = config("Clock", "ClockFormat", "HH:mm", "Time format; set to 'fuzzy' for fuzzy time", false);
-            clockString = config("Clock", "ClockString", "<b>{0}</b>",
-                "Formatted clock string - {0} is replaced by the actual time string, {1} is replaced by the fuzzy string, {2} is replaced by the current day",
-                false);
-            clockTextAlignment = config("Clock", "ClockTextAlignment", TextAnchor.MiddleCenter,
-                "Clock text alignment.", false);
-            clockFuzzyStrings = config("Clock", "ClockFuzzyStrings",
-                "Midnight,Early Morning,Early Morning,Before Dawn,Before Dawn,Dawn,Dawn,Morning,Morning,Late Morning,Late Morning,Midday,Midday,Early Afternoon,Early Afternoon,Afternoon,Afternoon,Evening,Evening,Night,Night,Late Night,Late Night,Midnight",
-                "Fuzzy time strings to split up the day into custom periods if ClockFormat is set to 'fuzzy'; comma-separated",
-                false);
-
-            newTimeString = "";
-            style = new GUIStyle
-            {
-                richText = true,
-                fontSize = clockFontSize.Value,
-                alignment = clockTextAlignment.Value
-            };
-            style2 = new GUIStyle
-            {
-                richText = true,
-                fontSize = clockFontSize.Value,
-                alignment = clockTextAlignment.Value
-            };
         }
 
 
@@ -181,13 +128,13 @@ namespace OdinQOL
             }
             else
             {
-                QOLLogger.LogDebug("getting fonts");
+                OdinQOLplugin.QOLLogger.LogDebug("Getting fonts");
                 Font[]? fonts = Resources.FindObjectsOfTypeAll<Font>();
                 foreach (Font? font in fonts)
                     if (font.name == clockFontName.Value)
                     {
                         clockFont = font;
-                        QOLLogger.LogDebug($"got font {font.name}");
+                        OdinQOLplugin.QOLLogger.LogDebug($"Got font {font.name}");
                         break;
                     }
             }
@@ -210,7 +157,7 @@ namespace OdinQOL
             configApplied = true;
         }
 
-        private string GetCurrentTimeString(DateTime theTime, float fraction, int days)
+        internal static string GetCurrentTimeString(DateTime theTime, float fraction, int days)
         {
             string[]? fuzzyStringArray = clockFuzzyStrings.Value.Split(',');
 
@@ -225,7 +172,8 @@ namespace OdinQOL
 
         private static string GetFuzzyFileName(string lang)
         {
-            return context.Info.Location.Replace("ClockMod.dll", "") + string.Format("clockmod.lang.{0}.cfg", lang);
+            return OdinQOLplugin.context.Info.Location.Replace("ClockMod.dll", "") +
+                   string.Format("clockmod.lang.{0}.cfg", lang);
         }
 
         private static bool CheckKeyHeld(string value)
@@ -240,7 +188,7 @@ namespace OdinQOL
             }
         }
 
-        private bool PressedToggleKey()
+        internal static bool PressedToggleKey()
         {
             try
             {
@@ -252,12 +200,12 @@ namespace OdinQOL
             }
         }
 
-        [HarmonyPatch(typeof(ZNetScene), "Awake")]
+        [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.Awake))]
         private static class ZNetScene_Awake_Patch
         {
             private static void Postfix()
             {
-                if (!modEnabled.Value)
+                if (!OdinQOLplugin.modEnabled.Value)
                     return;
 
                 ApplyConfig();
