@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
@@ -30,6 +31,21 @@ namespace OdinQOL.Patches
         public static ConfigEntry<string> itemDisallowTypesShips;
         public static ConfigEntry<string> itemAllowTypesShips;
 
+        public static ConfigEntry<string> itemDisallowCategories;
+        public static ConfigEntry<string> itemAllowCategories;
+        public static ConfigEntry<string> itemDisallowCategoriesChests;
+        public static ConfigEntry<string> itemAllowCategoriesChests;
+        public static ConfigEntry<string> itemDisallowCategoriesPersonalChests;
+        public static ConfigEntry<string> itemAllowCategoriesPersonalChests;
+        public static ConfigEntry<string> itemDisallowCategoriesReinforcedChests;
+        public static ConfigEntry<string> itemAllowCategoriesReinforcedChests;
+        public static ConfigEntry<string> itemDisallowCategoriesBlackMetalChests;
+        public static ConfigEntry<string> itemAllowCategoriesBlackMetalChests;
+        public static ConfigEntry<string> itemDisallowCategoriesCarts;
+        public static ConfigEntry<string> itemAllowCategoriesCarts;
+        public static ConfigEntry<string> itemDisallowCategoriesShips;
+        public static ConfigEntry<string> itemAllowCategoriesShips;
+
         public static ConfigEntry<string> toggleKey;
         public static ConfigEntry<string> toggleString;
 
@@ -39,10 +55,17 @@ namespace OdinQOL.Patches
         private static bool DisallowItem(Container container, ItemDrop.ItemData item)
         {
             string? name = item.m_dropPrefab.name;
+            string category = item.m_shared.m_itemType.ToString();
             if (itemAllowTypes.Value is { Length: > 0 } &&
                 !itemAllowTypes.Value.Split(',').Contains(name, StringComparer.Ordinal))
                 return true;
             if (itemDisallowTypes.Value.Split(',').Contains(name, StringComparer.Ordinal))
+                return true;
+
+            if (itemAllowCategories.Value is { Length: > 0 } &&
+                !itemAllowCategories.Value.Split(',').Contains(category, StringComparer.Ordinal))
+                return true;
+            if (itemDisallowCategories.Value.Split(',').Contains(category, StringComparer.Ordinal))
                 return true;
 
             if (mustHaveItemToPull.Value && !container.GetInventory().HaveItem(item.m_shared.m_name))
@@ -54,7 +77,12 @@ namespace OdinQOL.Patches
                 if (itemAllowTypesShips.Value is { Length: > 0 } &&
                     !itemAllowTypesShips.Value.Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
-                return itemDisallowTypesShips.Value.Split(',').Contains(name, StringComparer.Ordinal);
+                if (itemDisallowTypesShips.Value.Split(',').Contains(name, StringComparer.Ordinal))
+                    return true;
+                if (itemAllowCategoriesShips.Value is { Length: > 0 } && !itemAllowCategoriesShips.Value.Split(',')
+                        .Contains(category, StringComparer.Ordinal))
+                    return true;
+                return itemDisallowCategoriesShips.Value.Split(',').Contains(category, StringComparer.Ordinal);
             }
 
             if (container.m_wagon)
@@ -62,7 +90,12 @@ namespace OdinQOL.Patches
                 if (itemAllowTypesCarts.Value is { Length: > 0 } &&
                     !itemAllowTypesCarts.Value.Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
-                return itemDisallowTypesCarts.Value.Split(',').Contains(name, StringComparer.Ordinal);
+                if (itemDisallowTypesCarts.Value.Split(',').Contains(name, StringComparer.Ordinal))
+                    return true;
+                if (itemAllowCategoriesCarts.Value is { Length: > 0 } && !itemAllowCategoriesCarts.Value.Split(',')
+                        .Contains(category, StringComparer.Ordinal))
+                    return true;
+                return itemDisallowCategoriesCarts.Value.Split(',').Contains(category, StringComparer.Ordinal);
             }
 
             if (container.name.StartsWith("piece_chest_wood", StringComparison.Ordinal))
@@ -70,7 +103,12 @@ namespace OdinQOL.Patches
                 if (itemAllowTypesChests.Value is { Length: > 0 } &&
                     !itemAllowTypesChests.Value.Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
-                return itemDisallowTypesChests.Value.Split(',').Contains(name, StringComparer.Ordinal);
+                if (itemDisallowTypesChests.Value.Split(',').Contains(name, StringComparer.Ordinal))
+                    return true;
+                if (itemAllowCategoriesChests.Value is { Length: > 0 } && !itemAllowCategoriesChests.Value.Split(',')
+                        .Contains(category, StringComparer.Ordinal))
+                    return true;
+                return itemDisallowCategoriesChests.Value.Split(',').Contains(category, StringComparer.Ordinal);
             }
 
             if (container.name.StartsWith("piece_chest_private", StringComparison.Ordinal))
@@ -78,7 +116,12 @@ namespace OdinQOL.Patches
                 if (itemAllowTypesPersonalChests.Value is { Length: > 0 } && !itemAllowTypesPersonalChests.Value
                         .Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
-                return itemDisallowTypesPersonalChests.Value.Split(',').Contains(name, StringComparer.Ordinal);
+                if (itemDisallowTypesPersonalChests.Value.Split(',').Contains(name, StringComparer.Ordinal))
+                    return true;
+                if (itemAllowCategoriesPersonalChests.Value is { Length: > 0 } && !itemAllowCategoriesPersonalChests
+                        .Value.Split(',').Contains(category, StringComparer.Ordinal))
+                    return true;
+                return itemDisallowCategoriesPersonalChests.Value.Split(',').Contains(category, StringComparer.Ordinal);
             }
 
             if (container.name.StartsWith("piece_chest_blackmetal", StringComparison.Ordinal))
@@ -86,7 +129,13 @@ namespace OdinQOL.Patches
                 if (itemAllowTypesBlackMetalChests.Value is { Length: > 0 } && !itemAllowTypesBlackMetalChests.Value
                         .Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
-                return itemDisallowTypesBlackMetalChests.Value.Split(',').Contains(name, StringComparer.Ordinal);
+                if (itemDisallowTypesBlackMetalChests.Value.Split(',').Contains(name, StringComparer.Ordinal))
+                    return true;
+                if (itemAllowCategoriesBlackMetalChests.Value is { Length: > 0 } && !itemAllowCategoriesBlackMetalChests
+                        .Value.Split(',').Contains(category, StringComparer.Ordinal))
+                    return true;
+                return itemDisallowCategoriesBlackMetalChests.Value.Split(',')
+                    .Contains(category, StringComparer.Ordinal);
             }
 
             if (container.name.StartsWith("piece_chest", StringComparison.Ordinal))
@@ -94,7 +143,13 @@ namespace OdinQOL.Patches
                 if (itemAllowTypesReinforcedChests.Value is { Length: > 0 } && !itemAllowTypesReinforcedChests.Value
                         .Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
-                return itemDisallowTypesReinforcedChests.Value.Split(',').Contains(name, StringComparer.Ordinal);
+                if (itemDisallowTypesReinforcedChests.Value.Split(',').Contains(name, StringComparer.Ordinal))
+                    return true;
+                if (itemAllowCategoriesReinforcedChests.Value is { Length: > 0 } && !itemAllowCategoriesReinforcedChests
+                        .Value.Split(',').Contains(category, StringComparer.Ordinal))
+                    return true;
+                return itemDisallowCategoriesReinforcedChests.Value.Split(',')
+                    .Contains(category, StringComparer.Ordinal);
             }
 
             return true;

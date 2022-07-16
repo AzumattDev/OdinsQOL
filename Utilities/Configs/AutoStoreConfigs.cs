@@ -20,6 +20,51 @@ public class AutoStoreConfigs
             "The maximum range to pull dropped items for Ships");
         AutoStorePatch.itemDisallowTypes = OdinQOLplugin.context.config("Auto Storage", "ItemDisallowTypes", "",
             "Types of item to disallow pulling for, comma-separated.");
+
+        AutoStorePatch.itemDisallowCategories = OdinQOLplugin.context.config("Auto Storage", "ItemDisallowCategories",
+            "", "Categories of item to disallow pulling for, comma-separated.");
+        AutoStorePatch.itemAllowCategories = OdinQOLplugin.context.config("Auto Storage", "ItemAllowCategories", "",
+            "Categories of item to only allow pulling for, comma-separated. Overrides ItemDisallowCategories");
+
+        AutoStorePatch.itemDisallowCategoriesChests = OdinQOLplugin.context.config("Auto Storage",
+            "ItemDisallowCategoriesChests", "", "Categories of item to disallow pulling for, comma-separated.");
+        AutoStorePatch.itemAllowCategoriesChests = OdinQOLplugin.context.config("Auto Storage",
+            "ItemAllowCategoriesChests", "",
+            "Categories of item to only allow pulling for, comma-separated. Overrides ItemDisallowCategoriesChests");
+
+        AutoStorePatch.itemDisallowCategoriesPersonalChests = OdinQOLplugin.context.config("Auto Storage",
+            "ItemDisallowCategoriesPersonalChests", "", "Categories of item to disallow pulling for, comma-separated.");
+        AutoStorePatch.itemAllowCategoriesPersonalChests = OdinQOLplugin.context.config("Auto Storage",
+            "ItemAllowCategoriesPersonalChests", "",
+            "Categories of item to only allow pulling for, comma-separated. Overrides ItemDisallowCategoriesPersonalChests");
+
+        AutoStorePatch.itemDisallowCategoriesBlackMetalChests = OdinQOLplugin.context.config("Auto Storage",
+            "ItemDisallowCategoriesBlackMetalChests", "",
+            "Categories of item to disallow pulling for, comma-separated.");
+        AutoStorePatch.itemAllowCategoriesBlackMetalChests = OdinQOLplugin.context.config("Auto Storage",
+            "ItemAllowCategoriesBlackMetalChests", "",
+            "Categories of item to only allow pulling for, comma-separated. Overrides ItemDisallowCategoriesBlackMetalChests");
+
+        AutoStorePatch.itemDisallowCategoriesReinforcedChests = OdinQOLplugin.context.config("Auto Storage",
+            "ItemDisallowCategoriesReinforcedChests", "",
+            "Categories of item to disallow pulling for, comma-separated.");
+        AutoStorePatch.itemAllowCategoriesReinforcedChests = OdinQOLplugin.context.config("Auto Storage",
+            "ItemAllowCategoriesReinforcedChests", "",
+            "Categories of item to only allow pulling for, comma-separated. Overrides ItemDisallowCategoriesReinforcedChests");
+
+        AutoStorePatch.itemDisallowCategoriesCarts = OdinQOLplugin.context.config("Auto Storage",
+            "ItemDisallowCategoriesCarts", "", "Categories of item to disallow pulling for, comma-separated.");
+        AutoStorePatch.itemAllowCategoriesCarts = OdinQOLplugin.context.config("Auto Storage",
+            "ItemAllowCategoriesCarts", "",
+            "Categories of item to only allow pulling for, comma-separated. Overrides ItemDisallowCategoriesCarts");
+
+        AutoStorePatch.itemDisallowCategoriesShips = OdinQOLplugin.context.config("Auto Storage",
+            "ItemDisallowCategoriesShips", "", "Categories of item to disallow pulling for, comma-separated.");
+        AutoStorePatch.itemAllowCategoriesShips = OdinQOLplugin.context.config("Auto Storage",
+            "ItemAllowCategoriesShips", "",
+            "Categories of item to only allow pulling for, comma-separated. Overrides ItemDisallowCategoriesShips");
+
+
         AutoStorePatch.itemAllowTypes = OdinQOLplugin.context.config("Auto Storage", "ItemAllowTypes", "",
             "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypes");
         AutoStorePatch.itemDisallowTypesChests = OdinQOLplugin.context.config("Auto Storage", "ItemDisallowTypesChests",
