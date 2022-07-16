@@ -52,49 +52,49 @@ namespace OdinQOL.Patches
             if (ship != null)
             {
                 if (itemAllowTypesShips.Value != null && itemAllowTypesShips.Value.Length > 0 &&
-                    !itemAllowTypesShips.Value.Split(',').Contains(name))
+                    !itemAllowTypesShips.Value.Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
-                return itemDisallowTypesShips.Value.Split(',').Contains(name);
+                return itemDisallowTypesShips.Value.Split(',').Contains(name, StringComparer.Ordinal);
             }
 
             if (container.m_wagon)
             {
                 if (itemAllowTypesCarts.Value != null && itemAllowTypesCarts.Value.Length > 0 &&
-                    !itemAllowTypesCarts.Value.Split(',').Contains(name))
+                    !itemAllowTypesCarts.Value.Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
-                return itemDisallowTypesCarts.Value.Split(',').Contains(name);
+                return itemDisallowTypesCarts.Value.Split(',').Contains(name, StringComparer.Ordinal);
             }
 
             if (container.name.StartsWith("piece_chest_wood", StringComparison.Ordinal))
             {
                 if (itemAllowTypesChests.Value != null && itemAllowTypesChests.Value.Length > 0 &&
-                    !itemAllowTypesChests.Value.Split(',').Contains(name))
+                    !itemAllowTypesChests.Value.Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
-                return itemDisallowTypesChests.Value.Split(',').Contains(name);
+                return itemDisallowTypesChests.Value.Split(',').Contains(name, StringComparer.Ordinal);
             }
 
             if (container.name.StartsWith("piece_chest_private", StringComparison.Ordinal))
             {
                 if (itemAllowTypesPersonalChests.Value != null && itemAllowTypesPersonalChests.Value.Length > 0 &&
-                    !itemAllowTypesPersonalChests.Value.Split(',').Contains(name))
+                    !itemAllowTypesPersonalChests.Value.Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
-                return itemDisallowTypesPersonalChests.Value.Split(',').Contains(name);
+                return itemDisallowTypesPersonalChests.Value.Split(',').Contains(name, StringComparer.Ordinal);
             }
 
             if (container.name.StartsWith("piece_chest_blackmetal", StringComparison.Ordinal))
             {
                 if (itemAllowTypesBlackMetalChests.Value != null && itemAllowTypesBlackMetalChests.Value.Length > 0 &&
-                    !itemAllowTypesBlackMetalChests.Value.Split(',').Contains(name))
+                    !itemAllowTypesBlackMetalChests.Value.Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
-                return itemDisallowTypesBlackMetalChests.Value.Split(',').Contains(name);
+                return itemDisallowTypesBlackMetalChests.Value.Split(',').Contains(name, StringComparer.Ordinal);
             }
 
             if (container.name.StartsWith("piece_chest", StringComparison.Ordinal))
             {
                 if (itemAllowTypesReinforcedChests.Value != null && itemAllowTypesReinforcedChests.Value.Length > 0 &&
-                    !itemAllowTypesReinforcedChests.Value.Split(',').Contains(name))
+                    !itemAllowTypesReinforcedChests.Value.Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
-                return itemDisallowTypesReinforcedChests.Value.Split(',').Contains(name);
+                return itemDisallowTypesReinforcedChests.Value.Split(',').Contains(name, StringComparer.Ordinal);
             }
 
             return true;
