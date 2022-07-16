@@ -14,6 +14,7 @@ namespace OdinQOL.Patches
         public static ConfigEntry<float> dropRangeChests;
         public static ConfigEntry<float> dropRangePersonalChests;
         public static ConfigEntry<float> dropRangeReinforcedChests;
+        public static ConfigEntry<float> dropRangeBlackmetalChests;
         public static ConfigEntry<float> dropRangeCarts;
         public static ConfigEntry<float> dropRangeShips;
         public static ConfigEntry<string> itemDisallowTypes;
@@ -171,6 +172,8 @@ namespace OdinQOL.Patches
                 return dropRangePersonalChests.Value;
             if (container.name.StartsWith("piece_chest", StringComparison.Ordinal))
                 return dropRangeReinforcedChests.Value;
+            if (container.name.StartsWith("piece_chest_blackmetal", StringComparison.Ordinal))
+                return dropRangeBlackmetalChests.Value;
             return -1f;
         }
 

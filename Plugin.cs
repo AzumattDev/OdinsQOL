@@ -36,13 +36,26 @@ namespace OdinQOL
         public override string ToDescriptionString() =>
             "# Acceptable values: " + string.Join(", ", KeyboardShortcut.AllKeyCodes);
     }
+    
+    class AcceptableCategories : AcceptableValueBase
+    {
+        public AcceptableCategories() : base(typeof(ItemDrop.ItemData.ItemType))
+        {
+        }
+
+        public override object Clamp(object value) => value;
+        public override bool IsValid(object value) => true;
+
+        public override string ToDescriptionString() =>
+            "# Acceptable categories: " + string.Join(", ", OdinQOLplugin.Categories.ToString());
+    }
 
     [BepInPlugin(GUID, ModName, Version)]
     [BepInIncompatibility(
         "aedenthorn.CraftFromContainers")] // Since I have pulled this in and optimized a few things...make sure we don't overlap.
     [BepInIncompatibility(
         "com.jotunn.modsettings")] // It was exploited in the past to bypass ServerSync settings while it was in Jotunn. No telling that won't happen again even if only a short time.
-    public partial class OdinQOLplugin : BaseUnityPlugin
+    public class OdinQOLplugin : BaseUnityPlugin
     {
         public const string Version = "0.7.1";
         public const string ModName = "OdinPlusQOL";
@@ -269,5 +282,29 @@ namespace OdinQOL
             int days = EnvMan.instance.GetCurrentDay();
             return ClockPatches.GetCurrentTimeString(theTime, fraction, days);
         }
+
+        public static string[] Categories =
+        {
+            "None",
+            "Material",
+            "Consumable",
+            "OneHandedWeapon",
+            "Bow",
+            "Shield",
+            "Helmet",
+            "Chest",
+            "Ammo",
+            "Customization",
+            "Legs",
+            "Hands",
+            "Trophie",
+            "TwoHandedWeapon",
+            "Torch",
+            "Misc",
+            "Shoulder",
+            "Utility",
+            "Tool",
+            "Attach_Atgeir"
+        };
     }
 }
