@@ -30,7 +30,7 @@ public class GamePatchConfigs
         GamePatches.baseMegingjordBuff =
             OdinQOLplugin.context.config("Player", "Base Meginjord Buff", 150, "Meginjord buff amount (Base)");
         GamePatches.honeyProductionSpeed =
-            OdinQOLplugin.context.config("Game", "Honey Speed", 3600, "Honey Production Speed");
+            OdinQOLplugin.context.config("Game", "Honey Speed", 1200, "Honey Production Speed");
         GamePatches.maximumHoneyPerBeehive =
             OdinQOLplugin.context.config("Game", "Honey Count Per Hive", 4, "Honey Count Per Hive");
         GamePatches.maxPlayers =

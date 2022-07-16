@@ -295,15 +295,13 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(Beehive), "Awake")]
+        [HarmonyPatch(typeof(Beehive), nameof(Beehive.Awake))]
         public static class Beehive_Awake_Patch
         {
             private static bool Prefix(ref float ___m_secPerUnit, ref int ___m_maxHoney)
             {
                 ___m_secPerUnit = honeyProductionSpeed.Value;
                 ___m_maxHoney = maximumHoneyPerBeehive.Value;
-
-
                 return true;
             }
         }
