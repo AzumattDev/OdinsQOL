@@ -40,6 +40,12 @@ public class AutoStoreConfigs
         AutoStorePatch.itemAllowTypesReinforcedChests = OdinQOLplugin.context.config("Auto Storage",
             "ItemAllowTypesReinforcedChests", "",
             "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesReinforcedChests");
+        AutoStorePatch.itemDisallowTypesBlackMetalChests = OdinQOLplugin.context.config("Auto Storage",
+            "ItemDisallowTypesBlackMetalChests",
+            "", "Types of item to disallow pulling for, comma-separated.");
+        AutoStorePatch.itemAllowTypesBlackMetalChests = OdinQOLplugin.context.config("Auto Storage",
+            "ItemAllowTypesBlackMetalChests", "",
+            "Types of item to only allow pulling for, comma-separated. Overrides ItemDisallowTypesBlackMetalChests");
         AutoStorePatch.itemDisallowTypesCarts = OdinQOLplugin.context.config("Auto Storage", "ItemDisallowTypesCarts",
             "",
             "Types of item to disallow pulling for, comma-separated. (For Carts)");
