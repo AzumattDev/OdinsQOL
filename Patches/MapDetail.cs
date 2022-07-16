@@ -122,7 +122,7 @@ namespace OdinQOL.Patches
                     {
                         string? pair = customColors.Find(s =>
                             s.StartsWith(Player.GetPlayer(kvp.Value)?.GetPlayerName() + ":"));
-                        if (pair != null && pair.Length > 0)
+                        if (pair is { Length: > 0 })
                             ColorUtility.TryParseHtmlString(pair.Split(':')[1], out color);
                     }
                 }

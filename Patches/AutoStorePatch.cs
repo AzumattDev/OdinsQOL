@@ -51,7 +51,7 @@ namespace OdinQOL.Patches
             Ship? ship = container.gameObject.transform.parent?.GetComponent<Ship>();
             if (ship != null)
             {
-                if (itemAllowTypesShips.Value != null && itemAllowTypesShips.Value.Length > 0 &&
+                if (itemAllowTypesShips.Value is { Length: > 0 } &&
                     !itemAllowTypesShips.Value.Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
                 return itemDisallowTypesShips.Value.Split(',').Contains(name, StringComparer.Ordinal);
@@ -59,7 +59,7 @@ namespace OdinQOL.Patches
 
             if (container.m_wagon)
             {
-                if (itemAllowTypesCarts.Value != null && itemAllowTypesCarts.Value.Length > 0 &&
+                if (itemAllowTypesCarts.Value is { Length: > 0 } &&
                     !itemAllowTypesCarts.Value.Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
                 return itemDisallowTypesCarts.Value.Split(',').Contains(name, StringComparer.Ordinal);
@@ -67,7 +67,7 @@ namespace OdinQOL.Patches
 
             if (container.name.StartsWith("piece_chest_wood", StringComparison.Ordinal))
             {
-                if (itemAllowTypesChests.Value != null && itemAllowTypesChests.Value.Length > 0 &&
+                if (itemAllowTypesChests.Value is { Length: > 0 } &&
                     !itemAllowTypesChests.Value.Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
                 return itemDisallowTypesChests.Value.Split(',').Contains(name, StringComparer.Ordinal);
@@ -75,24 +75,24 @@ namespace OdinQOL.Patches
 
             if (container.name.StartsWith("piece_chest_private", StringComparison.Ordinal))
             {
-                if (itemAllowTypesPersonalChests.Value != null && itemAllowTypesPersonalChests.Value.Length > 0 &&
-                    !itemAllowTypesPersonalChests.Value.Split(',').Contains(name, StringComparer.Ordinal))
+                if (itemAllowTypesPersonalChests.Value is { Length: > 0 } && !itemAllowTypesPersonalChests.Value
+                        .Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
                 return itemDisallowTypesPersonalChests.Value.Split(',').Contains(name, StringComparer.Ordinal);
             }
 
             if (container.name.StartsWith("piece_chest_blackmetal", StringComparison.Ordinal))
             {
-                if (itemAllowTypesBlackMetalChests.Value != null && itemAllowTypesBlackMetalChests.Value.Length > 0 &&
-                    !itemAllowTypesBlackMetalChests.Value.Split(',').Contains(name, StringComparer.Ordinal))
+                if (itemAllowTypesBlackMetalChests.Value is { Length: > 0 } && !itemAllowTypesBlackMetalChests.Value
+                        .Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
                 return itemDisallowTypesBlackMetalChests.Value.Split(',').Contains(name, StringComparer.Ordinal);
             }
 
             if (container.name.StartsWith("piece_chest", StringComparison.Ordinal))
             {
-                if (itemAllowTypesReinforcedChests.Value != null && itemAllowTypesReinforcedChests.Value.Length > 0 &&
-                    !itemAllowTypesReinforcedChests.Value.Split(',').Contains(name, StringComparer.Ordinal))
+                if (itemAllowTypesReinforcedChests.Value is { Length: > 0 } && !itemAllowTypesReinforcedChests.Value
+                        .Split(',').Contains(name, StringComparer.Ordinal))
                     return true;
                 return itemDisallowTypesReinforcedChests.Value.Split(',').Contains(name, StringComparer.Ordinal);
             }
@@ -133,6 +133,7 @@ namespace OdinQOL.Patches
                     if (collider?.attachedRigidbody)
                     {
                         ItemDrop? item = collider.attachedRigidbody.GetComponent<ItemDrop>();
+                        if (!item) continue;
                         OdinQOLplugin.QOLLogger.LogDebug($"Nearby item name: {item.m_itemData.m_dropPrefab.name}");
 
                         if (item?.GetComponent<ZNetView>()?.IsValid() != true ||
