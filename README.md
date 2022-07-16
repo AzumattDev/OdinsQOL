@@ -20,6 +20,7 @@ the best collection of QOL and tweaks in one spot
       issues. You can disable OdinQOLs version of it in the configs under BiFrost section.
 * Fix the placement issue some people were having. Seems there was a rouge patch that didn't check for the configuration
   value.
+* Beehive config value default changed to vanilla default of 1200
 * Stack size configuration option has been changed in how it functions. It's now a direct multiplier.
   * `Multiplier for your item stacks. Directly multiplies stack of the item by this value. (Stack of 50 with value of 10 here would turn into a stack of 500)`
 * Fix some of the descriptions for configs and various other internal code updates/refactors.

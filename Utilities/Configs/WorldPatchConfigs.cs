@@ -9,7 +9,7 @@ public class WorldPatchConfigs
         WorldPatches.DungeonMaxRoomCount = OdinQOLplugin.context.config("Dungeon", "Max Room Count", 20,
             "This is the max number of rooms placed by dungeon gen higher numbers will cause lag");
 
-        WorldPatches.DungoneMinRoomCount = OdinQOLplugin.context.config("Dungeon", "Min Room Count", 5,
+        WorldPatches.DungoneMinRoomCount = OdinQOLplugin.context.config("Dungeon", "Min Room Count", 20,
             "This is the Min number of rooms placed by dungeon gen higher numbers will cause lag");
 
         WorldPatches.CampRadiusMin =
