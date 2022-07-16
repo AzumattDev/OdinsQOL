@@ -21,6 +21,7 @@ the best collection of QOL and tweaks in one spot
 * Fix the placement issue some people were having. Seems there was a rouge patch that didn't check for the configuration
   value.
 * Beehive config value default changed to vanilla default of 1200
+* Fix min_room count for dungeons to match vanilla value. Max rooms kept at 20 just in case there is lag associated with this value change.
 * Stack size configuration option has been changed in how it functions. It's now a direct multiplier.
   * `Multiplier for your item stacks. Directly multiplies stack of the item by this value. (Stack of 50 with value of 10 here would turn into a stack of 500)`
 * Fix some of the descriptions for configs and various other internal code updates/refactors.
