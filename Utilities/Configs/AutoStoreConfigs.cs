@@ -1,5 +1,7 @@
 ﻿using System;
+using BepInEx.Configuration;
 using OdinQOL.Patches;
+using UnityEngine;
 
 namespace OdinQOL.Configs;
 
@@ -7,6 +9,13 @@ public class AutoStoreConfigs
 {
     internal static void Generate()
     {
+        AutoStorePatch.isOn =
+            OdinQOLplugin.context.config("Auto Storage", "AutoStorageIsOn", false, "Behaviour is currently on or not");
+        AutoStorePatch.StoreShortcut =
+            OdinQOLplugin.context.config("Auto Storage", "Store Shortcut", new KeyboardShortcut(KeyCode.Period),
+                "Keyboard shortcut/Hotkey to store your inventory into nearby containers.", false);
+        AutoStorePatch.playerRange = OdinQOLplugin.context.config("Auto Storage", "Player Range", 5f,
+            "The maximum distance from the player to store items when the Store Shortcut is pressed. Follows storage rules for allowed items.");
         AutoStorePatch.dropRangeChests = OdinQOLplugin.context.config("Auto Storage", "DropRangeChests", 5f,
             "The maximum range to pull dropped items for Chests (Default chest)");
         AutoStorePatch.dropRangePersonalChests = OdinQOLplugin.context.config("Auto Storage", "DropRangePersonalChests",
@@ -116,7 +125,5 @@ public class AutoStoreConfigs
             "Key to toggle behaviour. Leave blank to disable the toggle key.", false);
         AutoStorePatch.mustHaveItemToPull = OdinQOLplugin.context.config("Auto Storage", "MustHaveItemToPull", false,
             "If true, a container must already have at least one of the item to pull.");
-        AutoStorePatch.isOn =
-            OdinQOLplugin.context.config("Auto Storage", "AutoStorageIsOn", false, "Behaviour is currently on or not");
     }
 }

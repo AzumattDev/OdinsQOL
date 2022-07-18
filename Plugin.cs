@@ -172,6 +172,10 @@ namespace OdinQOL
         {
             if (Utilities.IgnoreKeyPresses())
                 return;
+            if (AutoStorePatch.StoreShortcut.Value.IsDown())
+            {
+                AutoStorePatch.PlayerTryStore();
+            }
             if (Utilities.CheckKeyDown(AutoStorePatch.toggleKey.Value))
             {
                 AutoStorePatch.isOn.Value = !AutoStorePatch.isOn.Value;
