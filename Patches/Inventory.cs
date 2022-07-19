@@ -35,15 +35,15 @@ namespace OdinQOL.Patches
     {
         private static void Prefix(ref ItemDrop __instance)
         {
-            if (!(OdinQOLplugin.itemStackMultiplier.Value > 0)) return;
+            if (!(OdinQOLplugin.ItemStackMultiplier.Value > 0)) return;
             __instance.m_itemData.m_shared.m_weight =
                 Utilities.ApplyModifierValue(__instance.m_itemData.m_shared.m_weight,
                     OdinQOLplugin.WeightReduction.Value);
 
             if (__instance.m_itemData.m_shared.m_maxStackSize <= 1) return;
-            if (OdinQOLplugin.itemStackMultiplier.Value >= 1)
+            if (OdinQOLplugin.ItemStackMultiplier.Value >= 1)
             {
-                __instance.m_itemData.m_shared.m_maxStackSize *= (int)OdinQOLplugin.itemStackMultiplier.Value;
+                __instance.m_itemData.m_shared.m_maxStackSize *= (int)OdinQOLplugin.ItemStackMultiplier.Value;
             }
         }
     }
@@ -54,9 +54,9 @@ namespace OdinQOL.Patches
         static void Prefix(ItemDrop __instance)
         {
             if (__instance.m_itemData.m_shared.m_maxStackSize <= 1) return;
-            if (OdinQOLplugin.itemStackMultiplier.Value >= 1)
+            if (OdinQOLplugin.ItemStackMultiplier.Value >= 1)
             {
-                __instance.m_itemData.m_shared.m_maxStackSize *= (int)OdinQOLplugin.itemStackMultiplier.Value;
+                __instance.m_itemData.m_shared.m_maxStackSize *= (int)OdinQOLplugin.ItemStackMultiplier.Value;
             }
         }
     }

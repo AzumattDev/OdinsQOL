@@ -18,10 +18,10 @@ namespace OdinQOL
 {
     public static class ImprovedBuildHudConfig
     {
-        public static ConfigEntry<string> InventoryAmountFormat;
-        public static ConfigEntry<string> InventoryAmountColor;
-        public static ConfigEntry<string> CanBuildAmountFormat;
-        public static ConfigEntry<string> CanBuildAmountColor;
+        public static ConfigEntry<string> InventoryAmountFormat = null!;
+        public static ConfigEntry<string> InventoryAmountColor = null!;
+        public static ConfigEntry<string> CanBuildAmountFormat = null!;
+        public static ConfigEntry<string> CanBuildAmountColor = null!;
     }
 
     class AcceptableShortcuts : AcceptableValueBase
@@ -36,7 +36,7 @@ namespace OdinQOL
         public override string ToDescriptionString() =>
             "# Acceptable values: " + string.Join(", ", KeyboardShortcut.AllKeyCodes);
     }
-    
+
     class AcceptableCategories : AcceptableValueBase
     {
         public AcceptableCategories() : base(typeof(ItemDrop.ItemData.ItemType))
@@ -68,16 +68,16 @@ namespace OdinQOL
         private static readonly string ConfigFileFullPath =
             Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
 
-        public static ConfigEntry<bool> modEnabled;
+        public static ConfigEntry<bool> ModEnabled = null!;
 
-        public static ConfigEntry<bool> filltoptobottom;
-        public static ConfigEntry<bool> Deconstruct;
-        public static ConfigEntry<bool> AutoRepair;
-        public static ConfigEntry<int> returnedpercent;
+        public static ConfigEntry<bool> filltoptobottom = null!;
+        public static ConfigEntry<bool> Deconstruct = null!;
+        public static ConfigEntry<bool> AutoRepair = null!;
+        public static ConfigEntry<int> returnedpercent = null!;
 
-        public static ConfigEntry<float> WeightReduction;
-        public static ConfigEntry<float> itemStackMultiplier;
-        public static ConfigEntry<bool> NoTeleportPrevention;
+        public static ConfigEntry<float> WeightReduction = null!;
+        public static ConfigEntry<float> ItemStackMultiplier = null!;
+        public static ConfigEntry<bool> NoTeleportPrevention = null!;
 
         //public static readonly IEnumerable<KeyCode> AllKeyCodes;
 
@@ -100,7 +100,7 @@ namespace OdinQOL
             context = this;
 
 
-            modEnabled = config("General", "Enabled", true, "Enable the entire mod");
+            ModEnabled = config("General", "Enabled", true, "Enable the entire mod");
 
             WorldPatchConfigs.Generate();
             ChestSizeConfigs.Generate();
@@ -110,7 +110,7 @@ namespace OdinQOL
             WeightReduction = config("Items", "Item Weight Increase", 1f,
                 new ConfigDescription(
                     "Multiplier for your item weight. This is a modifier value. 50 will increase it by 50%, -50 will reduce it by 50%."));
-            itemStackMultiplier = config("Items", "Item Stack Increase", 1f,
+            ItemStackMultiplier = config("Items", "Item Stack Increase", 1f,
                 new ConfigDescription(
                     "Multiplier for your item stacks. Directly multiplies stack of the item by this value. (Stack of 50 with value of 10 here would turn into a stack of 500)"));
             NoTeleportPrevention = config("Items", "Disable Teleport check for items", false,
@@ -141,7 +141,7 @@ namespace OdinQOL
             BiFrostConfigs.Generate();
 
 
-            if (!modEnabled.Value)
+            if (!ModEnabled.Value)
                 return;
             CFC.CfcWasAllowed = !CFC.switchPrevent.Value;
 
@@ -176,6 +176,7 @@ namespace OdinQOL
             {
                 AutoStorePatch.PlayerTryStore();
             }
+
             if (Utilities.CheckKeyDown(AutoStorePatch.toggleKey.Value))
             {
                 AutoStorePatch.isOn.Value = !AutoStorePatch.isOn.Value;
@@ -214,7 +215,7 @@ namespace OdinQOL
             watcher.IncludeSubdirectories = true;
             watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
             watcher.EnableRaisingEvents = true;
-            
+
             FileSystemWatcher serverWatcher = new(Paths.ConfigPath, BiFrostServers.ConfigFileName);
             serverWatcher.Changed += Utilities.ReadNewServers;
             serverWatcher.Created += Utilities.ReadNewServers;

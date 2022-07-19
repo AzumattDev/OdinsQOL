@@ -46,7 +46,7 @@ namespace OdinQOL.Patches
         [HarmonyPatch(typeof(Location), nameof(Location.IsInsideNoBuildLocation))]
         private static bool Placement_Patch_NoBuild(ref bool __result)
         {
-            if (!OdinQOLplugin.modEnabled.Value) return true;
+            if (!OdinQOLplugin.ModEnabled.Value) return true;
             if (!BuildInsideProtectedLocations.Value) return true;
             __result = false;
             return false;
@@ -608,7 +608,7 @@ namespace OdinQOL.Patches
         {
             private static void Postfix(Piece piece, Text ___m_buildSelection)
             {
-                if (!OdinQOLplugin.modEnabled.Value || piece == null ||
+                if (!OdinQOLplugin.ModEnabled.Value || piece == null ||
                     string.IsNullOrEmpty(ImprovedBuildHudConfig.CanBuildAmountFormat.Value)) return;
                 string? displayName = Localization.instance.Localize(piece.m_name);
                 if (piece.m_resources.Length == 0) return;

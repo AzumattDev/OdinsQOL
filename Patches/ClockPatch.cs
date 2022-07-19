@@ -40,7 +40,7 @@ namespace OdinQOL.Patches
 
         private void OnGUI()
         {
-            if (OdinQOLplugin.modEnabled.Value && _configApplied && Player.m_localPlayer && Hud.instance)
+            if (OdinQOLplugin.ModEnabled.Value && _configApplied && Player.m_localPlayer && Hud.instance)
             {
                 float alpha = 1f;
                 NewTimeString = OdinQOLplugin.GetCurrentTimeString();
@@ -206,7 +206,7 @@ namespace OdinQOL.Patches
         {
             private static void Postfix()
             {
-                if (!OdinQOLplugin.modEnabled.Value)
+                if (!OdinQOLplugin.ModEnabled.Value)
                     return;
 
                 ApplyConfig();

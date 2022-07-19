@@ -228,17 +228,17 @@ namespace OdinQOL
                             ItemDrop.ItemData sendItem = item.Clone();
                             sendItem.m_stack = stackAmount;
 
-                            if (OdinQOLplugin.itemStackMultiplier.Value > 0)
+                            if (OdinQOLplugin.ItemStackMultiplier.Value > 0)
                             {
                                 sendItem.m_shared.m_weight = ApplyModifierValue(sendItem.m_shared.m_weight,
                                     OdinQOLplugin.WeightReduction.Value);
 
                                 if (sendItem.m_shared.m_maxStackSize > 1)
-                                    if (OdinQOLplugin.itemStackMultiplier.Value >= 1)
+                                    if (OdinQOLplugin.ItemStackMultiplier.Value >= 1)
                                         sendItem.m_shared.m_maxStackSize =
                                             (int)ApplyModifierValue(
                                                 requirement.m_resItem.m_itemData.m_shared.m_maxStackSize,
-                                                OdinQOLplugin.itemStackMultiplier.Value);
+                                                OdinQOLplugin.ItemStackMultiplier.Value);
                             }
 
 

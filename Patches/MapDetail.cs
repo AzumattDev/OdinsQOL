@@ -155,7 +155,7 @@ namespace OdinQOL.Patches
         {
             private static void Postfix(Texture2D ___m_mapTexture)
             {
-                if (!OdinQOLplugin.modEnabled.Value) return;
+                if (!OdinQOLplugin.ModEnabled.Value) return;
                 if (!MapDetailOn.Value) return;
                 Color32[]? data = ___m_mapTexture.GetPixels32();
 
@@ -173,7 +173,7 @@ namespace OdinQOL.Patches
         {
             private static void Postfix(bool __result)
             {
-                if (!OdinQOLplugin.modEnabled.Value || !__result)
+                if (!OdinQOLplugin.ModEnabled.Value || !__result)
                     return;
                 if (MapDetailOn.Value)
                     OdinQOLplugin.context.StartCoroutine(UpdateMap(true));
@@ -185,7 +185,7 @@ namespace OdinQOL.Patches
         {
             private static void Postfix(bool __result)
             {
-                if (!OdinQOLplugin.modEnabled.Value || !__result)
+                if (!OdinQOLplugin.ModEnabled.Value || !__result)
                     return;
                 if (MapDetailOn.Value)
                     OdinQOLplugin.context.StartCoroutine(UpdateMap(true));

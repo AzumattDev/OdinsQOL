@@ -43,7 +43,7 @@ public class CFC
         {
             OdinQOLplugin.QOLLogger.LogDebug($"(CookingStationOnAddFuelSwitchPatch) Looking for fuel");
 
-            if (!CFCEnabled.Value || !OdinQOLplugin.modEnabled.Value || !Utilities.AllowByKey() || item != null ||
+            if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value || !Utilities.AllowByKey() || item != null ||
                 __instance.GetFuel() > __instance.m_maxFuel - 1 ||
                 user.GetInventory().HaveItem(__instance.m_fuelItem.m_itemData.m_shared.m_name))
                 return true;
@@ -88,7 +88,7 @@ public class CFC
         {
             OdinQOLplugin.QOLLogger.LogDebug($"(CookingStationFindCookableItemPatch) Looking for cookable");
 
-            if (!CFCEnabled.Value || !OdinQOLplugin.modEnabled.Value || !Utilities.AllowByKey() || __result != null ||
+            if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value || !Utilities.AllowByKey() || __result != null ||
                 (__instance.m_requireFire && !__instance.IsFireLit() || __instance.GetFreeSlot() == -1))
                 return;
 
@@ -235,7 +235,7 @@ public class CFC
         static void Postfix(InventoryGui __instance, Transform elementRoot, Piece.Requirement req, Player player,
             bool craft, int quality)
         {
-            if (!CFCEnabled.Value || !OdinQOLplugin.modEnabled.Value || !Utilities.AllowByKey())
+            if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value || !Utilities.AllowByKey())
                 return;
             if (req.m_resItem == null) return;
             int invAmount = player.GetInventory().CountItems(req.m_resItem.m_itemData.m_shared.m_name);
@@ -272,7 +272,7 @@ public class CFC
         static bool Prefix(InventoryGui __instance, KeyValuePair<Recipe, ItemDrop.ItemData> ___m_selectedRecipe,
             ItemDrop.ItemData ___m_craftUpgradeItem)
         {
-            if (!CFCEnabled.Value || !OdinQOLplugin.modEnabled.Value || !Utilities.AllowByKey() ||
+            if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value || !Utilities.AllowByKey() ||
                 !pullItemsKey.Value.IsPressed() || ___m_selectedRecipe.Key == null)
                 return true;
 
@@ -301,7 +301,7 @@ public class CFC
         static void Postfix(Player __instance, ref bool __result, Piece.Requirement[] resources, bool discover,
             int qualityLevel, HashSet<string> ___m_knownMaterial)
         {
-            if (!CFCEnabled.Value || !OdinQOLplugin.modEnabled.Value || __result || discover ||
+            if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value || __result || discover ||
                 !Utilities.AllowByKey())
                 return;
             List<Container> nearbyContainers = Utilities.GetNearbyContainers(__instance.transform.position);
@@ -327,7 +327,7 @@ public class CFC
         static void Postfix(Player __instance, ref bool __result, Piece piece, Player.RequirementMode mode,
             HashSet<string> ___m_knownMaterial, Dictionary<string, int> ___m_knownStations)
         {
-            if (!CFCEnabled.Value || !OdinQOLplugin.modEnabled.Value || __result ||
+            if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value || __result ||
                 __instance?.transform?.position == null ||
                 !Utilities.AllowByKey())
                 return;
@@ -417,7 +417,7 @@ public class CFC
     {
         static bool Prefix(Player __instance, Piece.Requirement[] requirements, int qualityLevel)
         {
-            if (!CFCEnabled.Value || !OdinQOLplugin.modEnabled.Value || !Utilities.AllowByKey())
+            if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value || !Utilities.AllowByKey())
                 return true;
 
             Inventory pInventory = __instance.GetInventory();
@@ -486,7 +486,7 @@ public class CFC
     {
         static void Postfix(Player __instance, bool flashGuardStone)
         {
-            if (!CFCEnabled.Value || !OdinQOLplugin.modEnabled.Value || !showGhostConnections.Value)
+            if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value || !showGhostConnections.Value)
             {
                 return;
             }
@@ -577,7 +577,7 @@ public class CFC
         static bool Prefix(Player __instance, bool takeInput, float dt, PieceTable ___m_buildPieces,
             GameObject ___m_placementGhost)
         {
-            if (!CFCEnabled.Value || !OdinQOLplugin.modEnabled.Value || !Utilities.AllowByKey() ||
+            if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value || !Utilities.AllowByKey() ||
                 !pullItemsKey.Value.IsPressed() || !__instance.InPlaceMode() ||
                 !takeInput || Hud.IsPieceSelectionVisible())
             {
@@ -605,7 +605,7 @@ public class CFC
     {
         static void Postfix(Player __instance, ref bool __result)
         {
-            if (!CFCEnabled.Value || !OdinQOLplugin.modEnabled.Value) return;
+            if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value) return;
             if (__result == false)
             {
                 Utilities.StopConnectionEffects();
@@ -620,7 +620,7 @@ public class CFC
     {
         static void Postfix(Smelter __instance)
         {
-            if (!CFCEnabled.Value || !OdinQOLplugin.modEnabled.Value)
+            if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value)
                 return;
 
             if (fillAllModKey.Value.MainKey == KeyCode.None) return;
@@ -641,7 +641,7 @@ public class CFC
         static bool Prefix(Smelter __instance, Humanoid user, ItemDrop.ItemData item, ZNetView ___m_nview)
         {
             bool pullAll = fillAllModKey.Value.IsPressed();
-            if (!CFCEnabled.Value || !OdinQOLplugin.modEnabled.Value || (!Utilities.AllowByKey() && !pullAll) ||
+            if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value || (!Utilities.AllowByKey() && !pullAll) ||
                 item != null ||
                 __instance.GetQueueSize() >= __instance.m_maxOre)
                 return true;
@@ -758,7 +758,7 @@ public class CFC
         {
             bool pullAll = fillAllModKey.Value.IsPressed();
             Inventory inventory = user.GetInventory();
-            if (!CFCEnabled.Value || !OdinQOLplugin.modEnabled.Value || (!Utilities.AllowByKey() && !pullAll) ||
+            if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value || (!Utilities.AllowByKey() && !pullAll) ||
                 item != null ||
                 inventory == null ||
                 (inventory.HaveItem(__instance.m_fuelItem.m_itemData.m_shared.m_name) && !pullAll))

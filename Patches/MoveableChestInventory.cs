@@ -21,7 +21,7 @@ namespace OdinQOL.Patches
             private static void Postfix(InventoryGui __instance, Container ___m_currentContainer)
             {
                 Vector3 mousePos = Input.mousePosition;
-                if (!OdinQOLplugin.modEnabled.Value || !___m_currentContainer || !___m_currentContainer.IsOwner())
+                if (!OdinQOLplugin.ModEnabled.Value || !___m_currentContainer || !___m_currentContainer.IsOwner())
                 {
                     lastMousePos = mousePos;
                     return;

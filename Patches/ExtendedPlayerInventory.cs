@@ -87,7 +87,7 @@ namespace OdinQOL.Patches
         {
             private static void Prefix(Player __instance, Inventory ___m_inventory)
             {
-                if (!modEnabled.Value)
+                if (!ModEnabled.Value)
                     return;
                 QOLLogger.LogDebug("Player_Awake");
 
@@ -102,7 +102,7 @@ namespace OdinQOL.Patches
         {
             private static void Prefix(TombStone __instance)
             {
-                if (!modEnabled.Value)
+                if (!ModEnabled.Value)
                     return;
                 QOLLogger.LogDebug("TombStone_Awake");
 
@@ -117,7 +117,7 @@ namespace OdinQOL.Patches
         {
             private static void Prefix(TombStone __instance, Container ___m_container)
             {
-                if (!modEnabled.Value)
+                if (!ModEnabled.Value)
                     return;
                 QOLLogger.LogDebug("TombStone_Interact");
                 int num = ExtraRows.Value + (AddEquipmentRow.Value ? 5 : 4);
@@ -139,7 +139,7 @@ namespace OdinQOL.Patches
         {
             private static void Postfix(Inventory __instance, Inventory original)
             {
-                if (!modEnabled.Value)
+                if (!ModEnabled.Value)
                     return;
                 QOLLogger.LogDebug("MoveInventoryToGrave");
 
@@ -152,7 +152,7 @@ namespace OdinQOL.Patches
         {
             private static void Postfix(Player __instance, ref Inventory ___m_inventory)
             {
-                if (!modEnabled.Value)
+                if (!ModEnabled.Value)
                     return;
                 int height = ExtraRows.Value + (AddEquipmentRow.Value ? 5 : 4);
                 ___m_inventory.m_height = height;
@@ -208,7 +208,7 @@ namespace OdinQOL.Patches
                 InventoryGrid ___m_playerGrid,
                 Animator ___m_animator)
             {
-                if (!modEnabled.Value || !Player.m_localPlayer)
+                if (!ModEnabled.Value || !Player.m_localPlayer)
                     return;
                 if (AddEquipmentRow.Value)
                 {
@@ -308,7 +308,7 @@ namespace OdinQOL.Patches
         {
             private static void Postfix(InventoryGrid ___m_playerGrid)
             {
-                if (!modEnabled.Value || !AddEquipmentRow.Value)
+                if (!ModEnabled.Value || !AddEquipmentRow.Value)
                     return;
                 try
                 {
@@ -403,7 +403,7 @@ namespace OdinQOL.Patches
         {
             private static void Prefix(Inventory __instance, ref int ___m_height)
             {
-                if (!modEnabled.Value || !AddEquipmentRow.Value || !Player.m_localPlayer ||
+                if (!ModEnabled.Value || !AddEquipmentRow.Value || !Player.m_localPlayer ||
                     __instance != Player.m_localPlayer.GetInventory())
                     return;
                 QOLLogger.LogDebug("FindEmptySlot");
@@ -412,7 +412,7 @@ namespace OdinQOL.Patches
 
             private static void Postfix(Inventory __instance, ref int ___m_height)
             {
-                if (!modEnabled.Value || !AddEquipmentRow.Value || !Player.m_localPlayer ||
+                if (!ModEnabled.Value || !AddEquipmentRow.Value || !Player.m_localPlayer ||
                     __instance != Player.m_localPlayer.GetInventory())
                     return;
                 ++___m_height;
@@ -429,7 +429,7 @@ namespace OdinQOL.Patches
                 int ___m_width,
                 int ___m_height)
             {
-                if (!modEnabled.Value || !AddEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
+                if (!ModEnabled.Value || !AddEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
                     return true;
                 QOLLogger.LogDebug("GetEmptySlots");
                 int count = ___m_inventory.FindAll((Predicate<ItemDrop.ItemData>)(i => i.m_gridPos.y < ___m_height - 1))
@@ -449,7 +449,7 @@ namespace OdinQOL.Patches
                 int ___m_width,
                 int ___m_height)
             {
-                if (!modEnabled.Value || !AddEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
+                if (!ModEnabled.Value || !AddEquipmentRow.Value || __instance != Player.m_localPlayer.GetInventory())
                     return true;
                 int count = ___m_inventory.FindAll((Predicate<ItemDrop.ItemData>)(i => i.m_gridPos.y < ___m_height - 1))
                     .Count;
@@ -467,7 +467,7 @@ namespace OdinQOL.Patches
                 List<ItemDrop.ItemData> ___m_inventory,
                 ItemDrop.ItemData item)
             {
-                if (!modEnabled.Value || !AddEquipmentRow.Value || !Player.m_localPlayer ||
+                if (!ModEnabled.Value || !AddEquipmentRow.Value || !Player.m_localPlayer ||
                     __instance != Player.m_localPlayer.GetInventory())
                     return true;
                 QOLLogger.LogDebug("AddItem");
@@ -494,7 +494,7 @@ namespace OdinQOL.Patches
                 int x,
                 int y)
             {
-                if (!modEnabled.Value)
+                if (!ModEnabled.Value)
                     return;
                 if (x >= ___m_width)
                     ___m_width = x + 1;
@@ -509,7 +509,7 @@ namespace OdinQOL.Patches
         {
             private static void Postfix(Hud __instance)
             {
-                if (!modEnabled.Value || !AddEquipmentRow.Value)
+                if (!ModEnabled.Value || !AddEquipmentRow.Value)
                     return;
                 Transform transform = Object.Instantiate(__instance.m_rootObject.transform.Find("HotKeyBar"),
                     __instance.m_rootObject.transform, true);
@@ -527,11 +527,11 @@ namespace OdinQOL.Patches
         {
             private static void Postfix(Hud __instance)
             {
-                if (!modEnabled.Value || !AddEquipmentRow.Value || Player.m_localPlayer == null)
+                if (!ModEnabled.Value || !AddEquipmentRow.Value || Player.m_localPlayer == null)
                     return;
                 float scaleFactor = GameObject.Find("LoadingGUI").GetComponent<CanvasScaler>().scaleFactor;
                 Vector3 mousePosition = Input.mousePosition;
-                if (!modEnabled.Value)
+                if (!ModEnabled.Value)
                 {
                     lastMousePos = mousePosition;
                 }
@@ -585,7 +585,7 @@ namespace OdinQOL.Patches
         {
             private static bool Prefix(Terminal __instance)
             {
-                if (!modEnabled.Value)
+                if (!ModEnabled.Value)
                     return true;
                 string text = __instance.m_input.text;
                 if (!text.ToLower().Equals(typeof(OdinQOLplugin).Namespace.ToLower() + " reset"))
