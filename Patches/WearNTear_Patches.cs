@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using BepInEx.Configuration;
 using HarmonyLib;
 
@@ -6,18 +7,18 @@ namespace OdinQOL.Patches
 {
     public class WearNTear_Patches
     {
-        public static ConfigEntry<bool> NoWeatherDam;
-        public static ConfigEntry<bool> DisableStructintegrity;
-        public static ConfigEntry<bool> DisableBoatDamage;
-        public static ConfigEntry<bool> NoPlayerStructDam;
-        public static ConfigEntry<float> StructuralIntegritywood;
-        public static ConfigEntry<float> StructuralIntegritystone;
-        public static ConfigEntry<float> StructuralIntegrityiron;
-        public static ConfigEntry<float> StructuralIntegrityhardWood;
+        public static ConfigEntry<bool> NoWeatherDam = null!;
+        public static ConfigEntry<bool> DisableStructintegrity = null!;
+        public static ConfigEntry<bool> DisableBoatDamage = null!;
+        public static ConfigEntry<bool> NoPlayerStructDam = null!;
+        public static ConfigEntry<float> StructuralIntegritywood = null!;
+        public static ConfigEntry<float> StructuralIntegritystone = null!;
+        public static ConfigEntry<float> StructuralIntegrityiron = null!;
+        public static ConfigEntry<float> StructuralIntegrityhardWood = null!;
     }
 
 
-    [HarmonyPatch(typeof(WearNTear), "HaveRoof")]
+    [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.HaveRoof))]
     public static class RemoveWearNTear
     {
         private static void Postfix(ref bool __result)
@@ -29,7 +30,7 @@ namespace OdinQOL.Patches
     /// <summary>
     ///     Disable weather damage under water
     /// </summary>
-    [HarmonyPatch(typeof(WearNTear), "IsUnderWater")]
+    [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.IsUnderWater))]
     public static class RemoveWearNTearFromUnderWater
     {
         private static void Postfix(ref bool __result)
@@ -41,7 +42,7 @@ namespace OdinQOL.Patches
     /// <summary>
     ///     Removes the integrity check for having a connected piece to the ground.
     /// </summary>
-    [HarmonyPatch(typeof(WearNTear), "HaveSupport")]
+    [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.HaveSupport))]
     public static class WearNTearHaveSupportPatch
     {
         private static void Postfix(ref bool __result)
@@ -53,7 +54,7 @@ namespace OdinQOL.Patches
     /// <summary>
     ///     Disable damage to player structures
     /// </summary>
-    [HarmonyPatch(typeof(WearNTear), "ApplyDamage")]
+    [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.ApplyDamage))]
     public static class WearNTearApplyDamagePatch
     {
         private static bool Prefix(ref WearNTear __instance, ref float damage)
@@ -66,21 +67,18 @@ namespace OdinQOL.Patches
                   __instance.m_piece.IsPlacedByPlayer() && callingMethod != "UpdateWear"))
                 return true;
 
-            if (__instance.m_piece.m_name.StartsWith("$ship"))
-            {
-                if (stackTrace.GetFrame(15).GetMethod().Name == "UpdateWaterForce") return false;
+            if (!__instance.m_piece.m_name.StartsWith("$ship", StringComparison.Ordinal))
+                return !WearNTear_Patches.DisableStructintegrity.Value;
+            if (stackTrace.GetFrame(15).GetMethod().Name == "UpdateWaterForce") return false;
 
-                return true;
-            }
-
-            return !WearNTear_Patches.DisableStructintegrity.Value;
+            return true;
         }
     }
 
     /// <summary>
     ///     Disable structural integrity
     /// </summary>
-    [HarmonyPatch(typeof(WearNTear), "GetMaterialProperties")]
+    [HarmonyPatch(typeof(WearNTear), nameof(WearNTear.GetMaterialProperties))]
     public static class RemoveStructualIntegrity
     {
         private static bool Prefix(ref WearNTear __instance, out float maxSupport, out float minSupport,

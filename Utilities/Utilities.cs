@@ -126,36 +126,31 @@ namespace OdinQOL
         public static List<Container> GetNearbyContainers(Vector3 center)
         {
             List<Container> containers = new();
-            foreach (Container container in OdinQOLplugin.ContainerList)
+            foreach (Container container in OdinQOLplugin.ContainerList.Where(container => container != null &&
+                         container.GetComponentInParent<Piece>() != null && Player.m_localPlayer != null &&
+                         container?.transform != null && container.GetInventory() != null && (CFC.mRange.Value <= 0 ||
+                             Vector3.Distance(center, container.transform.position) <
+                             CFC.mRange.Value) && container.CheckAccess(Player.m_localPlayer.GetPlayerID()) &&
+                         !container.IsInUse()))
             {
-                if (container != null
-                    && container.GetComponentInParent<Piece>() != null
-                    && Player.m_localPlayer != null
-                    && container?.transform != null
-                    && container.GetInventory() != null
-                    && (CFC.mRange.Value <= 0 || Vector3.Distance(center, container.transform.position) <
-                        CFC.mRange.Value)
-                    && container.CheckAccess(Player.m_localPlayer.GetPlayerID()) && !container.IsInUse())
+                if (WardIsLovePlugin.IsLoaded() && WardIsLovePlugin.WardEnabled()!.Value)
                 {
-                    if (WardIsLovePlugin.IsLoaded() && WardIsLovePlugin.WardEnabled()!.Value)
+                    if (!WardMonoscript.CheckInWardMonoscript(container.transform.position))
                     {
-                        if (!WardMonoscript.CheckInWardMonoscript(container.transform.position))
-                        {
-                            container.Load();
-                            containers.Add(container);
-                            continue;
-                        }
+                        container.Load();
+                        containers.Add(container);
+                        continue;
+                    }
 
-                        if (!WardMonoscript.CheckAccess(container.transform.position, 0f, false)) continue;
-                        //container.GetComponent<ZNetView>()?.ClaimOwnership();
-                        container.Load();
-                        containers.Add(container);
-                    }
-                    else
-                    {
-                        container.Load();
-                        containers.Add(container);
-                    }
+                    if (!WardMonoscript.CheckAccess(container.transform.position, 0f, false)) continue;
+                    //container.GetComponent<ZNetView>()?.ClaimOwnership();
+                    container.Load();
+                    containers.Add(container);
+                }
+                else
+                {
+                    container.Load();
+                    containers.Add(container);
                 }
             }
 
@@ -180,7 +175,7 @@ namespace OdinQOL
             {
                 foreach (ConnectionParams c in OdinQOLplugin.ContainerConnections)
                 {
-                    UnityEngine.Object.Destroy(c.Connection);
+                    Object.Destroy(c.Connection);
                 }
             }
 

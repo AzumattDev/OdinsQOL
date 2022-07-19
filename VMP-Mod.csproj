@@ -190,7 +190,11 @@
         </PropertyGroup>
         <Error Condition="!Exists('packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets'))" />
     </Target>
-    <PropertyGroup>
-        <PostBuildEvent>copy "$(TargetDir)OdinQOL.dll" "C:\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\plugins\OdinQOL.dll</PostBuildEvent>
-    </PropertyGroup>
+<!--    <PropertyGroup>
+        &lt;!&ndash;<PostBuildEvent>copy "$(TargetDir)OdinQOL.dll" "C:\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\plugins\OdinQOL.dll</PostBuildEvent>&ndash;&gt;
+        <PostBuildEvent>copy "$(TargetDir)OdinQOL.dll" "C:\Users\crypt\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\OdinQOL test\BepInEx\plugins\OdinPlus-OdinsQOL\OdinQOL.dll</PostBuildEvent>
+    </PropertyGroup>-->
+    <Target Name="Copy" AfterTargets="ILRepack">
+        <Exec Command="copy /Y &quot;$(TargetDir)$(AssemblyName).dll&quot; &quot;C:\Users\crypt\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\OdinQOL test\BepInEx\plugins\OdinPlus-OdinsQOL\$(AssemblyName).dll&quot;" />
+    </Target>
 </Project>

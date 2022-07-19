@@ -7,90 +7,91 @@ namespace OdinQOL.Patches
 {
     public class ClockPatches
     {
-        public static ConfigEntry<bool> showingClock;
-        public static ConfigEntry<bool> showClockOnChange;
-        public static ConfigEntry<float> showClockOnChangeFadeTime;
-        public static ConfigEntry<float> showClockOnChangeFadeLength;
-        public static ConfigEntry<bool> toggleClockKeyOnPress;
-        public static ConfigEntry<bool> clockUseOSFont;
-        public static ConfigEntry<bool> clockUseShadow;
-        public static ConfigEntry<Color> clockFontColor;
-        public static ConfigEntry<Color> clockShadowColor;
-        public static ConfigEntry<int> clockShadowOffset;
-        public static ConfigEntry<string> clockLocationString;
-        public static ConfigEntry<int> clockFontSize;
-        public static ConfigEntry<string> toggleClockKeyMod;
-        public static ConfigEntry<string> toggleClockKey;
-        public static ConfigEntry<string> clockFontName;
-        public static ConfigEntry<string> clockFormat;
-        public static ConfigEntry<string> clockString;
-        public static ConfigEntry<TextAnchor> clockTextAlignment;
-        public static ConfigEntry<string> clockFuzzyStrings;
+        public static ConfigEntry<bool> ShowingClock = null!;
+        public static ConfigEntry<bool> ShowClockOnChange = null!;
+        public static ConfigEntry<float> ShowClockOnChangeFadeTime = null!;
+        public static ConfigEntry<float> ShowClockOnChangeFadeLength = null!;
+        public static ConfigEntry<bool> ToggleClockKeyOnPress = null!;
+        public static ConfigEntry<bool> ClockUseOSFont = null!;
+        public static ConfigEntry<bool> ClockUseShadow = null!;
+        public static ConfigEntry<Color> ClockFontColor = null!;
+        public static ConfigEntry<Color> ClockShadowColor = null!;
+        public static ConfigEntry<int> ClockShadowOffset = null!;
+        public static ConfigEntry<string> ClockLocationString = null!;
+        public static ConfigEntry<int> ClockFontSize = null!;
+        public static ConfigEntry<string> ToggleClockKeyMod = null!;
+        public static ConfigEntry<string> ToggleClockKey = null!;
+        public static ConfigEntry<string> ClockFontName = null!;
+        public static ConfigEntry<string> ClockFormat = null!;
+        public static ConfigEntry<string> ClockString = null!;
+        public static ConfigEntry<TextAnchor> ClockTextAlignment = null!;
+        public static ConfigEntry<string> ClockFuzzyStrings = null!;
 
-        private static Font clockFont;
-        internal static GUIStyle style;
-        internal static GUIStyle style2;
-        private static bool configApplied;
-        private static Vector2 clockPosition;
-        private static float shownTime;
-        private static string lastTimeString = "";
-        private static Rect windowRect;
-        private static Rect timeRect;
-        internal static string newTimeString;
+        private static Font _clockFont = null!;
+        internal static GUIStyle Style = null!;
+        internal static GUIStyle Style2 = null!;
+        private static bool _configApplied;
+        private static Vector2 _clockPosition;
+        private static float _shownTime;
+        private static string _lastTimeString = "";
+        private static Rect _windowRect;
+        private static Rect _timeRect;
+        internal static string NewTimeString = "";
 
         private void OnGUI()
         {
-            if (OdinQOLplugin.modEnabled.Value && configApplied && Player.m_localPlayer && Hud.instance)
+            if (OdinQOLplugin.modEnabled.Value && _configApplied && Player.m_localPlayer && Hud.instance)
             {
                 float alpha = 1f;
-                newTimeString = OdinQOLplugin.GetCurrentTimeString();
-                if (showClockOnChange.Value)
+                NewTimeString = OdinQOLplugin.GetCurrentTimeString();
+                if (ShowClockOnChange.Value)
                 {
-                    if (newTimeString == lastTimeString)
+                    if (NewTimeString == _lastTimeString)
                     {
-                        shownTime = 0;
+                        _shownTime = 0;
 
-                        if (!toggleClockKeyOnPress.Value || !CheckKeyHeld(toggleClockKey.Value))
+                        if (!ToggleClockKeyOnPress.Value || !CheckKeyHeld(ToggleClockKey.Value))
                             return;
                     }
 
-                    if (shownTime > showClockOnChangeFadeTime.Value)
+                    if (_shownTime > ShowClockOnChangeFadeTime.Value)
                     {
-                        if (shownTime > showClockOnChangeFadeTime.Value + showClockOnChangeFadeLength.Value)
+                        if (_shownTime > ShowClockOnChangeFadeTime.Value + ShowClockOnChangeFadeLength.Value)
                         {
-                            shownTime = 0;
-                            lastTimeString = newTimeString;
-                            if (!toggleClockKeyOnPress.Value || !CheckKeyHeld(toggleClockKey.Value))
+                            _shownTime = 0;
+                            _lastTimeString = NewTimeString;
+                            if (!ToggleClockKeyOnPress.Value || !CheckKeyHeld(ToggleClockKey.Value))
                                 return;
                         }
 
-                        alpha = (showClockOnChangeFadeLength.Value + showClockOnChangeFadeTime.Value - shownTime) /
-                                showClockOnChangeFadeLength.Value;
+                        alpha = (ShowClockOnChangeFadeLength.Value + ShowClockOnChangeFadeTime.Value - _shownTime) /
+                                ShowClockOnChangeFadeLength.Value;
                     }
 
-                    shownTime += Time.deltaTime;
+                    _shownTime += Time.deltaTime;
                 }
 
-                style.normal.textColor = new Color(clockFontColor.Value.r, clockFontColor.Value.g,
-                    clockFontColor.Value.b, clockFontColor.Value.a * alpha);
-                style2.normal.textColor = new Color(clockShadowColor.Value.r, clockShadowColor.Value.g,
-                    clockShadowColor.Value.b, clockShadowColor.Value.a * alpha);
-                if ((!toggleClockKeyOnPress.Value && showingClock.Value || toggleClockKeyOnPress.Value &&
-                        (showClockOnChange.Value || CheckKeyHeld(toggleClockKey.Value))) &&
+                Style.normal.textColor = new Color(ClockFontColor.Value.r, ClockFontColor.Value.g,
+                    ClockFontColor.Value.b, ClockFontColor.Value.a * alpha);
+                Style2.normal.textColor = new Color(ClockShadowColor.Value.r, ClockShadowColor.Value.g,
+                    ClockShadowColor.Value.b, ClockShadowColor.Value.a * alpha);
+                if ((!ToggleClockKeyOnPress.Value && ShowingClock.Value || ToggleClockKeyOnPress.Value &&
+                        (ShowClockOnChange.Value || CheckKeyHeld(ToggleClockKey.Value))) &&
                     Traverse.Create(Hud.instance).Method("IsVisible").GetValue<bool>())
                 {
                     GUI.backgroundColor = Color.clear;
-                    windowRect = GUILayout.Window(OdinQOLplugin.windowId, new Rect(windowRect.position, timeRect.size),
+                    _windowRect = GUILayout.Window(OdinQOLplugin.windowId,
+                        new Rect(_windowRect.position, _timeRect.size),
                         WindowBuilder,
                         "");
-                    //OdinQOLplugin.QOLLogger.LogDebug(""+windowRect.size);
                 }
             }
 
-            if (!Input.GetKey(KeyCode.Mouse0) && (windowRect.x != clockPosition.x || windowRect.y != clockPosition.y))
+            if (!Input.GetKey(KeyCode.Mouse0) &&
+                (_windowRect.x != _clockPosition.x || _windowRect.y != _clockPosition.y))
             {
-                clockPosition = new Vector2(windowRect.x, windowRect.y);
-                clockLocationString.Value = $"{windowRect.x},{windowRect.y}";
+                _clockPosition = new Vector2(_windowRect.x, _windowRect.y);
+                ClockLocationString.Value = $"{_windowRect.x},{_windowRect.y}";
                 OdinQOLplugin.context.Config.Save();
             }
         }
@@ -98,21 +99,21 @@ namespace OdinQOL.Patches
 
         private void WindowBuilder(int id)
         {
-            timeRect = GUILayoutUtility.GetRect(new GUIContent(newTimeString), style);
+            _timeRect = GUILayoutUtility.GetRect(new GUIContent(NewTimeString), Style);
 
-            GUI.DragWindow(timeRect);
+            GUI.DragWindow(_timeRect);
 
-            if (clockUseShadow.Value)
+            if (ClockUseShadow.Value)
                 GUI.Label(
-                    new Rect(timeRect.position + new Vector2(-clockShadowOffset.Value, clockShadowOffset.Value),
-                        timeRect.size), newTimeString, style2);
-            GUI.Label(timeRect, newTimeString, style);
+                    new Rect(_timeRect.position + new Vector2(-ClockShadowOffset.Value, ClockShadowOffset.Value),
+                        _timeRect.size), NewTimeString, Style2);
+            GUI.Label(_timeRect, NewTimeString, Style);
         }
 
         private static void ApplyConfig()
         {
-            string[]? split = clockLocationString.Value.Split(',');
-            clockPosition = new Vector2(
+            string[]? split = ClockLocationString.Value.Split(',');
+            _clockPosition = new Vector2(
                 split[0].Trim().EndsWith("%")
                     ? float.Parse(split[0].Trim().Substring(0, split[0].Trim().Length - 1)) / 100f * Screen.width
                     : float.Parse(split[0].Trim()),
@@ -120,53 +121,53 @@ namespace OdinQOL.Patches
                     ? float.Parse(split[1].Trim().Substring(0, split[1].Trim().Length - 1)) / 100f * Screen.height
                     : float.Parse(split[1].Trim()));
 
-            windowRect = new Rect(clockPosition, new Vector2(1000, 100));
+            _windowRect = new Rect(_clockPosition, new Vector2(1000, 100));
 
-            if (clockUseOSFont.Value)
+            if (ClockUseOSFont.Value)
             {
-                clockFont = Font.CreateDynamicFontFromOSFont(clockFontName.Value, clockFontSize.Value);
+                _clockFont = Font.CreateDynamicFontFromOSFont(ClockFontName.Value, ClockFontSize.Value);
             }
             else
             {
                 OdinQOLplugin.QOLLogger.LogDebug("Getting fonts");
                 Font[]? fonts = Resources.FindObjectsOfTypeAll<Font>();
                 foreach (Font? font in fonts)
-                    if (font.name == clockFontName.Value)
+                    if (font.name == ClockFontName.Value)
                     {
-                        clockFont = font;
+                        _clockFont = font;
                         OdinQOLplugin.QOLLogger.LogDebug($"Got font {font.name}");
                         break;
                     }
             }
 
-            style = new GUIStyle
+            Style = new GUIStyle
             {
                 richText = true,
-                fontSize = clockFontSize.Value,
-                alignment = clockTextAlignment.Value,
-                font = clockFont
+                fontSize = ClockFontSize.Value,
+                alignment = ClockTextAlignment.Value,
+                font = _clockFont
             };
-            style2 = new GUIStyle
+            Style2 = new GUIStyle
             {
                 richText = true,
-                fontSize = clockFontSize.Value,
-                alignment = clockTextAlignment.Value,
-                font = clockFont
+                fontSize = ClockFontSize.Value,
+                alignment = ClockTextAlignment.Value,
+                font = _clockFont
             };
 
-            configApplied = true;
+            _configApplied = true;
         }
 
         internal static string GetCurrentTimeString(DateTime theTime, float fraction, int days)
         {
-            string[]? fuzzyStringArray = clockFuzzyStrings.Value.Split(',');
+            string[]? fuzzyStringArray = ClockFuzzyStrings.Value.Split(',');
 
             int idx = Math.Min((int)(fuzzyStringArray.Length * fraction), fuzzyStringArray.Length - 1);
 
-            if (clockFormat.Value == "fuzzy")
-                return string.Format(clockString.Value, fuzzyStringArray[idx]);
+            if (ClockFormat.Value == "fuzzy")
+                return string.Format(ClockString.Value, fuzzyStringArray[idx]);
 
-            return string.Format(clockString.Value, theTime.ToString(clockFormat.Value), fuzzyStringArray[idx],
+            return string.Format(ClockString.Value, theTime.ToString(ClockFormat.Value), fuzzyStringArray[idx],
                 days.ToString());
         }
 
@@ -192,7 +193,7 @@ namespace OdinQOL.Patches
         {
             try
             {
-                return Input.GetKeyDown(toggleClockKey.Value.ToLower()) && CheckKeyHeld(toggleClockKeyMod.Value);
+                return Input.GetKeyDown(ToggleClockKey.Value.ToLower()) && CheckKeyHeld(ToggleClockKeyMod.Value);
             }
             catch
             {

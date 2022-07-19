@@ -18,7 +18,7 @@ public class DisplayPinsOnMap
     private static readonly float updateInterval = 5.0f;
 
     // clear dictionary if the user logs out
-    [HarmonyPatch(typeof(Minimap), "OnDestroy")]
+    [HarmonyPatch(typeof(Minimap), nameof(Minimap.OnDestroy))]
     public static class Minimap_OnDestroy_Patch
     {
         private static void Postfix()
@@ -28,10 +28,10 @@ public class DisplayPinsOnMap
         }
     }
 
-    [HarmonyPatch(typeof(Minimap), "UpdateMap")]
+    [HarmonyPatch(typeof(Minimap), nameof(Minimap.UpdateMap))]
     public static class Minimap_UpdateMap_Patch
     {
-        private static float timeCounter = updateInterval;
+        private static float _timeCounter = updateInterval;
 
         private static void FindIcons()
         {
@@ -42,9 +42,8 @@ public class DisplayPinsOnMap
             if (!hammerDrop)
                 return;
             PieceTable hammerPieceTable = hammerDrop.m_itemData.m_shared.m_buildPieces;
-            foreach (GameObject piece in hammerPieceTable.m_pieces)
+            foreach (Piece p in hammerPieceTable.m_pieces.Select(piece => piece.GetComponent<Piece>()))
             {
-                Piece p = piece.GetComponent<Piece>();
                 icons.Add(p.name.GetStableHashCode(), p.m_icon);
             }
         }
@@ -61,11 +60,9 @@ public class DisplayPinsOnMap
             Ship controlledShip = player.GetControlledShip();
             if (controlledShip && Vector3.Distance(controlledShip.transform.position, zdo.m_position) < 0.01f)
             {
-                if (pinWasFound)
-                {
-                    __instance.RemovePin(customPin);
-                    customPins.Remove(zdo);
-                }
+                if (!pinWasFound) return true;
+                __instance.RemovePin(customPin);
+                customPins.Remove(zdo);
 
                 return true;
             }
@@ -74,8 +71,7 @@ public class DisplayPinsOnMap
             {
                 customPin = __instance.AddPin(zdo.m_position, Minimap.PinType.Death, pinName, false, false);
 
-                Sprite sprite;
-                if (icons.TryGetValue(hashCode, out sprite))
+                if (icons.TryGetValue(hashCode, out Sprite sprite))
                     customPin.m_icon = sprite;
 
                 customPin.m_doubleSize = true;
@@ -83,7 +79,7 @@ public class DisplayPinsOnMap
             }
             else
             {
-                customPin.m_pos = zdo.m_position;
+                if (customPin != null) customPin.m_pos = zdo.m_position;
             }
 
             return true;
@@ -91,13 +87,13 @@ public class DisplayPinsOnMap
 
         public static void Postfix(ref Minimap __instance, Player player, float dt, bool takeInput)
         {
-            timeCounter += dt;
+            _timeCounter += dt;
 
-            if (timeCounter < updateInterval || !MapDetail.MapDetailOn.Value ||
-                !MapDetail.displayCartsAndBoats.Value)
+            if (_timeCounter < updateInterval || !MapDetail.MapDetailOn.Value ||
+                !MapDetail.DisplayCartsAndBoats.Value)
                 return;
 
-            timeCounter -= updateInterval;
+            _timeCounter -= updateInterval;
 
             if (icons.Count == 0)
                 FindIcons();

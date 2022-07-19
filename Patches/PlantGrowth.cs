@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
 using HarmonyLib;
@@ -6,58 +7,57 @@ using UnityEngine;
 
 namespace OdinQOL.Patches
 {
-    internal class PlantGrowth
+    internal static class PlantGrowth
     {
-        public static ConfigEntry<bool> displayGrowth;
-        public static ConfigEntry<bool> plantAnywhere;
-        public static ConfigEntry<bool> ignoreBiome;
-        public static ConfigEntry<bool> ignoreSun;
-        public static ConfigEntry<bool> preventPlantTooClose;
-        public static ConfigEntry<bool> preventDestroyIfCantGrow;
-        public static ConfigEntry<float> growthTimeMultTree;
-        public static ConfigEntry<float> growRadiusMultTree;
-        public static ConfigEntry<float> minScaleMultTree;
-        public static ConfigEntry<float> maxScaleMultTree;
-        public static ConfigEntry<float> growthTimeMultPlant;
-        public static ConfigEntry<float> growRadiusMultPlant;
-        public static ConfigEntry<float> minScaleMultPlant;
-        public static ConfigEntry<float> maxScaleMultPlant;
+        public static ConfigEntry<bool> DisplayGrowth = null!;
+        public static ConfigEntry<bool> PlantAnywhere = null!;
+        public static ConfigEntry<bool> IgnoreBiome = null!;
+        public static ConfigEntry<bool> IgnoreSun = null!;
+        public static ConfigEntry<bool> PreventPlantTooClose = null!;
+        public static ConfigEntry<bool> PreventDestroyIfCantGrow = null!;
+        public static ConfigEntry<float> GrowthTimeMultTree = null!;
+        public static ConfigEntry<float> GrowRadiusMultTree = null!;
+        public static ConfigEntry<float> MinScaleMultTree = null!;
+        public static ConfigEntry<float> MaxScaleMultTree = null!;
+        public static ConfigEntry<float> GrowthTimeMultPlant = null!;
+        public static ConfigEntry<float> GrowRadiusMultPlant = null!;
+        public static ConfigEntry<float> MinScaleMultPlant = null!;
+        public static ConfigEntry<float> MaxScaleMultPlant = null!;
 
         private static bool HaveGrowSpace(Plant plant)
         {
             int spaceMask = LayerMask.GetMask("Default", "static_solid", "Default_small", "piece", "piece_nonsolid");
             float plantMaxDist = plant.m_growRadius;
             if (!plant.m_grownPrefabs[0]
-                .GetComponent<TreeBase>()) //Check if not tree as their m_grownPrefabs don't have colliders
+                    .GetComponent<TreeBase>()) //Check if not tree as their m_grownPrefabs don't have colliders
                 plantMaxDist = plantMaxDist + Math.Abs(plant.GetComponent<CapsuleCollider>().radius -
                                                        plant.m_grownPrefabs[0].GetComponent<CapsuleCollider>().radius);
             Collider[]? array = Physics.OverlapSphere(plant.transform.position, 2.5f, spaceMask);
-            for (int i = 0; i < array.Length; i++)
-                if (array[i].GetComponent<Plant>())
+            foreach (Collider t in array)
+                if (t.GetComponent<Plant>())
                 {
-                    Plant? collidingPlant = array[i].GetComponent<Plant>();
-                    if (collidingPlant != plant)
-                    {
-                        float collidingPlantMaxDist = collidingPlant.m_growRadius;
-                        if (!collidingPlant.m_grownPrefabs[0]
-                            .GetComponent<TreeBase>()) //Check if not tree as their m_grownPrefabs don't have colliders
-                            collidingPlantMaxDist = collidingPlantMaxDist +
-                                                    Math.Abs(collidingPlant.GetComponent<CapsuleCollider>().radius -
-                                                             collidingPlant.m_grownPrefabs[0]
-                                                                 .GetComponent<CapsuleCollider>().radius);
-                        if (collidingPlant && collidingPlant != plant && Vector3.Distance(
-                                plant.transform.GetComponent<CapsuleCollider>()
-                                    .ClosestPoint(collidingPlant.transform.position),
-                                collidingPlant.transform.GetComponent<CapsuleCollider>()
-                                    .ClosestPoint(plant.transform.position)) <
-                            Math.Max(plantMaxDist, collidingPlantMaxDist))
-                            return false;
-                    }
+                    Plant? collidingPlant = t.GetComponent<Plant>();
+                    if (collidingPlant == plant) continue;
+                    float collidingPlantMaxDist = collidingPlant.m_growRadius;
+                    if (!collidingPlant.m_grownPrefabs[0]
+                            .GetComponent<
+                                TreeBase>()) //Check if not tree as their m_grownPrefabs don't have colliders
+                        collidingPlantMaxDist = collidingPlantMaxDist +
+                                                Math.Abs(collidingPlant.GetComponent<CapsuleCollider>().radius -
+                                                         collidingPlant.m_grownPrefabs[0]
+                                                             .GetComponent<CapsuleCollider>().radius);
+                    if (collidingPlant && collidingPlant != plant && Vector3.Distance(
+                            plant.transform.GetComponent<CapsuleCollider>()
+                                .ClosestPoint(collidingPlant.transform.position),
+                            collidingPlant.transform.GetComponent<CapsuleCollider>()
+                                .ClosestPoint(plant.transform.position)) <
+                        Math.Max(plantMaxDist, collidingPlantMaxDist))
+                        return false;
                 }
-                else if (array[i] != plant &&
+                else if (t != plant &&
                          Vector3.Distance(
-                             plant.transform.GetComponent<CapsuleCollider>().ClosestPoint(array[i].transform.position),
-                             array[i].transform.GetComponent<Collider>().ClosestPoint(plant.transform.position)) <
+                             plant.transform.GetComponent<CapsuleCollider>().ClosestPoint(t.transform.position),
+                             t.transform.GetComponent<Collider>().ClosestPoint(plant.transform.position)) <
                          plant.m_growRadius)
                 {
                     return false;
@@ -65,159 +65,137 @@ namespace OdinQOL.Patches
 
 
             if (plant.m_needCultivatedGround && !Heightmap.FindHeightmap(plant.transform.position)
-                .IsCultivated(plant.transform.position))
+                    .IsCultivated(plant.transform.position))
                 return false;
             return true;
         }
 
-        [HarmonyPatch(typeof(Player), "UpdatePlacementGhost")]
+        [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacementGhost))]
         private static class Player_UpdatePlacementGhost_Patch
         {
             private static void Postfix(Player __instance, ref GameObject ___m_placementGhost,
                 GameObject ___m_placementMarkerInstance)
             {
-                if (___m_placementMarkerInstance != null && ___m_placementGhost?.GetComponent<Plant>() != null)
-                    if (preventPlantTooClose.Value)
-                    {
-                        Plant? plant = ___m_placementGhost.GetComponent<Plant>();
-                        if (!HaveGrowSpace(plant))
-                        {
-                            typeof(Player).GetField("m_placementStatus", BindingFlags.NonPublic | BindingFlags.Instance)
-                                ?.SetValue(__instance, 5);
-                            typeof(Player)
-                                .GetMethod("SetPlacementGhostValid", BindingFlags.NonPublic | BindingFlags.Instance)
-                                ?.Invoke(__instance, new object[] { false });
-                        }
-                    }
+                if (___m_placementMarkerInstance == null || ___m_placementGhost?.GetComponent<Plant>() == null) return;
+                if (!PreventPlantTooClose.Value) return;
+                Plant? plant = ___m_placementGhost.GetComponent<Plant>();
+                if (HaveGrowSpace(plant)) return;
+                __instance.m_placementStatus = Player.PlacementStatus.MoreSpace;
+                __instance.SetPlacementGhostValid(false);
             }
         }
 
-        [HarmonyPatch(typeof(Piece), "Awake")]
+        [HarmonyPatch(typeof(Piece), nameof(Piece.Awake))]
         private static class Piece_Awake_Patch
         {
             private static void Postfix(ref Piece __instance)
             {
-                if (__instance.gameObject.GetComponent<Plant>() != null)
-                    if (plantAnywhere.Value)
-                    {
-                        __instance.m_cultivatedGroundOnly = false;
-                        __instance.m_groundOnly = false;
-                    }
+                if (__instance.gameObject.GetComponent<Plant>() == null) return;
+                if (!PlantAnywhere.Value) return;
+                __instance.m_cultivatedGroundOnly = false;
+                __instance.m_groundOnly = false;
             }
         }
 
 
-        [HarmonyPatch(typeof(Plant), "GetHoverText")]
+        [HarmonyPatch(typeof(Plant), nameof(Plant.GetHoverText))]
         private static class Plant_GetHoverText_Patch
         {
             private static void Postfix(ref Plant __instance, ref string __result)
             {
-                if (!displayGrowth.Value)
+                if (!DisplayGrowth.Value)
                     return;
-                double timeSincePlanted = Traverse.Create(__instance).Method("TimeSincePlanted").GetValue<double>();
-                float growTime = Traverse.Create(__instance).Method("GetGrowTime").GetValue<float>();
+                double timeSincePlanted = __instance.TimeSincePlanted();
+                float growTime = __instance.GetGrowTime();
                 if (timeSincePlanted < growTime)
                     __result += "\n" + Mathf.RoundToInt((float)timeSincePlanted) + "/" + Mathf.RoundToInt(growTime);
             }
         }
 
 
-        [HarmonyPatch(typeof(Plant), "Awake")]
+        [HarmonyPatch(typeof(Plant), nameof(Plant.Awake))]
         private static class Plant_Awake_Patch
         {
             private static void Postfix(ref Plant __instance)
             {
-                if (plantAnywhere.Value) __instance.m_needCultivatedGround = false;
-                if (preventDestroyIfCantGrow.Value) __instance.m_destroyIfCantGrow = false;
-                if (ignoreBiome.Value)
+                if (PlantAnywhere.Value) __instance.m_needCultivatedGround = false;
+                if (PreventDestroyIfCantGrow.Value) __instance.m_destroyIfCantGrow = false;
+                if (IgnoreBiome.Value)
                 {
-                    Heightmap.Biome biome = 0;
-                    foreach (Heightmap.Biome b in Enum.GetValues(typeof(Heightmap.Biome))) biome |= b;
+                    Heightmap.Biome biome = Enum.GetValues(typeof(Heightmap.Biome)).Cast<Heightmap.Biome>()
+                        .Aggregate<Heightmap.Biome, Heightmap.Biome>(0, (current, b) => current | b);
 
                     __instance.m_biome = biome;
                 }
 
                 if (__instance.m_grownPrefabs[0].GetComponent<TreeBase>())
                 {
-                    __instance.m_growTime *= growthTimeMultTree.Value;
-                    __instance.m_growTimeMax *= growthTimeMultTree.Value;
-                    __instance.m_growRadius *= growRadiusMultTree.Value;
-                    __instance.m_minScale *= minScaleMultTree.Value;
-                    __instance.m_maxScale *= maxScaleMultTree.Value;
+                    __instance.m_growTime *= GrowthTimeMultTree.Value;
+                    __instance.m_growTimeMax *= GrowthTimeMultTree.Value;
+                    __instance.m_growRadius *= GrowRadiusMultTree.Value;
+                    __instance.m_minScale *= MinScaleMultTree.Value;
+                    __instance.m_maxScale *= MaxScaleMultTree.Value;
                 }
                 else
                 {
-                    __instance.m_growTime *= growthTimeMultPlant.Value;
-                    __instance.m_growTimeMax *= growthTimeMultPlant.Value;
-                    __instance.m_growRadius *= growRadiusMultPlant.Value;
-                    __instance.m_minScale *= minScaleMultPlant.Value;
-                    __instance.m_maxScale *= maxScaleMultPlant.Value;
+                    __instance.m_growTime *= GrowthTimeMultPlant.Value;
+                    __instance.m_growTimeMax *= GrowthTimeMultPlant.Value;
+                    __instance.m_growRadius *= GrowRadiusMultPlant.Value;
+                    __instance.m_minScale *= MinScaleMultPlant.Value;
+                    __instance.m_maxScale *= MaxScaleMultPlant.Value;
                 }
             }
         }
 
 
-        [HarmonyPatch(typeof(Plant), "GetGrowTime")]
+        [HarmonyPatch(typeof(Plant), nameof(Plant.GetGrowTime))]
         private static class Plant_GetGrowTime_Patch
         {
             private static void Postfix(ref Plant __instance, ref float __result)
             {
                 __result *= __instance.m_grownPrefabs[0].GetComponent<TreeBase>()
-                    ? growthTimeMultTree.Value
-                    : growthTimeMultPlant.Value;
+                    ? GrowthTimeMultTree.Value
+                    : GrowthTimeMultPlant.Value;
             }
         }
 
-        [HarmonyPatch(typeof(Plant), "HaveRoof")]
+        [HarmonyPatch(typeof(Plant), nameof(Plant.HaveRoof))]
         private static class Plant_HaveRoof_Patch
         {
             private static bool Prefix(ref bool __result)
             {
-                if (ignoreSun.Value)
-                {
-                    __result = false;
-                    return false;
-                }
-
-                return true;
+                if (!IgnoreSun.Value) return true;
+                __result = false;
+                return false;
             }
         }
 
-        [HarmonyPatch(typeof(Plant), "HaveGrowSpace")]
+        [HarmonyPatch(typeof(Plant), nameof(Plant.HaveGrowSpace))]
         private static class Plant_HaveGrowSpace_Patch
         {
             private static bool Prefix(Plant __instance, ref bool __result)
             {
-                //OdinQOLplugin.QOLLogger.LogDebug($"checking too close?");
-
-                if (__instance.m_grownPrefabs[0].GetComponent<TreeBase>() && growRadiusMultTree.Value == 0 ||
-                    !__instance.name.ToLower().Contains("tree") && growRadiusMultPlant.Value == 0)
-                {
-                    __result = true;
-                    return false;
-                }
-
-                return true;
+                if ((!__instance.m_grownPrefabs[0].GetComponent<TreeBase>() || GrowRadiusMultTree.Value != 0) &&
+                    (__instance.name.ToLower().Contains("tree") || GrowRadiusMultPlant.Value != 0)) return true;
+                __result = true;
+                return false;
             }
 
             private static void Postfix(Plant __instance, ref bool __result)
             {
-                if (!__result)
+                if (__result) return;
+                int spaceMask = LayerMask.GetMask("Default", "static_solid", "Default_small", "piece",
+                    "piece_nonsolid");
+                Collider[]? array = Physics.OverlapSphere(__instance.transform.position, __instance.m_growRadius,
+                    spaceMask);
+                foreach (Collider t in array)
                 {
-                    int spaceMask = LayerMask.GetMask("Default", "static_solid", "Default_small", "piece",
-                        "piece_nonsolid");
-                    Collider[]? array = Physics.OverlapSphere(__instance.transform.position, __instance.m_growRadius,
-                        spaceMask);
-                    for (int i = 0; i < array.Length; i++)
+                    Plant? component = t.GetComponent<Plant>();
+                    if (component && component != __instance)
                     {
-                        Plant? component = array[i].GetComponent<Plant>();
-                        if (component && component != __instance)
-                        {
-                            //OdinQOLplugin.QOLLogger.LogDebug($"{Vector3.Distance(__instance.transform.position, component.transform.position)} {component.m_growRadius} {__instance.m_growRadius}");
-                        }
+                        //OdinQOLplugin.QOLLogger.LogDebug($"{Vector3.Distance(__instance.transform.position, component.transform.position)} {component.m_growRadius} {__instance.m_growRadius}");
                     }
                 }
-                //OdinQOLplugin.QOLLogger.LogDebug($"checking too close?");
             }
         }
     }

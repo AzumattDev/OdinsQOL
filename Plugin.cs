@@ -126,7 +126,7 @@ namespace OdinQOL
             SignPatchConfigs.Generate();
             AutoStoreConfigs.Generate();
 
-            ClientPatches._chatPlayerName =
+            ClientPatches.ChatPlayerName =
                 config(
                     "Names", "chatPlayerName", string.Empty,
                     "Override your player name shown in-game and in the chat box.", false);
@@ -145,15 +145,15 @@ namespace OdinQOL
                 return;
             CFC.CfcWasAllowed = !CFC.switchPrevent.Value;
 
-            SignPatches.currentFont = SignPatches.GetFont(SignPatches.fontName.Value, 20);
-            SignPatches.lastFontName = SignPatches.currentFont?.name;
+            SignPatches.CurrentFont = SignPatches.GetFont(SignPatches.FontName.Value, 20);
+            SignPatches.LastFontName = SignPatches.CurrentFont?.name;
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
             SetupWatcher();
-            QuickAccessBar.hotkeys = new[]
+            QuickAccessBar.Hotkeys = new[]
             {
-                QuickAccessBar.hotKey1,
-                QuickAccessBar.hotKey2,
-                QuickAccessBar.hotKey3
+                QuickAccessBar.HotKey1,
+                QuickAccessBar.HotKey2,
+                QuickAccessBar.HotKey3
             };
         }
 
@@ -187,11 +187,11 @@ namespace OdinQOL
             if (Minimap.instance && Player.m_localPlayer && ZNet.instance != null)
                 StartCoroutine(MapDetail.UpdateMap(false));
 
-            if (Utilities.IgnoreKeyPresses() || ClockPatches.toggleClockKeyOnPress.Value ||
+            if (Utilities.IgnoreKeyPresses() || ClockPatches.ToggleClockKeyOnPress.Value ||
                 !ClockPatches.PressedToggleKey())
                 return;
-            bool show = ClockPatches.showingClock.Value;
-            ClockPatches.showingClock.Value = !show;
+            bool show = ClockPatches.ShowingClock.Value;
+            ClockPatches.ShowingClock.Value = !show;
             Config.Save();
         }
 

@@ -6,41 +6,37 @@ namespace OdinQOL.Patches
 {
     internal class SignPatches
     {
-        public static ConfigEntry<bool> useRichText;
-        public static ConfigEntry<string> fontName;
-        public static ConfigEntry<Vector2> textPositionOffset;
-        public static ConfigEntry<Vector3> signScale;
-        public static ConfigEntry<string> signDefaultColor;
-        public static Font currentFont;
-        public static Material saveOrigMat;
-        public static string lastFontName;
+        public static ConfigEntry<bool> UseRichText = null!;
+        public static ConfigEntry<string> FontName = null!;
+        public static ConfigEntry<Vector2> TextPositionOffset = null!;
+        public static ConfigEntry<Vector3> SignScale = null!;
+        public static ConfigEntry<string> SignDefaultColor = null!;
+        public static Font CurrentFont = null!;
+        public static Material SaveOrigMat = null!;
+        public static string LastFontName = null!;
 
         public static void FixSign(ref Sign sign)
         {
-            sign.transform.localScale = signScale.Value;
+            sign.transform.localScale = SignScale.Value;
 
-            sign.m_textWidget.supportRichText = useRichText.Value;
+            sign.m_textWidget.supportRichText = UseRichText.Value;
             sign.m_characterLimit = 0;
-            sign.m_textWidget.material = useRichText.Value ? null : saveOrigMat;
-
-            //sign.m_textWidget.fontSize = fontSize.Value;
-            sign.m_textWidget.gameObject.GetComponent<RectTransform>().anchoredPosition = textPositionOffset.Value;
-            if (lastFontName != fontName.Value) // call when config changes
+            sign.m_textWidget.material = UseRichText.Value ? null : SaveOrigMat;
+            sign.m_textWidget.gameObject.GetComponent<RectTransform>().anchoredPosition = TextPositionOffset.Value;
+            if (LastFontName != FontName.Value) // call when config changes
             {
-                lastFontName = fontName.Value;
-                OdinQOLplugin.QOLLogger.LogDebug($"new font {fontName.Value}");
-                Font? font = GetFont(fontName.Value, 20);
+                LastFontName = FontName.Value;
+                OdinQOLplugin.QOLLogger.LogDebug($"new font {FontName.Value}");
+                Font? font = GetFont(FontName.Value, 20);
                 if (font == null)
                     OdinQOLplugin.QOLLogger.LogDebug("new font not found");
                 else
-                    currentFont = font;
+                    CurrentFont = font;
             }
 
-            if (currentFont != null && sign.m_textWidget.font?.name != currentFont.name)
-            {
-                OdinQOLplugin.QOLLogger.LogDebug($"setting font {currentFont.name}");
-                sign.m_textWidget.font = currentFont;
-            }
+            if (CurrentFont == null || sign.m_textWidget.font?.name == CurrentFont.name) return;
+            OdinQOLplugin.QOLLogger.LogDebug($"setting font {CurrentFont.name}");
+            sign.m_textWidget.font = CurrentFont;
         }
 
         public static Font GetFont(string fontName, int fontSize)
@@ -58,7 +54,7 @@ namespace OdinQOL.Patches
             private static void Prefix(Sign __instance)
             {
                 // Save the original material of the sign so we can dynamic swap later.
-                saveOrigMat = __instance.m_textWidget.material;
+                SaveOrigMat = __instance.m_textWidget.material;
             }
 
             private static void Postfix(Sign __instance)
@@ -73,12 +69,12 @@ namespace OdinQOL.Patches
             private static void Postfix(Sign __instance)
             {
                 FixSign(ref __instance);
-                if (!useRichText.Value) return;
+                if (!UseRichText.Value) return;
                 if (!__instance.m_nview.IsValid() || __instance.m_nview == null) return;
 
-                if (signDefaultColor.Value is not { Length: > 0 }) return;
+                if (SignDefaultColor.Value is not { Length: > 0 }) return;
                 if (__instance.m_defaultText.Contains("<color=")) return;
-                string newText = $"<color={signDefaultColor.Value}>" +
+                string newText = $"<color={SignDefaultColor.Value}>" +
                                  __instance.m_nview.GetZDO().GetString("text", __instance.m_defaultText) +
                                  "</color>";
                 __instance.m_nview.ClaimOwnership();

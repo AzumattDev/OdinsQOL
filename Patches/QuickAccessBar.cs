@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using BepInEx.Configuration;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,27 +9,26 @@ namespace OdinQOL.Patches
 {
     internal class QuickAccessBar : MonoBehaviour
     {
-        public static ConfigEntry<bool> addEquipmentRow;
-        public static ConfigEntry<bool> displayEquipmentRowSeparate;
-        public static ConfigEntry<int> extraRows;
+        public static ConfigEntry<bool> AddEquipmentRow = null!;
+        public static ConfigEntry<bool> DisplayEquipmentRowSeparate = null!;
+        public static ConfigEntry<int> ExtraRows = null!;
+        public static ConfigEntry<string> HelmetText = null!;
+        public static ConfigEntry<string> ChestText = null!;
+        public static ConfigEntry<string> LegsText = null!;
+        public static ConfigEntry<string> BackText = null!;
+        public static ConfigEntry<string> UtilityText = null!;
+        public static ConfigEntry<float> QuickAccessScale = null!;
 
-        public static ConfigEntry<string> helmetText;
-        public static ConfigEntry<string> chestText;
-        public static ConfigEntry<string> legsText;
-        public static ConfigEntry<string> backText;
-        public static ConfigEntry<string> utilityText;
-        public static ConfigEntry<float> quickAccessScale;
+        public static ConfigEntry<KeyCode> HotKey1 = null!;
+        public static ConfigEntry<KeyCode> HotKey2 = null!;
+        public static ConfigEntry<KeyCode> HotKey3 = null!;
+        public static ConfigEntry<KeyCode> ModKeyOne = null!;
+        public static ConfigEntry<KeyCode> ModKeyTwo = null!;
 
-        public static ConfigEntry<KeyCode> hotKey1;
-        public static ConfigEntry<KeyCode> hotKey2;
-        public static ConfigEntry<KeyCode> hotKey3;
-        public static ConfigEntry<KeyCode> modKeyOne;
-        public static ConfigEntry<KeyCode> modKeyTwo;
+        public static ConfigEntry<KeyCode>[] Hotkeys = null!;
 
-        public static ConfigEntry<KeyCode>[] hotkeys;
-
-        public static ConfigEntry<float> quickAccessX;
-        public static ConfigEntry<float> quickAccessY;
+        public static ConfigEntry<float> QuickAccessX = null!;
+        public static ConfigEntry<float> QuickAccessY = null!;
 
         public GameObject m_elementPrefab;
 
@@ -79,10 +79,7 @@ namespace OdinQOL.Patches
                     if (inventory.GetItemAt(7, inventory.GetHeight() - 1) != null)
                         m_items.Add(inventory.GetItemAt(7, inventory.GetHeight() - 1));
                     m_items.Sort((Comparison<ItemDrop.ItemData>)((x, y) => x.m_gridPos.x.CompareTo(y.m_gridPos.x)));
-                    int num = 0;
-                    foreach (ItemDrop.ItemData itemData in m_items)
-                        if (itemData.m_gridPos.x - 4 > num)
-                            num = itemData.m_gridPos.x - 4;
+                    int num = m_items.Select(itemData => itemData.m_gridPos.x - 4).Prepend(0).Max();
                     if (m_elements.Count != num)
                     {
                         foreach (ElementData element in m_elements)
@@ -96,7 +93,7 @@ namespace OdinQOL.Patches
                             };
                             elementData.m_go.transform.localPosition = new Vector3(index * m_elementSpace, 0.0f, 0.0f);
                             elementData.m_go.transform.Find("binding").GetComponent<Text>().text =
-                                hotkeys[index].Value.ToString();
+                                Hotkeys[index].Value.ToString();
                             elementData.m_icon =
                                 elementData.m_go.transform.transform.Find("icon").GetComponent<Image>();
                             elementData.m_durability =
@@ -112,9 +109,8 @@ namespace OdinQOL.Patches
                     foreach (ElementData element in m_elements)
                         element.m_used = false;
                     bool flag = ZInput.IsGamepadActive();
-                    for (int index = 0; index < m_items.Count; ++index)
+                    foreach (ItemDrop.ItemData itemData in m_items)
                     {
-                        ItemDrop.ItemData itemData = m_items[index];
                         ElementData element = m_elements[itemData.m_gridPos.x - 5];
                         element.m_used = true;
                         element.m_icon.gameObject.SetActive(true);
@@ -153,14 +149,12 @@ namespace OdinQOL.Patches
                     {
                         ElementData element = m_elements[index];
                         element.m_selection.SetActive(flag && index == m_selected);
-                        if (!element.m_used)
-                        {
-                            element.m_icon.gameObject.SetActive(false);
-                            element.m_durability.gameObject.SetActive(false);
-                            element.m_equiped.SetActive(false);
-                            element.m_queued.SetActive(false);
-                            element.m_amount.gameObject.SetActive(false);
-                        }
+                        if (element.m_used) continue;
+                        element.m_icon.gameObject.SetActive(false);
+                        element.m_durability.gameObject.SetActive(false);
+                        element.m_equiped.SetActive(false);
+                        element.m_queued.SetActive(false);
+                        element.m_amount.gameObject.SetActive(false);
                     }
                 }
                 catch (Exception ex)

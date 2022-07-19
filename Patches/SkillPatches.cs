@@ -32,33 +32,33 @@ namespace OdinQOL.Patches
             All = 999
         }
 
-        public static ConfigEntry<bool> ChangeSkills;
-        public static ConfigEntry<bool> experienceGainedNotifications;
-        public static ConfigEntry<float> swordskill;
-        public static ConfigEntry<float> kniveskill;
-        public static ConfigEntry<float> clubskill;
-        public static ConfigEntry<float> polearmskill;
-        public static ConfigEntry<float> spearskill;
-        public static ConfigEntry<float> blockskill;
-        public static ConfigEntry<float> axeskill;
-        public static ConfigEntry<float> bowskill;
-        public static ConfigEntry<float> unarmed;
-        public static ConfigEntry<float> pickaxe;
-        public static ConfigEntry<float> woodcutting;
-        public static ConfigEntry<float> jump;
-        public static ConfigEntry<float> sneak;
-        public static ConfigEntry<float> run;
-        public static ConfigEntry<float> swim;
-        public static ConfigEntry<float> deathPenaltyMultiplier;
+        public static ConfigEntry<bool> ChangeSkills = null!;
+        public static ConfigEntry<bool> ExperienceGainedNotifications = null!;
+        public static ConfigEntry<float> Swordskill = null!;
+        public static ConfigEntry<float> Kniveskill = null!;
+        public static ConfigEntry<float> Clubskill = null!;
+        public static ConfigEntry<float> Polearmskill = null!;
+        public static ConfigEntry<float> Spearskill = null!;
+        public static ConfigEntry<float> Blockskill = null!;
+        public static ConfigEntry<float> Axeskill = null!;
+        public static ConfigEntry<float> Bowskill = null!;
+        public static ConfigEntry<float> Unarmed = null!;
+        public static ConfigEntry<float> Pickaxe = null!;
+        public static ConfigEntry<float> Woodcutting = null!;
+        public static ConfigEntry<float> Jump = null!;
+        public static ConfigEntry<float> Sneak = null!;
+        public static ConfigEntry<float> Run = null!;
+        public static ConfigEntry<float> Swim = null!;
+        public static ConfigEntry<float> DeathPenaltyMultiplier = null!;
 
-        public static float tFloat(this float value, int digits)
+        public static float TFloat(this float value, int digits)
         {
             double mult = Math.Pow(10.0, digits);
             double result = Math.Truncate(mult * value) / mult;
             return (float)result;
         }
 
-        [HarmonyPatch(typeof(Skills), "RaiseSkill")]
+        [HarmonyPatch(typeof(Skills), nameof(Skills.RaiseSkill))]
         public static class AddExpGainedDisplay
         {
             /// <summary>
@@ -66,55 +66,26 @@ namespace OdinQOL.Patches
             /// </summary>
             private static void Prefix(ref Skills __instance, ref Skills.SkillType skillType, ref float factor)
             {
-                if (ChangeSkills.Value)
-                    switch ((SkillType)skillType)
-                    {
-                        case SkillType.Swords:
-                            factor = Utilities.ApplyModifierValue(factor, swordskill.Value);
-                            break;
-                        case SkillType.Knives:
-                            factor = Utilities.ApplyModifierValue(factor, kniveskill.Value);
-                            break;
-                        case SkillType.Clubs:
-                            factor = Utilities.ApplyModifierValue(factor, clubskill.Value);
-                            break;
-                        case SkillType.Polearms:
-                            factor = Utilities.ApplyModifierValue(factor, polearmskill.Value);
-                            break;
-                        case SkillType.Spears:
-                            factor = Utilities.ApplyModifierValue(factor, spearskill.Value);
-                            break;
-                        case SkillType.Blocking:
-                            factor = Utilities.ApplyModifierValue(factor, blockskill.Value);
-                            break;
-                        case SkillType.Axes:
-                            factor = Utilities.ApplyModifierValue(factor, axeskill.Value);
-                            break;
-                        case SkillType.Bows:
-                            factor = Utilities.ApplyModifierValue(factor, bowskill.Value);
-                            break;
-                        case SkillType.Unarmed:
-                            factor = Utilities.ApplyModifierValue(factor, unarmed.Value);
-                            break;
-                        case SkillType.Pickaxes:
-                            factor = Utilities.ApplyModifierValue(factor, pickaxe.Value);
-                            break;
-                        case SkillType.WoodCutting:
-                            factor = Utilities.ApplyModifierValue(factor, woodcutting.Value);
-                            break;
-                        case SkillType.Jump:
-                            factor = Utilities.ApplyModifierValue(factor, jump.Value);
-                            break;
-                        case SkillType.Sneak:
-                            factor = Utilities.ApplyModifierValue(factor, sneak.Value);
-                            break;
-                        case SkillType.Run:
-                            factor = Utilities.ApplyModifierValue(factor, run.Value);
-                            break;
-                        case SkillType.Swim:
-                            factor = Utilities.ApplyModifierValue(factor, swim.Value);
-                            break;
-                    }
+                if (!ChangeSkills.Value) return;
+                factor = (SkillType)skillType switch
+                {
+                    SkillType.Swords => Utilities.ApplyModifierValue(factor, Swordskill.Value),
+                    SkillType.Knives => Utilities.ApplyModifierValue(factor, Kniveskill.Value),
+                    SkillType.Clubs => Utilities.ApplyModifierValue(factor, Clubskill.Value),
+                    SkillType.Polearms => Utilities.ApplyModifierValue(factor, Polearmskill.Value),
+                    SkillType.Spears => Utilities.ApplyModifierValue(factor, Spearskill.Value),
+                    SkillType.Blocking => Utilities.ApplyModifierValue(factor, Blockskill.Value),
+                    SkillType.Axes => Utilities.ApplyModifierValue(factor, Axeskill.Value),
+                    SkillType.Bows => Utilities.ApplyModifierValue(factor, Bowskill.Value),
+                    SkillType.Unarmed => Utilities.ApplyModifierValue(factor, Unarmed.Value),
+                    SkillType.Pickaxes => Utilities.ApplyModifierValue(factor, Pickaxe.Value),
+                    SkillType.WoodCutting => Utilities.ApplyModifierValue(factor, Woodcutting.Value),
+                    SkillType.Jump => Utilities.ApplyModifierValue(factor, Jump.Value),
+                    SkillType.Sneak => Utilities.ApplyModifierValue(factor, Sneak.Value),
+                    SkillType.Run => Utilities.ApplyModifierValue(factor, Run.Value),
+                    SkillType.Swim => Utilities.ApplyModifierValue(factor, Swim.Value),
+                    _ => factor
+                };
             }
 
             /// <summary>
@@ -122,31 +93,31 @@ namespace OdinQOL.Patches
             /// </summary>
             private static void Postfix(Skills __instance, Skills.SkillType skillType, float factor = 1f)
             {
-                if (experienceGainedNotifications.Value)
-                    try
-                    {
-                        Skills.Skill skill;
-                        skill = __instance.GetSkill(skillType);
-                        float percent = skill.m_accumulator / (skill.GetNextLevelRequirement() / 100);
-                        __instance.m_player.Message(MessageHud.MessageType.TopLeft, "Level " + skill.m_level.tFloat(0) +
-                            " " + skill.m_info.m_skill
-                            + " [" + skill.m_accumulator.tFloat(2) + "/" + skill.GetNextLevelRequirement().tFloat(2) +
-                            "]"
-                            + " (" + percent.tFloat(0) + "%)", 0, skill.m_info.m_icon);
-                    }
-                    catch
-                    {
-                    }
+                if (!ExperienceGainedNotifications.Value) return;
+                try
+                {
+                    Skills.Skill skill = __instance.GetSkill(skillType);
+                    float percent = skill.m_accumulator / (skill.GetNextLevelRequirement() / 100);
+                    __instance.m_player.Message(MessageHud.MessageType.TopLeft, "Level " + skill.m_level.TFloat(0) +
+                        " " + skill.m_info.m_skill
+                        + " [" + skill.m_accumulator.TFloat(2) + "/" + skill.GetNextLevelRequirement().TFloat(2) +
+                        "]"
+                        + " (" + percent.TFloat(0) + "%)", 0, skill.m_info.m_icon);
+                }
+                catch
+                {
+                    // ignored
+                }
             }
         }
 
         [HarmonyPatch(typeof(Skills), nameof(Skills.OnDeath))]
         public static class Skills_OnDeath_Transpiler
         {
-            private static readonly MethodInfo method_Skills_LowerAllSkills =
+            private static readonly MethodInfo MethodSkillsLowerAllSkills =
                 AccessTools.Method(typeof(Skills), nameof(Skills.LowerAllSkills));
 
-            private static readonly MethodInfo method_LowerAllSkills =
+            private static readonly MethodInfo MethodLowerAllSkills =
                 AccessTools.Method(typeof(Skills_OnDeath_Transpiler), nameof(LowerAllSkills));
 
             /// <summary>
@@ -157,17 +128,16 @@ namespace OdinQOL.Patches
             {
                 List<CodeInstruction>? il = instructions.ToList();
 
-                for (int i = 0; i < il.Count; ++i)
-                    if (il[i].Calls(method_Skills_LowerAllSkills))
-                        il[i].operand = method_LowerAllSkills;
+                foreach (CodeInstruction t in il.Where(t => t.Calls(MethodSkillsLowerAllSkills)))
+                    t.operand = MethodLowerAllSkills;
 
                 return il.AsEnumerable();
             }
 
             public static void LowerAllSkills(Skills instance, float factor)
             {
-                if (deathPenaltyMultiplier.Value > -100.0f)
-                    instance.LowerAllSkills(Utilities.ApplyModifierValue(factor, deathPenaltyMultiplier.Value));
+                if (DeathPenaltyMultiplier.Value > -100.0f)
+                    instance.LowerAllSkills(Utilities.ApplyModifierValue(factor, DeathPenaltyMultiplier.Value));
             }
         }
     }

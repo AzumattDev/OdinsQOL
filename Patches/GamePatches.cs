@@ -15,39 +15,39 @@ namespace OdinQOL.Patches
 {
     internal class GamePatches
     {
-        public static ConfigEntry<bool> DisableGuardianAnimation;
-        public static ConfigEntry<bool> SkipTuts;
-        public static ConfigEntry<bool> reequipItemsAfterSwimming;
-        public static ConfigEntry<bool> enableAreaRepair;
-        public static ConfigEntry<bool> StaminaIsEnabled;
-        public static ConfigEntry<int> areaRepairRadius;
-        public static ConfigEntry<int> baseMegingjordBuff;
-        public static ConfigEntry<int> honeyProductionSpeed;
-        public static ConfigEntry<int> maximumHoneyPerBeehive;
+        public static ConfigEntry<bool> DisableGuardianAnimation = null!;
+        public static ConfigEntry<bool> SkipTuts = null!;
+        public static ConfigEntry<bool> ReequipItemsAfterSwimming = null!;
+        public static ConfigEntry<bool> EnableAreaRepair = null!;
+        public static ConfigEntry<bool> StaminaIsEnabled = null!;
+        public static ConfigEntry<int> AreaRepairRadius = null!;
+        public static ConfigEntry<int> BaseMegingjordBuff = null!;
+        public static ConfigEntry<int> HoneyProductionSpeed = null!;
+        public static ConfigEntry<int> MaximumHoneyPerBeehive = null!;
 
-        public static ConfigEntry<bool> buildInsideProtectedLocations;
-        public static ConfigEntry<float> craftingDuration;
-        public static ConfigEntry<float> dodgeStaminaUsage;
-        public static ConfigEntry<float> encumberedStaminaDrain;
-        public static ConfigEntry<float> sneakStaminaDrain;
-        public static ConfigEntry<float> runStaminaDrain;
-        public static ConfigEntry<float> staminaRegenDelay;
-        public static ConfigEntry<float> staminaRegen;
-        public static ConfigEntry<float> swimStaminaDrain;
-        public static ConfigEntry<float> jumpStaminaDrain;
-        public static ConfigEntry<float> baseAutoPickUpRange;
-        public static ConfigEntry<float> disableCameraShake;
-        public static ConfigEntry<float> baseMaximumWeight;
-        public static ConfigEntry<float> maximumPlacementDistance;
-        public static ConfigEntry<int> maxPlayers;
-        public static ConfigEntry<bool> iHaveArrivedOnSpawn;
+        public static ConfigEntry<bool> BuildInsideProtectedLocations = null!;
+        public static ConfigEntry<float> CraftingDuration = null!;
+        public static ConfigEntry<float> DodgeStaminaUsage = null!;
+        public static ConfigEntry<float> EncumberedStaminaDrain = null!;
+        public static ConfigEntry<float> SneakStaminaDrain = null!;
+        public static ConfigEntry<float> RunStaminaDrain = null!;
+        public static ConfigEntry<float> StaminaRegenDelay = null!;
+        public static ConfigEntry<float> StaminaRegen = null!;
+        public static ConfigEntry<float> SwimStaminaDrain = null!;
+        public static ConfigEntry<float> JumpStaminaDrain = null!;
+        public static ConfigEntry<float> BaseAutoPickUpRange = null!;
+        public static ConfigEntry<float> DisableCameraShake = null!;
+        public static ConfigEntry<float> BaseMaximumWeight = null!;
+        public static ConfigEntry<float> MaximumPlacementDistance = null!;
+        public static ConfigEntry<int> MaxPlayers = null!;
+        public static ConfigEntry<bool> HaveArrivedOnSpawn = null!;
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(Location), "IsInsideNoBuildLocation")]
+        [HarmonyPatch(typeof(Location), nameof(Location.IsInsideNoBuildLocation))]
         private static bool Placement_Patch_NoBuild(ref bool __result)
         {
             if (!OdinQOLplugin.modEnabled.Value) return true;
-            if (!buildInsideProtectedLocations.Value) return true;
+            if (!BuildInsideProtectedLocations.Value) return true;
             __result = false;
             return false;
         }
@@ -68,25 +68,25 @@ namespace OdinQOL.Patches
         {
             private static bool Prefix(string user, string text)
             {
-                return !iHaveArrivedOnSpawn.Value || !text.ToLower().Contains("i have arrived");
+                return !HaveArrivedOnSpawn.Value || !text.ToLower().Contains("i have arrived");
             }
         }
 
         [HarmonyPatch]
         public static class AreaRepair
         {
-            private static int m_repair_count;
+            private static int _mRepairCount;
 
             [HarmonyPatch(typeof(Player), nameof(Player.UpdatePlacement))]
             public static class Player_UpdatePlacement_Transpiler
             {
-                private static readonly MethodInfo method_Player_Repair =
+                private static readonly MethodInfo MethodPlayerRepair =
                     AccessTools.Method(typeof(Player), nameof(Player.Repair));
 
                 private static AccessTools.FieldRef<Player, Piece> field_Player_m_hoveringPiece =
                     AccessTools.FieldRefAccess<Player, Piece>(nameof(Player.m_hoveringPiece));
 
-                private static readonly MethodInfo method_RepairNearby =
+                private static readonly MethodInfo MethodRepairNearby =
                     AccessTools.Method(typeof(Player_UpdatePlacement_Transpiler), nameof(RepairNearby));
 
                 /// <summary>
@@ -98,57 +98,54 @@ namespace OdinQOL.Patches
                 {
                     List<CodeInstruction>? il = instructions.ToList();
 
-                    if (enableAreaRepair.Value)
-                        // Replace call to Player::Repair with our own stub.
-                        // Our stub calls the original repair multiple times, one for each nearby piece.
-                        for (int i = 0; i < il.Count; ++i)
-                            if (il[i].Calls(method_Player_Repair))
-                                il[i].operand = method_RepairNearby;
+                    if (!EnableAreaRepair.Value) return il.AsEnumerable();
+                    foreach (CodeInstruction t in il.Where(t => t.Calls(MethodPlayerRepair)))
+                        t.operand = MethodRepairNearby;
 
                     return il.AsEnumerable();
                 }
 
                 public static void RepairNearby(Player instance, ItemDrop.ItemData toolItem, Piece _1)
                 {
-                    Piece? selected_piece = instance.GetHoveringPiece();
-                    Vector3 position = selected_piece != null
-                        ? selected_piece.transform.position
+                    Piece? selectedPiece = instance.GetHoveringPiece();
+                    Vector3 position = selectedPiece != null
+                        ? selectedPiece.transform.position
                         : instance.transform.position;
 
                     List<Piece>? pieces = new();
-                    Piece.GetAllPiecesInRadius(position, areaRepairRadius.Value, pieces);
+                    Piece.GetAllPiecesInRadius(position, AreaRepairRadius.Value, pieces);
 
-                    m_repair_count = 0;
+                    _mRepairCount = 0;
 
-                    Piece? original_piece = instance.m_hoveringPiece;
+                    Piece? originalPiece = instance.m_hoveringPiece;
 
                     foreach (Piece? piece in pieces)
                     {
-                        bool has_stamina = instance.HaveStamina(toolItem.m_shared.m_attack.m_attackStamina);
-                        bool uses_durability = toolItem.m_shared.m_useDurability;
-                        bool has_durability = toolItem.m_durability > 0.0f;
+                        bool hasStamina = instance.HaveStamina(toolItem.m_shared.m_attack.m_attackStamina);
+                        bool usesDurability = toolItem.m_shared.m_useDurability;
+                        bool hasDurability = toolItem.m_durability > 0.0f;
 
-                        if (!has_stamina || uses_durability && !has_durability) break;
+                        if (!hasStamina || usesDurability && !hasDurability) break;
 
                         // The repair function takes a piece to repair but then completely ignores it and repairs the hovering piece instead...
                         // I really don't like this, but Valheim's spaghetti code makes it required.
                         instance.m_hoveringPiece = piece;
                         instance.Repair(toolItem, _1);
-                        instance.m_hoveringPiece = original_piece;
+                        instance.m_hoveringPiece = originalPiece;
                     }
 
                     instance.Message(MessageHud.MessageType.TopLeft,
-                        $"{m_repair_count} pieces repaired");
+                        $"{_mRepairCount} pieces repaired");
                 }
             }
 
             [HarmonyPatch(typeof(Player), nameof(Player.Repair))]
             public static class Player_Repair_Transpiler
             {
-                private static readonly MethodInfo method_Character_Message =
+                private static readonly MethodInfo MethodCharacterMessage =
                     AccessTools.Method(typeof(Character), nameof(Character.Message));
 
-                private static readonly MethodInfo method_MessageNoop =
+                private static readonly MethodInfo MethodMessageNoop =
                     AccessTools.Method(typeof(Player_Repair_Transpiler), nameof(MessageNoop));
 
                 /// <summary>
@@ -160,19 +157,17 @@ namespace OdinQOL.Patches
                 {
                     List<CodeInstruction>? il = instructions.ToList();
 
-                    if (enableAreaRepair.Value)
-                    {
-                        // Replace calls to Character::Message with our own noop stub
-                        // We don't want to spam messages for each piece so we patch the messages out here and dispatch our own messages in the other transpiler.
-                        // First call pushes 1, then subsequent calls 0 - the first call is the branch where the repair succeeded.
-                        int count = 0;
-                        for (int i = 0; i < il.Count; ++i)
-                            if (il[i].Calls(method_Character_Message))
-                            {
-                                il[i].operand = method_MessageNoop;
-                                il.Insert(i++, new CodeInstruction(count++ == 0 ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0));
-                            }
-                    }
+                    if (!EnableAreaRepair.Value) return il.AsEnumerable();
+                    // Replace calls to Character::Message with our own noop stub
+                    // We don't want to spam messages for each piece so we patch the messages out here and dispatch our own messages in the other transpiler.
+                    // First call pushes 1, then subsequent calls 0 - the first call is the branch where the repair succeeded.
+                    int count = 0;
+                    for (int i = 0; i < il.Count; ++i)
+                        if (il[i].Calls(MethodCharacterMessage))
+                        {
+                            il[i].operand = MethodMessageNoop;
+                            il.Insert(i++, new CodeInstruction(count++ == 0 ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0));
+                        }
 
                     return il.AsEnumerable();
                 }
@@ -180,12 +175,12 @@ namespace OdinQOL.Patches
                 public static void MessageNoop(Character _0, MessageHud.MessageType _1, string _2, int _3, Sprite _4,
                     int repaired)
                 {
-                    m_repair_count += repaired;
+                    _mRepairCount += repaired;
                 }
             }
         }
 
-        [HarmonyPatch(typeof(Player), "StartGuardianPower")]
+        [HarmonyPatch(typeof(Player), nameof(Player.StartGuardianPower))]
         public static class Player_StartGuardianPower_Patch
         {
             private static bool Prefix(ref Player __instance, ref bool __result)
@@ -212,46 +207,53 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(Player), "HaveSeenTutorial")]
-        public class Player_HaveSeenTutorial_Patch
+        [HarmonyPatch(typeof(Player), nameof(Player.HaveSeenTutorial))]
+        private static class Player_HaveSeenTutorial_Patch
         {
-            [HarmonyPrefix]
-            private static void Prefix(Player __instance, ref string name)
+            static void Prefix(Player __instance, ref string name)
             {
-                if (SkipTuts.Value)
-                    if (!__instance.m_shownTutorials.Contains(name))
-                        __instance.m_shownTutorials.Add(name);
+                if (!SkipTuts.Value) return;
+                if (!__instance.m_shownTutorials.Contains(name))
+                    __instance.m_shownTutorials.Add(name);
             }
         }
 
         public static class UpdateEquipmentState
         {
-            public static bool shouldReequipItemsAfterSwimming;
+            public static bool ShouldReequipItemsAfterSwimming;
         }
 
-        [HarmonyPatch(typeof(Humanoid), "UpdateEquipment")]
+        [HarmonyPatch(typeof(Humanoid), nameof(Humanoid.UpdateEquipment))]
         public static class Humanoid_UpdateEquipment_Patch
         {
             private static bool Prefix(Humanoid __instance)
             {
-                if (!reequipItemsAfterSwimming.Value)
+                if (!ReequipItemsAfterSwimming.Value)
                     return true;
-
-                if (__instance.IsPlayer() && __instance.IsSwiming() && !__instance.IsOnGround())
+                if (!__instance.IsPlayer()) return true;
+                switch (__instance.IsSwiming())
                 {
-                    // The above is only enough to know we will eventually exit swimming, but we still don't know if the items were visible prior or not.
-                    // We only want to re-show them if they were shown to begin with, so we need to check.
-                    // This is also why this must be a prefix patch; in a postfix patch, the items are already hidden, and we don't know
-                    // if they were hidden by UpdateEquipment or by the user far earlier.
+                    case true:
+                        if (!__instance.IsOnGround())
+                        {
+                            // The above is only enough to know we will eventually exit swimming, but we still don't know if the items were visible prior or not.
+                            // We only want to re-show them if they were shown to begin with, so we need to check.
+                            // This is also why this must be a prefix patch; in a postfix patch, the items are already hidden, and we don't know
+                            // if they were hidden by UpdateEquipment or by the user far earlier.
 
-                    if (__instance.m_leftItem != null || __instance.m_rightItem != null)
-                        UpdateEquipmentState.shouldReequipItemsAfterSwimming = true;
-                }
-                else if (__instance.IsPlayer() && !__instance.IsSwiming() && __instance.IsOnGround() &&
-                         UpdateEquipmentState.shouldReequipItemsAfterSwimming)
-                {
-                    __instance.ShowHandItems();
-                    UpdateEquipmentState.shouldReequipItemsAfterSwimming = false;
+                            if (__instance.m_leftItem != null || __instance.m_rightItem != null)
+                                UpdateEquipmentState.ShouldReequipItemsAfterSwimming = true;
+                        }
+
+                        break;
+                    case false:
+                        if (__instance.IsOnGround() && UpdateEquipmentState.ShouldReequipItemsAfterSwimming)
+                        {
+                            __instance.ShowHandItems();
+                            UpdateEquipmentState.ShouldReequipItemsAfterSwimming = false;
+                        }
+
+                        break;
                 }
 
                 return true;
@@ -266,32 +268,32 @@ namespace OdinQOL.Patches
 #pragma warning disable CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
                 if (__instance.m_addMaxCarryWeight != null && __instance.m_addMaxCarryWeight > 0)
 #pragma warning restore CS0472 // The result of the expression is always the same since a value of this type is never equal to 'null'
-                    __instance.m_addMaxCarryWeight = __instance.m_addMaxCarryWeight - 150 + baseMegingjordBuff.Value;
+                    __instance.m_addMaxCarryWeight = __instance.m_addMaxCarryWeight - 150 + BaseMegingjordBuff.Value;
             }
         }
 
-        [HarmonyPatch(typeof(Player), "Awake")]
+        [HarmonyPatch(typeof(Player), nameof(Player.Awake))]
         public static class Player_Awake_Patch
         {
             private static void Postfix(ref Player __instance)
             {
                 if (StaminaIsEnabled.Value)
                 {
-                    __instance.m_dodgeStaminaUsage = dodgeStaminaUsage.Value;
-                    __instance.m_encumberedStaminaDrain = encumberedStaminaDrain.Value;
-                    __instance.m_sneakStaminaDrain = sneakStaminaDrain.Value;
-                    __instance.m_runStaminaDrain = runStaminaDrain.Value;
-                    __instance.m_staminaRegenDelay = staminaRegenDelay.Value;
-                    __instance.m_staminaRegen = staminaRegen.Value;
-                    __instance.m_swimStaminaDrainMinSkill = swimStaminaDrain.Value;
-                    __instance.m_swimStaminaDrainMaxSkill = swimStaminaDrain.Value;
-                    __instance.m_jumpStaminaUsage = jumpStaminaDrain.Value;
+                    __instance.m_dodgeStaminaUsage = DodgeStaminaUsage.Value;
+                    __instance.m_encumberedStaminaDrain = EncumberedStaminaDrain.Value;
+                    __instance.m_sneakStaminaDrain = SneakStaminaDrain.Value;
+                    __instance.m_runStaminaDrain = RunStaminaDrain.Value;
+                    __instance.m_staminaRegenDelay = StaminaRegenDelay.Value;
+                    __instance.m_staminaRegen = StaminaRegen.Value;
+                    __instance.m_swimStaminaDrainMinSkill = SwimStaminaDrain.Value;
+                    __instance.m_swimStaminaDrainMaxSkill = SwimStaminaDrain.Value;
+                    __instance.m_jumpStaminaUsage = JumpStaminaDrain.Value;
                 }
 
-                __instance.m_autoPickupRange = baseAutoPickUpRange.Value;
-                __instance.m_baseCameraShake = disableCameraShake.Value;
-                __instance.m_maxCarryWeight = baseMaximumWeight.Value;
-                __instance.m_maxPlaceDistance = maximumPlacementDistance.Value;
+                __instance.m_autoPickupRange = BaseAutoPickUpRange.Value;
+                __instance.m_baseCameraShake = DisableCameraShake.Value;
+                __instance.m_maxCarryWeight = BaseMaximumWeight.Value;
+                __instance.m_maxPlaceDistance = MaximumPlacementDistance.Value;
             }
         }
 
@@ -300,13 +302,13 @@ namespace OdinQOL.Patches
         {
             private static bool Prefix(ref float ___m_secPerUnit, ref int ___m_maxHoney)
             {
-                ___m_secPerUnit = honeyProductionSpeed.Value;
-                ___m_maxHoney = maximumHoneyPerBeehive.Value;
+                ___m_secPerUnit = HoneyProductionSpeed.Value;
+                ___m_maxHoney = MaximumHoneyPerBeehive.Value;
                 return true;
             }
         }
 
-        [HarmonyPatch(typeof(Hud), "DamageFlash")]
+        [HarmonyPatch(typeof(Hud), nameof(Hud.DamageFlash))]
         public static class Hud_DamageFlash_Patch
         {
             private static void Postfix(Hud __instance)
@@ -316,8 +318,9 @@ namespace OdinQOL.Patches
         }
 
         [HarmonyPatch(typeof(TeleportWorld), "GetHoverText")]
-        public static class TeleportWorld_bigPortalText_Patch
+        public static class TeleportWorld_BigPortalText_Patch
         {
+            // TODO Add config option to turn this off.
             private static void Postfix(TeleportWorld __instance, string __result)
             {
                 string? portalName = __instance.GetText();
@@ -333,10 +336,10 @@ namespace OdinQOL.Patches
         [HarmonyPatch(typeof(Player), nameof(Player.UpdateFood))]
         public static class Player_UpdateFood_Transpiler
         {
-            private static readonly FieldInfo field_Player_m_foodUpdateTimer =
+            private static readonly FieldInfo FieldPlayerMFoodUpdateTimer =
                 AccessTools.Field(typeof(Player), nameof(Player.m_foodUpdateTimer));
 
-            private static readonly MethodInfo method_ComputeModifiedDt =
+            private static readonly MethodInfo MethodComputeModifiedDt =
                 AccessTools.Method(typeof(Player_UpdateFood_Transpiler), nameof(ComputeModifiedDT));
 
             /// <summary>
@@ -350,11 +353,11 @@ namespace OdinQOL.Patches
                 List<CodeInstruction>? il = instructions.ToList();
 
                 for (int i = 0; i < il.Count - 2; ++i)
-                    if (il[i].LoadsField(field_Player_m_foodUpdateTimer) &&
+                    if (il[i].LoadsField(FieldPlayerMFoodUpdateTimer) &&
                         il[i + 1].opcode == OpCodes.Ldarg_1 /* dt */ &&
                         il[i + 2].opcode == OpCodes.Add)
                         // We insert after Ldarg_1 (push dt) a call to our function, which computes the modified DT and returns it.
-                        il.Insert(i + 2, new CodeInstruction(OpCodes.Call, method_ComputeModifiedDt));
+                        il.Insert(i + 2, new CodeInstruction(OpCodes.Call, MethodComputeModifiedDt));
 
                 return il.AsEnumerable();
             }
@@ -368,22 +371,22 @@ namespace OdinQOL.Patches
         [HarmonyPatch(typeof(Player), nameof(Player.GetTotalFoodValue))]
         public static class Player_GetTotalFoodValue_Transpiler
         {
-            private static readonly FieldInfo field_Food_m_health =
+            private static readonly FieldInfo FieldFoodMHealth =
                 AccessTools.Field(typeof(Player.Food), nameof(Player.Food.m_health));
 
-            private static readonly FieldInfo field_Food_m_stamina =
+            private static readonly FieldInfo FieldFoodMStamina =
                 AccessTools.Field(typeof(Player.Food), nameof(Player.Food.m_stamina));
 
-            private static readonly FieldInfo field_Food_m_item =
+            private static readonly FieldInfo FieldFoodMItem =
                 AccessTools.Field(typeof(Player.Food), nameof(Player.Food.m_item));
 
-            private static readonly FieldInfo field_ItemData_m_shared =
+            private static readonly FieldInfo FieldItemDataMShared =
                 AccessTools.Field(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.m_shared));
 
-            private static readonly FieldInfo field_SharedData_m_food =
+            private static readonly FieldInfo FieldSharedDataMFood =
                 AccessTools.Field(typeof(ItemDrop.ItemData.SharedData), nameof(ItemDrop.ItemData.SharedData.m_food));
 
-            private static readonly FieldInfo field_SharedData_m_foodStamina =
+            private static readonly FieldInfo FieldSharedDataMFoodStamina =
                 AccessTools.Field(typeof(ItemDrop.ItemData.SharedData),
                     nameof(ItemDrop.ItemData.SharedData.m_foodStamina));
 
@@ -398,17 +401,15 @@ namespace OdinQOL.Patches
 
                 for (int i = 0; i < il.Count; ++i)
                 {
-                    bool loads_health = il[i].LoadsField(field_Food_m_health);
-                    bool loads_stamina = il[i].LoadsField(field_Food_m_stamina);
+                    bool loadsHealth = il[i].LoadsField(FieldFoodMHealth);
+                    bool loadsStamina = il[i].LoadsField(FieldFoodMStamina);
 
-                    if (loads_health || loads_stamina)
-                    {
-                        il[i].operand = field_Food_m_item;
-                        il.Insert(++i, new CodeInstruction(OpCodes.Ldfld, field_ItemData_m_shared));
-                        il.Insert(++i,
-                            new CodeInstruction(OpCodes.Ldfld,
-                                loads_health ? field_SharedData_m_food : field_SharedData_m_foodStamina));
-                    }
+                    if (!loadsHealth && !loadsStamina) continue;
+                    il[i].operand = FieldFoodMItem;
+                    il.Insert(++i, new CodeInstruction(OpCodes.Ldfld, FieldItemDataMShared));
+                    il.Insert(++i,
+                        new CodeInstruction(OpCodes.Ldfld,
+                            loadsHealth ? FieldSharedDataMFood : FieldSharedDataMFoodStamina));
                 }
 
 
@@ -419,7 +420,7 @@ namespace OdinQOL.Patches
         [HarmonyPatch(typeof(Player), nameof(Player.RemovePiece))]
         public static class Player_RemovePiece_Transpiler
         {
-            private static readonly MethodInfo modifyIsInsideMythicalZone =
+            private static readonly MethodInfo ModifyIsInsideMythicalZone =
                 AccessTools.Method(typeof(Player_RemovePiece_Transpiler), nameof(IsInsideNoBuildLocation));
 
             /// <summary>
@@ -433,7 +434,7 @@ namespace OdinQOL.Patches
                     if (il[i].operand != null)
                         // search for every call to the function
                         if (il[i].operand.ToString().Contains(nameof(Location.IsInsideNoBuildLocation)))
-                            il[i] = new CodeInstruction(OpCodes.Call, modifyIsInsideMythicalZone);
+                            il[i] = new CodeInstruction(OpCodes.Call, ModifyIsInsideMythicalZone);
                 // replace every call to the function with the stub
                 return il.AsEnumerable();
             }
@@ -450,7 +451,7 @@ namespace OdinQOL.Patches
         {
             static void Postfix(Player __instance, bool flashGuardStone)
             {
-                if (!buildInsideProtectedLocations.Value) return;
+                if (!BuildInsideProtectedLocations.Value) return;
                 if (Player.m_localPlayer == null) return;
                 try
                 {
@@ -481,17 +482,15 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(EventSystem), "OnApplicationFocus")]
+        [HarmonyPatch(typeof(EventSystem),
+            "EventSystem.OnApplicationFocus")] // Method is protected, must leave in quotes to patch it.
         public static class EventSystem_OnApplicationFocus_Patch
         {
             private static void Postfix(bool hasFocus)
             {
                 if (PlayerPrefs.GetInt("MuteGameInBackground", 0) == 1)
                 {
-                    if (hasFocus)
-                        AudioListener.volume = PlayerPrefs.GetFloat("MasterVolume", 1f);
-                    else
-                        AudioListener.volume = 0f;
+                    AudioListener.volume = hasFocus ? PlayerPrefs.GetFloat("MasterVolume", 1f) : 0f;
                 }
             }
         }
@@ -536,41 +535,41 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(InventoryGui), "UpdateRecipe")]
-        private class fasterCrafting
+        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateRecipe))]
+        private class FasterCrafting
         {
             private static void Prefix(ref InventoryGui __instance)
             {
-                __instance.m_craftDuration = craftingDuration.Value;
+                __instance.m_craftDuration = CraftingDuration.Value;
             }
         }
 
-        [HarmonyPatch(typeof(FejdStartup), "Awake")]
+        [HarmonyPatch(typeof(FejdStartup), nameof(FejdStartup.Awake))]
         public static class HookServerStart
         {
             private static void Postfix(ref FejdStartup __instance)
             {
                 __instance.m_minimumPasswordLength = 0;
-                __instance.m_serverPlayerLimit = maxPlayers.Value;
+                __instance.m_serverPlayerLimit = MaxPlayers.Value;
             }
         }
 
-        [HarmonyPatch(typeof(SteamGameServer), "SetMaxPlayerCount")]
+        [HarmonyPatch(typeof(SteamGameServer), nameof(SteamGameServer.SetMaxPlayerCount))]
         public static class ChangeSteamServerVariables
         {
             private static void Prefix(ref int cPlayersMax)
             {
-                int maxPlayers = GamePatches.maxPlayers.Value;
+                int maxPlayers = MaxPlayers.Value;
                 if (maxPlayers >= 1) cPlayersMax = maxPlayers;
             }
         }
 
-        [HarmonyPatch(typeof(ZNet), "Awake")]
+        [HarmonyPatch(typeof(ZNet), nameof(ZNet.Awake))]
         public static class ChangeGameServerVariables
         {
             private static void Postfix(ref ZNet __instance)
             {
-                int maxPlayers = GamePatches.maxPlayers.Value;
+                int maxPlayers = MaxPlayers.Value;
                 if (maxPlayers >= 1)
                     // Set Server Instance Max Players
                     __instance.m_serverPlayerLimit = maxPlayers;
@@ -580,7 +579,7 @@ namespace OdinQOL.Patches
         /// <summary>
         ///     Alters public password requirements
         /// </summary>
-        [HarmonyPatch(typeof(FejdStartup), "IsPublicPasswordValid")]
+        [HarmonyPatch(typeof(FejdStartup), nameof(FejdStartup.IsPublicPasswordValid))]
         public static class ChangeServerPasswordBehavior
         {
             private static bool Prefix(ref bool __result)

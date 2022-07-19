@@ -5,23 +5,23 @@ namespace OdinQOL.Patches
 {
     internal class Container_Configs
     {
-        public static ConfigEntry<bool> ContainerSectionOn;
-        public static ConfigEntry<bool> ChestContainerControl;
-        public static ConfigEntry<bool> ShipContainerControl;
-        public static ConfigEntry<int> KarveRow;
-        public static ConfigEntry<int> KarveCol;
-        public static ConfigEntry<int> LongRow;
-        public static ConfigEntry<int> LongCol;
-        public static ConfigEntry<int> CartRow;
-        public static ConfigEntry<int> CartCol;
-        public static ConfigEntry<int> PersonalRow;
-        public static ConfigEntry<int> PersonalCol;
-        public static ConfigEntry<int> WoodRow;
-        public static ConfigEntry<int> WoodCol;
-        public static ConfigEntry<int> IronRow;
-        public static ConfigEntry<int> IronCol;
-        public static ConfigEntry<int> BMRow;
-        public static ConfigEntry<int> BMCol;
+        public static ConfigEntry<bool> ContainerSectionOn = null!;
+        public static ConfigEntry<bool> ChestContainerControl = null!;
+        public static ConfigEntry<bool> ShipContainerControl = null!;
+        public static ConfigEntry<int> KarveRow = null!;
+        public static ConfigEntry<int> KarveCol = null!;
+        public static ConfigEntry<int> LongRow = null!;
+        public static ConfigEntry<int> LongCol = null!;
+        public static ConfigEntry<int> CartRow = null!;
+        public static ConfigEntry<int> CartCol = null!;
+        public static ConfigEntry<int> PersonalRow = null!;
+        public static ConfigEntry<int> PersonalCol = null!;
+        public static ConfigEntry<int> WoodRow = null!;
+        public static ConfigEntry<int> WoodCol = null!;
+        public static ConfigEntry<int> IronRow = null!;
+        public static ConfigEntry<int> IronCol = null!;
+        public static ConfigEntry<int> BmRow = null!;
+        public static ConfigEntry<int> BmCol = null!;
 
         [HarmonyPatch(typeof(Container), nameof(Container.Awake))]
         public static class Container_Awake_Patch
@@ -40,29 +40,28 @@ namespace OdinQOL.Patches
                     ref int inventoryColumns = ref ___m_inventory.m_width;
                     ref int inventoryRows = ref ___m_inventory.m_height;
 
-                    // Personal chest
-                    if (inventoryName == "$piece_chestprivate")
+                    switch (inventoryName)
                     {
-                        inventoryRows = PersonalRow.Value;
-                        inventoryColumns = PersonalCol.Value;
-                    }
-                    // Wood chest
-                    else if (inventoryName == "$piece_chestwood")
-                    {
-                        inventoryRows = WoodRow.Value;
-                        inventoryColumns = WoodCol.Value;
-                    }
-                    // Iron chest
-                    else if (inventoryName == "$piece_chest")
-                    {
-                        inventoryRows = IronRow.Value;
-                        inventoryColumns = IronCol.Value;
-                    }
-                    // Blackmetal chest
-                    else if (inventoryName == "$piece_chestblackmetal")
-                    {
-                        inventoryRows = BMRow.Value;
-                        inventoryColumns = BMCol.Value;
+                        // Personal chest
+                        case "$piece_chestprivate":
+                            inventoryRows = PersonalRow.Value;
+                            inventoryColumns = PersonalCol.Value;
+                            break;
+                        // Wood chest
+                        case "$piece_chestwood":
+                            inventoryRows = WoodRow.Value;
+                            inventoryColumns = WoodCol.Value;
+                            break;
+                        // Iron chest
+                        case "$piece_chest":
+                            inventoryRows = IronRow.Value;
+                            inventoryColumns = IronCol.Value;
+                            break;
+                        // Blackmetal chest
+                        case "$piece_chestblackmetal":
+                            inventoryRows = BmRow.Value;
+                            inventoryColumns = BmCol.Value;
+                            break;
                     }
                 }
                 else

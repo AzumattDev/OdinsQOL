@@ -6,35 +6,35 @@ public class PlantGrowthConfigs
 {
     internal static void Generate()
     {
-        PlantGrowth.displayGrowth =
+        PlantGrowth.DisplayGrowth =
             OdinQOLplugin.context.config("PlantGrowth", "DisplayGrowth", true, "Display growth progress in hover text",
                 false);
-        PlantGrowth.plantAnywhere = OdinQOLplugin.context.config("PlantGrowth", "PlantAnywhere", false,
+        PlantGrowth.PlantAnywhere = OdinQOLplugin.context.config("PlantGrowth", "PlantAnywhere", false,
             "Don't require cultivated ground to plant anything");
-        PlantGrowth.ignoreBiome =
+        PlantGrowth.IgnoreBiome =
             OdinQOLplugin.context.config("PlantGrowth", "IgnoreBiome", false, "Allow planting anything in any biome.");
-        PlantGrowth.ignoreSun =
+        PlantGrowth.IgnoreSun =
             OdinQOLplugin.context.config("PlantGrowth", "IgnoreSun", false, "Allow planting under roofs.");
-        PlantGrowth.preventPlantTooClose = OdinQOLplugin.context.config("PlantGrowth", "PreventPlantTooClose", true,
+        PlantGrowth.PreventPlantTooClose = OdinQOLplugin.context.config("PlantGrowth", "PreventPlantTooClose", true,
             "Prevent plants from being planted if they are too close together to grow.");
-        PlantGrowth.preventDestroyIfCantGrow = OdinQOLplugin.context.config("PlantGrowth", "PreventDestroyIfCantGrow",
+        PlantGrowth.PreventDestroyIfCantGrow = OdinQOLplugin.context.config("PlantGrowth", "PreventDestroyIfCantGrow",
             false,
             "Prevent destruction of plants that normally are destroyed if they can't grow.");
-        PlantGrowth.growthTimeMultTree = OdinQOLplugin.context.config("PlantGrowth", "GrowthTimeMultTree", 1f,
+        PlantGrowth.GrowthTimeMultTree = OdinQOLplugin.context.config("PlantGrowth", "GrowthTimeMultTree", 1f,
             "Multiply time taken to grow by this amount.");
-        PlantGrowth.growRadiusMultTree = OdinQOLplugin.context.config("PlantGrowth", "GrowthRadiusMultTree", 1f,
+        PlantGrowth.GrowRadiusMultTree = OdinQOLplugin.context.config("PlantGrowth", "GrowthRadiusMultTree", 1f,
             "Multiply required space to grow by this amount.");
-        PlantGrowth.minScaleMultTree = OdinQOLplugin.context.config("PlantGrowth", "MinScaleMultTree", 1f,
+        PlantGrowth.MinScaleMultTree = OdinQOLplugin.context.config("PlantGrowth", "MinScaleMultTree", 1f,
             "Multiply minimum size by this amount.");
-        PlantGrowth.maxScaleMultTree = OdinQOLplugin.context.config("PlantGrowth", "MaxScaleMultTree", 1f,
+        PlantGrowth.MaxScaleMultTree = OdinQOLplugin.context.config("PlantGrowth", "MaxScaleMultTree", 1f,
             "Multiply maximum size by this amount.");
-        PlantGrowth.growthTimeMultPlant = OdinQOLplugin.context.config("PlantGrowth", "GrowthTimeMultPlant", 1f,
+        PlantGrowth.GrowthTimeMultPlant = OdinQOLplugin.context.config("PlantGrowth", "GrowthTimeMultPlant", 1f,
             "Multiply time taken to grow by this amount.");
-        PlantGrowth.growRadiusMultPlant = OdinQOLplugin.context.config("PlantGrowth", "GrowthRadiusMultPlant", 1f,
+        PlantGrowth.GrowRadiusMultPlant = OdinQOLplugin.context.config("PlantGrowth", "GrowthRadiusMultPlant", 1f,
             "Multiply required space to grow by this amount.");
-        PlantGrowth.minScaleMultPlant = OdinQOLplugin.context.config("PlantGrowth", "MinScaleMultPlant", 1f,
+        PlantGrowth.MinScaleMultPlant = OdinQOLplugin.context.config("PlantGrowth", "MinScaleMultPlant", 1f,
             "Multiply minimum size by this amount.");
-        PlantGrowth.maxScaleMultPlant = OdinQOLplugin.context.config("PlantGrowth", "MaxScaleMultPlant", 1f,
+        PlantGrowth.MaxScaleMultPlant = OdinQOLplugin.context.config("PlantGrowth", "MaxScaleMultPlant", 1f,
             "Multiply maximum size by this amount.");
     }
 }

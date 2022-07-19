@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
@@ -16,35 +17,31 @@ namespace OdinQOL.Patches
             Value
         }
 
-        public static ConfigEntry<int> WorkbenchRange;
-        public static ConfigEntry<int> workbenchEnemySpawnRange;
-        public static ConfigEntry<bool> AlterWorkBench;
-        public static ConfigEntry<int> maxEntries;
-        public static ConfigEntry<SortType> sortType;
-        public static ConfigEntry<bool> sortAsc;
-        public static ConfigEntry<string> entryString;
-        public static ConfigEntry<string> overFlowText;
-        public static ConfigEntry<string> capacityText;
-        public static ConfigEntry<bool> useScrollWheel;
-        public static ConfigEntry<bool> showMenu;
-        public static ConfigEntry<string> scrollModKey;
-        public static ConfigEntry<string> prevHotKey;
-        public static ConfigEntry<string> nextHotKey;
-        public static ConfigEntry<int> workbenchAttachmentRange;
+        public static ConfigEntry<int> WorkbenchRange = null!;
+        public static ConfigEntry<int> WorkbenchEnemySpawnRange = null!;
+        public static ConfigEntry<bool> AlterWorkBench = null!;
+        public static ConfigEntry<int> MaxEntries = null!;
+        public static ConfigEntry<SortType> sortType = null!;
+        public static ConfigEntry<bool> SortAsc = null!;
+        public static ConfigEntry<string> EntryString = null!;
+        public static ConfigEntry<string> OverFlowText = null!;
+        public static ConfigEntry<string> CapacityText = null!;
+        public static ConfigEntry<bool> UseScrollWheel = null!;
+        public static ConfigEntry<bool> ShowMenu = null!;
+        public static ConfigEntry<string> ScrollModKey = null!;
+        public static ConfigEntry<string> PrevHotKey = null!;
+        public static ConfigEntry<string> NextHotKey = null!;
+        public static ConfigEntry<int> WorkbenchAttachmentRange = null!;
 
 
         public static void ResizeChildEffectArea(MonoBehaviour parent, EffectArea.Type includedTypes, float newRadius)
         {
-            if (parent != null)
-            {
-                EffectArea? effectArea = parent.GetComponentInChildren<EffectArea>();
-                if (effectArea != null)
-                    if ((effectArea.m_type & includedTypes) != 0)
-                    {
-                        SphereCollider? collision = effectArea.GetComponent<SphereCollider>();
-                        if (collision != null) collision.radius = newRadius;
-                    }
-            }
+            if (parent == null) return;
+            EffectArea? effectArea = parent.GetComponentInChildren<EffectArea>();
+            if (effectArea == null) return;
+            if ((effectArea.m_type & includedTypes) == 0) return;
+            SphereCollider? collision = effectArea.GetComponent<SphereCollider>();
+            if (collision != null) collision.radius = newRadius;
         }
 
         public static void SortByType(SortType type, List<ItemData> items, bool asc)
@@ -95,15 +92,12 @@ namespace OdinQOL.Patches
         {
             items.Sort(delegate(ItemData a, ItemData b)
             {
-                if (a.m_shared.m_weight == b.m_shared.m_weight)
-                {
-                    if (a.m_shared.m_name == b.m_shared.m_name)
-                        return CompareInts(a.m_stack, b.m_stack, false);
-                    return CompareStrings(Localization.instance.Localize(a.m_shared.m_name),
-                        Localization.instance.Localize(b.m_shared.m_name), true);
-                }
-
-                return CompareFloats(a.m_shared.m_weight, b.m_shared.m_weight, asc);
+                if (a.m_shared.m_weight != b.m_shared.m_weight)
+                    return CompareFloats(a.m_shared.m_weight, b.m_shared.m_weight, asc);
+                if (a.m_shared.m_name == b.m_shared.m_name)
+                    return CompareInts(a.m_stack, b.m_stack, false);
+                return CompareStrings(Localization.instance.Localize(a.m_shared.m_name),
+                    Localization.instance.Localize(b.m_shared.m_name), true);
             });
         }
 
@@ -111,15 +105,12 @@ namespace OdinQOL.Patches
         {
             items.Sort(delegate(ItemData a, ItemData b)
             {
-                if (a.m_shared.m_value == b.m_shared.m_value)
-                {
-                    if (a.m_shared.m_name == b.m_shared.m_name)
-                        return CompareInts(a.m_stack, b.m_stack, false);
-                    return CompareStrings(Localization.instance.Localize(a.m_shared.m_name),
-                        Localization.instance.Localize(b.m_shared.m_name), true);
-                }
-
-                return CompareInts(a.m_shared.m_value, b.m_shared.m_value, asc);
+                if (a.m_shared.m_value != b.m_shared.m_value)
+                    return CompareInts(a.m_shared.m_value, b.m_shared.m_value, asc);
+                if (a.m_shared.m_name == b.m_shared.m_name)
+                    return CompareInts(a.m_stack, b.m_stack, false);
+                return CompareStrings(Localization.instance.Localize(a.m_shared.m_name),
+                    Localization.instance.Localize(b.m_shared.m_name), true);
             });
         }
 
@@ -136,60 +127,56 @@ namespace OdinQOL.Patches
 
         public static int CompareStrings(string a, string b, bool asc)
         {
-            if (asc)
-                return string.Compare(a, b, StringComparison.Ordinal);
-            return string.Compare(b, a, StringComparison.Ordinal);
+            return asc
+                ? string.Compare(a, b, StringComparison.Ordinal)
+                : string.Compare(b, a, StringComparison.Ordinal);
         }
 
         public static int CompareFloats(float a, float b, bool asc)
         {
-            if (asc)
-                return a.CompareTo(b);
-            return b.CompareTo(a);
+            return asc ? a.CompareTo(b) : b.CompareTo(a);
         }
 
         public static int CompareInts(float a, float b, bool asc)
         {
-            if (asc)
-                return a.CompareTo(b);
-            return b.CompareTo(a);
+            return asc ? a.CompareTo(b) : b.CompareTo(a);
         }
 
 
         /// <summary>
         ///     Alter workbench range
         /// </summary>
-        [HarmonyPatch(typeof(CraftingStation), "Start")]
+        [HarmonyPatch(typeof(CraftingStation), nameof(CraftingStation.Start))]
         public static class WorkbenchRangeIncrease
         {
             private static void Prefix(ref CraftingStation __instance, ref float ___m_rangeBuild,
                 GameObject ___m_areaMarker)
             {
-                if (AlterWorkBench.Value && WorkbenchRange.Value > 0)
-                    try
-                    {
-                        ___m_rangeBuild = WorkbenchRange.Value;
-                        ___m_areaMarker.GetComponent<CircleProjector>().m_radius = ___m_rangeBuild;
-                        float scaleIncrease = (WorkbenchRange.Value - 20f) / 20f * 100f;
-                        ___m_areaMarker.gameObject.transform.localScale =
-                            new Vector3(scaleIncrease / 100, 1f, scaleIncrease / 100);
+                if (!AlterWorkBench.Value || WorkbenchRange.Value <= 0) return;
+                try
+                {
+                    ___m_rangeBuild = WorkbenchRange.Value;
+                    ___m_areaMarker.GetComponent<CircleProjector>().m_radius = ___m_rangeBuild;
+                    float scaleIncrease = (WorkbenchRange.Value - 20f) / 20f * 100f;
+                    ___m_areaMarker.gameObject.transform.localScale =
+                        new Vector3(scaleIncrease / 100, 1f, scaleIncrease / 100);
 
-                        // Apply this change to the child GameObject's EffectArea collision.
-                        // Various other systems query this collision instead of the PrivateArea radius for permissions (notably, enemy spawning).
-                        ResizeChildEffectArea(__instance, EffectArea.Type.PlayerBase,
-                            workbenchEnemySpawnRange.Value > 0 ? workbenchEnemySpawnRange.Value : WorkbenchRange.Value);
-                    }
-                    catch
-                    {
-                        // is not a workbench
-                    }
+                    // Apply this change to the child GameObject's EffectArea collision.
+                    // Various other systems query this collision instead of the PrivateArea radius for permissions (notably, enemy spawning).
+                    ResizeChildEffectArea(__instance, EffectArea.Type.PlayerBase,
+                        WorkbenchEnemySpawnRange.Value > 0 ? WorkbenchEnemySpawnRange.Value : WorkbenchRange.Value);
+                }
+                catch
+                {
+                    // is not a workbench
+                }
             }
         }
 
         /// <summary>
         ///     Disable roof requirement on workbench
         /// </summary>
-        [HarmonyPatch(typeof(CraftingStation), "CheckUsable")]
+        [HarmonyPatch(typeof(CraftingStation), nameof(CraftingStation.CheckUsable))]
         public static class WorkbenchRemoveRestrictions
         {
             private static bool Prefix(ref CraftingStation __instance, ref Player player, ref bool showMessage,
@@ -201,7 +188,7 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(Container), "GetHoverText")]
+        [HarmonyPatch(typeof(Container), nameof(Container.GetHoverText))]
         private static class GetHoverText_Patch
         {
             private static void Postfix(Container __instance, ref string __result)
@@ -211,27 +198,26 @@ namespace OdinQOL.Patches
                     __instance.GetInventory().NrOfItems() == 0)
                     return;
 
-                List<ItemData>? items = new();
-                foreach (ItemDrop.ItemData? idd in __instance.GetInventory().GetAllItems())
-                    items.Add(new ItemData(idd));
-                SortByType(SortType.Value, items, sortAsc.Value);
+                List<ItemData>? items = __instance.GetInventory().GetAllItems().Select(idd => new ItemData(idd))
+                    .ToList();
+                SortByType(SortType.Value, items, SortAsc.Value);
                 int entries = 0;
                 int amount = 0;
                 string? name = "";
 
-                if (capacityText.Value.Trim().Length > 0)
+                if (CapacityText.Value.Trim().Length > 0)
                 {
                     __result = __result.Replace("\n",
-                        string.Format(capacityText.Value, __instance.GetInventory().GetAllItems().Count,
+                        string.Format(CapacityText.Value, __instance.GetInventory().GetAllItems().Count,
                             __instance.GetInventory().GetWidth() * __instance.GetInventory().GetHeight()) + "\n");
                 }
 
                 for (int i = 0; i < items.Count; i++)
                 {
-                    if (maxEntries.Value >= 0 && entries >= maxEntries.Value)
+                    if (MaxEntries.Value >= 0 && entries >= MaxEntries.Value)
                     {
-                        if (overFlowText.Value.Length > 0)
-                            __result += "\n" + overFlowText.Value;
+                        if (OverFlowText.Value.Length > 0)
+                            __result += "\n" + OverFlowText.Value;
                         break;
                     }
 
@@ -243,7 +229,7 @@ namespace OdinQOL.Patches
                     }
                     else
                     {
-                        __result += "\n" + string.Format(entryString.Value, amount,
+                        __result += "\n" + string.Format(EntryString.Value, amount,
                             Localization.instance.Localize(name));
                         entries++;
 
@@ -252,7 +238,7 @@ namespace OdinQOL.Patches
 
                     name = item.m_shared.m_name;
                     if (i == items.Count - 1)
-                        __result += "\n" + string.Format(entryString.Value, amount,
+                        __result += "\n" + string.Format(EntryString.Value, amount,
                             Localization.instance.Localize(name));
                 }
             }
@@ -263,8 +249,8 @@ namespace OdinQOL.Patches
         {
             static void Prefix(StationExtension __instance, ref float ___m_maxStationDistance)
             {
-                if (CraftingPatch.AlterWorkBench.Value)
-                    ___m_maxStationDistance = CraftingPatch.workbenchAttachmentRange.Value;
+                if (AlterWorkBench.Value)
+                    ___m_maxStationDistance = WorkbenchAttachmentRange.Value;
             }
         }
 

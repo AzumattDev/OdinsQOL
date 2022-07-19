@@ -5,13 +5,14 @@ namespace OdinQOL.Patches
 {
     internal class WorldPatches
     {
-        public static ConfigEntry<int> DungeonMaxRoomCount;
-        public static ConfigEntry<int> DungoneMinRoomCount;
-        public static ConfigEntry<int> CampRadiusMin;
-        public static ConfigEntry<int> CampRadiusMax;
+        public static ConfigEntry<int> DungeonMaxRoomCount = null!;
+        public static ConfigEntry<int> DungoneMinRoomCount = null!;
+        public static ConfigEntry<int> CampRadiusMin = null!;
+        public static ConfigEntry<int> CampRadiusMax = null!;
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(DungeonGenerator), "Generate", typeof(int), typeof(ZoneSystem.SpawnMode))]
+        [HarmonyPatch(typeof(DungeonGenerator), nameof(DungeonGenerator.Generate), typeof(int),
+            typeof(ZoneSystem.SpawnMode))]
         private static void ApplyGeneratorSettings(ref DungeonGenerator __instance)
         {
             __instance.m_minRooms = DungoneMinRoomCount.Value;

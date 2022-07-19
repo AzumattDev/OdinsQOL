@@ -6,7 +6,7 @@ namespace OdinQOL.Patches
 {
     public class ClientPatches
     {
-        public static ConfigEntry<string> _chatPlayerName;
+        public static ConfigEntry<string> ChatPlayerName = null!;
 
         private static bool _overridePlayerName;
 
@@ -45,8 +45,8 @@ namespace OdinQOL.Patches
             {
                 if (_overridePlayerName
                     && __instance == Player.m_localPlayer
-                    && !string.IsNullOrEmpty(_chatPlayerName.Value))
-                    __result =  _chatPlayerName.Value;
+                    && !string.IsNullOrEmpty(ChatPlayerName.Value))
+                    __result = ChatPlayerName.Value;
             }
         }
 
@@ -55,8 +55,7 @@ namespace OdinQOL.Patches
         {
             static void Postfix(PlayerProfile __instance, ref string __result)
             {
-                if (_overridePlayerName && !string.IsNullOrEmpty(_chatPlayerName.Value)) __result = _chatPlayerName.Value;
-                
+                if (_overridePlayerName && !string.IsNullOrEmpty(ChatPlayerName.Value)) __result = ChatPlayerName.Value;
             }
         }
 
@@ -65,12 +64,12 @@ namespace OdinQOL.Patches
         {
             static void Postfix(Game __instance, Vector3 spawnPoint, Player __result)
             {
-                if (!string.IsNullOrEmpty(_chatPlayerName.Value))
-                    __result.m_nview.GetZDO().Set("playerName", _chatPlayerName.Value);
+                if (!string.IsNullOrEmpty(ChatPlayerName.Value))
+                    __result.m_nview.GetZDO().Set("playerName", ChatPlayerName.Value);
             }
         }
 
-        [HarmonyPatch(typeof(Ship), "Awake")]
+        [HarmonyPatch(typeof(Ship), nameof(Ship.Awake))]
         public static class shipfix
         {
             private static void Postfix(ref Ship __instance)
@@ -79,36 +78,13 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(ItemStand), "Interact")]
-        private class standFix
+        [HarmonyPatch(typeof(ItemStand), nameof(ItemStand.Interact))]
+        private class StandFix
         {
             private static bool Prefix(Humanoid user, bool hold, ItemStand __instance)
             {
                 if (PrivateArea.CheckAccess(__instance.transform.position)) return true;
                 return false;
-            }
-        }
-
-
-        [HarmonyPatch(typeof(ItemStand), "CanAttach")]
-        public class ItemStand_CanAttach
-        {
-            public static void Postfix(ItemStand __instance, ref bool __result)
-            {
-                if (__instance.m_name == "$piece_itemstand") __result = true;
-            }
-        }
-
-        [HarmonyPatch(typeof(ItemStand), "GetAttachPrefab")]
-        public class ItemStand_GetAttachPrefab
-        {
-            public static void Postfix(GameObject item, ref GameObject __result)
-            {
-                if (__result == null)
-                {
-                    Collider? componentInChildren = item.transform.GetComponentInChildren<Collider>();
-                    if ((bool)componentInChildren) __result = componentInChildren.transform.gameObject;
-                }
             }
         }
     }

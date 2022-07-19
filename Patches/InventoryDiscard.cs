@@ -9,11 +9,12 @@ namespace OdinQOL.Patches
 {
     public class InventoryDiscard
     {
-        public static ConfigEntry<KeyboardShortcut> hotKey;
-        public static ConfigEntry<bool> discardInvEnabled;
-        public static ConfigEntry<bool> returnUnknownResources;
-        public static ConfigEntry<bool> returnEnchantedResources;
-        public static ConfigEntry<float> returnResources;
+        public static ConfigEntry<KeyboardShortcut> HotKey = null!;
+        public static ConfigEntry<bool> DiscardInvEnabled = null!;
+        public static ConfigEntry<bool> ReturnUnknownResources = null!;
+        public static ConfigEntry<bool> ReturnEnchantedResources = null!;
+
+        public static ConfigEntry<float> ReturnResources = null!;
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateItemDrag))]
         private static class UpdateItemDrag_Patch
@@ -21,18 +22,18 @@ namespace OdinQOL.Patches
             private static void Postfix(InventoryGui __instance, ItemDrop.ItemData ___m_dragItem,
                 Inventory ___m_dragInventory, int ___m_dragAmount, ref GameObject ___m_dragGo)
             {
-                if (!discardInvEnabled.Value || !hotKey.Value.IsDown() || ___m_dragItem == null ||
+                if (!DiscardInvEnabled.Value || !HotKey.Value.IsDown() || ___m_dragItem == null ||
                     !___m_dragInventory.ContainsItem(___m_dragItem))
                     return;
 
                 OdinQOLplugin.QOLLogger.LogDebug(
                     $"Discarding {___m_dragAmount}/{___m_dragItem.m_stack} {___m_dragItem.m_dropPrefab.name}");
 
-                if (returnResources.Value > 0)
+                if (ReturnResources.Value > 0)
                 {
                     Recipe recipe = ObjectDB.instance.GetRecipe(___m_dragItem);
 
-                    if (recipe != null && (returnUnknownResources.Value ||
+                    if (recipe != null && (ReturnUnknownResources.Value ||
                                            Player.m_localPlayer.IsRecipeKnown(___m_dragItem.m_shared.m_name)))
                     {
                         OdinQOLplugin.QOLLogger.LogDebug(
@@ -42,8 +43,8 @@ namespace OdinQOL.Patches
                         List<Piece.Requirement>? reqs = recipe.m_resources.ToList();
 
                         bool isMagic = false;
-                        bool cancel = false;
-                        if (OdinQOLplugin.epicLootAssembly != null && returnEnchantedResources.Value)
+                        const bool cancel = false;
+                        if (OdinQOLplugin.epicLootAssembly != null && ReturnEnchantedResources.Value)
                             isMagic = (bool)OdinQOLplugin.epicLootAssembly.GetType("EpicLoot.ItemDataExtensions")
                                 .GetMethod("IsMagic", BindingFlags.Public | BindingFlags.Static, null,
                                     new[] { typeof(ItemDrop.ItemData) }, null)?.Invoke(null, new[] { ___m_dragItem });
@@ -59,7 +60,7 @@ namespace OdinQOL.Patches
                                     ?.Invoke(null, new object[] { ___m_dragItem, rarity });
                             foreach (KeyValuePair<ItemDrop, int> kvp in magicReqs)
                             {
-                                if (!returnUnknownResources.Value &&
+                                if (!ReturnUnknownResources.Value &&
                                     (ObjectDB.instance.GetRecipe(kvp.Key.m_itemData) &&
                                      !Player.m_localPlayer.IsRecipeKnown(kvp.Key.m_itemData.m_shared.m_name) ||
                                      !Player.m_localPlayer.m_knownMaterial.Contains(kvp.Key.m_itemData.m_shared
@@ -89,7 +90,7 @@ namespace OdinQOL.Patches
                                             item.GetComponent<ItemDrop>().m_itemData.m_shared.m_name ==
                                             req.m_resItem.m_itemData.m_shared.m_name)!;
                                         ItemDrop.ItemData newItem = prefab.GetComponent<ItemDrop>().m_itemData.Clone();
-                                        int numToAdd = Mathf.RoundToInt(req.GetAmount(j) * returnResources.Value);
+                                        int numToAdd = Mathf.RoundToInt(req.GetAmount(j) * ReturnResources.Value);
                                         OdinQOLplugin.QOLLogger.LogDebug(
                                             $"Returning {numToAdd}/{req.GetAmount(j)} {prefab.name}");
                                         while (numToAdd > 0)
