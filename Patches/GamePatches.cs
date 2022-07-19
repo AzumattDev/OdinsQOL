@@ -483,7 +483,7 @@ namespace OdinQOL.Patches
         }
 
         [HarmonyPatch(typeof(EventSystem),
-            "EventSystem.OnApplicationFocus")] // Method is protected, must leave in quotes to patch it.
+            "OnApplicationFocus")] // Method is protected, must leave in quotes to patch it.
         public static class EventSystem_OnApplicationFocus_Patch
         {
             private static void Postfix(bool hasFocus)
