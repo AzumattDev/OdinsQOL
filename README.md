@@ -8,27 +8,39 @@ the best collection of QOL and tweaks in one spot
 # Changelog (latest patch listed first)
 
 ##### 0.8.0
-* Add FileWatcher to the code. Changes made directly to the configuration files on the server should sync with the clients upon saving the file.
-* Integrate CraftFromContainers and provide a little boost to the performance of it (more optimizations to it to come!)
-    * Please note, if CFC is installed, this mod will not load.
-    * The CFC code has been updated to provide compatibility with WardIsLove wards, no more pulling from chests you aren't allowed to. (I hope!)
+
+* Add FileWatcher to the code. Changes made directly to the configuration files on the server should sync with the
+  clients upon saving the file. Keep in mind, depending on the setting changed, it might require a client reboot to see
+  the change.
+* Integrate CraftFromContainers and provide a little boost to the performance of it
+    * Please note, `if CFC is installed, this mod will not load.`
+    * The CFC code has been updated to provide compatibility with WardIsLove wards, no more pulling from chests you
+      aren't allowed to. (I hope!)
     * CraftFromContainers section in the config file is the new location for all things CFC in OdinQOL.
-* Remove ConnectionPanel code/configs. Integrated my FastLink code but renamed to Bifröst. Works the same! This is to
-  allow for passwords, support of IPv6 and a quicker launch via UI.
-    * The file you can configure your servers for OdinQOL is `com.odinplusqol.mod_servers.yml`
-    * If you happen to have FastLink installed, these are compatible and can be ran at the same time. Shouldn't be any
-      issues. You can disable OdinQOLs version of it in the configs under BiFrost section.
+* Remove ConnectionPanel code/configs. Integrated my FastLink code but renamed to Bifröst. Works the
+  same! This is to allow for passwords, support of IPv6 and a quicker launch via UI.
+    * `(It is highly recommended that you
+      regenerate your configuration file due to
+      the removal of the ConnectionPanel configs. BepInEx doesn't handle orphaned config entries)`
+        * The file you can configure your servers for OdinQOL is `com.odinplusqol.mod_servers.yml`
+            * If you happen to have FastLink installed, these are compatible and can be ran at the same time. Shouldn't
+              be any
+              issues. You can disable OdinQOLs version of it in the configs under BiFrost section.
 * Fix the placement issue some people were having. Seems there was a rouge patch that didn't check for the configuration
   value.
 * Beehive config value default changed to vanilla default of 1200
-* Fix min_room count for dungeons to match vanilla value. Max rooms kept at 20 just in case there is lag associated with this value change.
+* Fix min_room count for dungeons to match vanilla value. Max rooms kept at 20 just in case there is lag associated with
+  this value change.
 * Auto Storage changes. Add in blackmetal chest configs. Optimize code.
 * Stack size configuration option has been changed in how it functions. It's now a direct multiplier.
-  * `Multiplier for your item stacks. Directly multiplies stack of the item by this value. (Stack of 50 with value of 10 here would turn into a stack of 500)`
-* Fix some of the descriptions for configs and various other internal code updates/refactors.
+    * `Multiplier for your item stacks. Directly multiplies stack of the item by this value. (Stack of 50 with value of 10 here would turn into a stack of 500)`
+* Fix some of the descriptions for configs.
+*  Various other internal code updates/refactors. Some updates provide better performance, so the mod should run smoother now.
 * Incompatibility added to the new "Mod Settings" mod by Jules/Jotunn. There were issues in the past where this mod
-  would allow bypassing configuration options while it was inside Jotunn codebase. Though this might not be the case anymore, I won't risk it happening once
+  would allow bypassing configuration options while it was inside Jotunn codebase. Though this might not be the case
+  anymore, I won't risk it happening once
   more.
+
 ##### 0.7.1
 
 * Compatibility with Shipyard by adding 3 configuration options to the "Containers" section.

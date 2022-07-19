@@ -57,7 +57,7 @@ namespace OdinQOL
         "com.jotunn.modsettings")] // It was exploited in the past to bypass ServerSync settings while it was in Jotunn. No telling that won't happen again even if only a short time.
     public class OdinQOLplugin : BaseUnityPlugin
     {
-        public const string Version = "0.7.1";
+        public const string Version = "0.8.0";
         public const string ModName = "OdinPlusQOL";
         public const string GUID = "com.odinplusqol.mod";
         internal static readonly int windowId = 434343;
