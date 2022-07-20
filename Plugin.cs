@@ -170,6 +170,8 @@ namespace OdinQOL
 
         private void Update()
         {
+            if (Minimap.instance && Player.m_localPlayer != null && ZNet.instance != null)
+                StartCoroutine(MapDetail.UpdateMap(false));
             if (Utilities.IgnoreKeyPresses())
                 return;
             if (AutoStorePatch.StoreShortcut.Value.IsDown())
@@ -184,9 +186,6 @@ namespace OdinQOL
                 Player.m_localPlayer.Message(MessageHud.MessageType.Center,
                     string.Format(AutoStorePatch.toggleString.Value, AutoStorePatch.isOn.Value));
             }
-
-            if (Minimap.instance && Player.m_localPlayer && ZNet.instance != null)
-                StartCoroutine(MapDetail.UpdateMap(false));
 
             if (Utilities.IgnoreKeyPresses() || ToggleClockKeyOnPress.Value ||
                 !PressedToggleKey())

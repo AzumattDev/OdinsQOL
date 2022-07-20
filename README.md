@@ -9,6 +9,8 @@ the best collection of QOL and tweaks in one spot
 ##### 0.8.2
 * Update Structural integrity to be in percentage values, also update the config descriptions to make more sense.
 * Fix issues with the BiFrost toggle
+* Fix newly created issue that cause the clock to no longer appear
+* Fix issue with MapDetails
 ##### 0.8.1
 * Fix a mess up
 ##### 0.8.0

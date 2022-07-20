@@ -27,12 +27,9 @@ namespace OdinQOL.Patches
         {
             if (!MapDetailOn.Value)
                 yield break;
-            if (Player.m_localPlayer == null)
-                yield break;
 
             if (force)
                 yield return null;
-
 
             Vector3 position = Player.m_localPlayer.transform.position;
             Vector2 coords = new(position.x,
@@ -160,9 +157,9 @@ namespace OdinQOL.Patches
                 Color32[]? data = ___m_mapTexture.GetPixels32();
 
                 _mapTexture = new Texture2D(___m_mapTexture.width, ___m_mapTexture.height, TextureFormat.RGBA32, false)
-                    {
-                        wrapMode = TextureWrapMode.Clamp
-                    };
+                {
+                    wrapMode = TextureWrapMode.Clamp
+                };
                 _mapTexture.SetPixels32(data);
                 _mapTexture.Apply();
             }
