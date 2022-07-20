@@ -3,9 +3,9 @@ using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
 
-namespace OdinQOL.Patches
+namespace OdinQOL
 {
-    public class ClockPatches
+    public partial class OdinQOLplugin
     {
         public static ConfigEntry<bool> ShowingClock = null!;
         public static ConfigEntry<bool> ShowClockOnChange = null!;
@@ -40,10 +40,10 @@ namespace OdinQOL.Patches
 
         private void OnGUI()
         {
-            if (OdinQOLplugin.ModEnabled.Value && _configApplied && Player.m_localPlayer && Hud.instance)
+            if (ShowingClock.Value && _configApplied && Player.m_localPlayer && Hud.instance)
             {
                 float alpha = 1f;
-                NewTimeString = OdinQOLplugin.GetCurrentTimeString();
+                NewTimeString = GetCurrentTimeString();
                 if (ShowClockOnChange.Value)
                 {
                     if (NewTimeString == _lastTimeString)
@@ -80,8 +80,7 @@ namespace OdinQOL.Patches
                     Traverse.Create(Hud.instance).Method("IsVisible").GetValue<bool>())
                 {
                     GUI.backgroundColor = Color.clear;
-                    _windowRect = GUILayout.Window(OdinQOLplugin.windowId,
-                        new Rect(_windowRect.position, _timeRect.size),
+                    _windowRect = GUILayout.Window(windowId, new Rect(_windowRect.position, _timeRect.size),
                         WindowBuilder,
                         "");
                 }
@@ -92,7 +91,7 @@ namespace OdinQOL.Patches
             {
                 _clockPosition = new Vector2(_windowRect.x, _windowRect.y);
                 ClockLocationString.Value = $"{_windowRect.x},{_windowRect.y}";
-                OdinQOLplugin.context.Config.Save();
+                Config.Save();
             }
         }
 
@@ -129,13 +128,13 @@ namespace OdinQOL.Patches
             }
             else
             {
-                OdinQOLplugin.QOLLogger.LogDebug("Getting fonts");
+                QOLLogger.LogDebug("Getting fonts");
                 Font[]? fonts = Resources.FindObjectsOfTypeAll<Font>();
                 foreach (Font? font in fonts)
                     if (font.name == ClockFontName.Value)
                     {
                         _clockFont = font;
-                        OdinQOLplugin.QOLLogger.LogDebug($"Got font {font.name}");
+                        QOLLogger.LogDebug($"Got font {font.name}");
                         break;
                     }
             }
@@ -158,7 +157,7 @@ namespace OdinQOL.Patches
             _configApplied = true;
         }
 
-        internal static string GetCurrentTimeString(DateTime theTime, float fraction, int days)
+        private static string GetCurrentTimeString(DateTime theTime, float fraction, int days)
         {
             string[]? fuzzyStringArray = ClockFuzzyStrings.Value.Split(',');
 
@@ -169,12 +168,6 @@ namespace OdinQOL.Patches
 
             return string.Format(ClockString.Value, theTime.ToString(ClockFormat.Value), fuzzyStringArray[idx],
                 days.ToString());
-        }
-
-        private static string GetFuzzyFileName(string lang)
-        {
-            return OdinQOLplugin.context.Info.Location.Replace("ClockMod.dll", "") +
-                   string.Format("clockmod.lang.{0}.cfg", lang);
         }
 
         private static bool CheckKeyHeld(string value)
@@ -189,7 +182,7 @@ namespace OdinQOL.Patches
             }
         }
 
-        internal static bool PressedToggleKey()
+        private bool PressedToggleKey()
         {
             try
             {
@@ -206,7 +199,7 @@ namespace OdinQOL.Patches
         {
             private static void Postfix()
             {
-                if (!OdinQOLplugin.ModEnabled.Value)
+                if (!ShowingClock.Value)
                     return;
 
                 ApplyConfig();

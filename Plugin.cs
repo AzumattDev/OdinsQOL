@@ -55,7 +55,7 @@ namespace OdinQOL
         "aedenthorn.CraftFromContainers")] // Since I have pulled this in and optimized a few things...make sure we don't overlap.
     [BepInIncompatibility(
         "com.jotunn.modsettings")] // It was exploited in the past to bypass ServerSync settings while it was in Jotunn. No telling that won't happen again even if only a short time.
-    public class OdinQOLplugin : BaseUnityPlugin
+    public partial class OdinQOLplugin : BaseUnityPlugin
     {
         public const string Version = "0.8.1";
         public const string ModName = "OdinPlusQOL";
@@ -188,11 +188,11 @@ namespace OdinQOL
             if (Minimap.instance && Player.m_localPlayer && ZNet.instance != null)
                 StartCoroutine(MapDetail.UpdateMap(false));
 
-            if (Utilities.IgnoreKeyPresses() || ClockPatches.ToggleClockKeyOnPress.Value ||
-                !ClockPatches.PressedToggleKey())
+            if (Utilities.IgnoreKeyPresses() || ToggleClockKeyOnPress.Value ||
+                !PressedToggleKey())
                 return;
-            bool show = ClockPatches.ShowingClock.Value;
-            ClockPatches.ShowingClock.Value = !show;
+            bool show = ShowingClock.Value;
+            ShowingClock.Value = !show;
             Config.Save();
         }
 
@@ -285,7 +285,7 @@ namespace OdinQOL
             DateTime now = DateTime.Now;
             DateTime theTime = new(now.Year, now.Month, now.Day, hour, minute, second);
             int days = EnvMan.instance.GetCurrentDay();
-            return ClockPatches.GetCurrentTimeString(theTime, fraction, days);
+            return GetCurrentTimeString(theTime, fraction, days);
         }
 
         public static string[] Categories =
