@@ -282,7 +282,7 @@ namespace OdinQOL
 
         internal static void ReadNewServers(object sender, FileSystemEventArgs e)
         {
-            if (!File.Exists(BiFrostServers.ConfigPath)) return;
+            if (!File.Exists(BiFrostServers.ConfigPath) || BiFrost.DisableBiFrost.Value) return;
             try
             {
                 OdinQOLplugin.QOLLogger.LogDebug("FastLink: Reloading Server List");

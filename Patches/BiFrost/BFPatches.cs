@@ -94,6 +94,7 @@ internal class BiFrostSetupGui
         MServerListElements.Clear();
 
         BiFrostServers.Init();
+        if (BiFrost.DisableBiFrost.Value) return;
 
         BFRootGo = new GameObject("BiFrost");
         BFRootGo.AddComponent<RectTransform>();

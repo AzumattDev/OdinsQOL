@@ -27,7 +27,7 @@ internal class BiFrostServers
 
     public static void Init()
     {
-        //if (Utilities.IsFastLinkLoaded() || BiFrost.DisableBiFrost.Value) return;
+        if (BiFrost.DisableBiFrost.Value) return;
         entries.Clear();
         try
         {

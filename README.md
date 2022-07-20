@@ -6,7 +6,11 @@ the best collection of QOL and tweaks in one spot
 ### Having issues? Post them on my GitHub for me to not forget! (https://github.com/AzumattDev/OdinsQOL/issues)
 
 # Changelog (latest patch listed first)
-
+##### 0.8.2
+* Update Structural integrity to be in percentage values, also update the config descriptions to make more sense.
+* Fix issues with the BiFrost toggle
+##### 0.8.1
+* Fix a mess up
 ##### 0.8.0
 
 * Add FileWatcher to the code. Changes made directly to the configuration files on the server should sync with the
