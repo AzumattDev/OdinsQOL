@@ -232,13 +232,17 @@ namespace OdinQOL
                             {
                                 sendItem.m_shared.m_weight = ApplyModifierValue(sendItem.m_shared.m_weight,
                                     OdinQOLplugin.WeightReduction.Value);
+                                OdinQOLplugin.QOLLogger.LogDebug("Send ItemStackSize:" +
+                                                                 sendItem.m_shared.m_maxStackSize +
+                                                                 $"\nRequirement Stack Value: {requirement.m_resItem.m_itemData.m_shared.m_maxStackSize}");
 
                                 if (sendItem.m_shared.m_maxStackSize > 1)
                                     if (OdinQOLplugin.ItemStackMultiplier.Value >= 1)
                                         sendItem.m_shared.m_maxStackSize =
-                                            (int)ApplyModifierValue(
-                                                requirement.m_resItem.m_itemData.m_shared.m_maxStackSize,
-                                                OdinQOLplugin.ItemStackMultiplier.Value);
+                                            requirement.m_resItem.m_itemData.m_shared.m_maxStackSize *=
+                                                (int)OdinQOLplugin.ItemStackMultiplier.Value;
+
+                                OdinQOLplugin.QOLLogger.LogDebug($"\nFinal Value: {sendItem.m_shared.m_maxStackSize}");
                             }
 
 
