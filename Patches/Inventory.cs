@@ -48,7 +48,7 @@ namespace OdinQOL.Patches
         }
     }
 
-    [HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.SetStack))]
+    /*[HarmonyPatch(typeof(ItemDrop), nameof(ItemDrop.SetStack))]
     static class ItemDrop_SetStack_Patch
     {
         static void Prefix(ItemDrop __instance)
@@ -59,7 +59,7 @@ namespace OdinQOL.Patches
                 __instance.m_itemData.m_shared.m_maxStackSize *= (int)OdinQOLplugin.ItemStackMultiplier.Value;
             }
         }
-    }
+    }*/
 
 
     /// <summary>
