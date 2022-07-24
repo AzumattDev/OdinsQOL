@@ -718,7 +718,7 @@ public class CFC
                     if (!added.ContainsKey(name))
                         added[name] = 0;
                     added[name] += amount;
-                    OdinQOLplugin.QOLLogger.LogError($"Pull ALL is {pullAll}");
+                    OdinQOLplugin.QOLLogger.LogDebug($"Pull ALL is {pullAll}");
                     OdinQOLplugin.QOLLogger.LogDebug(
                         $"(SmelterOnAddOrePatch) Container at {c.transform.position} has {newItem.m_stack} {newItem.m_dropPrefab.name}, taking {amount}");
 
@@ -807,7 +807,7 @@ public class CFC
                     continue;
                 }
 
-                OdinQOLplugin.QOLLogger.LogError($"Pull ALL is {pullAll}");
+                OdinQOLplugin.QOLLogger.LogDebug($"Pull ALL is {pullAll}");
                 int amount = pullAll
                     ? (int)Mathf.Min(
                         __instance.m_maxFuel - __instance.GetFuel(), newItem.m_stack)
