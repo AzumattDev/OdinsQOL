@@ -131,7 +131,7 @@ public class CFC
         static bool Prefix(Fireplace __instance, Humanoid user, bool hold, ref bool __result, ZNetView ___m_nview)
         {
             __result = true;
-            bool pullAll = fillAllModKey.Value.IsPressed();
+            bool pullAll = Input.GetKey(fillAllModKey.Value.MainKey); // Used to be fillAllModKey.Value.IsPressed(); something is wrong with KeyboardShortcuts always returning false
             Inventory inventory = user.GetInventory();
 
             if (!Utilities.AllowByKey() || hold || inventory == null ||
@@ -184,7 +184,7 @@ public class CFC
                                 __instance.m_maxFuel - Mathf.CeilToInt(___m_nview.GetZDO().GetFloat("fuel")),
                                 item.m_stack)
                             : 1;
-
+                        OdinQOLplugin.QOLLogger.LogDebug($"Pull ALL is {pullAll}");
                         OdinQOLplugin.QOLLogger.LogDebug(
                             $"(FireplaceInteractPatch) Container at {c.transform.position} has {item.m_stack} {item.m_dropPrefab.name}, taking {amount}");
 
@@ -640,7 +640,7 @@ public class CFC
     {
         static bool Prefix(Smelter __instance, Humanoid user, ItemDrop.ItemData item, ZNetView ___m_nview)
         {
-            bool pullAll = fillAllModKey.Value.IsPressed();
+            bool pullAll = Input.GetKey(fillAllModKey.Value.MainKey); // Used to be fillAllModKey.Value.IsPressed(); something is wrong with KeyboardShortcuts always returning false
             if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value || (!Utilities.AllowByKey() && !pullAll) ||
                 item != null ||
                 __instance.GetQueueSize() >= __instance.m_maxOre)
@@ -718,7 +718,7 @@ public class CFC
                     if (!added.ContainsKey(name))
                         added[name] = 0;
                     added[name] += amount;
-
+                    OdinQOLplugin.QOLLogger.LogError($"Pull ALL is {pullAll}");
                     OdinQOLplugin.QOLLogger.LogDebug(
                         $"(SmelterOnAddOrePatch) Container at {c.transform.position} has {newItem.m_stack} {newItem.m_dropPrefab.name}, taking {amount}");
 
@@ -756,7 +756,7 @@ public class CFC
         static bool Prefix(Smelter __instance, ref bool __result, ZNetView ___m_nview, Humanoid user,
             ItemDrop.ItemData item)
         {
-            bool pullAll = fillAllModKey.Value.IsPressed();
+            bool pullAll = Input.GetKey(fillAllModKey.Value.MainKey); // Used to be fillAllModKey.Value.IsPressed(); something is wrong with KeyboardShortcuts always returning false
             Inventory inventory = user.GetInventory();
             if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value || (!Utilities.AllowByKey() && !pullAll) ||
                 item != null ||
@@ -807,6 +807,7 @@ public class CFC
                     continue;
                 }
 
+                OdinQOLplugin.QOLLogger.LogError($"Pull ALL is {pullAll}");
                 int amount = pullAll
                     ? (int)Mathf.Min(
                         __instance.m_maxFuel - __instance.GetFuel(), newItem.m_stack)

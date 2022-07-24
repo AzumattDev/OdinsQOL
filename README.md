@@ -7,11 +7,13 @@ the best collection of QOL and tweaks in one spot
 
 # Changelog (latest patch listed first)
 ##### 0.8.3
+* Fixed CFC FillAllKey not working. Keyboardshortcut was always returning false, not sure why.
 * Fix Item Stack bug if exact resources are used.
 * Item Drawer stack compat fix.
 * Add switch toggles for Dungeons and Camp alteration.
+* Add switch toggle for workbench alteration.
 * Fix issue with workbench radius disappearance when workbench range is set to 20.
-* Fix some issues found in the legacy code while fixing other code for this patch version.
+* Fix some issues found in the legacy code while fixing other code for this patch version. (aka...ghost configs)
 ##### 0.8.2
 * Update Structural integrity to be in percentage values, also update the config descriptions to make more sense.
 * Fix issues with the BiFrost toggle
