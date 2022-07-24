@@ -17,9 +17,10 @@ namespace OdinQOL.Patches
             Value
         }
 
+        public static ConfigEntry<bool> AlterWorkbench = null!;
         public static ConfigEntry<int> WorkbenchRange = null!;
         public static ConfigEntry<int> WorkbenchEnemySpawnRange = null!;
-        public static ConfigEntry<bool> AlterWorkBench = null!;
+        public static ConfigEntry<bool> ChangeRoofBehavior = null!;
         public static ConfigEntry<int> MaxEntries = null!;
         public static ConfigEntry<SortType> sortType = null!;
         public static ConfigEntry<bool> SortAsc = null!;
@@ -152,14 +153,11 @@ namespace OdinQOL.Patches
             private static void Prefix(ref CraftingStation __instance, ref float ___m_rangeBuild,
                 GameObject ___m_areaMarker)
             {
-                if (!AlterWorkBench.Value || WorkbenchRange.Value <= 0) return;
+                if (!AlterWorkbench.Value || WorkbenchRange.Value <= 0) return;
                 try
                 {
                     ___m_rangeBuild = WorkbenchRange.Value;
                     ___m_areaMarker.GetComponent<CircleProjector>().m_radius = ___m_rangeBuild;
-                    float scaleIncrease = (WorkbenchRange.Value - 20f) / 20f * 100f;
-                    ___m_areaMarker.gameObject.transform.localScale =
-                        new Vector3(scaleIncrease / 100, 1f, scaleIncrease / 100);
 
                     // Apply this change to the child GameObject's EffectArea collision.
                     // Various other systems query this collision instead of the PrivateArea radius for permissions (notably, enemy spawning).
@@ -182,7 +180,7 @@ namespace OdinQOL.Patches
             private static bool Prefix(ref CraftingStation __instance, ref Player player, ref bool showMessage,
                 ref bool __result)
             {
-                if (AlterWorkBench.Value) __instance.m_craftRequireRoof = false;
+                if (AlterWorkbench.Value && ChangeRoofBehavior.Value) __instance.m_craftRequireRoof = false;
 
                 return true;
             }
@@ -200,7 +198,7 @@ namespace OdinQOL.Patches
 
                 List<ItemData>? items = __instance.GetInventory().GetAllItems().Select(idd => new ItemData(idd))
                     .ToList();
-                SortByType(SortType.Value, items, SortAsc.Value);
+                SortByType(sortType.Value, items, SortAsc.Value);
                 int entries = 0;
                 int amount = 0;
                 string? name = "";
@@ -249,7 +247,7 @@ namespace OdinQOL.Patches
         {
             static void Prefix(StationExtension __instance, ref float ___m_maxStationDistance)
             {
-                if (AlterWorkBench.Value)
+                if (AlterWorkbench.Value && WorkbenchRange.Value >=5)
                     ___m_maxStationDistance = WorkbenchAttachmentRange.Value;
             }
         }

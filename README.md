@@ -9,6 +9,9 @@ the best collection of QOL and tweaks in one spot
 ##### 0.8.3
 * Fix Item Stack bug if exact resources are used.
 * Item Drawer stack compat fix.
+* Add switch toggles for Dungeons and Camp alteration.
+* Fix issue with workbench radius disappearance when workbench range is set to 20.
+* Fix some issues found in the legacy code while fixing other code for this patch version.
 ##### 0.8.2
 * Update Structural integrity to be in percentage values, also update the config descriptions to make more sense.
 * Fix issues with the BiFrost toggle

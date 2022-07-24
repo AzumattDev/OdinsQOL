@@ -7,6 +7,9 @@ public class CraftingConfigs
 {
     internal static void Generate()
     {
+        CraftingPatch.AlterWorkbench =
+            OdinQOLplugin.context.config("WorkBench", "Allow Workbench Alterations", false,
+                "Toggles the WorkBench section.");
         CraftingPatch.WorkbenchRange = OdinQOLplugin.context.config("WorkBench", "WorkBenchRange", 20,
             new ConfigDescription("Range you can build from workbench in meters",
                 new AcceptableValueRange<int>(6, 650)));
@@ -14,8 +17,9 @@ public class CraftingConfigs
             "WorkBenchRange (Playerbase size)", 20,
             new ConfigDescription("Workbench PlayerBase radius, this is how far away enemies spawn",
                 new AcceptableValueRange<int>(6, 650)));
-        CraftingPatch.AlterWorkBench =
-            OdinQOLplugin.context.config("WorkBench", "Change No Roof Behavior", true, "Show building pieces");
+        CraftingPatch.ChangeRoofBehavior =
+            OdinQOLplugin.context.config("WorkBench", "Change No Roof Behavior", false,
+                "Turns off the need for a roof to be above the workbench");
         CraftingPatch.WorkbenchAttachmentRange = OdinQOLplugin.context.config("WorkBench", "WorkBench Extension", 5,
             new ConfigDescription("Range for workbench extensions", new AcceptableValueRange<int>(5, 100)));
         CraftingPatch.MaxEntries =
