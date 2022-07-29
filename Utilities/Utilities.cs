@@ -238,9 +238,7 @@ namespace OdinQOL
 
                                 if (sendItem.m_shared.m_maxStackSize > 1)
                                     if (OdinQOLplugin.ItemStackMultiplier.Value >= 1)
-                                        sendItem.m_shared.m_maxStackSize =
-                                            requirement.m_resItem.m_itemData.m_shared.m_maxStackSize *=
-                                                (int)OdinQOLplugin.ItemStackMultiplier.Value;
+                                        sendItem.m_shared.m_maxStackSize = requirement.m_resItem.m_itemData.m_shared.m_maxStackSize * (int)OdinQOLplugin.ItemStackMultiplier.Value;
 
                                 OdinQOLplugin.QOLLogger.LogDebug($"\nFinal Value: {sendItem.m_shared.m_maxStackSize}");
                             }
