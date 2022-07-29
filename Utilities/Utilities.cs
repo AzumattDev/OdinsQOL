@@ -211,7 +211,7 @@ namespace OdinQOL
                             continue;
 
 
-                        for (int i = 0; i < cInventory.GetAllItems().Count; i++)
+                        for (int i = 0; i < cInventory.GetAllItems().Count; ++i)
                         {
                             ItemDrop.ItemData item = cInventory.GetItem(i);
                             if (item.m_shared.m_name != reqName) continue;
@@ -247,13 +247,16 @@ namespace OdinQOL
                             pInventory.AddItem(sendItem);
 
                             if (stackAmount == item.m_stack)
+                            {
                                 cInventory.RemoveItem(item);
+                                --i;
+                            }
                             else
                                 item.m_stack -= stackAmount;
 
                             totalAmount += stackAmount;
                             OdinQOLplugin.QOLLogger.LogDebug(
-                                $"total amount is now {totalAmount}/{totalRequirement} {reqName}");
+                                $"Total amount is now {totalAmount}/{totalRequirement} {reqName}");
 
                             if (totalAmount >= totalRequirement)
                                 break;
@@ -263,7 +266,7 @@ namespace OdinQOL
                         cInventory.Changed();
 
                         if (totalAmount < totalRequirement) continue;
-                        OdinQOLplugin.QOLLogger.LogDebug($"pulled enough {reqName}");
+                        OdinQOLplugin.QOLLogger.LogDebug($"Pulled enough {reqName}");
                         break;
                     }
                 }

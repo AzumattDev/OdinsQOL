@@ -448,7 +448,7 @@ public class CFC
                         continue;
 
 
-                    for (int i = 0; i < cInventory.GetAllItems().Count; i++)
+                    for (int i = 0; i < cInventory.GetAllItems().Count; ++i)
                     {
                         ItemDrop.ItemData item = cInventory.GetItem(i);
                         if (item.m_shared.m_name != reqName) continue;
@@ -459,7 +459,7 @@ public class CFC
                         if (stackAmount == item.m_stack)
                         {
                             cInventory.RemoveItem(i);
-                            i--;
+                            --i;
                         }
                         else
                             item.m_stack -= stackAmount;

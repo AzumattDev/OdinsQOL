@@ -53,8 +53,8 @@ namespace OdinQOL
     [BepInPlugin(GUID, ModName, Version)]
     [BepInIncompatibility(
         "aedenthorn.CraftFromContainers")] // Since I have pulled this in and optimized a few things...make sure we don't overlap.
-    [BepInIncompatibility(
-        "com.jotunn.modsettings")] // It was exploited in the past to bypass ServerSync settings while it was in Jotunn. No telling that won't happen again even if only a short time.
+    /*[BepInIncompatibility(
+        "com.jotunn.modsettings")] // It was exploited in the past to bypass ServerSync settings while it was in Jotunn. No telling that won't happen again even if only a short time.*/
     public partial class OdinQOLplugin : BaseUnityPlugin
     {
         public const string Version = "0.8.3";

@@ -6,7 +6,23 @@ the best collection of QOL and tweaks in one spot
 ### Having issues? Post them on my GitHub for me to not forget! (https://github.com/AzumattDev/OdinsQOL/issues)
 
 # Changelog (latest patch listed first)
+
+##### 0.8.4
+
+`NOTE: I am on a two week break from modding, any more enhancements you'd like or bugs needing fixing will be added/fixed when I return.`
+
+* Update SkillGainFactor config descriptions to make more sense.
+* Potentially game breaking fixes
+    * Fix a bug where the requirement was more than the max stack size or the item can't be stacked would cause a rouge
+      item to be left in the chest. (Thanks to Lime18 for the bug report & Bjorn for the fix!)
+    * Fix a bug where pulling resources while having the stack size multiplied would cause an increase in the stack size
+      & sometimes the actual item count. (Thanks to Bjorn for the bug report & fix!)
+    * Fix for Pulling resources into the player inventory not grabbing all resources needed to craft if the item doesn't
+      stack. (Found when testing Bjorn's fix!)
+* Remove incompatibility with Mod Settings mod. Will add back if issues with that mod arise.
+
 ##### 0.8.3
+
 * Fixed CFC FillAllKey not working. Keyboardshortcut was always returning false, not sure why.
 * Fix Item Stack bug if exact resources are used.
 * Item Drawer stack compat fix.
@@ -14,13 +30,18 @@ the best collection of QOL and tweaks in one spot
 * Add switch toggle for workbench alteration.
 * Fix issue with workbench radius disappearance when workbench range is set to 20.
 * Fix some issues found in the legacy code while fixing other code for this patch version. (aka...ghost configs)
+
 ##### 0.8.2
+
 * Update Structural integrity to be in percentage values, also update the config descriptions to make more sense.
 * Fix issues with the BiFrost toggle
 * Fix newly created issue that cause the clock to no longer appear
 * Fix issue with MapDetails
+
 ##### 0.8.1
+
 * Fix a mess up
+
 ##### 0.8.0
 
 * Add FileWatcher to the code. Changes made directly to the configuration files on the server should sync with the
@@ -49,7 +70,8 @@ the best collection of QOL and tweaks in one spot
 * Stack size configuration option has been changed in how it functions. It's now a direct multiplier.
     * `Multiplier for your item stacks. Directly multiplies stack of the item by this value. (Stack of 50 with value of 10 here would turn into a stack of 500)`
 * Fix some of the descriptions for configs.
-*  Various other internal code updates/refactors. Some updates provide better performance, so the mod should run smoother now.
+* Various other internal code updates/refactors. Some updates provide better performance, so the mod should run smoother
+  now.
 * Incompatibility added to the new "Mod Settings" mod by Jules/Jotunn. There were issues in the past where this mod
   would allow bypassing configuration options while it was inside Jotunn codebase. Though this might not be the case
   anymore, I won't risk it happening once
