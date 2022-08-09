@@ -9,7 +9,7 @@ the best collection of QOL and tweaks in one spot
 
 #### 0.8.5
 * Turn QuickAccessBar into a HotKeyBar (Thanks to [Blaxxun](https://github.com/blaxxun-boop) in a [GitHub commit](https://github.com/AzumattDev/OdinPlusQOLMods/commit/56f5d28a98c24b9a965463ae0720ab62582de25d)). Reflected in OdinQOL.
-    * This provies some compatibility with Jewelcrafting and other mods that might need to modify the QuickAccessBar. 
+    * This provides some compatibility with Jewelcrafting and other mods that might need to modify the QuickAccessBar. 
 * Added new config options for hotkey texts and allow overflow of hotkey bindings.
     * You can now override the hotkey text for each hotkey. Should you need it to be different than the default. 
 
