@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using BepInEx;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,6 +35,8 @@ namespace OdinQOL.Patches
             if (!transform1)
                 transform1 = Object.Instantiate(elementPrefab.transform.Find("binding"), transform);
             transform1.GetComponent<Text>().enabled = true;
+            transform1.GetComponent<Text>().horizontalOverflow = HorizontalWrapMode.Overflow;
+            transform1.GetComponent<Text>().verticalOverflow = VerticalWrapMode.Overflow;
             transform1.GetComponent<Text>().text = value;
             if (!center)
                 return;
@@ -340,17 +343,17 @@ namespace OdinQOL.Patches
                     int num6 = num5 + 1;
                     Transform child5 = transform5.GetChild(num5);
                     SetSlotText(str5, child5);
-                    string? str6 = HotKey1.Value.ToString();
+                    string? str6 = HotKey1Text.Value.IsNullOrWhiteSpace() ? HotKey1.Value.ToString() : HotKey1Text.Value;
                     Transform transform6 = ___m_playerGrid.m_gridRoot.transform;
                     int num7 = num6 + 1;
                     Transform child6 = transform6.GetChild(num6);
                     SetSlotText(str6, child6, false);
-                    string? str7 = HotKey2.Value.ToString();
+                    string? str7 = HotKey2Text.Value.IsNullOrWhiteSpace() ? HotKey2.Value.ToString() : HotKey2Text.Value;
                     Transform transform7 = ___m_playerGrid.m_gridRoot.transform;
                     int num8 = num7 + 1;
                     Transform child7 = transform7.GetChild(num7);
                     SetSlotText(str7, child7, false);
-                    string? str8 = HotKey3.Value.ToString();
+                    string? str8 = HotKey3Text.Value.IsNullOrWhiteSpace() ? HotKey3.Value.ToString() : HotKey3Text.Value;
                     Transform transform8 = ___m_playerGrid.m_gridRoot.transform;
                     int num9 = num8 + 1;
                     Transform child8 = transform8.GetChild(num8);
@@ -515,10 +518,6 @@ namespace OdinQOL.Patches
                     __instance.m_rootObject.transform, true);
                 transform.name = "QuickAccessBar";
                 transform.GetComponent<RectTransform>().localPosition = Vector3.zero;
-                GameObject elementPrefab = transform.GetComponent<HotkeyBar>().m_elementPrefab;
-                transform.gameObject.AddComponent<QuickAccessBar>().m_elementPrefab = elementPrefab;
-                elementPrefab = elementPrefab;
-                Object.Destroy(transform.GetComponent<HotkeyBar>());
             }
         }
 

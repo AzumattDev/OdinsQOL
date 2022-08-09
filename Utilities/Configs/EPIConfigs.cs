@@ -37,6 +37,13 @@ public class EPIConfigs
             "Hotkey 2 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html", false);
         QuickAccessBar.HotKey3 = OdinQOLplugin.context.config("Extended Inventory", "HotKey3", KeyCode.C,
             "Hotkey 3 - Use https://docs.unity3d.com/Manual/ConventionalGameInput.html", false);
+        
+        QuickAccessBar.HotKey1Text = OdinQOLplugin.context.config("Extended Inventory", "HotKey1 Text", "",
+            "Hotkey 1 Display Text. Leave blank to use the hotkey itself.", false);
+        QuickAccessBar.HotKey2Text = OdinQOLplugin.context.config("Extended Inventory", "HotKey2 Text", "",
+            "Hotkey 2 Display Text. Leave blank to use the hotkey itself.", false);
+        QuickAccessBar.HotKey3Text = OdinQOLplugin.context.config("Extended Inventory", "HotKey3 Text", "",
+            "Hotkey 3 Display Text. Leave blank to use the hotkey itself.", false);
 
         QuickAccessBar.ModKeyOne = OdinQOLplugin.context.config("Extended Inventory", "ModKey1", KeyCode.Mouse0,
             "First modifier key to move quick slots. Use https://docs.unity3d.com/Manual/ConventionalGameInput.html format.",

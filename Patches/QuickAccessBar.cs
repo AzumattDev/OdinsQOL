@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BepInEx;
 using BepInEx.Configuration;
+using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace OdinQOL.Patches
 {
-    internal class QuickAccessBar : MonoBehaviour
+    [HarmonyPatch(typeof(HotkeyBar), nameof(HotkeyBar.UpdateIcons))]
+    internal static class QuickAccessBar
     {
         public static ConfigEntry<bool> AddEquipmentRow = null!;
         public static ConfigEntry<bool> DisplayEquipmentRowSeparate = null!;
@@ -22,78 +26,69 @@ namespace OdinQOL.Patches
         public static ConfigEntry<KeyCode> HotKey1 = null!;
         public static ConfigEntry<KeyCode> HotKey2 = null!;
         public static ConfigEntry<KeyCode> HotKey3 = null!;
+        public static ConfigEntry<string> HotKey1Text = null!;
+        public static ConfigEntry<string> HotKey2Text = null!;
+        public static ConfigEntry<string> HotKey3Text = null!;
         public static ConfigEntry<KeyCode> ModKeyOne = null!;
         public static ConfigEntry<KeyCode> ModKeyTwo = null!;
 
         public static ConfigEntry<KeyCode>[] Hotkeys = null!;
+        public static ConfigEntry<string>[] HotkeyTexts;
 
         public static ConfigEntry<float> QuickAccessX = null!;
         public static ConfigEntry<float> QuickAccessY = null!;
 
-        public GameObject m_elementPrefab;
-
-        public float m_elementSpace = 70f;
-
-        private readonly List<ElementData> m_elements = new();
-
-        private readonly List<ItemDrop.ItemData> m_items = new();
-
-        private int m_selected;
-
-        private void Update()
+        [HarmonyPriority(Priority.Last)]
+        private static bool Prefix(HotkeyBar __instance, Player player)
         {
-            Player localPlayer = Player.m_localPlayer;
-            if (localPlayer && !InventoryGui.IsVisible() && !Menu.IsVisible() && !GameCamera.InFreeFly())
+            if (__instance.name != "QuickAccessBar")
             {
-                if (ZInput.GetButtonDown("JoyDPadLeft"))
-                    m_selected = Mathf.Max(0, m_selected - 1);
-                if (ZInput.GetButtonDown("JoyDPadRight"))
-                    m_selected = Mathf.Min(m_elements.Count - 1, m_selected + 1);
-                if (ZInput.GetButtonDown("JoyDPadUp"))
-                    localPlayer.UseHotbarItem(m_selected + 1);
+                return true;
             }
 
-            if (m_selected > m_elements.Count - 1)
-                m_selected = Mathf.Max(0, m_elements.Count - 1);
-            UpdateIcons(localPlayer);
-        }
 
-        private void UpdateIcons(Player player)
-        {
             if (!player || player.IsDead())
             {
-                foreach (ElementData element in m_elements)
-                    Destroy(element.m_go);
-                m_elements.Clear();
+                foreach (HotkeyBar.ElementData element in __instance.m_elements)
+                    Object.Destroy(element.m_go);
+                __instance.m_elements.Clear();
             }
             else
             {
                 try
                 {
-                    m_items.Clear();
+                    __instance.m_items.Clear();
                     Inventory inventory = player.GetInventory();
                     if (inventory.GetItemAt(5, inventory.GetHeight() - 1) != null)
-                        m_items.Add(inventory.GetItemAt(5, inventory.GetHeight() - 1));
+                        __instance.m_items.Add(inventory.GetItemAt(5, inventory.GetHeight() - 1));
                     if (inventory.GetItemAt(6, inventory.GetHeight() - 1) != null)
-                        m_items.Add(inventory.GetItemAt(6, inventory.GetHeight() - 1));
+                        __instance.m_items.Add(inventory.GetItemAt(6, inventory.GetHeight() - 1));
                     if (inventory.GetItemAt(7, inventory.GetHeight() - 1) != null)
-                        m_items.Add(inventory.GetItemAt(7, inventory.GetHeight() - 1));
-                    m_items.Sort((Comparison<ItemDrop.ItemData>)((x, y) => x.m_gridPos.x.CompareTo(y.m_gridPos.x)));
-                    int num = m_items.Select(itemData => itemData.m_gridPos.x - 4).Prepend(0).Max();
-                    if (m_elements.Count != num)
+                        __instance.m_items.Add(inventory.GetItemAt(7, inventory.GetHeight() - 1));
+                    __instance.m_items.Sort(
+                        (Comparison<ItemDrop.ItemData>)((x, y) => x.m_gridPos.x.CompareTo(y.m_gridPos.x)));
+                    int num = __instance.m_items.Select(itemData => itemData.m_gridPos.x - 4).Prepend(0).Max();
+                    if (__instance.m_elements.Count != num)
                     {
-                        foreach (ElementData element in m_elements)
-                            Destroy(element.m_go);
-                        m_elements.Clear();
+                        foreach (HotkeyBar.ElementData element in __instance.m_elements)
+                            Object.Destroy(element.m_go);
+                        __instance.m_elements.Clear();
                         for (int index = 0; index < num; ++index)
                         {
-                            ElementData elementData = new()
+                            HotkeyBar.ElementData elementData = new()
                             {
-                                m_go = Instantiate(m_elementPrefab, transform)
+                                m_go = Object.Instantiate(__instance.m_elementPrefab, __instance.transform)
                             };
-                            elementData.m_go.transform.localPosition = new Vector3(index * m_elementSpace, 0.0f, 0.0f);
+                            elementData.m_go.transform.localPosition =
+                                new Vector3(index * __instance.m_elementSpace, 0.0f, 0.0f);
                             elementData.m_go.transform.Find("binding").GetComponent<Text>().text =
-                                Hotkeys[index].Value.ToString();
+                                HotkeyTexts[index].Value.IsNullOrWhiteSpace()
+                                    ? Hotkeys[index].Value.ToString()
+                                    : HotkeyTexts[index].Value;
+                            elementData.m_go.transform.Find("binding").GetComponent<Text>().horizontalOverflow =
+                                HorizontalWrapMode.Overflow;
+                            elementData.m_go.transform.Find("binding").GetComponent<Text>().verticalOverflow =
+                                VerticalWrapMode.Overflow;
                             elementData.m_icon =
                                 elementData.m_go.transform.transform.Find("icon").GetComponent<Image>();
                             elementData.m_durability =
@@ -102,16 +97,16 @@ namespace OdinQOL.Patches
                             elementData.m_equiped = elementData.m_go.transform.Find("equiped").gameObject;
                             elementData.m_queued = elementData.m_go.transform.Find("queued").gameObject;
                             elementData.m_selection = elementData.m_go.transform.Find("selected").gameObject;
-                            m_elements.Add(elementData);
+                            __instance.m_elements.Add(elementData);
                         }
                     }
 
-                    foreach (ElementData element in m_elements)
+                    foreach (HotkeyBar.ElementData element in __instance.m_elements)
                         element.m_used = false;
                     bool flag = ZInput.IsGamepadActive();
-                    foreach (ItemDrop.ItemData itemData in m_items)
+                    foreach (ItemDrop.ItemData itemData in __instance.m_items)
                     {
-                        ElementData element = m_elements[itemData.m_gridPos.x - 5];
+                        HotkeyBar.ElementData element = __instance.m_elements[itemData.m_gridPos.x - 5];
                         element.m_used = true;
                         element.m_icon.gameObject.SetActive(true);
                         element.m_icon.sprite = itemData.GetIcon();
@@ -145,10 +140,10 @@ namespace OdinQOL.Patches
                         }
                     }
 
-                    for (int index = 0; index < m_elements.Count; ++index)
+                    for (int index = 0; index < __instance.m_elements.Count; ++index)
                     {
-                        ElementData element = m_elements[index];
-                        element.m_selection.SetActive(flag && index == m_selected);
+                        HotkeyBar.ElementData element = __instance.m_elements[index];
+                        element.m_selection.SetActive(flag && index == __instance.m_selected);
                         if (element.m_used) continue;
                         element.m_icon.gameObject.SetActive(false);
                         element.m_durability.gameObject.SetActive(false);
@@ -162,24 +157,8 @@ namespace OdinQOL.Patches
                     OdinQOLplugin.QOLLogger.LogDebug($"There was an error in your shit: {ex}");
                 }
             }
-        }
 
-        private class ElementData
-        {
-            public Text m_amount;
-
-            public GuiBar m_durability;
-
-            public GameObject m_equiped;
-
-            public GameObject m_go;
-
-            public Image m_icon;
-
-            public GameObject m_queued;
-
-            public GameObject m_selection;
-            public bool m_used;
+            return false;
         }
     }
 }

@@ -155,6 +155,12 @@ namespace OdinQOL
                 QuickAccessBar.HotKey2,
                 QuickAccessBar.HotKey3
             };
+            QuickAccessBar.HotkeyTexts = new[]
+            {
+                QuickAccessBar.HotKey1Text,
+                QuickAccessBar.HotKey2Text,
+                QuickAccessBar.HotKey3Text
+            };
         }
 
         private void Start()

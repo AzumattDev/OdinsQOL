@@ -7,10 +7,13 @@ the best collection of QOL and tweaks in one spot
 
 # Changelog (latest patch listed first)
 
+#### 0.8.5
+* Turn QuickAccessBar into a HotKeyBar (Thanks to [Blaxxun](https://github.com/blaxxun-boop) in a [GitHub commit](https://github.com/AzumattDev/OdinPlusQOLMods/commit/56f5d28a98c24b9a965463ae0720ab62582de25d)). Reflected in OdinQOL.
+    * This provies some compatibility with Jewelcrafting and other mods that might need to modify the QuickAccessBar. 
+* Added new config options for hotkey texts and allow overflow of hotkey bindings.
+    * You can now override the hotkey text for each hotkey. Should you need it to be different than the default. 
+
 ##### 0.8.4
-
-`NOTE: I am on a two week break from modding, any more enhancements you'd like or bugs needing fixing will be added/fixed when I return.`
-
 * Update SkillGainFactor config descriptions to make more sense.
 * Potentially game breaking fixes
     * Fix a bug where the requirement was more than the max stack size or the item can't be stacked would cause a rouge
