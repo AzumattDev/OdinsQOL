@@ -6,7 +6,8 @@ the best collection of QOL and tweaks in one spot
 ### Having issues? Post them on my GitHub for me to not forget! (https://github.com/AzumattDev/OdinsQOL/issues)
 
 # Changelog (latest patch listed first)
-
+#### 0.8.6
+* WardIsLove v 3.0.1 compatibility update. 
 #### 0.8.5
 * Turn QuickAccessBar into a HotKeyBar (Thanks to [Blaxxun](https://github.com/blaxxun-boop) in a [GitHub commit](https://github.com/AzumattDev/OdinPlusQOLMods/commit/56f5d28a98c24b9a965463ae0720ab62582de25d)). Reflected in OdinQOL.
     * This provides some compatibility with Jewelcrafting and other mods that might need to modify the QuickAccessBar. 

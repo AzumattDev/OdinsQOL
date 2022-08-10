@@ -18,6 +18,6 @@ public class WardIsLovePlugin : WILCompat {
     }
 
     public static ConfigEntry<bool>? WardEnabled() {
-        return GetField<ConfigEntry<bool>>(ClassType(), null!, "_wardEnabled");
+        return GetField<ConfigEntry<bool>>(ClassType(), null!, "WardEnabled");
     }
 }
