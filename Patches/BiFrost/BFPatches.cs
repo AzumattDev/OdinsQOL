@@ -49,6 +49,7 @@ internal class BiFrostPatchPasswordPrompt
 {
     private static bool Prefix(ZNet __instance, ZRpc rpc, bool needPassword)
     {
+        if (BiFrost.ShowPasswordPrompt.Value) return true;
         string? str = BiFrostFunctions.CurrentPass();
         if (str == null) return true;
         if (needPassword)
@@ -130,5 +131,15 @@ internal class BiFrostSetupGui
 
         BiFrostFunctions.PopulateServerList(BF);
         BiFrostFunctions.UpdateServerList();
+    }
+}
+
+[HarmonyPatch(typeof(FejdStartup), nameof(FejdStartup.LoadMainScene))]
+static class FejdStartup_LoadMainScene_Patch
+{
+    static void Postfix(FejdStartup __instance)
+    {
+        if (BiFrostSetupGui.BF.activeSelf)
+            BiFrostSetupGui.BF.SetActive(false);
     }
 }

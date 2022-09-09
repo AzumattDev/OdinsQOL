@@ -14,6 +14,7 @@ public class BiFrost
 {
     public static ConfigEntry<Vector2> UIAnchor = null!;
     public static ConfigEntry<bool> DisableBiFrost = null!;
+    public static ConfigEntry<bool> ShowPasswordPrompt = null!;
 }
 
 internal class BiFrostServers
@@ -73,7 +74,7 @@ internal class BiFrostServers
         }
         catch (Exception ex)
         {
-            OdinQOLplugin.QOLLogger.LogError($"FastLink: Error loading config {ex}");
+            OdinQOLplugin.QOLLogger.LogError($"BiFrost: Error loading config {ex}");
         }
     }
 }
