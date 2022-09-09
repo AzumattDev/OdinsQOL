@@ -41,6 +41,7 @@ namespace OdinQOL.Patches
         public static ConfigEntry<float> MaximumPlacementDistance = null!;
         public static ConfigEntry<int> MaxPlayers = null!;
         public static ConfigEntry<bool> HaveArrivedOnSpawn = null!;
+        public static ConfigEntry<bool> HoverPortalTag = null!;
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Location), nameof(Location.IsInsideNoBuildLocation))]
@@ -323,13 +324,16 @@ namespace OdinQOL.Patches
             // TODO Add config option to turn this off.
             private static void Postfix(TeleportWorld __instance, string __result)
             {
-                string? portalName = __instance.GetText();
+                if (HoverPortalTag.Value)
+                {
+                    string? portalName = __instance.GetText();
 
 
-                __result = Localization.instance.Localize(string.Concat("$piece_portal $piece_portal_tag:", " ", "[",
-                    portalName, "]"));
+                    __result = Localization.instance.Localize(string.Concat("$piece_portal $piece_portal_tag:", " ", "[",
+                        portalName, "]"));
 
-                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, __result);
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, __result);
+                }
             }
         }
 

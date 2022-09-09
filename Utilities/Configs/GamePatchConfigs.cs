@@ -69,6 +69,9 @@ public class GamePatchConfigs
         GamePatches.MaximumPlacementDistance = OdinQOLplugin.context.config<float>("WorkBench",
             "Build distance alteration", 15,
             "Build Distance  (Maximum Placement Distance)");
+        GamePatches.HoverPortalTag = OdinQOLplugin.context.config<bool>("Game",
+            "Portal Tag on Hover", true,
+            "Enabled Portal Tag message while hovering over Portal");
 
 
         ImprovedBuildHudConfig.InventoryAmountFormat = OdinQOLplugin.context.config("Building HUD",
