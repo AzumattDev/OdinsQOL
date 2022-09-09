@@ -6,7 +6,6 @@ namespace OdinQOL.Patches
 {
     public class ClientPatches
     {
-        public static ConfigEntry<string> ChatPlayerName = null!;
 
         private static bool _overridePlayerName;
 
@@ -35,37 +34,6 @@ namespace OdinQOL.Patches
             static void Postfix(Chat __instance, Vector3 position)
             {
                 _overridePlayerName = false;
-            }
-        }
-
-        [HarmonyPatch(typeof(Player), nameof(Player.GetPlayerName))]
-        static class Player_GetPlayerName_Patch
-        {
-            static void Postfix(Player __instance, ref string __result)
-            {
-                if (_overridePlayerName
-                    && __instance == Player.m_localPlayer
-                    && !string.IsNullOrEmpty(ChatPlayerName.Value))
-                    __result = ChatPlayerName.Value;
-            }
-        }
-
-        [HarmonyPatch(typeof(PlayerProfile), nameof(PlayerProfile.GetName))]
-        static class PlayerProfile_GetName_Patch
-        {
-            static void Postfix(PlayerProfile __instance, ref string __result)
-            {
-                if (_overridePlayerName && !string.IsNullOrEmpty(ChatPlayerName.Value)) __result = ChatPlayerName.Value;
-            }
-        }
-
-        [HarmonyPatch(typeof(Game), nameof(Game.SpawnPlayer))]
-        static class Game_SpawnPlayer_Patch
-        {
-            static void Postfix(Game __instance, Vector3 spawnPoint, Player __result)
-            {
-                if (!string.IsNullOrEmpty(ChatPlayerName.Value))
-                    __result.m_nview.GetZDO().Set("playerName", ChatPlayerName.Value);
             }
         }
 

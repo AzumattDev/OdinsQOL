@@ -117,19 +117,14 @@ namespace OdinQOL
                 new ConfigDescription("Disable Teleport check for items"));
             filltoptobottom = config("Items", "Fill your things top to bottom when moving from inv to chest", true,
                 new ConfigDescription("Move your things top to bottom when changing from inv to chest"), false);
-            AutoRepair = config("Items", "Auto repair your things when interacting with build station", true,
-                new ConfigDescription("Auto repair your things when interacting with build station"), false);
+            AutoRepair = config("Items", "Auto repair your things when interacting with build station", false,
+                new ConfigDescription("Auto repair your things when interacting with build station"));
 
             MapDetailConfigs.Generate();
             ClockPatchConfigs.Generate();
             GamePatchConfigs.Generate();
             SignPatchConfigs.Generate();
             AutoStoreConfigs.Generate();
-
-            ClientPatches.ChatPlayerName =
-                config(
-                    "Names", "chatPlayerName", string.Empty,
-                    "Override your player name shown in-game and in the chat box.", false);
 
             PlantGrowthConfigs.Generate();
             WNTPatchConfigs.Generate();

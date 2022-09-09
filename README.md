@@ -3,20 +3,30 @@
 This mod contains a collection of patches from various sources (all MIT/GNU GPL licensed sources) in order to bring you
 the best collection of QOL and tweaks in one spot
 
+`Install on all clients and the server.`
+
+`This mod uses ServerSync, if installed on the server and the config is set to be forced, it will sync all configs to client`
+
+`This mod uses a file watcher. If the configuration file is not changed with BepInEx Configuration manager, but changed in the file directly on the server, upon file save, it will sync the changes to all clients. Please keep in mind that logging out or rebooting might be required for some configuration changes, as not everything can update immediately`
+
 ### Having issues? Post them on my GitHub for me to not forget! (https://github.com/AzumattDev/OdinsQOL/issues)
 
 # Changelog (latest patch listed first)
+#### 0.8.8
+* Change auto repair default value to false and change to sync with server's setting. Requested by Tyson#28262
+* Remove the ability to override your player name in the chatbox. Valid complaints with this feature have been made, and I have decided to remove it. I had forgotten that this was a feature, and I apologize for the inconvenience.
+* Fix issue created in last version if you didn't have the BiFrost enabled. Reported by Tyson#28262. I forgot that the BiFrost is optional, and didn't code for that. My bad.
 #### 0.8.7
 * Mimic FastLink v1.1.0 update. Allow prompting for password still. Disable GUI when in loading screen.
 * Add config option to disable the portal hover tag (thanks to @wackymole)
 * Keep an eye out for another update this weekend, I'm working on changing more things. This update was released to fix some compatiblity issues with other mods.
 #### 0.8.6
-* WardIsLove v 3.0.1 compatibility update. 
+* WardIsLove v 3.0.1 compatibility update.
 #### 0.8.5
 * Turn QuickAccessBar into a HotKeyBar (Thanks to [Blaxxun](https://github.com/blaxxun-boop) in a [GitHub commit](https://github.com/AzumattDev/OdinPlusQOLMods/commit/56f5d28a98c24b9a965463ae0720ab62582de25d)). Reflected in OdinQOL.
-    * This provides some compatibility with Jewelcrafting and other mods that might need to modify the QuickAccessBar. 
+    * This provides some compatibility with Jewelcrafting and other mods that might need to modify the QuickAccessBar.
 * Added new config options for hotkey texts and allow overflow of hotkey bindings.
-    * You can now override the hotkey text for each hotkey. Should you need it to be different than the default. 
+    * You can now override the hotkey text for each hotkey. Should you need it to be different than the default.
 
 ##### 0.8.4
 * Update SkillGainFactor config descriptions to make more sense.

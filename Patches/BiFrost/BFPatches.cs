@@ -139,6 +139,7 @@ static class FejdStartup_LoadMainScene_Patch
 {
     static void Postfix(FejdStartup __instance)
     {
+        if (BiFrost.DisableBiFrost.Value) return;
         if (BiFrostSetupGui.BF.activeSelf)
             BiFrostSetupGui.BF.SetActive(false);
     }
