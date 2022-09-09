@@ -6,6 +6,8 @@ the best collection of QOL and tweaks in one spot
 ### Having issues? Post them on my GitHub for me to not forget! (https://github.com/AzumattDev/OdinsQOL/issues)
 
 # Changelog (latest patch listed first)
+#### 0.8.7
+* Mimic FastLink v1.1.0 update. Allow prompting for password still. Disable GUI when in loading screen.
 #### 0.8.6
 * WardIsLove v 3.0.1 compatibility update. 
 #### 0.8.5
