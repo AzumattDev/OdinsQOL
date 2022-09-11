@@ -238,7 +238,9 @@ namespace OdinQOL
 
                                 if (sendItem.m_shared.m_maxStackSize > 1)
                                     if (OdinQOLplugin.ItemStackMultiplier.Value >= 1)
-                                        sendItem.m_shared.m_maxStackSize = requirement.m_resItem.m_itemData.m_shared.m_maxStackSize * (int)OdinQOLplugin.ItemStackMultiplier.Value;
+                                        sendItem.m_shared.m_maxStackSize =
+                                            requirement.m_resItem.m_itemData.m_shared.m_maxStackSize *
+                                            (int)OdinQOLplugin.ItemStackMultiplier.Value;
 
                                 OdinQOLplugin.QOLLogger.LogDebug($"\nFinal Value: {sendItem.m_shared.m_maxStackSize}");
                             }
@@ -276,8 +278,20 @@ namespace OdinQOL
             }
         }
 
+        public static string TimeCalc(DateTime placedTime, float growthTime)
+        {
+            TimeSpan timeSincePlaced = ZNet.instance.GetTime() - placedTime;
+            TimeSpan t = TimeSpan.FromSeconds(growthTime - timeSincePlaced.TotalSeconds);
+            double remainingMinutes = (growthTime / 60) - timeSincePlaced.TotalMinutes;
+            string timeRemaining = t.Hours <= 0
+                ? t.Minutes <= 0 ? $"{t.Seconds:D2}s" : $"{t.Minutes:D2}m {t.Seconds:D2}s"
+                : $"{t.Hours:D2}h {t.Minutes:D2}m {t.Seconds:D2}s";
+            string formattedString = remainingMinutes < 0.0 ? "Almost ready" : $"({timeRemaining})";
+            return formattedString;
+        }
 
-        /* FastLink Utils */
+
+        /* BiFrost Utils */
         internal static void SaveAndReset(object sender, EventArgs e)
         {
             OdinQOLplugin.context.Config.Save();
@@ -290,7 +304,7 @@ namespace OdinQOL
             if (!File.Exists(BiFrostServers.ConfigPath) || BiFrost.DisableBiFrost.Value) return;
             try
             {
-                OdinQOLplugin.QOLLogger.LogDebug("FastLink: Reloading Server List");
+                OdinQOLplugin.QOLLogger.LogDebug("BiFrost: Reloading Server List");
                 BiFrostSetupGui.Connecting = null;
                 foreach (GameObject serverListElement in BiFrostSetupGui.MServerListElements)
                     Object.Destroy(serverListElement);

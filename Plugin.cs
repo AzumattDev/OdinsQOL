@@ -127,6 +127,7 @@ namespace OdinQOL
             AutoStoreConfigs.Generate();
 
             PlantGrowthConfigs.Generate();
+            FermenterPatchConfigs.Generate();
             WNTPatchConfigs.Generate();
             SkillPatchConfigs.Generate();
             EPIConfigs.Generate();

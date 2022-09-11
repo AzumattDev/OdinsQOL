@@ -7,7 +7,7 @@ public class PlantGrowthConfigs
     internal static void Generate()
     {
         PlantGrowth.DisplayGrowth =
-            OdinQOLplugin.context.config("PlantGrowth", "DisplayGrowth", true, "Display growth progress in hover text",
+            OdinQOLplugin.context.config("PlantGrowth", "DisplayGrowth", true, "Display growth progress in hover text (applies to pickables as well)",
                 false);
         PlantGrowth.PlantAnywhere = OdinQOLplugin.context.config("PlantGrowth", "PlantAnywhere", false,
             "Don't require cultivated ground to plant anything");

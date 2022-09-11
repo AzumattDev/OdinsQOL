@@ -126,10 +126,28 @@ namespace OdinQOL.Patches
             {
                 if (!DisplayGrowth.Value)
                     return;
-                double timeSincePlanted = Traverse.Create(__instance).Method("TimeSincePlanted").GetValue<double>();
-                float growTime = Traverse.Create(__instance).Method("GetGrowTime").GetValue<float>();
-                if (timeSincePlanted < growTime)
-                    __result += "\n" + Mathf.RoundToInt((float)timeSincePlanted) + "/" + Mathf.RoundToInt(growTime);
+                double timeSincePlanted = __instance.TimeSincePlanted();
+                DateTime dateTime = new(__instance.m_nview.GetZDO().GetLong("plantTime", ZNet.instance.GetTime().Ticks));
+                float growTime = __instance.GetGrowTime();
+                if (timeSincePlanted <= growTime)
+                    __result += "\n" + Utilities.TimeCalc(dateTime, growTime);
+            }
+        }
+        
+        [HarmonyPatch(typeof(Pickable),nameof(Pickable.GetHoverText))]
+        static class Pickable_GetHoverText_Patch
+        {
+            static void Postfix(Pickable __instance, bool ___m_picked, ZNetView ___m_nview, int ___m_respawnTimeMinutes, ref string __result)
+            {
+                if (!DisplayGrowth.Value)
+                    return;
+                if (!___m_picked || ___m_nview.GetZDO() == null) return;
+                if (__instance.name.ToLower().Contains("surt"))
+                    return;
+                float growthTime = ___m_respawnTimeMinutes * 60;
+                DateTime pickedTime = new(___m_nview.GetZDO().GetLong("picked_time"));
+                string timeString = Utilities.TimeCalc(pickedTime,growthTime);
+                __result = Localization.instance.Localize(__instance.GetHoverName()) + $"\n{timeString}";
             }
         }
 

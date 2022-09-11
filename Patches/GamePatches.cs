@@ -53,17 +53,6 @@ namespace OdinQOL.Patches
             return false;
         }
 
-
-        /*[HarmonyPatch(typeof(Game), nameof(Game.UpdateRespawn))]
-        public static class Game_UpdateRespawn_Patch
-        {
-            private static void Prefix(ref Game __instance, float dt)
-            {
-                if (OdinQOLplugin.iHaveArrivedOnSpawn.Value)
-                    __instance.m_firstSpawn = false;
-            }
-        }*/
-
         [HarmonyPatch(typeof(Chat), nameof(Chat.OnNewChatMessage))]
         public static class ChatOnNewChatMessage_Patch
         {
@@ -318,10 +307,9 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(TeleportWorld), "GetHoverText")]
+        [HarmonyPatch(typeof(TeleportWorld), nameof(TeleportWorld.GetHoverText))]
         public static class TeleportWorld_BigPortalText_Patch
         {
-            // TODO Add config option to turn this off.
             private static void Postfix(TeleportWorld __instance, string __result)
             {
                 if (HoverPortalTag.Value)

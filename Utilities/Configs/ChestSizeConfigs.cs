@@ -35,8 +35,8 @@ public class ChestSizeConfigs
             new ConfigDescription("Wood Chest Rows", new AcceptableValueRange<int>(2, 10)));
         Container_Configs.WoodCol = OdinQOLplugin.context.config("Containers", "Wood Chest Columns", 5,
             new ConfigDescription("Wood Chest Columns", new AcceptableValueRange<int>(5, 8)));
-        Container_Configs.IronRow = OdinQOLplugin.context.config("Containers", "Iron Chest Rows", 3,
-            new ConfigDescription("Iron Chest Rows", new AcceptableValueRange<int>(3, 20)));
+        Container_Configs.IronRow = OdinQOLplugin.context.config("Containers", "Iron Chest Rows", 4,
+            new ConfigDescription("Iron Chest Rows", new AcceptableValueRange<int>(4, 20)));
         Container_Configs.IronCol = OdinQOLplugin.context.config("Containers", "Iron Chest Columns", 6,
             new ConfigDescription("Iron Chest Columns", new AcceptableValueRange<int>(6, 8)));
         Container_Configs.BmRow = OdinQOLplugin.context.config("Containers", "Blackmetal Chest Rows", 4,

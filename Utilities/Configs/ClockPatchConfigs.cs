@@ -14,7 +14,7 @@ public class ClockPatchConfigs
         OdinQOLplugin.ToggleClockKey = OdinQOLplugin.context.config("Clock", "ShowClockKey", "home",
             "Key used to toggle the clock display. use https://docs.unity3d.com/Manual/ConventionalGameInput.html",
             false);
-        OdinQOLplugin.ClockLocationString = OdinQOLplugin.context.config("Clock", "ClockLocationString", "50%,3%",
+        OdinQOLplugin.ClockLocationString = OdinQOLplugin.context.config("Clock", "ClockLocationString", "48%,0%",
             "Location on the screen to show the clock (x,y) or (x%,y%)", false);
         OdinQOLplugin.ShowClockOnChange = OdinQOLplugin.context.config("Clock", "ShowClockOnChange", false,
             "Only show the clock when the time changes?", false);

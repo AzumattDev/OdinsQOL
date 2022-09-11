@@ -17,6 +17,9 @@ the best collection of QOL and tweaks in one spot
 * Remove the ability to override your player name in the chatbox. Valid complaints with this feature have been made, and I have decided to remove it. I had forgotten that this was a feature, and I apologize for the inconvenience.
 * Fixed a bug where crafting items while your inventory was full could cause them to disappear.
 * Fix issue created in last version if you didn't have the BiFrost enabled. Reported by Tyson#28262. I forgot that the BiFrost is optional, and didn't code for that. My bad.
+* Iron chest rows defaulted to 4
+* Display Fermenter progress on hover
+* Centered the clock on the screen.
 #### 0.8.7
 * Mimic FastLink v1.1.0 update. Allow prompting for password still. Disable GUI when in loading screen.
 * Add config option to disable the portal hover tag (thanks to @wackymole)
