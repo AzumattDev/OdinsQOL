@@ -578,22 +578,62 @@ namespace OdinQOL.Patches
             }
         }
 
-
-        [HarmonyPatch(typeof(Terminal), nameof(Terminal.InputText))]
-        private static class InputText_Patch
+        /* Modified version of the original method to allow for crafting items to not disappear when the inventory is full */
+        [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.DoCrafting))]
+        public static class InventoryGui_DoCrafting_Patch
         {
-            private static bool Prefix(Terminal __instance)
+            public static bool Prefix(InventoryGui __instance, Player player, bool __runOriginal)
             {
-                if (!ModEnabled.Value)
-                    return true;
-                string text = __instance.m_input.text;
-                if (!text.ToLower().Equals(typeof(OdinQOLplugin).Namespace.ToLower() + " reset"))
-                    return true;
-                context.Config.Reload();
-                context.Config.Save();
-                __instance.AddString(text);
-                __instance.AddString(context.Info.Metadata.Name + " config reloaded");
+                if (!__runOriginal || __instance.m_craftRecipe == null)
+                {
+                    return false;
+                }
+
+                int newQuality = __instance.m_craftUpgradeItem?.m_quality + 1 ?? 1;
+                if (newQuality > __instance.m_craftRecipe.m_item.m_itemData.m_shared.m_maxQuality
+                    || !player.HaveRequirements(__instance.m_craftRecipe, false, newQuality) && !player.NoCostCheat()
+                    || (__instance.m_craftUpgradeItem != null
+                        && !player.GetInventory().ContainsItem(__instance.m_craftUpgradeItem)
+                        || __instance.m_craftUpgradeItem == null
+                        && !player.GetInventory().HaveEmptySlot()))
+                {
+                    return false;
+                }
+
+                if (__instance.m_craftRecipe.m_item.m_itemData.m_shared.m_dlc.Length > 0 &&
+                    !DLCMan.instance.IsDLCInstalled(__instance.m_craftRecipe.m_item.m_itemData.m_shared.m_dlc))
+                {
+                    return false;
+                }
+
+                ItemDrop.ItemData? upgradeItem = __instance.m_craftUpgradeItem;
+                if (upgradeItem == null) return true;
+                upgradeItem.m_quality = newQuality;
+                upgradeItem.m_durability = upgradeItem.GetMaxDurability();
+
+                if (!player.NoCostCheat())
+                {
+                    player.ConsumeResources(__instance.m_craftRecipe.m_resources, newQuality);
+                }
+
+                __instance.UpdateCraftingPanel();
+
+                CraftingStation? currentCraftingStation = Player.m_localPlayer.GetCurrentCraftingStation();
+                if (currentCraftingStation != null)
+                {
+                    currentCraftingStation.m_craftItemDoneEffects.Create(player.transform.position,
+                        Quaternion.identity);
+                }
+                else
+                {
+                    __instance.m_craftItemDoneEffects.Create(player.transform.position, Quaternion.identity);
+                }
+
+                ++Game.instance.GetPlayerProfile().m_playerStats.m_crafts;
+                Gogan.LogEvent("Game", "Crafted", __instance.m_craftRecipe.m_item.m_itemData.m_shared.m_name, newQuality);
+
                 return false;
+
             }
         }
     }
