@@ -25,7 +25,7 @@ namespace OdinQOL.Patches
 
         public static IEnumerator UpdateMap(bool force)
         {
-            if (!MapDetailOn.Value)
+            if (!MapDetailOn.Value && !ShowBuildings.Value)
                 yield break;
 
             if (force)
@@ -67,7 +67,6 @@ namespace OdinQOL.Patches
             {
                 foreach (int i in _lastPixels.Where(i => !pixels.ContainsKey(i)))
                     goto newpixels;
-                OdinQOLplugin.QOLLogger.LogDebug("No new pixels");
                 yield break;
             }
 
@@ -77,7 +76,6 @@ namespace OdinQOL.Patches
 
             if (pixels.Count == 0)
             {
-                OdinQOLplugin.QOLLogger.LogDebug("No pixels to add");
                 SetMaps(_mapTexture);
                 yield break;
             }

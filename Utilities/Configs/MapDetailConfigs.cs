@@ -7,7 +7,7 @@ public class MapDetailConfigs
 {
     internal static void Generate()
     {
-        MapDetail.MapDetailOn = OdinQOLplugin.context.config("Map Details", "MapDetail On", true,
+        MapDetail.MapDetailOn = OdinQOLplugin.context.config("Map Details", "MapDetail On", false,
             "Toggle this whole section off/on");
         MapDetail.DisplayCartsAndBoats =
             OdinQOLplugin.context.config("Map Details", "Display Boats/Carts", true, "Show Boats and carts on the map");

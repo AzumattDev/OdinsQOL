@@ -20,6 +20,9 @@ the best collection of QOL and tweaks in one spot
 * Iron chest rows defaulted to 4
 * Display Fermenter progress on hover
 * Centered the clock on the screen.
+* ShowBuildings under MapDetails now determines buildings are painted on the map. This allows for map details to be on, and show carts without buildings showing on the map. Previously this was a dead config (not sure why).
+* MapDetails default value is now false
+* Remove some unused code. Fixed some wording.
 #### 0.8.7
 * Mimic FastLink v1.1.0 update. Allow prompting for password still. Disable GUI when in loading screen.
 * Add config option to disable the portal hover tag (thanks to @wackymole)
