@@ -15,6 +15,7 @@ internal class AutoStorePatch
     public static ConfigEntry<float> dropRangePersonalChests;
     public static ConfigEntry<float> dropRangeReinforcedChests;
     public static ConfigEntry<float> dropRangeBlackmetalChests;
+    public static ConfigEntry<float> dropRangeCustomChests;
     public static ConfigEntry<float> dropRangeCarts;
     public static ConfigEntry<float> dropRangeShips;
     public static ConfigEntry<string> itemDisallowTypes;
@@ -26,6 +27,9 @@ internal class AutoStorePatch
     public static ConfigEntry<string> itemDisallowTypesReinforcedChests;
     public static ConfigEntry<string> itemAllowTypesReinforcedChests;
     public static ConfigEntry<string> itemDisallowTypesBlackMetalChests;
+    public static ConfigEntry<string> customChests;
+    public static ConfigEntry<string> itemAllowTypesCustomChests;
+    public static ConfigEntry<string> itemDisallowTypesCustomChests;
     public static ConfigEntry<string> itemAllowTypesBlackMetalChests;
     public static ConfigEntry<string> itemDisallowTypesCarts;
     public static ConfigEntry<string> itemAllowTypesCarts;
@@ -42,6 +46,8 @@ internal class AutoStorePatch
     public static ConfigEntry<string> itemAllowCategoriesReinforcedChests;
     public static ConfigEntry<string> itemDisallowCategoriesBlackMetalChests;
     public static ConfigEntry<string> itemAllowCategoriesBlackMetalChests;
+    public static ConfigEntry<string> itemDisallowCategoriesCustomChests;
+    public static ConfigEntry<string> itemAllowCategoriesCustomChests;
     public static ConfigEntry<string> itemDisallowCategoriesCarts;
     public static ConfigEntry<string> itemAllowCategoriesCarts;
     public static ConfigEntry<string> itemDisallowCategoriesShips;
@@ -155,6 +161,23 @@ internal class AutoStorePatch
                 .Contains(category, StringComparer.Ordinal);
         }
 
+        foreach (string s in customChests.Value.Split(','))
+        {
+            if (container.name.StartsWith(s, StringComparison.Ordinal))
+            {
+                if (itemAllowTypesCustomChests.Value is { Length: > 0 } && !itemAllowTypesCustomChests.Value
+                        .Split(',').Contains(name, StringComparer.Ordinal))
+                    return true;
+                if (itemDisallowTypesCustomChests.Value.Split(',').Contains(name, StringComparer.Ordinal))
+                    return true;
+                if (itemAllowCategoriesCustomChests.Value is { Length: > 0 } && !itemAllowCategoriesCustomChests
+                        .Value.Split(',').Contains(category, StringComparer.Ordinal))
+                    return true;
+                return itemDisallowCategoriesCustomChests.Value.Split(',')
+                    .Contains(category, StringComparer.Ordinal);
+            }
+        }
+
         return true;
     }
 
@@ -176,6 +199,12 @@ internal class AutoStorePatch
             return dropRangeReinforcedChests.Value;
         if (container.name.StartsWith("piece_chest_blackmetal", StringComparison.Ordinal))
             return dropRangeBlackmetalChests.Value;
+        foreach (string s in customChests.Value.Split(','))
+        {
+            if (container.name.StartsWith(s, StringComparison.Ordinal))
+                return dropRangeCustomChests.Value;
+        }
+
         return -1f;
     }
 

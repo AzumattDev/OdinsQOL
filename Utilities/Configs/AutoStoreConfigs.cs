@@ -27,6 +27,9 @@ public class AutoStoreConfigs
         AutoStorePatch.dropRangeBlackmetalChests = OdinQOLplugin.context.config("Auto Storage",
             "DropRangeBlackmetalChests", 5f,
             "The maximum range to pull dropped items for Blackmetal Chests");
+        AutoStorePatch.dropRangeCustomChests = OdinQOLplugin.context.config("Auto Storage",
+            "DropRangeCustomChests", 5f,
+            "The maximum range to pull dropped items for Custom Chests");
         AutoStorePatch.dropRangeCarts = OdinQOLplugin.context.config("Auto Storage", "DropRangeCarts", 5f,
             "The maximum range to pull dropped items for Carts");
         AutoStorePatch.dropRangeShips = OdinQOLplugin.context.config("Auto Storage", "DropRangeShips", 5f,
@@ -109,6 +112,15 @@ public class AutoStoreConfigs
         AutoStorePatch.itemAllowTypesBlackMetalChests = OdinQOLplugin.context.config("Auto Storage",
             "ItemAllowTypesBlackMetalChests", "",
             "Types of item to only allow pulling for, comma-separated. Uses Prefab names. Overrides ItemDisallowTypesBlackMetalChests");
+        AutoStorePatch.customChests = OdinQOLplugin.context.config("Auto Storage", "CustomChests", "",
+            "Custom Chests to use, comma-separated. Uses Prefab names.");
+        AutoStorePatch.itemDisallowTypesCustomChests = OdinQOLplugin.context.config("Auto Storage",
+            "ItemDisallowTypesCustomChests",
+            "", "Types of item to disallow pulling for, comma-separated. Uses Prefab names.");
+        AutoStorePatch.itemAllowTypesCustomChests = OdinQOLplugin.context.config("Auto Storage",
+            "ItemAllowTypesCustomChests", "",
+            "Types of item to only allow pulling for, comma-separated. Uses Prefab names. Overrides ItemDisallowTypesCustomChests");
+        
         AutoStorePatch.itemDisallowTypesCarts = OdinQOLplugin.context.config("Auto Storage", "ItemDisallowTypesCarts",
             "",
             "Types of item to disallow pulling for, comma-separated. Uses Prefab names. (For Carts)");
