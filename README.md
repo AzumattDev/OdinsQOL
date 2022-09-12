@@ -24,6 +24,7 @@ the best collection of QOL and tweaks in one spot
 * MapDetails default value is now false
 * Remove some unused code. Fixed some wording.
 * Auto store now allows for custom chests to be added to a list. Affected by ItemDisallowCustomChests, ItemAllowCustomChests and DropRangeCustomChests values.
+* CFC now has a configuration option for ItemDisallowTypes, to prevent certain items from being pulled into the player inventory.
 #### 0.8.7
 * Mimic FastLink v1.1.0 update. Allow prompting for password still. Disable GUI when in loading screen.
 * Add config option to disable the portal hover tag (thanks to @wackymole)
