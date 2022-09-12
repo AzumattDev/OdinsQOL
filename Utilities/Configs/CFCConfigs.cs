@@ -30,7 +30,9 @@ public class CFCConfigs
         CFC.CFCOreDisallowTypes = OdinQOLplugin.context.config("CraftFromContainers", "OreDisallowTypes",
             "RoundLog,FineWood",
             "Types of item to disallow as ore (i.e. anything that is transformed), comma-separated). Uses Prefab names.");
-
+        CFC.CFCItemDisallowTypes = OdinQOLplugin.context.config("CraftFromContainers", "ItemDisallowTypes",
+            "",
+            "Types of items to disallow pulling from chests, comma-separated. Uses Prefab names.");
         CFC.showGhostConnections = OdinQOLplugin.context.config("CraftFromContainers",
             "ShowConnections", false,
             "If true, will display connections to nearby workstations within range when building containers", false);

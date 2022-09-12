@@ -858,6 +858,7 @@ public class CFC
     public static ConfigEntry<string> pulledMessage = null!;
     public static ConfigEntry<string> CFCFuelDisallowTypes = null!;
     public static ConfigEntry<string> CFCOreDisallowTypes = null!;
+    public static ConfigEntry<string> CFCItemDisallowTypes = null!;
     public static ConfigEntry<KeyboardShortcut> pullItemsKey = null!;
     public static ConfigEntry<KeyboardShortcut> preventModKey = null!;
     public static ConfigEntry<KeyboardShortcut> fillAllModKey = null!;
