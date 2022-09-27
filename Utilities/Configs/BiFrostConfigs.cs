@@ -1,5 +1,5 @@
 ﻿using BepInEx.Configuration;
-using OdinQOL.Patches.BiFrost;
+//using OdinQOL.Patches.BiFrost;
 using UnityEngine;
 
 namespace OdinQOL.Configs;
@@ -8,7 +8,7 @@ public class BiFrostConfigs
 {
     internal static void Generate()
     {
-        BiFrost.UIAnchor = OdinQOLplugin.context.config("BiFrost", "Position of the UI", new Vector2(-900, 200),
+        /*BiFrost.UIAnchor = OdinQOLplugin.context.config("BiFrost", "Position of the UI", new Vector2(-900, 200),
             new ConfigDescription("Sets the anchor position of the UI"), false);
 
         BiFrost.DisableBiFrost = OdinQOLplugin.context.config("BiFrost", "Disable", true,
@@ -19,6 +19,6 @@ public class BiFrostConfigs
                 "Set to true if you want to still show the password prompt to the user. This is for servers that have a password but don't wish to use the file to keep the password."),
             false);
 
-        BiFrost.UIAnchor.SettingChanged += Utilities.SaveAndReset;
+        BiFrost.UIAnchor.SettingChanged += Utilities.SaveAndReset;*/
     }
 }

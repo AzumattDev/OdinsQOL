@@ -10,7 +10,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using OdinQOL.Configs;
 using OdinQOL.Patches;
-using OdinQOL.Patches.BiFrost;
+//using OdinQOL.Patches.BiFrost;
 using ServerSync;
 using UnityEngine;
 
@@ -57,7 +57,7 @@ namespace OdinQOL
         "com.jotunn.modsettings")] // It was exploited in the past to bypass ServerSync settings while it was in Jotunn. No telling that won't happen again even if only a short time.*/
     public partial class OdinQOLplugin : BaseUnityPlugin
     {
-        public const string Version = "0.8.8";
+        public const string Version = "0.9.0";
         public const string ModName = "OdinPlusQOL";
         public const string GUID = "com.odinplusqol.mod";
         internal static readonly int windowId = 434343;
@@ -217,13 +217,13 @@ namespace OdinQOL
             watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
             watcher.EnableRaisingEvents = true;
 
-            FileSystemWatcher serverWatcher = new(Paths.ConfigPath, BiFrostServers.ConfigFileName);
+            /*FileSystemWatcher serverWatcher = new(Paths.ConfigPath, BiFrostServers.ConfigFileName);
             serverWatcher.Changed += Utilities.ReadNewServers;
             serverWatcher.Created += Utilities.ReadNewServers;
             serverWatcher.Renamed += Utilities.ReadNewServers;
             serverWatcher.IncludeSubdirectories = true;
             serverWatcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
-            serverWatcher.EnableRaisingEvents = true;
+            serverWatcher.EnableRaisingEvents = true;*/
         }
 
         private void ReadConfigValues(object sender, FileSystemEventArgs e)

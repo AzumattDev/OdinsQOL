@@ -542,9 +542,18 @@ namespace OdinQOL.Patches
             private static void Postfix(ref FejdStartup __instance)
             {
                 __instance.m_minimumPasswordLength = 0;
-                __instance.m_serverPlayerLimit = MaxPlayers.Value;
+                //__instance.m_serverPlayerLimit = MaxPlayers.Value;
             }
         }
+        
+        /*[HarmonyPatch(typeof(ServerList),nameof(ServerList.UpdateServerListGui))]
+        static class ServerList_UpdateServerListGui_Patch
+        {
+            static void Postfix(ServerList __instance)
+            {
+            }
+        }*/
+        
 
         [HarmonyPatch(typeof(SteamGameServer), nameof(SteamGameServer.SetMaxPlayerCount))]
         public static class ChangeSteamServerVariables
@@ -556,7 +565,7 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(ZNet), nameof(ZNet.Awake))]
+        /*[HarmonyPatch(typeof(ZNet), nameof(ZNet.Awake))]
         public static class ChangeGameServerVariables
         {
             private static void Postfix(ref ZNet __instance)
@@ -565,8 +574,34 @@ namespace OdinQOL.Patches
                 if (maxPlayers >= 1)
                     // Set Server Instance Max Players
                     __instance.m_serverPlayerLimit = maxPlayers;
+                
             }
+        }*/
+        
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
+        static IEnumerable<CodeInstruction> MaxPlayersPatch(IEnumerable<CodeInstruction> instructions)
+        {
+            var found = false;
+            foreach (var instruction in instructions)
+            {
+                if (instruction.opcode == OpCodes.Ldc_I4_S)
+                {
+                    OdinQOLplugin.QOLLogger.LogDebug("Found Ldc_I4_S, changing the value to " + MaxPlayers.Value);
+                    yield return new CodeInstruction(OpCodes.Call, ReplacePlayerLimit);
+                    found = true;
+                }
+                yield return instruction;
+            }
+            if (found is false)
+                OdinQOLplugin.QOLLogger.LogError("Cannot find <Stdfld someField> in OriginalType.OriginalMethod");
         }
+
+        private static int ReplacePlayerLimit()
+        {
+            return MaxPlayers.Value;
+        }
+        
 
         /// <summary>
         ///     Alters public password requirements

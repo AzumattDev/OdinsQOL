@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
@@ -116,7 +116,7 @@ internal class BiFrostSetupGui
             BF.SetActive(true);
 
 
-        /* Set Mod Text */
+        /* Set Mod Text #1#
         BF.transform.Find("topic").GetComponent<Text>().text = "Bifröst";
 
         try
@@ -143,4 +143,4 @@ static class FejdStartup_LoadMainScene_Patch
         if (BiFrostSetupGui.BF.activeSelf)
             BiFrostSetupGui.BF.SetActive(false);
     }
-}
+}*/

@@ -7,7 +7,7 @@ using BepInEx.Logging;
 using CraftyBoxes.Compatibility.WardIsLove;
 using HarmonyLib;
 using OdinQOL.Patches;
-using OdinQOL.Patches.BiFrost;
+//using OdinQOL.Patches.BiFrost;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -300,7 +300,7 @@ namespace OdinQOL
         }
 
 
-        /* BiFrost Utils */
+        /*/* BiFrost Utils #1#
         internal static void SaveAndReset(object sender, EventArgs e)
         {
             OdinQOLplugin.context.Config.Save();
@@ -330,7 +330,7 @@ namespace OdinQOL
                 OdinQOLplugin.QOLLogger.LogError($"There was an issue loading your {BiFrostServers.ConfigFileName}");
                 OdinQOLplugin.QOLLogger.LogError("Please check your config entries for spelling and format!");
             }
-        }
+        }*/
     }
 
     // Aedenthorn was getting this prefab almost every frame after iterating through all gameobjects...not sure why, but this should improve performance greatly in the UpdatePlacementGhost patch for CFC.

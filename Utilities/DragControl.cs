@@ -1,4 +1,4 @@
-﻿using OdinQOL.Patches.BiFrost;
+﻿/*using OdinQOL.Patches.BiFrost;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -23,4 +23,4 @@ public class DragControl : MonoBehaviour, IDragHandler, IEndDragHandler
     {
         BiFrost.UIAnchor.Value = dragRectTransform.anchoredPosition;
     }
-}
+}*/

@@ -12,6 +12,10 @@ the best collection of QOL and tweaks in one spot
 ### Having issues? Post them on my GitHub for me to not forget! (https://github.com/AzumattDev/OdinsQOL/issues)
 
 # Changelog (latest patch listed first)
+#### 0.9.0
+* Updated to work with Game Version 0.211.7
+  * BiFrost temporarily disabled due to issues with the new version, will work out a fix soon, until then, use their new server saving!
+* Code change for Max Players allowed in the server to work with latest version.
 #### 0.8.8
 * Change auto repair default value to false and change to sync with server's setting. Requested by Tyson#28262
 * Remove the ability to override your player name in the chatbox. Valid complaints with this feature have been made, and I have decided to remove it. I had forgotten that this was a feature, and I apologize for the inconvenience.
