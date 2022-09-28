@@ -564,42 +564,22 @@ namespace OdinQOL.Patches
                 if (maxPlayers >= 1) cPlayersMax = maxPlayers;
             }
         }
-
-        /*[HarmonyPatch(typeof(ZNet), nameof(ZNet.Awake))]
-        public static class ChangeGameServerVariables
-        {
-            private static void Postfix(ref ZNet __instance)
-            {
-                int maxPlayers = MaxPlayers.Value;
-                if (maxPlayers >= 1)
-                    // Set Server Instance Max Players
-                    __instance.m_serverPlayerLimit = maxPlayers;
-                
-            }
-        }*/
         
-        [HarmonyTranspiler]
         [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
-        static IEnumerable<CodeInstruction> MaxPlayersPatch(IEnumerable<CodeInstruction> instructions)
+        internal class MaxPlayersCount
         {
-            var found = false;
-            foreach (var instruction in instructions)
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> MaxPlayersPatch(IEnumerable<CodeInstruction> instructions)
             {
-                if (instruction.opcode == OpCodes.Ldc_I4_S)
-                {
-                    OdinQOLplugin.QOLLogger.LogDebug("Found Ldc_I4_S, changing the value to " + MaxPlayers.Value);
-                    yield return new CodeInstruction(OpCodes.Call, ReplacePlayerLimit);
-                    found = true;
-                }
-                yield return instruction;
+#if DEBUG
+                MaxPlayerCountLogger.LogMessage("Searching for Ldc_I4_S and setting it to " +
+                                                                     _maxPlayers.Value);
+#endif
+                return new CodeMatcher(instructions).MatchForward(false, new CodeMatch(OpCodes.Ldc_I4_S, (sbyte)10))
+                    .Set(OpCodes.Call, Transpilers.EmitDelegate(ReplacePlayerLimit).operand).InstructionEnumeration();
             }
-            if (found is false)
-                OdinQOLplugin.QOLLogger.LogError("Cannot find <Stdfld someField> in OriginalType.OriginalMethod");
-        }
 
-        private static int ReplacePlayerLimit()
-        {
-            return MaxPlayers.Value;
+            private static int ReplacePlayerLimit() => MaxPlayers.Value;
         }
         
 
