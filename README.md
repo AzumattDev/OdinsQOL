@@ -12,6 +12,8 @@ the best collection of QOL and tweaks in one spot
 ### Having issues? Post them on my GitHub for me to not forget! (https://github.com/AzumattDev/OdinsQOL/issues)
 
 # Changelog (latest patch listed first)
+#### 0.9.1
+* Fix MaxPlayerCount not working as intended.
 #### 0.9.0
 * Updated to work with Game Version 0.211.7
   * BiFrost temporarily disabled due to issues with the new version, will work out a fix soon, until then, use their new server saving!
