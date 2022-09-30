@@ -72,7 +72,15 @@ public class GamePatchConfigs
         GamePatches.HoverPortalTag = OdinQOLplugin.context.config("Game",
             "Portal Tag on Hover", true,
             "Enabled Portal Tag message while hovering over Portal");
-
+        GamePatches.ShowDamageFlash = OdinQOLplugin.context.config("Player",
+            "ShowDamageFlash", true,
+            "Show the flashing red screen when taking damage");
+        GamePatches.NoFoodDeg = OdinQOLplugin.context.config("Player",
+            "No Food Degrade", false,
+            "Disables food degrading");
+        GamePatches.FoodModifications = OdinQOLplugin.context.config("Player",
+            "Modify food", false,
+            "Ensuring the food lasts longer while maintaining the same rate of regeneration. Needed to be on for No Food Degrade to work");
 
         ImprovedBuildHudConfig.InventoryAmountFormat = OdinQOLplugin.context.config("Building HUD",
             "Inventory Amount Format",

@@ -42,6 +42,9 @@ namespace OdinQOL.Patches
         public static ConfigEntry<int> MaxPlayers = null!;
         public static ConfigEntry<bool> HaveArrivedOnSpawn = null!;
         public static ConfigEntry<bool> HoverPortalTag = null!;
+        public static ConfigEntry<bool> ShowDamageFlash = null!;
+        public static ConfigEntry<bool> FoodModifications = null!;
+        public static ConfigEntry<bool> NoFoodDeg = null!;
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Location), nameof(Location.IsInsideNoBuildLocation))]
@@ -303,7 +306,7 @@ namespace OdinQOL.Patches
         {
             private static void Postfix(Hud __instance)
             {
-                __instance.m_damageScreen.gameObject.SetActive(false);
+                __instance.m_damageScreen.gameObject.SetActive(ShowDamageFlash.Value);
             }
         }
 
@@ -317,7 +320,8 @@ namespace OdinQOL.Patches
                     string? portalName = __instance.GetText();
 
 
-                    __result = Localization.instance.Localize(string.Concat("$piece_portal $piece_portal_tag:", " ", "[",
+                    __result = Localization.instance.Localize(string.Concat("$piece_portal $piece_portal_tag:", " ",
+                        "[",
                         portalName, "]"));
 
                     MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, __result);
@@ -342,6 +346,7 @@ namespace OdinQOL.Patches
             [HarmonyTranspiler]
             public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
+                if (!FoodModifications.Value) return instructions;
                 List<CodeInstruction>? il = instructions.ToList();
 
                 for (int i = 0; i < il.Count - 2; ++i)
@@ -389,21 +394,24 @@ namespace OdinQOL.Patches
             [HarmonyTranspiler]
             public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
+                if (!FoodModifications.Value) return instructions;
                 List<CodeInstruction>? il = instructions.ToList();
 
-                for (int i = 0; i < il.Count; ++i)
+                if (NoFoodDeg.Value)
                 {
-                    bool loadsHealth = il[i].LoadsField(FieldFoodMHealth);
-                    bool loadsStamina = il[i].LoadsField(FieldFoodMStamina);
+                    for (int i = 0; i < il.Count; ++i)
+                    {
+                        bool loadsHealth = il[i].LoadsField(FieldFoodMHealth);
+                        bool loadsStamina = il[i].LoadsField(FieldFoodMStamina);
 
-                    if (!loadsHealth && !loadsStamina) continue;
-                    il[i].operand = FieldFoodMItem;
-                    il.Insert(++i, new CodeInstruction(OpCodes.Ldfld, FieldItemDataMShared));
-                    il.Insert(++i,
-                        new CodeInstruction(OpCodes.Ldfld,
-                            loadsHealth ? FieldSharedDataMFood : FieldSharedDataMFoodStamina));
+                        if (!loadsHealth && !loadsStamina) continue;
+                        il[i].operand = FieldFoodMItem;
+                        il.Insert(++i, new CodeInstruction(OpCodes.Ldfld, FieldItemDataMShared));
+                        il.Insert(++i,
+                            new CodeInstruction(OpCodes.Ldfld,
+                                loadsHealth ? FieldSharedDataMFood : FieldSharedDataMFoodStamina));
+                    }
                 }
-
 
                 return il.AsEnumerable();
             }
@@ -421,6 +429,7 @@ namespace OdinQOL.Patches
             [HarmonyTranspiler]
             public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
+                if(!BuildInsideProtectedLocations.Value) return instructions;
                 List<CodeInstruction>? il = instructions.ToList();
                 for (int i = 0; i < il.Count; ++i)
                     if (il[i].operand != null)
@@ -545,7 +554,7 @@ namespace OdinQOL.Patches
                 //__instance.m_serverPlayerLimit = MaxPlayers.Value;
             }
         }
-        
+
         /*[HarmonyPatch(typeof(ServerList),nameof(ServerList.UpdateServerListGui))]
         static class ServerList_UpdateServerListGui_Patch
         {
@@ -553,7 +562,7 @@ namespace OdinQOL.Patches
             {
             }
         }*/
-        
+
 
         [HarmonyPatch(typeof(SteamGameServer), nameof(SteamGameServer.SetMaxPlayerCount))]
         public static class ChangeSteamServerVariables
@@ -564,7 +573,7 @@ namespace OdinQOL.Patches
                 if (maxPlayers >= 1) cPlayersMax = maxPlayers;
             }
         }
-        
+
         [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
         internal class MaxPlayersCount
         {
@@ -581,7 +590,7 @@ namespace OdinQOL.Patches
 
             private static int ReplacePlayerLimit() => MaxPlayers.Value;
         }
-        
+
 
         /// <summary>
         ///     Alters public password requirements
