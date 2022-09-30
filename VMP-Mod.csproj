@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -15,7 +15,7 @@
         <Deterministic>true</Deterministic>
         <NuGetPackageImportStamp>
         </NuGetPackageImportStamp>
-        <TargetFrameworkProfile/>
+        <TargetFrameworkProfile />
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -76,14 +76,14 @@
         <Reference Include="ServerSync, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>Libs\ServerSync.dll</HintPath>
         </Reference>
-        <Reference Include="System"/>
-        <Reference Include="System.Core"/>
-        <Reference Include="System.Numerics"/>
-        <Reference Include="System.Xml.Linq"/>
-        <Reference Include="System.Data.DataSetExtensions"/>
-        <Reference Include="System.Data"/>
-        <Reference Include="System.Net.Http"/>
-        <Reference Include="System.Xml"/>
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Numerics" />
+        <Reference Include="System.Xml.Linq" />
+        <Reference Include="System.Data.DataSetExtensions" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Net.Http" />
+        <Reference Include="System.Xml" />
         <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>$(GamePath)\unstripped_corlib\UnityEngine.dll</HintPath>
         </Reference>
@@ -119,78 +119,78 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Patches\CFC.cs"/>
-        <Compile Include="Patches\DisplayPinsOnMap.cs"/>
-        <Compile Include="Patches\ExtendedPlayerInventory.cs"/>
-        <Compile Include="Patches\BiFrost\BiFrost.cs"/>
-        <Compile Include="Patches\BiFrost\BiFrostFunctions.cs"/>
-        <Compile Include="Patches\BiFrost\BFPatches.cs"/>
-        <Compile Include="Patches\Fermenter.cs"/>
-        <Compile Include="Patches\InventoryDiscard.cs"/>
-        <Compile Include="Patches\MoveableChestInventory.cs"/>
-        <Compile Include="Patches\QuickAccessBar.cs"/>
-        <Compile Include="Patches\SkillPatches.cs"/>
-        <Compile Include="Patches\ClockPatch.cs"/>
-        <Compile Include="Patches\PlantGrowth.cs"/>
-        <Compile Include="Patches\ClientPatches.cs"/>
-        <Compile Include="Patches\ServerPatches.cs"/>
-        <Compile Include="Patches\WorldPatches.cs"/>
-        <Compile Include="Patches\ChestSizePatch.cs"/>
-        <Compile Include="Patches\AutoStorePatch.cs"/>
-        <Compile Include="Patches\SignPatches.cs"/>
-        <Compile Include="Patches\WearNTear_Patches.cs"/>
-        <Compile Include="Patches\GamePatches.cs"/>
-        <Compile Include="Patches\MapDetail.cs"/>
-        <Compile Include="Patches\Inventory.cs"/>
-        <Compile Include="Patches\InventoryGUI.cs"/>
-        <Compile Include="Patches\CraftingPatches.cs"/>
-        <Compile Include="Plugin.cs"/>
-        <Compile Include="Properties\AssemblyInfo.cs"/>
-        <Compile Include="Utilities\Compatibility\WardIsLove\WardIsLovePlugin.cs"/>
-        <Compile Include="Utilities\Compatibility\WardIsLove\WardMonoscript.cs"/>
-        <Compile Include="Utilities\Compatibility\WILCompat.cs"/>
-        <Compile Include="Utilities\Configs\AutoStoreConfigs.cs"/>
-        <Compile Include="Utilities\Configs\CFCConfigs.cs"/>
-        <Compile Include="Utilities\Configs\ChestSizeConfigs.cs"/>
-        <Compile Include="Utilities\Configs\ClockPatchConfigs.cs"/>
-        <Compile Include="Utilities\Configs\CraftingConfigs.cs"/>
-        <Compile Include="Utilities\Configs\EPIConfigs.cs"/>
-        <Compile Include="Utilities\Configs\BiFrostConfigs.cs"/>
-        <Compile Include="Utilities\Configs\FermenterPatchConfigs.cs"/>
-        <Compile Include="Utilities\Configs\GamePatchConfigs.cs"/>
-        <Compile Include="Utilities\Configs\InvDiscardConfigs.cs"/>
-        <Compile Include="Utilities\Configs\MapDetailConfigs.cs"/>
-        <Compile Include="Utilities\Configs\MoveableChestConfigs.cs"/>
-        <Compile Include="Utilities\Configs\PlantGrowthConfigs.cs"/>
-        <Compile Include="Utilities\Configs\SignPatchConfigs.cs"/>
-        <Compile Include="Utilities\Configs\SkillPatchConfigs.cs"/>
-        <Compile Include="Utilities\Configs\WNTPatchConfigs.cs"/>
-        <Compile Include="Utilities\Configs\WorldPatchConfigs.cs"/>
-        <Compile Include="Utilities\DragControl.cs"/>
-        <Compile Include="Utilities\Utilities.cs"/>
+        <Compile Include="Patches\CFC.cs" />
+        <Compile Include="Patches\DisplayPinsOnMap.cs" />
+        <Compile Include="Patches\ExtendedPlayerInventory.cs" />
+        <Compile Include="Patches\BiFrost\BiFrost.cs" />
+        <Compile Include="Patches\BiFrost\BiFrostFunctions.cs" />
+        <Compile Include="Patches\BiFrost\BFPatches.cs" />
+        <Compile Include="Patches\Fermenter.cs" />
+        <Compile Include="Patches\InventoryDiscard.cs" />
+        <Compile Include="Patches\MoveableChestInventory.cs" />
+        <Compile Include="Patches\QuickAccessBar.cs" />
+        <Compile Include="Patches\SkillPatches.cs" />
+        <Compile Include="Patches\ClockPatch.cs" />
+        <Compile Include="Patches\PlantGrowth.cs" />
+        <Compile Include="Patches\ClientPatches.cs" />
+        <Compile Include="Patches\ServerPatches.cs" />
+        <Compile Include="Patches\WorldPatches.cs" />
+        <Compile Include="Patches\ChestSizePatch.cs" />
+        <Compile Include="Patches\AutoStorePatch.cs" />
+        <Compile Include="Patches\SignPatches.cs" />
+        <Compile Include="Patches\WearNTear_Patches.cs" />
+        <Compile Include="Patches\GamePatches.cs" />
+        <Compile Include="Patches\MapDetail.cs" />
+        <Compile Include="Patches\Inventory.cs" />
+        <Compile Include="Patches\InventoryGUI.cs" />
+        <Compile Include="Patches\CraftingPatches.cs" />
+        <Compile Include="Plugin.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="Utilities\Compatibility\WardIsLove\WardIsLovePlugin.cs" />
+        <Compile Include="Utilities\Compatibility\WardIsLove\WardMonoscript.cs" />
+        <Compile Include="Utilities\Compatibility\WILCompat.cs" />
+        <Compile Include="Utilities\Configs\AutoStoreConfigs.cs" />
+        <Compile Include="Utilities\Configs\CFCConfigs.cs" />
+        <Compile Include="Utilities\Configs\ChestSizeConfigs.cs" />
+        <Compile Include="Utilities\Configs\ClockPatchConfigs.cs" />
+        <Compile Include="Utilities\Configs\CraftingConfigs.cs" />
+        <Compile Include="Utilities\Configs\EPIConfigs.cs" />
+        <Compile Include="Utilities\Configs\BiFrostConfigs.cs" />
+        <Compile Include="Utilities\Configs\FermenterPatchConfigs.cs" />
+        <Compile Include="Utilities\Configs\GamePatchConfigs.cs" />
+        <Compile Include="Utilities\Configs\InvDiscardConfigs.cs" />
+        <Compile Include="Utilities\Configs\MapDetailConfigs.cs" />
+        <Compile Include="Utilities\Configs\MoveableChestConfigs.cs" />
+        <Compile Include="Utilities\Configs\PlantGrowthConfigs.cs" />
+        <Compile Include="Utilities\Configs\SignPatchConfigs.cs" />
+        <Compile Include="Utilities\Configs\SkillPatchConfigs.cs" />
+        <Compile Include="Utilities\Configs\WNTPatchConfigs.cs" />
+        <Compile Include="Utilities\Configs\WorldPatchConfigs.cs" />
+        <Compile Include="Utilities\DragControl.cs" />
+        <Compile Include="Utilities\Utilities.cs" />
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="Assets\Bundles\map-pin-ui"/>
+        <EmbeddedResource Include="Assets\Bundles\map-pin-ui" />
     </ItemGroup>
     <ItemGroup>
-        <None Include="packages.config"/>
+        <None Include="packages.config" />
     </ItemGroup>
     <ItemGroup>
-        <Content Include=".gitignore"/>
-        <Content Include="ILRepack.targets"/>
+        <Content Include=".gitignore" />
+        <Content Include="ILRepack.targets" />
         <Content Include="Libs\ServerSync.dll">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Include="LICENSE.txt"/>
-        <Content Include="README.md"/>
+        <Content Include="LICENSE.txt" />
+        <Content Include="README.md" />
     </ItemGroup>
-    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
-    <Import Project="packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets" Condition="Exists('packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')"/>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <Import Project="packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets" Condition="Exists('packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" />
     <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
         <PropertyGroup>
             <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them. For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
         </PropertyGroup>
-        <Error Condition="!Exists('packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets'))"/>
+        <Error Condition="!Exists('packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets'))" />
     </Target>
     <!--    <PropertyGroup>
             &lt;!&ndash;<PostBuildEvent>copy "$(TargetDir)OdinQOL.dll" "C:\Program Files (x86)\Steam\steamapps\common\Valheim\BepInEx\plugins\OdinQOL.dll</PostBuildEvent>&ndash;&gt;

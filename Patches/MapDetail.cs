@@ -25,8 +25,7 @@ namespace OdinQOL.Patches
 
         public static IEnumerator UpdateMap(bool force)
         {
-            if (!MapDetailOn.Value && !ShowBuildings.Value)
-                yield break;
+            if(!MapDetailOn.Value || !ShowBuildings.Value) { yield break; }
 
             if (force)
                 yield return null;
