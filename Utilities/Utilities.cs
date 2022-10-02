@@ -7,6 +7,7 @@ using BepInEx.Logging;
 using CraftyBoxes.Compatibility.WardIsLove;
 using HarmonyLib;
 using OdinQOL.Patches;
+using OdinQOL.Patches.BiFrost;
 //using OdinQOL.Patches.BiFrost;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -228,10 +229,12 @@ namespace OdinQOL
                             foreach (string s in CFC.CFCItemDisallowTypes.Value.Split(','))
                             {
                                 if (!requirement.m_resItem.m_itemData.m_dropPrefab.name.Contains(s)) continue;
-                                OdinQOLplugin.QOLLogger.LogDebug($"Can't send {s} to player it is contained in the ItemDisallowTypes list for CraftFromContainers");
+                                OdinQOLplugin.QOLLogger.LogDebug(
+                                    $"Can't send {s} to player it is contained in the ItemDisallowTypes list for CraftFromContainers");
                                 skipThis = true;
                             }
-                            if(skipThis) continue;
+
+                            if (skipThis) continue;
                             OdinQOLplugin.QOLLogger.LogDebug($"Sending {stackAmount} {reqName} to player");
 
                             ItemDrop.ItemData sendItem = item.Clone();
@@ -300,7 +303,7 @@ namespace OdinQOL
         }
 
 
-        /*/* BiFrost Utils #1#
+        /* BiFrost Utils */
         internal static void SaveAndReset(object sender, EventArgs e)
         {
             OdinQOLplugin.context.Config.Save();
@@ -330,7 +333,7 @@ namespace OdinQOL
                 OdinQOLplugin.QOLLogger.LogError($"There was an issue loading your {BiFrostServers.ConfigFileName}");
                 OdinQOLplugin.QOLLogger.LogError("Please check your config entries for spelling and format!");
             }
-        }*/
+        }
     }
 
     // Aedenthorn was getting this prefab almost every frame after iterating through all gameobjects...not sure why, but this should improve performance greatly in the UpdatePlacementGhost patch for CFC.

@@ -1,4 +1,4 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -61,6 +61,14 @@ internal class BiFrostServers
                     .AppendLine("<color=red>Another IPv4 Server</color>:")
                     .AppendLine("  address: 192.0.2.146")
                     .AppendLine("  port: 9999")
+                    .AppendLine("  ispvp: true")
+                    .AppendLine(
+                        "# You can specify if a server is crossplay or not. This will show the crossplay's \"Shuffle\" icon. Please note, this is not fully supported at this time.")
+                    .AppendLine("Crossplay Server:")
+                    .AppendLine("  address: 92.183.211.42")
+                    .AppendLine("  port: 9999")
+                    .AppendLine("  password: somepassword")
+                    .AppendLine("  iscrossplay: true")
                     .AppendLine("  ispvp: true"));
                 streamWriter.Close();
             }
@@ -88,6 +96,8 @@ public class BiFrostDefinition
     public string address { get; set; } = null!;
 
     public bool ispvp { get; set; } = false;
+    
+    public bool iscrossplay { get; set; } = false;
 
     public string password { get; set; } = "";
 
@@ -100,4 +110,4 @@ public class BiFrostDefinition
         });
 
     public override string ToString() => $"Server(name={serverName},address={address},port={port})";
-}*/
+}

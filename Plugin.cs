@@ -10,6 +10,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using OdinQOL.Configs;
 using OdinQOL.Patches;
+using OdinQOL.Patches.BiFrost;
 //using OdinQOL.Patches.BiFrost;
 using ServerSync;
 using UnityEngine;
@@ -53,8 +54,17 @@ namespace OdinQOL
     [BepInPlugin(GUID, ModName, Version)]
     [BepInIncompatibility(
         "aedenthorn.CraftFromContainers")] // Since I have pulled this in and optimized a few things...make sure we don't overlap.
-    /*[BepInIncompatibility(
-        "com.jotunn.modsettings")] // It was exploited in the past to bypass ServerSync settings while it was in Jotunn. No telling that won't happen again even if only a short time.*/
+    [BepInIncompatibility("aedenthorn.AutoStore")]
+    [BepInIncompatibility("aedenthorn.ExtendedPlayerInventory")]
+    [BepInIncompatibility("aedenthorn.DiscardInventoryItem")]
+    [BepInIncompatibility("aedenthorn.MovableChestInventory")]
+    [BepInIncompatibility("aedenthorn.MapDetails")]
+    [BepInIncompatibility("aedenthorn.ClockMod")]
+    [BepInIncompatibility(
+        "org.bepinex.plugins.valheim_plus")]
+    [BepInIncompatibility("odinplusqol.OdinsCraftyBoxes")]
+    [BepInIncompatibility("odinplusqol.OdinsExtendedInventory")]
+    [BepInIncompatibility("odinplusqol.OdinsInventoryDiscard")]
     public partial class OdinQOLplugin : BaseUnityPlugin
     {
         public const string Version = "0.9.1";
@@ -217,13 +227,13 @@ namespace OdinQOL
             watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
             watcher.EnableRaisingEvents = true;
 
-            /*FileSystemWatcher serverWatcher = new(Paths.ConfigPath, BiFrostServers.ConfigFileName);
+            FileSystemWatcher serverWatcher = new(Paths.ConfigPath, BiFrostServers.ConfigFileName);
             serverWatcher.Changed += Utilities.ReadNewServers;
             serverWatcher.Created += Utilities.ReadNewServers;
             serverWatcher.Renamed += Utilities.ReadNewServers;
             serverWatcher.IncludeSubdirectories = true;
             serverWatcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
-            serverWatcher.EnableRaisingEvents = true;*/
+            serverWatcher.EnableRaisingEvents = true;
         }
 
         private void ReadConfigValues(object sender, FileSystemEventArgs e)

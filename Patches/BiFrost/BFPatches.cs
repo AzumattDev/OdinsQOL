@@ -1,4 +1,4 @@
-﻿/*using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
@@ -47,21 +47,17 @@ internal class BiFrostPatchConnectFailed
 [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_ClientHandshake))]
 internal class BiFrostPatchPasswordPrompt
 {
-    private static bool Prefix(ZNet __instance, ZRpc rpc, bool needPassword)
+    private static bool Prefix(ZNet __instance, ZRpc rpc, bool needPassword, string serverPasswordSalt)
     {
         if (BiFrost.ShowPasswordPrompt.Value) return true;
         string? str = BiFrostFunctions.CurrentPass();
-        if (str == null) return true;
+        if (string.IsNullOrEmpty(str)) return true;
+        ZNet.m_serverPasswordSalt = serverPasswordSalt;
         if (needPassword)
         {
-            OdinQOLplugin.QOLLogger.LogDebug("Authenticating with saved password...");
+            OdinQOLplugin.QOLLogger.LogDebug($"Authenticating with saved password...{str}");
             __instance.m_connectingDialog.gameObject.SetActive(false);
-            typeof(ZNet).GetMethod("SendPeerInfo", BindingFlags.Instance | BindingFlags.NonPublic)
-                ?.Invoke(__instance, new object[2]
-                {
-                    rpc,
-                    str
-                });
+            __instance.SendPeerInfo(rpc, str);
             return false;
         }
 
@@ -91,7 +87,7 @@ internal class BiFrostSetupGui
     {
         Connecting = null;
         foreach (GameObject serverListElement in MServerListElements)
-            Object.Destroy(serverListElement);
+            Object.DestroyImmediate(serverListElement);
         MServerListElements.Clear();
 
         BiFrostServers.Init();
@@ -104,8 +100,9 @@ internal class BiFrostSetupGui
 
         BF = Object.Instantiate(GameObject.Find("GUI/StartGui/StartGame/Panel/JoinPanel").gameObject,
             BFRootGo.transform);
-
-
+        Object.DestroyImmediate(BF.gameObject.GetComponent<TabHandler>());
+        Object.DestroyImmediate(BF.gameObject.GetComponent<ServerList>());
+        Object.DestroyImmediate(BF.gameObject.GetComponent<UIGamePad>());
         BF.transform.SetParent(BFRootGo.transform);
         BF.gameObject.transform.localScale = new Vector3((float)0.85, (float)0.85, (float)0.85);
         BFRootGo.transform.position =
@@ -116,7 +113,7 @@ internal class BiFrostSetupGui
             BF.SetActive(true);
 
 
-        /* Set Mod Text #1#
+        /* Set Mod Text */
         BF.transform.Find("topic").GetComponent<Text>().text = "Bifröst";
 
         try
@@ -143,4 +140,4 @@ static class FejdStartup_LoadMainScene_Patch
         if (BiFrostSetupGui.BF.activeSelf)
             BiFrostSetupGui.BF.SetActive(false);
     }
-}*/
+}

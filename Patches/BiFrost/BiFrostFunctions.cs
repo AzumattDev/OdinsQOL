@@ -1,6 +1,7 @@
-﻿/*using System;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using Steamworks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -12,21 +13,31 @@ public class BiFrostFunctions
 {
     internal static void DestroyAll(GameObject thing)
     {
-        Object.Destroy(thing.transform.Find("Join manually").gameObject);
-        Object.Destroy(thing.transform.Find("FilterField").gameObject);
-        Object.Destroy(thing.transform.Find("Refresh").gameObject);
-        Object.Destroy(thing.transform.Find("FriendGames").gameObject);
-        Object.Destroy(thing.transform.Find("PublicGames").gameObject);
-        Object.Destroy(thing.transform.Find("Server help").gameObject);
-        Object.Destroy(thing.transform.Find("Back").gameObject);
-        Object.Destroy(thing.transform.Find("Join").gameObject);
+        //Object.DestroyImmediate(thing.transform.Find("Join manually").gameObject);
+        Object.DestroyImmediate(thing.transform.Find("FilterField").gameObject);
+        Object.DestroyImmediate(thing.transform.Find("Refresh").gameObject);
+        //Object.DestroyImmediate(thing.transform.Find("FriendGames").gameObject);
+        //Object.DestroyImmediate(thing.transform.Find("PublicGames").gameObject);
+        Object.DestroyImmediate(thing.transform.Find("Server help").gameObject);
+        Object.DestroyImmediate(thing.transform.Find("Back").gameObject);
+        Object.DestroyImmediate(thing.transform.Find("Join").gameObject);
+
+        // Destroy the new tab buttons for now
+        Object.DestroyImmediate(thing.transform.Find("FavoriteTab").gameObject);
+        Object.DestroyImmediate(thing.transform.Find("RecentTab").gameObject);
+        Object.DestroyImmediate(thing.transform.Find("FriendsTab").gameObject);
+        Object.DestroyImmediate(thing.transform.Find("CommunityTab").gameObject);
+
+        // Destroy the new buttons for now
+        Object.DestroyImmediate(thing.transform.Find("Add server").gameObject);
+        Object.DestroyImmediate(thing.transform.Find("FavoriteButton").gameObject);
     }
 
 
     internal static void PopulateServerList(GameObject linkpanel)
     {
         OdinQOLplugin.QOLLogger.LogDebug("POPULATE SERVER LIST");
-        BiFrostSetupGui.MServerListElement = linkpanel.transform.Find("ServerList/ServerElement").gameObject;
+        BiFrostSetupGui.MServerListElement = linkpanel.transform.Find("ServerList/ServerElementSteamCrossplay").gameObject;
         linkpanel.transform.Find("ServerList").gameObject.GetComponent<Image>().enabled = false;
         GameObject? listRoot = GameObject.Find("GuiRoot/GUI/StartGui/BiFrost/JoinPanel(Clone)/ServerList/ListRoot")
             .gameObject;
@@ -93,7 +104,7 @@ public class BiFrostFunctions
                 gameObject.SetActive(true);
                 ((gameObject.transform as RectTransform)!).anchoredPosition =
                     new Vector2(0.0f, index * -BiFrostSetupGui.m_serverListElementStep);
-                gameObject.GetComponent<Button>().onClick.AddListener(OnSelectedServer);
+                gameObject.GetComponent<Button>().onClick.AddListener(() => OnSelectedServer(gameObject));
                 BiFrostSetupGui.MServerListElements.Add(gameObject);
                 if (BiFrostSetupGui.MServerListElements.Count > 1)
                 {
@@ -123,6 +134,8 @@ public class BiFrostFunctions
                 .SetActive(server.password.Length > 1);
             serverListElement.transform.Find("PVP").gameObject
                 .SetActive(server.ispvp);
+            serverListElement.transform.Find("crossplay").gameObject
+                .SetActive(server.iscrossplay);
             Transform target = serverListElement.transform.Find("selected");
 
             bool flag = BiFrostSetupGui.MJoinServer != null && BiFrostSetupGui.MJoinServer.Equals(server);
@@ -219,9 +232,12 @@ public class BiFrostFunctions
         {
             return false;
         }
-
-        ZSteamMatchmaking.instance.m_joinAddr.SetIPv6(address.GetAddressBytes(), port);
-        ZSteamMatchmaking.instance.m_haveJoinAddr = true;
+        SteamNetworkingIPAddr networkingIpAddr = new();
+        networkingIpAddr.SetIPv6(address.GetAddressBytes(), port);
+        ZSteamMatchmaking.instance.m_joinData =
+            (ServerJoinData)new ServerJoinDataDedicated(networkingIpAddr.GetIPv4(), port);
+        /*ZSteamMatchmaking.instance.m_joinAddr.SetIPv6(address.GetAddressBytes(), port);
+        ZSteamMatchmaking.instance.m_haveJoinAddr = true;*/
         return true;
     }
 
@@ -234,11 +250,11 @@ public class BiFrostFunctions
         BiFrostSetupGui.ResolveTask = null;
     }
 
-    private static void OnSelectedServer()
+    private static void OnSelectedServer(GameObject gameObject)
     {
         OdinQOLplugin.QOLLogger.LogDebug("SELECTED SERVER");
         BiFrostSetupGui.MJoinServer =
-            BiFrostSetupGui.MServerList[FindSelectedServer(EventSystem.current.currentSelectedGameObject)];
+            BiFrostSetupGui.MServerList[FindSelectedServer(gameObject)];
         Connect(new BiFrostDefinition
         {
             serverName = BiFrostSetupGui.MJoinServer.serverName, address = BiFrostSetupGui.MJoinServer.address,
@@ -250,13 +266,25 @@ public class BiFrostFunctions
 
     private static int FindSelectedServer(Object button)
     {
-        OdinQOLplugin.QOLLogger.LogDebug("FIND SELECTED");
-        for (int index = 0; index < BiFrostSetupGui.MServerListElements.Count; ++index)
+        try
         {
-            if (BiFrostSetupGui.MServerListElements[index] == button)
-                return index;
-        }
+            OdinQOLplugin.QOLLogger.LogDebug("FIND SELECTED");
+            for (int index = 0; index < BiFrostSetupGui.MServerListElements.Count; ++index)
+            {
+                if (index >= 0 && index < BiFrostSetupGui.MServerListElements.Count &&
+                    BiFrostSetupGui.MServerListElements[index] == button)
+                {
+                    return index;
+                }
+            }
 
-        return -1;
+            return -1;
+        }
+        catch (Exception e)
+        {
+            OdinQOLplugin.QOLLogger.LogDebug("The issues were found in FindSelectedServer: " + e);
+            
+        }
+        return 1;
     }
-}*/
+}

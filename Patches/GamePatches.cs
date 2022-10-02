@@ -551,17 +551,8 @@ namespace OdinQOL.Patches
             private static void Postfix(ref FejdStartup __instance)
             {
                 __instance.m_minimumPasswordLength = 0;
-                //__instance.m_serverPlayerLimit = MaxPlayers.Value;
             }
         }
-
-        /*[HarmonyPatch(typeof(ServerList),nameof(ServerList.UpdateServerListGui))]
-        static class ServerList_UpdateServerListGui_Patch
-        {
-            static void Postfix(ServerList __instance)
-            {
-            }
-        }*/
 
 
         [HarmonyPatch(typeof(SteamGameServer), nameof(SteamGameServer.SetMaxPlayerCount))]
