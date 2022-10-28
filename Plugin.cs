@@ -67,7 +67,7 @@ namespace OdinQOL
     [BepInIncompatibility("odinplusqol.OdinsInventoryDiscard")]
     public partial class OdinQOLplugin : BaseUnityPlugin
     {
-        public const string Version = "0.9.2";
+        public const string Version = "0.9.3";
         public const string ModName = "OdinPlusQOL";
         public const string GUID = "com.odinplusqol.mod";
         internal static readonly int windowId = 434343;
