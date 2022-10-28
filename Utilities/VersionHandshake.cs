@@ -12,7 +12,7 @@ namespace OdinQOL
             // Register version check call
             OdinQOLplugin.QOLLogger.LogDebug("Registering version RPC handler");
             peer.m_rpc.Register($"{OdinQOLplugin.ModName}_VersionCheck",
-                new Action<ZRpc, ZPackage>(RpcHandlers.RPC_AzuAutoStore_Version));
+                new Action<ZRpc, ZPackage>(RpcHandlers.RPC_OdinQOL_Version));
 
             // Make calls to check versions
             OdinQOLplugin.QOLLogger.LogInfo("Invoking version check");
@@ -73,7 +73,7 @@ namespace OdinQOL
     {
         public static readonly List<ZRpc> ValidatedPeers = new();
 
-        public static void RPC_AzuAutoStore_Version(ZRpc rpc, ZPackage pkg)
+        public static void RPC_OdinQOL_Version(ZRpc rpc, ZPackage pkg)
         {
             string? version = pkg.ReadString();
             OdinQOLplugin.QOLLogger.LogInfo("Version check, local: " +
