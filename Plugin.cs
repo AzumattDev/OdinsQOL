@@ -88,6 +88,7 @@ namespace OdinQOL
         public static ConfigEntry<float> WeightReduction = null!;
         public static ConfigEntry<float> ItemStackMultiplier = null!;
         public static ConfigEntry<bool> NoTeleportPrevention = null!;
+        public static string ConnectionError ="";
 
         //public static readonly IEnumerable<KeyCode> AllKeyCodes;
 

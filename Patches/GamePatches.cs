@@ -496,7 +496,7 @@ namespace OdinQOL.Patches
             }
         }
 
-        [HarmonyPatch(typeof(Version), nameof(Version.GetVersionString))]
+        /*[HarmonyPatch(typeof(Version), nameof(Version.GetVersionString))]
         private static class PatchVersionGetVersionString
         {
             [HarmonyPriority(Priority.Last)]
@@ -507,9 +507,9 @@ namespace OdinQOL.Patches
                     __result += $"-{OdinQOLplugin.ModName}{OdinQOLplugin.Version}";
                 }
             }
-        }
+        }*/
 
-        [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
+        /*[HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
         private static class PatchZNetRPC_PeerInfo
         {
             [HarmonyPriority(Priority.Last)]
@@ -534,7 +534,7 @@ namespace OdinQOL.Patches
                 pkg = newPkg;
                 pkg.SetPos(0);
             }
-        }
+        }*/
 
         [HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateRecipe))]
         private class FasterCrafting

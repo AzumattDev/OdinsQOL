@@ -168,6 +168,7 @@
         <Compile Include="Utilities\Configs\WorldPatchConfigs.cs" />
         <Compile Include="Utilities\DragControl.cs" />
         <Compile Include="Utilities\Utilities.cs" />
+        <Compile Include="Utilities\VersionHandshake.cs" />
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Assets\Bundles\map-pin-ui" />
