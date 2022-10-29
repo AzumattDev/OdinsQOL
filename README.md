@@ -31,7 +31,7 @@ For Questions or Comments, find me in the Odin Plus Team Discord or in mine:
 
 # Changelog (latest patch listed first)
 
-### 0.9.3
+### 0.9.3/0.9.4
 - Hotfix for current game version. Update ServerSync internally.
 - Previous comments about last patch apply here as well. Only updating because it's needed. The changes are not in this codebase.
 
