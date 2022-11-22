@@ -376,6 +376,9 @@ namespace OdinQOL.Patches
 
             private static readonly FieldInfo FieldFoodMItem =
                 AccessTools.Field(typeof(Player.Food), nameof(Player.Food.m_item));
+            
+            private static readonly FieldInfo FieldFoodMEitr =
+                AccessTools.Field(typeof(Player.Food), nameof(Player.Food.m_eitr)); // Just in case I want to use this later...
 
             private static readonly FieldInfo FieldItemDataMShared =
                 AccessTools.Field(typeof(ItemDrop.ItemData), nameof(ItemDrop.ItemData.m_shared));

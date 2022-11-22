@@ -123,7 +123,7 @@ namespace OdinQOL.Patches
 
                 if (___m_dragAmount == ___m_dragItem.m_stack)
                 {
-                    Player.m_localPlayer.RemoveFromEquipQueue(___m_dragItem);
+                    Player.m_localPlayer.RemoveEquipAction(___m_dragItem);
                     Player.m_localPlayer.UnequipItem(___m_dragItem, false);
                     ___m_dragInventory.RemoveItem(___m_dragItem);
                 }

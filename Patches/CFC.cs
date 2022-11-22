@@ -296,16 +296,16 @@ public class CFC
     public static class HaveRequirementsPatch
     {
         public static MethodBase TargetMethod() => AccessTools.DeclaredMethod(typeof(Player),
-            nameof(Player.HaveRequirements), new[] { typeof(Piece.Requirement[]), typeof(bool), typeof(int) });
+            nameof(Player.HaveRequirementItems), new[] { typeof(Recipe), typeof(bool), typeof(int) });
 
-        static void Postfix(Player __instance, ref bool __result, Piece.Requirement[] resources, bool discover,
+        static void Postfix(Player __instance, ref bool __result, Recipe piece, bool discover,
             int qualityLevel, HashSet<string> ___m_knownMaterial)
         {
             if (!CFCEnabled.Value || !OdinQOLplugin.ModEnabled.Value || __result || discover ||
                 !Utilities.AllowByKey())
                 return;
             List<Container> nearbyContainers = Utilities.GetNearbyContainers(__instance.transform.position);
-            foreach (Piece.Requirement requirement in resources)
+            foreach (Piece.Requirement requirement in piece.m_resources)
             {
                 if (!requirement.m_resItem) continue;
                 int amount = requirement.GetAmount(qualityLevel);

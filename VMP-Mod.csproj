@@ -198,7 +198,7 @@
             <PostBuildEvent>copy "$(TargetDir)OdinQOL.dll" "C:\Users\crypt\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\OdinQOL test\BepInEx\plugins\OdinPlus-OdinsQOL\OdinQOL.dll</PostBuildEvent>
         </PropertyGroup>-->
     <Target Name="Copy" AfterTargets="ILRepack">
-        <!--<Exec Command="copy /Y &quot;$(TargetDir)$(AssemblyName).dll&quot; &quot;C:\Users\crypt\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\OdinQOL test\BepInEx\plugins\OdinPlus-OdinsQOL\$(AssemblyName).dll&quot;" />-->
+        <Exec Command="copy /Y &quot;$(TargetDir)$(AssemblyName).dll&quot; &quot;C:\Users\crypt\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\PTB\BepInEx\plugins\_TESTINGMODS\$(AssemblyName).dll&quot;" />
         <!--<Exec Command="copy /Y &quot;$(TargetDir)$(AssemblyName).dll&quot; &quot;C:\Users\crypt\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\OdinQOL Test PTB\BepInEx\plugins\$(AssemblyName).dll&quot;"/>-->
     </Target>
 </Project>
