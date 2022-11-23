@@ -38,5 +38,8 @@ public class WNTPatchConfigs
         WearNTear_Patches.StructuralIntegrityhardWood = OdinQOLplugin.context.config("WearNTear_Patches",
             "Hardwood Structural Integrity", 0f,
             "Hardwood Structural Integrity. Reduces the loss of structural integrity by distance by % less. The value 100 would result in disabled structural integrity over distance, does not allow for placement in free air without Disable Structural Integrity system.");
+        WearNTear_Patches.StructuralIntegrityMarble = OdinQOLplugin.context.config("WearNTear_Patches",
+            "Marble Structural Integrity", 0f,
+            "Hardwood Structural Integrity. Reduces the loss of structural integrity by distance by % less. The value 100 would result in disabled structural integrity over distance, does not allow for placement in free air without Disable Structural Integrity system.");
     }
 }

@@ -17,6 +17,7 @@ namespace OdinQOL.Patches
         public static ConfigEntry<float> StructuralIntegritystone = null!;
         public static ConfigEntry<float> StructuralIntegrityiron = null!;
         public static ConfigEntry<float> StructuralIntegrityhardWood = null!;
+        public static ConfigEntry<float> StructuralIntegrityMarble = null!;
     }
 
 
@@ -148,6 +149,13 @@ namespace OdinQOL.Patches
                         verticalLoss = 0.1f - ((0.1f / 100) * WearNTear_Patches.StructuralIntegrityhardWood.Value);
                         horizontalLoss = 0.16666667f -
                                          ((0.16666667f / 100) * WearNTear_Patches.StructuralIntegrityhardWood.Value);
+                        return false;
+                    case WearNTear.MaterialType.Marble:
+                        maxSupport = 1500f;
+                        minSupport = 100f;
+                        verticalLoss = 0.125f - ((0.125f / 100) * WearNTear_Patches.StructuralIntegrityMarble.Value);
+                        horizontalLoss = 0.5f -
+                                         ((0.5f / 100) * WearNTear_Patches.StructuralIntegrityMarble.Value);
                         return false;
                     default:
                         maxSupport = 0f;
