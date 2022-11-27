@@ -169,6 +169,7 @@ namespace OdinQOL
                 QuickAccessBar.HotKey2Text,
                 QuickAccessBar.HotKey3Text
             };
+            Utilities.AutoDoc();
         }
 
         private void Start()

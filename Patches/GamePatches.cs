@@ -575,8 +575,7 @@ namespace OdinQOL.Patches
             static IEnumerable<CodeInstruction> MaxPlayersPatch(IEnumerable<CodeInstruction> instructions)
             {
 #if DEBUG
-                MaxPlayerCountLogger.LogMessage("Searching for Ldc_I4_S and setting it to " +
-                                                                     _maxPlayers.Value);
+                //OdinQOLplugin.QOLLogger.LogMessage("Searching for Ldc_I4_S and setting it to " +_maxPlayers.Value);
 #endif
                 return new CodeMatcher(instructions).MatchForward(false, new CodeMatch(OpCodes.Ldc_I4_S, (sbyte)10))
                     .Set(OpCodes.Call, Transpilers.EmitDelegate(ReplacePlayerLimit).operand).InstructionEnumeration();
