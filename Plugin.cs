@@ -8,6 +8,7 @@ using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using JetBrains.Annotations;
 using OdinQOL.Configs;
 using OdinQOL.Patches;
 using OdinQOL.Patches.BiFrost;
@@ -272,6 +273,24 @@ namespace OdinQOL
             bool synchronizedSetting = true)
         {
             return config(group, name, value, new ConfigDescription(description), synchronizedSetting);
+        }
+
+        internal ConfigEntry<T> TextEntryConfig<T>(string group, string name, T value, string desc,
+            bool synchronizedSetting = true)
+        {
+            ConfigurationManagerAttributes attributes = new()
+            {
+                CustomDrawer = Utilities.TextAreaDrawer
+            };
+            return config(group, name, value, new ConfigDescription(desc, null, attributes), synchronizedSetting);
+        }
+        
+        private class ConfigurationManagerAttributes
+        {
+            [UsedImplicitly] public int? Order;
+            [UsedImplicitly] public bool? Browsable;
+            [UsedImplicitly] public string? Category;
+            [UsedImplicitly] public Action<ConfigEntryBase>? CustomDrawer;
         }
 
         public static int GetAvailableItems(string itemName)

@@ -13,7 +13,7 @@ public class CFCConfigs
 
         CFC.mRange = OdinQOLplugin.context.config("CraftFromContainers", "ContainerRange", 10f,
             "The maximum range from which to pull items from");
-        CFC.resourceString = OdinQOLplugin.context.config("CraftFromContainers", "ResourceCostString", "{0}/{1}",
+        CFC.resourceString = OdinQOLplugin.context.TextEntryConfig("CraftFromContainers", "ResourceCostString", "{0}/{1}",
             "String used to show required and available resources. {0} is replaced by how much is available, and {1} is replaced by how much is required. Set to nothing to leave it as default.",
             false);
         CFC.flashColor = OdinQOLplugin.context.config("CraftFromContainers", "FlashColor", Color.yellow,
@@ -21,16 +21,16 @@ public class CFCConfigs
         CFC.unFlashColor = OdinQOLplugin.context.config("CraftFromContainers", "UnFlashColor", Color.white,
             "Resource amounts will flash from this colour when coming from containers (set both colors to the same color for no flashing)",
             false);
-        CFC.pulledMessage = OdinQOLplugin.context.config("CraftFromContainers", "PulledMessage",
+        CFC.pulledMessage = OdinQOLplugin.context.TextEntryConfig("CraftFromContainers", "PulledMessage",
             "Pulled items to inventory",
             "Message to show after pulling items to player inventory", false);
-        CFC.CFCFuelDisallowTypes = OdinQOLplugin.context.config("CraftFromContainers", "FuelDisallowTypes",
+        CFC.CFCFuelDisallowTypes = OdinQOLplugin.context.TextEntryConfig("CraftFromContainers", "FuelDisallowTypes",
             "RoundLog,FineWood",
             "Types of item to disallow as fuel (i.e. anything that is consumed), comma-separated. Uses Prefab names.");
-        CFC.CFCOreDisallowTypes = OdinQOLplugin.context.config("CraftFromContainers", "OreDisallowTypes",
+        CFC.CFCOreDisallowTypes = OdinQOLplugin.context.TextEntryConfig("CraftFromContainers", "OreDisallowTypes",
             "RoundLog,FineWood",
             "Types of item to disallow as ore (i.e. anything that is transformed), comma-separated). Uses Prefab names.");
-        CFC.CFCItemDisallowTypes = OdinQOLplugin.context.config("CraftFromContainers", "ItemDisallowTypes",
+        CFC.CFCItemDisallowTypes = OdinQOLplugin.context.TextEntryConfig("CraftFromContainers", "ItemDisallowTypes",
             "",
             "Types of items to disallow pulling from chests, comma-separated. Uses Prefab names.");
         CFC.showGhostConnections = OdinQOLplugin.context.config("CraftFromContainers",

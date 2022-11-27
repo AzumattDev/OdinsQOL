@@ -34,102 +34,102 @@ public class AutoStoreConfigs
             "The maximum range to pull dropped items for Carts");
         AutoStorePatch.dropRangeShips = OdinQOLplugin.context.config("Auto Storage", "DropRangeShips", 5f,
             "The maximum range to pull dropped items for Ships");
-        AutoStorePatch.itemDisallowTypes = OdinQOLplugin.context.config("Auto Storage", "ItemDisallowTypes", "",
+        AutoStorePatch.itemDisallowTypes = OdinQOLplugin.context.TextEntryConfig("Auto Storage", "ItemDisallowTypes", "",
             "Types of item to disallow pulling for, comma-separated. Uses Prefab names.");
 
-        AutoStorePatch.itemDisallowCategories = OdinQOLplugin.context.config("Auto Storage", "ItemDisallowCategories",
+        AutoStorePatch.itemDisallowCategories = OdinQOLplugin.context.TextEntryConfig("Auto Storage", "ItemDisallowCategories",
             "",
             $"Categories of item to disallow pulling for, comma-separated. \nAccepted Values are {string.Join(",", OdinQOLplugin.Categories)}");
         AutoStorePatch.itemAllowCategories = OdinQOLplugin.context.config("Auto Storage", "ItemAllowCategories", "",
             $"Categories of item to only allow pulling for, comma-separated. Overrides ItemDisallowCategories.  \nAccepted Values are {string.Join(",", OdinQOLplugin.Categories)}");
 
-        AutoStorePatch.itemDisallowCategoriesChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemDisallowCategoriesChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemDisallowCategoriesChests", "",
             $"Categories of item to disallow pulling for, comma-separated. \nAccepted Values are {string.Join(",", OdinQOLplugin.Categories)}");
-        AutoStorePatch.itemAllowCategoriesChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemAllowCategoriesChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemAllowCategoriesChests", "",
             $"Categories of item to only allow pulling for, comma-separated. Overrides ItemDisallowCategoriesChests. \nAccepted Values are {string.Join(",", OdinQOLplugin.Categories)}");
 
-        AutoStorePatch.itemDisallowCategoriesPersonalChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemDisallowCategoriesPersonalChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemDisallowCategoriesPersonalChests", "",
             $"Categories of item to disallow pulling for, comma-separated. \nAccepted Values are {string.Join(",", OdinQOLplugin.Categories)}");
-        AutoStorePatch.itemAllowCategoriesPersonalChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemAllowCategoriesPersonalChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemAllowCategoriesPersonalChests", "",
             $"Categories of item to only allow pulling for, comma-separated. Overrides ItemDisallowCategoriesPersonalChests. \nAccepted Values are {string.Join(",", OdinQOLplugin.Categories)}");
 
-        AutoStorePatch.itemDisallowCategoriesBlackMetalChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemDisallowCategoriesBlackMetalChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemDisallowCategoriesBlackMetalChests", "",
             $"Categories of item to disallow pulling for, comma-separated. \nAccepted Values are {string.Join(",", OdinQOLplugin.Categories)}");
-        AutoStorePatch.itemAllowCategoriesBlackMetalChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemAllowCategoriesBlackMetalChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemAllowCategoriesBlackMetalChests", "",
             $"Categories of item to only allow pulling for, comma-separated. Overrides ItemDisallowCategoriesBlackMetalChests. \nAccepted Values are {string.Join(",", OdinQOLplugin.Categories)}");
 
-        AutoStorePatch.itemDisallowCategoriesReinforcedChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemDisallowCategoriesReinforcedChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemDisallowCategoriesReinforcedChests", "",
             $"Categories of item to disallow pulling for, comma-separated. \nAccepted Values are {string.Join(",", OdinQOLplugin.Categories)}");
-        AutoStorePatch.itemAllowCategoriesReinforcedChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemAllowCategoriesReinforcedChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemAllowCategoriesReinforcedChests", "",
             $"Categories of item to only allow pulling for, comma-separated. Overrides ItemDisallowCategoriesReinforcedChests. \nAccepted Values are {string.Join(",", OdinQOLplugin.Categories)}");
 
-        AutoStorePatch.itemDisallowCategoriesCarts = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemDisallowCategoriesCarts = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemDisallowCategoriesCarts", "",
             $"Categories of item to disallow pulling for, comma-separated. \nAccepted Values are {string.Join(",", OdinQOLplugin.Categories)}");
-        AutoStorePatch.itemAllowCategoriesCarts = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemAllowCategoriesCarts = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemAllowCategoriesCarts", "",
             $"Categories of item to only allow pulling for, comma-separated. Overrides ItemDisallowCategoriesCarts. \nAccepted Values are {string.Join(",", OdinQOLplugin.Categories)}");
 
-        AutoStorePatch.itemDisallowCategoriesShips = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemDisallowCategoriesShips = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemDisallowCategoriesShips", "",
             $"Categories of item to disallow pulling for, comma-separated. \nAccepted Values are {string.Join(",", OdinQOLplugin.Categories)}");
-        AutoStorePatch.itemAllowCategoriesShips = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemAllowCategoriesShips = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemAllowCategoriesShips", "",
             $"Categories of item to only allow pulling for, comma-separated. Overrides ItemDisallowCategoriesShips. \nAccepted Values are {string.Join(",", OdinQOLplugin.Categories)}");
 
 
-        AutoStorePatch.itemAllowTypes = OdinQOLplugin.context.config("Auto Storage", "ItemAllowTypes", "",
+        AutoStorePatch.itemAllowTypes = OdinQOLplugin.context.TextEntryConfig("Auto Storage", "ItemAllowTypes", "",
             "Types of item to only allow pulling for, comma-separated. Uses Prefab names. Overrides ItemDisallowTypes");
-        AutoStorePatch.itemDisallowTypesChests = OdinQOLplugin.context.config("Auto Storage", "ItemDisallowTypesChests",
+        AutoStorePatch.itemDisallowTypesChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage", "ItemDisallowTypesChests",
             "",
             "Types of item to disallow pulling for, comma-separated. Uses Prefab names. (For Chests)");
-        AutoStorePatch.itemAllowTypesChests = OdinQOLplugin.context.config("Auto Storage", "ItemAllowTypesChests", "",
+        AutoStorePatch.itemAllowTypesChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage", "ItemAllowTypesChests", "",
             "Types of item to only allow pulling for, comma-separated. Uses Prefab names. Overrides ItemDisallowTypesChests");
-        AutoStorePatch.itemDisallowTypesPersonalChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemDisallowTypesPersonalChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemDisallowTypesPersonalChests", "",
             "Types of item to disallow pulling for, comma-separated. Uses Prefab names. (For Personal Chests)");
-        AutoStorePatch.itemAllowTypesPersonalChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemAllowTypesPersonalChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemAllowTypesPersonalChests",
             "",
             "Types of item to only allow pulling for, comma-separated. Uses Prefab names. Overrides ItemDisallowTypesPersonalChests");
-        AutoStorePatch.itemDisallowTypesReinforcedChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemDisallowTypesReinforcedChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemDisallowTypesReinforcedChests", "",
             "Types of item to disallow pulling for, comma-separated. Uses Prefab names. (For ReinforcedChests)");
-        AutoStorePatch.itemAllowTypesReinforcedChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemAllowTypesReinforcedChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemAllowTypesReinforcedChests", "",
             "Types of item to only allow pulling for, comma-separated. Uses Prefab names. Overrides ItemDisallowTypesReinforcedChests");
-        AutoStorePatch.itemDisallowTypesBlackMetalChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemDisallowTypesBlackMetalChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemDisallowTypesBlackMetalChests",
             "", "Types of item to disallow pulling for, comma-separated. Uses Prefab names.");
-        AutoStorePatch.itemAllowTypesBlackMetalChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemAllowTypesBlackMetalChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemAllowTypesBlackMetalChests", "",
             "Types of item to only allow pulling for, comma-separated. Uses Prefab names. Overrides ItemDisallowTypesBlackMetalChests");
-        AutoStorePatch.customChests = OdinQOLplugin.context.config("Auto Storage", "CustomChests", "",
+        AutoStorePatch.customChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage", "CustomChests", "",
             "Custom Chests to use, comma-separated. Uses Prefab names.");
-        AutoStorePatch.itemDisallowTypesCustomChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemDisallowTypesCustomChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemDisallowTypesCustomChests",
             "", "Types of item to disallow pulling for, comma-separated. Uses Prefab names.");
-        AutoStorePatch.itemAllowTypesCustomChests = OdinQOLplugin.context.config("Auto Storage",
+        AutoStorePatch.itemAllowTypesCustomChests = OdinQOLplugin.context.TextEntryConfig("Auto Storage",
             "ItemAllowTypesCustomChests", "",
             "Types of item to only allow pulling for, comma-separated. Uses Prefab names. Overrides ItemDisallowTypesCustomChests");
         
-        AutoStorePatch.itemDisallowTypesCarts = OdinQOLplugin.context.config("Auto Storage", "ItemDisallowTypesCarts",
+        AutoStorePatch.itemDisallowTypesCarts = OdinQOLplugin.context.TextEntryConfig("Auto Storage", "ItemDisallowTypesCarts",
             "",
             "Types of item to disallow pulling for, comma-separated. Uses Prefab names. (For Carts)");
-        AutoStorePatch.itemAllowTypesCarts = OdinQOLplugin.context.config("Auto Storage", "ItemAllowTypesCarts", "",
+        AutoStorePatch.itemAllowTypesCarts = OdinQOLplugin.context.TextEntryConfig("Auto Storage", "ItemAllowTypesCarts", "",
             "Types of item to only allow pulling for, comma-separated. Uses Prefab names. Overrides ItemDisallowTypesCarts");
-        AutoStorePatch.itemDisallowTypesShips = OdinQOLplugin.context.config("Auto Storage", "ItemDisallowTypesShips",
+        AutoStorePatch.itemDisallowTypesShips = OdinQOLplugin.context.TextEntryConfig("Auto Storage", "ItemDisallowTypesShips",
             "",
             "Types of item to disallow pulling for, comma-separated. Uses Prefab names. (For Ships)");
-        AutoStorePatch.itemAllowTypesShips = OdinQOLplugin.context.config("Auto Storage", "ItemAllowTypesShips", "",
+        AutoStorePatch.itemAllowTypesShips = OdinQOLplugin.context.TextEntryConfig("Auto Storage", "ItemAllowTypesShips", "",
             "Types of item to only allow pulling for, comma-separated. Uses Prefab names. Overrides ItemDisallowTypesShips");
         AutoStorePatch.toggleString = OdinQOLplugin.context.config("Auto Storage", "ToggleString", "Auto Pull: {0}",
             "Text to show on toggle. {0} is replaced with true/false");

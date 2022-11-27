@@ -18,6 +18,7 @@ namespace OdinQOL.Patches
         public static ConfigEntry<bool> ShowBuildings = null!;
         public static ConfigEntry<bool> MapDetailOn = null!;
         public static ConfigEntry<bool> DisplayCartsAndBoats = null!;
+        public static ConfigEntry<string> CustomBoats = null!;
         public static ConfigEntry<Color> PersonalBuildingColor = null!;
         public static ConfigEntry<Color> OtherBuildingColor = null!;
         public static ConfigEntry<Color> UnownedBuildingColor = null!;

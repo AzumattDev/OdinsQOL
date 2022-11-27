@@ -45,13 +45,13 @@ public class ClockPatchConfigs
             "If true, limit clock display to when the hotkey is down", false);
         OdinQOLplugin.ClockFormat = OdinQOLplugin.context.config("Clock", "ClockFormat", "HH:mm",
             "Time format; set to 'fuzzy' for fuzzy time", false);
-        OdinQOLplugin.ClockString = OdinQOLplugin.context.config("Clock", "ClockString", "<b>{0}</b>",
+        OdinQOLplugin.ClockString = OdinQOLplugin.context.TextEntryConfig("Clock", "ClockString", "<b>{0}</b>",
             "Formatted clock string - {0} is replaced by the actual time string, {1} is replaced by the fuzzy string, {2} is replaced by the current day",
             false);
         OdinQOLplugin.ClockTextAlignment = OdinQOLplugin.context.config("Clock", "ClockTextAlignment",
             TextAnchor.MiddleCenter,
             "Clock text alignment.", false);
-        OdinQOLplugin.ClockFuzzyStrings = OdinQOLplugin.context.config("Clock", "ClockFuzzyStrings",
+        OdinQOLplugin.ClockFuzzyStrings = OdinQOLplugin.context.TextEntryConfig("Clock", "ClockFuzzyStrings",
             "Midnight,Early Morning,Early Morning,Before Dawn,Before Dawn,Dawn,Dawn,Morning,Morning,Late Morning,Late Morning,Midday,Midday,Early Afternoon,Early Afternoon,Afternoon,Afternoon,Evening,Evening,Night,Night,Late Night,Late Night,Midnight",
             "Fuzzy time strings to split up the day into custom periods if ClockFormat is set to 'fuzzy'; comma-separated",
             false);

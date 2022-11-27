@@ -30,12 +30,12 @@ public class CraftingConfigs
             "Type by which to sort entries.", false);
         CraftingPatch.SortAsc =
             OdinQOLplugin.context.config("Show Chest Contents", "SortAsc", false, "Sort ascending?", false);
-        CraftingPatch.EntryString = OdinQOLplugin.context.config("Show Chest Contents", "EntryText",
+        CraftingPatch.EntryString = OdinQOLplugin.context.TextEntryConfig("Show Chest Contents", "EntryText",
             "<color=#FFFFAAFF>{0}</color> <color=#AAFFAAFF>{1}</color>",
             "Entry text. {0} is replaced by the total amount, {1} is replaced by the item name.", false);
-        CraftingPatch.OverFlowText = OdinQOLplugin.context.config("Show Chest Contents", "OverFlowText",
+        CraftingPatch.OverFlowText = OdinQOLplugin.context.TextEntryConfig("Show Chest Contents", "OverFlowText",
             "<color=#AAAAAAFF>...</color>", "Overflow text if more items than max entries.", false);
-        CraftingPatch.CapacityText = OdinQOLplugin.context.config("General", "CapacityText",
+        CraftingPatch.CapacityText = OdinQOLplugin.context.TextEntryConfig("General", "CapacityText",
             "<color=#FFFFAAFF> {0}/{1}</color>",
             "Text to show capacity. {0} is replaced by number of full slots, {1} is replaced by total slots.",
             false);

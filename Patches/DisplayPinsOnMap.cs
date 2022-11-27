@@ -8,14 +8,15 @@ namespace OdinQOL.Patches;
 
 public class DisplayPinsOnMap
 {
-    private static readonly Dictionary<ZDO, Minimap.PinData> customPins = new();
-    private static readonly Dictionary<int, Sprite> icons = new();
+    private static readonly Dictionary<ZDO, Minimap.PinData> CustomPins = new();
+    private static readonly Dictionary<int, Sprite> Icons = new();
+    private static List<string> PrefabList = new();
     private static readonly int CartHashcode = "Cart".GetStableHashCode();
     private static readonly int RaftHashcode = "Raft".GetStableHashCode();
     private static readonly int KarveHashcode = "Karve".GetStableHashCode();
     private static readonly int LongshipHashcode = "VikingShip".GetStableHashCode();
-    private static readonly int hammerHashCode = "Hammer".GetStableHashCode();
-    private static readonly float updateInterval = 5.0f;
+    private static readonly int HammerHashCode = "Hammer".GetStableHashCode();
+    private const float UpdateInterval = 5.0f;
 
     // clear dictionary if the user logs out
     [HarmonyPatch(typeof(Minimap), nameof(Minimap.OnDestroy))]
@@ -23,19 +24,20 @@ public class DisplayPinsOnMap
     {
         private static void Postfix()
         {
-            customPins.Clear();
-            icons.Clear();
+            CustomPins.Clear();
+            Icons.Clear();
+            PrefabList.Clear();
         }
     }
 
     [HarmonyPatch(typeof(Minimap), nameof(Minimap.UpdateMap))]
     public static class Minimap_UpdateMap_Patch
     {
-        private static float _timeCounter = updateInterval;
+        private static float _timeCounter = UpdateInterval;
 
         private static void FindIcons()
         {
-            GameObject hammer = ObjectDB.instance.m_itemByHash[hammerHashCode];
+            GameObject hammer = ObjectDB.instance.m_itemByHash[HammerHashCode];
             if (!hammer)
                 return;
             ItemDrop hammerDrop = hammer.GetComponent<ItemDrop>();
@@ -44,7 +46,7 @@ public class DisplayPinsOnMap
             PieceTable hammerPieceTable = hammerDrop.m_itemData.m_shared.m_buildPieces;
             foreach (Piece p in hammerPieceTable.m_pieces.Select(piece => piece.GetComponent<Piece>()))
             {
-                icons.Add(p.name.GetStableHashCode(), p.m_icon);
+                Icons.Add(p.name.GetStableHashCode(), p.m_icon);
             }
         }
 
@@ -54,7 +56,7 @@ public class DisplayPinsOnMap
                 return false;
 
             Minimap.PinData customPin;
-            bool pinWasFound = customPins.TryGetValue(zdo, out customPin);
+            bool pinWasFound = CustomPins.TryGetValue(zdo, out customPin);
 
             // turn off associated pin if player controlled ship is in that position
             Ship controlledShip = player.GetControlledShip();
@@ -62,7 +64,7 @@ public class DisplayPinsOnMap
             {
                 if (!pinWasFound) return true;
                 __instance.RemovePin(customPin);
-                customPins.Remove(zdo);
+                CustomPins.Remove(zdo);
 
                 return true;
             }
@@ -71,11 +73,11 @@ public class DisplayPinsOnMap
             {
                 customPin = __instance.AddPin(zdo.m_position, Minimap.PinType.Death, pinName, false, false);
 
-                if (icons.TryGetValue(hashCode, out Sprite sprite))
+                if (Icons.TryGetValue(hashCode, out Sprite sprite))
                     customPin.m_icon = sprite;
 
                 customPin.m_doubleSize = true;
-                customPins.Add(zdo, customPin);
+                CustomPins.Add(zdo, customPin);
             }
             else
             {
@@ -89,20 +91,32 @@ public class DisplayPinsOnMap
         {
             _timeCounter += dt;
 
-            if (_timeCounter < updateInterval || !MapDetail.MapDetailOn.Value ||
+            if (_timeCounter < UpdateInterval || !MapDetail.MapDetailOn.Value ||
                 !MapDetail.DisplayCartsAndBoats.Value)
                 return;
+            if (!string.IsNullOrWhiteSpace(MapDetail.CustomBoats.Value) && MapDetail.CustomBoats.Value.Length > 0)
+            {
+                PrefabList = MapDetail.CustomBoats.Value.Trim().Split(',')
+                    .Select(s => s.Trim()).ToList();
+            }
+            else
+            {
+                PrefabList.Clear();
+            }
 
-            _timeCounter -= updateInterval;
+            _timeCounter -= UpdateInterval;
 
-            if (icons.Count == 0)
+            if (Icons.Count == 0)
                 FindIcons();
 
-            // search zones for ships and carts
-            foreach (List<ZDO> zdoarray in ZDOMan.instance.m_objectsBySector)
+            // search zones for ships and carts (use for loop to avoid enumerator errors. Foreach makes this immutable and it complains.)
+            for (int i1 = 0; i1 < ZDOMan.instance.m_objectsBySector.Length; i1++)
+            {
+                List<ZDO> zdoarray = ZDOMan.instance.m_objectsBySector[i1];
                 if (zdoarray != null)
-                    foreach (ZDO zdo in zdoarray)
+                    for (int i = 0; i < zdoarray.Count; i++)
                     {
+                        ZDO zdo = zdoarray[i];
                         if (CheckPin(__instance, player, zdo, CartHashcode, "Cart"))
                             continue;
                         if (CheckPin(__instance, player, zdo, RaftHashcode, "Raft"))
@@ -111,13 +125,20 @@ public class DisplayPinsOnMap
                             continue;
                         if (CheckPin(__instance, player, zdo, LongshipHashcode, "Longship"))
                             continue;
+                        for (int index = 0; index < PrefabList.Count; index++)
+                        {
+                            string prefab = PrefabList[index];
+                            if (CheckPin(__instance, player, zdo, prefab.GetStableHashCode(), prefab))
+                                break;
+                        }
                     }
+            }
 
             // clear pins for destroyed objects
-            foreach (KeyValuePair<ZDO, Minimap.PinData> pin in customPins.Where(pin => !pin.Key.IsValid()))
+            foreach (KeyValuePair<ZDO, Minimap.PinData> pin in CustomPins.Where(pin => !pin.Key.IsValid()))
             {
                 __instance.RemovePin(pin.Value);
-                customPins.Remove(pin.Key);
+                CustomPins.Remove(pin.Key);
             }
         }
     }

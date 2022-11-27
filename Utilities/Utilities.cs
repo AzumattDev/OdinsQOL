@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BepInEx.Bootstrap;
+using BepInEx.Configuration;
 using BepInEx.Logging;
 using CraftyBoxes.Compatibility.WardIsLove;
 using HarmonyLib;
@@ -22,6 +23,14 @@ namespace OdinQOL
 
     internal class Utilities
     {
+        internal static void TextAreaDrawer(ConfigEntryBase entry)
+        {
+            GUILayout.ExpandHeight(true);
+            GUILayout.ExpandWidth(true);
+            entry.BoxedValue = GUILayout.TextArea((string)entry.BoxedValue, GUILayout.ExpandWidth(true),
+                GUILayout.ExpandHeight(true));
+        }
+
         internal static bool AllowByKey()
         {
             if (CFC.preventModKey.Value.IsPressed())
