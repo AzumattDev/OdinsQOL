@@ -192,11 +192,17 @@ namespace OdinQOL.Patches
                     verticalLoss = 0.1f;
                     horizontalLoss = 0.16666667f;
                     return false;
+                case WearNTear.MaterialType.Marble:
+                    maxSupport = 1500f;
+                    minSupport = 100f;
+                    verticalLoss = 0.125f;
+                    horizontalLoss = 0.5f;
+                    return false;
                 default:
-                    maxSupport = 0f;
-                    minSupport = 0f;
-                    verticalLoss = 0f;
-                    horizontalLoss = 0f;
+                    maxSupport = 0.0f;
+                    minSupport = 0.0f;
+                    verticalLoss = 0.0f;
+                    horizontalLoss = 0.0f;
                     return false;
             }
         }

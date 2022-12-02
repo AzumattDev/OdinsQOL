@@ -12,8 +12,8 @@ public class MapDetailConfigs
         MapDetail.DisplayCartsAndBoats =
             OdinQOLplugin.context.config("Map Details", "Display Boats/Carts", true, "Show Boats and carts on the map");
         // Custom boats string config
-        MapDetail.CustomBoats = OdinQOLplugin.context.TextEntryConfig("Map Details", "Custom Boats", "CargoShip,Skuldelev,LittleBoat,MercantShip,BigCargoShip,FishingBoat,FishingCanoe,WarShip",
-            "Custom boats to show on the map. Format: \"BoatName1,BoatName2,BoatName3\".");
+        MapDetail.CustomBoats = OdinQOLplugin.context.TextEntryConfig("Map Details", "Custom Boats & Carts", "CargoShip,Skuldelev,LittleBoat,MercantShip,BigCargoShip,FishingBoat,FishingCanoe,WarShip",
+            "Custom boats to show on the map. Format: \"BoatName1,BoatName2,BoatName3,CartName1\".");
         MapDetail.ShowRange = OdinQOLplugin.context.config("Map Details", "ShowRange", 50f,
             "Range in metres around player to show details");
         MapDetail.UpdateDelta = OdinQOLplugin.context.config("Map Details", "UpdateDelta", 5f,

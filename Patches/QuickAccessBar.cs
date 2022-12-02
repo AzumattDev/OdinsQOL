@@ -132,7 +132,11 @@ namespace OdinQOL.Patches
                         if (itemData.m_shared.m_maxStackSize > 1)
                         {
                             element.m_amount.gameObject.SetActive(true);
-                            element.m_amount.text = itemData.m_stack + "/" + itemData.m_shared.m_maxStackSize;
+                            if (element.m_stackText != itemData.m_stack)
+                            {
+                                element.m_amount.text = $"{itemData.m_stack} / {itemData.m_shared.m_maxStackSize}";
+                                element.m_stackText = itemData.m_stack;
+                            }
                         }
                         else
                         {
