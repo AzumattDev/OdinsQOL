@@ -612,6 +612,8 @@ namespace OdinQOL.Patches
             }
         }
 
+        
+        /* CANT TAKE */
         [HarmonyPatch(typeof(Hud), nameof(Hud.SetupPieceInfo), typeof(Piece))]
         public static class Hud_Patch
         {
