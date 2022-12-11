@@ -172,6 +172,17 @@ namespace OdinQOL
                              CFC.mRange.Value) && container.CheckAccess(Player.m_localPlayer.GetPlayerID()) &&
                          !container.IsInUse()))
             {
+                var containerPos = container.transform.position;
+                if(!PrivateArea.CheckAccess(containerPos, 0f, false))
+                    continue;
+                if (!PrivateArea.InsideFactionArea(container.transform.position, Character.Faction.Players))
+                {
+                    container.Load();
+                    containers.Add(container);
+                    continue;
+                }
+                
+                
                 if (WardIsLovePlugin.IsLoaded() && WardIsLovePlugin.WardEnabled()!.Value)
                 {
                     if (!WardMonoscript.CheckInWardMonoscript(container.transform.position))

@@ -1,0 +1,9 @@
+﻿{
+  "name": "OdinsQOL",
+  "description": "A collection of QOL patches and tweaks for your game",
+  "version_number": "0.9.6",
+  "website_url": "https://github.com/AzumattDev/OdinsQOL",
+  "dependencies": [
+    "denikson-BepInExPack_Valheim-5.4.1901"
+  ]
+}
